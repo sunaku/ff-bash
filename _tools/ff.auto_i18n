@@ -6,9 +6,10 @@
 # 	input files must have extension .pot
 #
 
-upload_scp_url=$UCSC_ID:public_html/pub/tmp/
-upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
-
+# place where files will be uploaded temporarily in order to do translations
+upload_scp_url="cyzsuraj@shell.sourceforge.net:htdocs/tmp/"
+upload_web_url="http://ff-bash.sourceforge.net/tmp/"
+	
 result_dir=../i18n
 scripts_dir=../scripts
 

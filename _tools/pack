@@ -13,10 +13,9 @@
 
 ## vars
 
-pack_upload_scp_url=$UCSC_ID:public_html/pub/projects/ff/
-upload_scp_url=$UCSC_ID:public_html/pub/tmp/
-upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
-
+	# place where files will be uploaded temporarily in order to do translations
+	upload_scp_url="cyzsuraj@shell.sourceforge.net:htdocs/tmp/"
+	upload_web_url="http://ff-bash.sourceforge.net/tmp/"
 
 	# version of this release
 	pack_ver=$1
@@ -97,7 +96,7 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
 		for f in $pack_dir_docs/*html
 		do 
-			sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fpeople.ucsc.edu%2f%7eskurapat%2fpub%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
+			sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
 		done
 
 ## package creation
