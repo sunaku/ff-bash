@@ -6,9 +6,9 @@
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-	
+
 		<!-- list of available translations -->
-		<p>Translations: 
+		<p>Translations:
 			<a href="faq.zh.html">Chinese Simplified</a> |
 			<a href="faq.zt.html">Chinese Traditional</a> |
 			<a href="faq.nl.html">Dutch</a> |
@@ -23,20 +23,20 @@
 			<a href="faq.ru.html">Russian</a> |
 			<a href="faq.es.html">Spanish</a>
 		</p>
-		
+
 		<!-- begin page content -->
 		<h1>For each File &mdash; Frequently Asked Questions</h1>
 		<blockquote>
 			<p>This document attempts to answer frequently asked questions about the <b>For each File</b> package.</p>
-			
-			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
+
+			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and report defects, submit patches, discuss in forums, and request new features at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 		</blockquote>
 
 		<h2>Have a Question?</h2>
 		<blockquote>
 			<p>You can post your question on the discussion forums at <a href="http://sourceforge.net/forum/?group_id=106777">http://sourceforge.net/forum/?group_id=106777</a>.</p>
 		</blockquote>
-		
+
 		<h2 id="qlist">Question Listing</h2>
 		<blockquote>
 			<ol>
@@ -46,45 +46,45 @@
 				<li><a href="#targets_garbled">Why are some targets given on the command-line handled improperly?</a></li>
 			</ol>
 		</blockquote>
-		
+
 		<h2>Questions and Answers</h2>
 		<ol>
 			<li id="find_exec">
 				<h3>What are the advantages of using <b>For each File</b> instead of <samp>find -exec</samp>?</h3>
 				<blockquote>
-					<p>
-						There is one advantage which can be observed under the following condition: if <samp>find -exec</samp> is used to invoke an intermediate shell, then it will expend more system resources than <b>For each File</b>: <code>find . -exec bash -c '...' \;</code>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell); thus causing the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory; thus avoiding a context switch. This behavior reduces the number of process forks and thus expends less system resources as compared to <samp>find -exec</samp> under said condition.
-					</p>
-					
+					<p><b>For each File</b> is more efficient than using <samp>find -exec</samp> in conjunction with an intermediate shell (e.g., <code>find . -exec bash -c '...' \;</code>). For every file it handles, <samp>find -exec</samp> forks a child process for the intermediate shell; thus causing the operating system to perform a context switch. In contrast, <b>For each File</b> invokes a <samp>GNU BASH</samp> function, which is already present in memory; thus avoiding a context switch. This behavior reduces the number of process forks, which are generally more resource expensive than function calls.</p>
+
+					<p>Note that the use of <samp>find -exec</samp> in conjunction with an intermediate shell is quite common in solutions to non-trivial problems that employ these tools.</p>
+
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
 			</li>
-			
+
 			<li id="read_ignored">
 				<h3>Why is the <samp>read</samp> built-in command in my script being ignored?</h3>
 				<blockquote>
 					<p>By default, the <samp>read</samp> built-in command attempts to read user input from the standard input stream. However, the standard input stream may be in use if this tool is invoked with the <samp>--pipe</samp> option.</p>
-					
+
 					<p>If your intention is to read input from the user, a solution is to have the <samp>read</samp> built-in command read directly from the user's terminal rather than the standard input stream: <code>read &lt; /dev/tty</code></p>
-					
+
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
 			</li>
-			
+
 			<li id="shell_arg_buffer">
 				<h3>Why does the tool crash when a large number of targets are specified on the command-line?</h3>
 				<blockquote>
 					<p>The number of targets specified may be too large for the <samp>execle</samp> system call to handle. A solution is to pipe the large list of targets to the tool whilst invoking it with the <samp>--pipe</samp> option. Another solution is to use the recursive mode of this tool to traverse a directory which contains, either physically or indirectly via symbolic or hard links, the large number of targets.</p>
-					
+
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
 			</li>
-			
+
 			<li id="targets_garbled">
 				<h3>Why are some targets given on the command-line handled improperly?</h3>
 				<blockquote>
-					<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to precede the list of targets using <samp>--</samp>, which signals the command-line options parser to stop parsing the remaining targets: <code>ff -- -foo --bar ...</code>. A more fault-tolerant solution is to feed a list of the target names to the tool whilst invoking it with the <samp>--pipe</samp> option. This ensures that target names bypass the scrutiny of both the shell and tool, thus avoiding misinterpretation.</p>
-					
+					<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to precede the list of targets by the <samp>--</samp> option. This signals the command-line options parser to stop parsing the remaining targets. A more fault-tolerant solution is to feed a list of the target names to the tool whilst invoking it with the <samp>--pipe</samp> option. This ensures that target names bypass the scrutiny of both the shell and tool, thus avoiding misinterpretation.</p>
+
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
 			</li>

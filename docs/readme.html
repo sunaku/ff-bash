@@ -6,9 +6,9 @@
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-	
+
 		<!-- list of available translations -->
-		<p>Translations: 
+		<p>Translations:
 			<a href="readme.zh.html">Chinese Simplified</a> |
 			<a href="readme.zt.html">Chinese Traditional</a> |
 			<a href="readme.nl.html">Dutch</a> |
@@ -23,15 +23,15 @@
 			<a href="readme.ru.html">Russian</a> |
 			<a href="readme.es.html">Spanish</a>
 		</p>
-		
+
 		<!-- begin page content -->
 		<h1>For each File &mdash; Package Overview</h1>
 		<blockquote>
 			<p>This document provides a brief overview of the <b>For each File</b> package.</p>
-			
-			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
+
+			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and report defects, submit patches, discuss in forums, and request new features at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 		</blockquote>
-		
+
 		<!-- toc -->
 		<h2>Table of Contents</h2>
 		<ol>
@@ -57,7 +57,7 @@
 				<h2 id="reqs">Requirements</h2>
 				<blockquote>
 					<p>It is recommended that the latest available versions of the following software be used, as newer releases tend to have less defects. Also, the paths to the software below must be listed before those of their native counterparts in the user's <samp>$PATH</samp> variable. For example, on a non <samp>GNU/Linux</samp> system: <code>PATH=/gnu/bin:/bin</code></p>
-					
+
 					<h3>Required Software</h3>
 					<ul>
 						<li><a href="http://www.gnu.org/software/bash/bash.html"><samp>GNU BASH</samp></a> (Shell)
@@ -77,7 +77,7 @@
 							</ul>
 						</li>
 					</ul>
-					
+
 					<h3>Recommended Software (Optional)</h3>
 					<ul>
 						<li><a href="http://www.gnu.org/software/termutils/"><samp>GNU termutils</samp></a> (Terminal Utilities)
@@ -98,7 +98,7 @@
 				<h2 id="tree">Package Tree</h2>
 				<blockquote>
 					<p>The following diagram shows the hierarchical structure of this package. All paths shown in the diagram are relative to the directory that contains the package. Also, subordinate files have been omitted from the diagram for brevity.</p>
-					
+
 					<ul>
 						<li><samp>./docs/</samp> &mdash; <i>Contains documentation.</i>
 							<ul>
@@ -130,8 +130,8 @@
 				<h2 id="uda">Example Scripts</h2>
 				<blockquote>
 					<p>In the <samp>./scripts/</samp> directory there are several example scripts that can be invoked with the tools of this package. These scripts are named such that their names begin with the name of the tool for which they were designed to be invoked by. For example, an example script named <samp>foo.bar</samp> is to be used invoked with the <samp>foo</samp> tool. Also note that scripts written to be invoked by one tool may not produce correct results if invoked with another.</p>
-					
-					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>: 
+
+					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>:
 						<code>
 							./ff -f ./scripts/ff.info ./* | ${PAGER:-less}<br/>
 							./ff -rf ./scripts/ff.info . | ${PAGER:-less}<br/>
@@ -140,7 +140,7 @@
 							./fl -f ./scripts/fl.info ./docs/gpl.txt | ${PAGER:-less}<br/>
 						</code>
 					</p>
-		
+
 					<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>head ./scripts/* | ${PAGER:-less}</code></p>
 				</blockquote>
 			</li>
@@ -154,7 +154,7 @@
 				<h2 id="trans">Translations</h2>
 				<blockquote>
 					<p>Feel free to contribute translations for new languages and revise the existing <samp>GNU gettext</samp> compatible <a href="http://www.gnu.org/software/gettext/manual/html_chapter/gettext_2.html#SEC9">translation catalogs</a> located in <samp>./i18n/</samp>. New and updated translation catalogs will be made available at <a href="http://ff-bash.sourceforge.net/i18n/">http://ff-bash.sourceforge.net/i18n/</a> as they are contributed.</p>
-					
+
 					<h3>Instructions for writing new translations</h3>
 					<ol>
 						<li>Determine the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp></a> language code of the language you wish to write translations for. In this example, we assume that <samp><em>bar</em></samp> is the language code.</li>
@@ -164,7 +164,7 @@
 								cp <em>foo</em>.pot <em>foo</em>.<em>bar</em>.po
 							</code>
 						</li>
-						<li>Write your translations in the copied file: 
+						<li>Write your translations in the copied file:
 							<p>
 								<samp>msgid</samp> &quot;Text that has not been translated.&quot;<br/>
 								<samp>msgstr</samp> &quot;<i>Your translation.</i>&quot;

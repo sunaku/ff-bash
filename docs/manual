@@ -198,7 +198,7 @@ $(
 <b>$( gettext "AUTHOR" )</b>
 	$( gettext "Written by %s." "Suraj N. Kurapati &lt;skurapat@ucsc.edu&gt;" )
 
-	$( gettext "You can find announcements for new releases at %s and additional resources at %s." "<em>http://freshmeat.net/projects/ff/</em>" "<em>http://sourceforge.net/tracker/?group_id=106777</em>")
+	$( gettext "You can find announcements for new releases at %s and report defects, submit patches, discuss in forums, and request new features at %s." "<em>http://freshmeat.net/projects/ff/</em>" "<em>http://sourceforge.net/tracker/?group_id=106777</em>")
 
 <b>$( gettext "COPYRIGHT" )</b>
 	Copyright 2003, 2004 Suraj N. Kurapati.
