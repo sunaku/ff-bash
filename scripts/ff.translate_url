@@ -120,7 +120,7 @@
 			if [ "$langSrc" == "${langFlag%_*}" ]
 			then
 		
-				queryURL=${service_URL}${service_URL_documentFlag}${docURL}${service_URL_langFlag}${langFlag}
+				queryURL="${service_URL}${service_URL_documentFlag}${docURL}${service_URL_langFlag}${langFlag}"
 				
 				# fetch translation
 				wget --header="Accept-Charset: $service_encoding" -O $$ "$queryURL"
