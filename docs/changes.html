@@ -6,9 +6,9 @@
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-		
+
 		<!-- list of available translations -->
-		<p>Translations: 
+		<p>Translations:
 			<a href="changes.zh.html">Chinese Simplified</a> |
 			<a href="changes.zt.html">Chinese Traditional</a> |
 			<a href="changes.nl.html">Dutch</a> |
@@ -23,14 +23,36 @@
 			<a href="changes.ru.html">Russian</a> |
 			<a href="changes.es.html">Spanish</a>
 		</p>
-		
+
 		<h1>For each File &mdash; Record of Changes</h1>
 		<blockquote>
 			<p>This document serves as a record of important changes in this release of the <b>For each File</b> package. A complete record of changes between successive releases of this package can be accessed at <a href="http://ff-bash.sourceforge.net/docs/changes.html">http://ff-bash.sourceforge.net/docs/changes.html</a>.</p>
-			
-			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
+
+			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and report defects, submit patches, discuss in forums, and request new features at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 		</blockquote>
-		
+
+		<h2>Version 1.7.3 (2004-08-13)</h2>
+		<ul>
+			<li>The start-up time has been made the same for all language codes.</li>
+			<li>Command-line arguments can now be passed to a user's script via the <samp>--args</samp> option.</li>
+			<li><samp>id3tag.lib</samp>, a library for reading ID3v1 and ID3v1.1 tags, has been added.
+				<ul>
+					<li><samp>ff.mp3_catalog</samp> now uses the new <samp>id3tag.lib</samp> library instead of the <samp>mp3info</samp> program, and the new <samp>--args</samp> option instead of querying the user.</li>
+				</ul>
+			</li>
+			<li>The short options <samp>-h</samp> and <samp>-v</samp> have been removed as their longer counterparts are more common.</li>
+			<li>The language code can now be specified via the <samp>--lang</samp> option.</li>
+			<li>The preset scripting variables have been renamed to better reflect their contents as follows:
+				<ul>
+					<li><samp>$t</samp> becomes <samp>$o</samp></li>
+					<li><samp>$f</samp> becomes <samp>$p</samp></li>
+					<li><samp>$fn</samp> becomes <samp>$n</samp></li>
+				</ul>
+			</li>
+		</ul>
+
+		<!-- old-version-info begin -->
+
 		<h2>Version 1.7.2 (2004-07-31)</h2>
 		<ul>
 			<li>The recursive mode for <b>For each File</b> has been completely rewritten and no longer requires <samp>GNU find</samp>.
@@ -62,9 +84,7 @@
 			<li>The tool manuals are cached so that subsequent display queries are executed faster.</li>
 			<li>The incorrect order of some translations in the translation catalogs has been fixed.</li>
 		</ul>
-		
-		<!-- old-version-info begin -->
-		
+
 		<h2>Version 1.7.1 (2004-07-16)</h2>
 		<ul>
 			<li>The German translation catalogs have been updated by <em>Michael Wiedmann</em>.</li>
@@ -76,7 +96,7 @@
 			<li>Trivial and obsolete example scripts have been removed from the package.</li>
 			<li>The installation script has been removed from the package due to  portability concerns.</li>
 		</ul>
-		
+
 		<h2>Version 1.7.0 (2004-07-09)</h2>
 		<ul>
 			<li>A defect causing segmentation faults upon parsing shell-sensitive characters in target names has been fixed.</li>
@@ -85,7 +105,7 @@
 			<li>Overall start-up time has been improved.</li>
 			<li>The example scripts <samp>ff.vars</samp> and <samp>fl.vars</samp> display the invocation of control functions.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.9 (2004-06-21)</h2>
 		<ul>
 			<li>Corrupted Unicode characters in the translations have been fixed.</li>
@@ -94,7 +114,7 @@
 			<li>Shell commands are read from the user's terminal when not specified on the command-line.</li>
 			<li>The <samp>--mask</samp> option has been added for filename filtering in recursive mode.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.8 (2004-06-18)</h2>
 		<ul>
 			<li>Completely redesigned the command-line interface and added new options.</li>
@@ -107,14 +127,14 @@
 			<li>Updated the installation script and localized it.</li>
 			<li>Added example script which fetches translations for on-line documents.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.7 (2004-04-13)</h2>
 		<ul>
 			<li>Added support for internationalization/localization through a gettext emulation library.</li>
 			<li>Removed installation script as it was unnecessary.</li>
 			<li>Modularized the package tree and source code.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.6 (2004-04-05)</h2>
 		<ul>
 			<li>Fixed bug where the argument of the <samp>-s</samp> option was evaluated as a target.</li>
@@ -122,20 +142,20 @@
 			<li>Added an un-installation feature to the install script.</li>
 			<li>Added command line option to display program version.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.5 (2004-04-01)</h2>
 		<ul>
 			<li>Fixed bug where targets given on command line were being misinterpreted.</li>
 			<li>Updated documentation and examples.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.4 (2004-03-24)</h2>
 		<ul>
 			<li>Added command line option which allows the user to bypass the size limit of the shell's argument buffer.</li>
 			<li>Added <samp>begin_file()</samp> and <samp>end_file()</samp> control functions to the <b>For each Line</b> tool.</li>
 			<li>Updated documentation and examples.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.3 (2004-03-21)</h2>
 		<ul>
 			<li>Modularized and optimized the code (~951% speed-up).</li>
@@ -143,7 +163,7 @@
 			<li>Added more command line options.</li>
 			<li>Updated installation script, documentation, and examples.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.2 (2004-03-14)</h2>
 		<ul>
 			<li>Fixed inconsistency in scripting variables between non/recursive modes.</li>
@@ -152,7 +172,7 @@
 			<li>Added new scripting variables <samp>${w}</samp> and <samp>${fn}</samp>.</li>
 			<li>Updated help and source documentation.</li>
 		</ul>
-		
+
 		<h2>Version 1.6.1 (2004-03-13)</h2>
 		<ul>
 			<li>Added new scripting variable: <samp>${p}</samp>.</li>
@@ -160,33 +180,33 @@
 			<li>Added installation script.</li>
 			<li>Updated documentation.</li>
 		</ul>
-		
+
 		<h2>Version 1.6 (2004-03-11)</h2>
 		<ul>
 			<li>Fixed special characters handling in file names.</li>
 			<li>Added new <b>For each Line</b> tool to package.</li>
 			<li>Updated documentation.</li>
 		</ul>
-		
+
 		<h2>Version 1.5 (2004-02-03)</h2>
 		<ul>
 			<li>Implemented subdirectory recursing in an iterative fashion.</li>
 			<li>User scripts are evaluated directly by the <samp>GNU BASH</samp> shell, via <samp>eval</samp>.</li>
 		</ul>
-		
+
 		<h2>Version 1.4 (2004-01-25)</h2>
 		<ul>
 			<li>Implemented solution for handling fragmented filenames.</li>
 			<li>Removed obsolete <samp>ffr</samp> tool. Use <samp>ff -r</samp> instead.</li>
 			<li>Added command line options, documentation, and help message.</li>
 		</ul>
-		
+
 		<h2>Version 1.3 (2003-08-30)</h2>
 		<ul>
 			<li>Initial import into <samp>CVS</samp>.</li>
 			<li>Command-line arguments are handled iteratively.</li>
 		</ul>
-		
+
 		<!-- old-version-info end -->
 	</body>
 </html>
