@@ -33,7 +33,7 @@
 ## globals
 
 	__lib_ff_version=1.6.9
-	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}.$$"
+#	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}.$$"
 	
 	declare -a __lib_ff_targetList		# array of targets
 	
@@ -68,7 +68,7 @@
 	__lib_ff_exit()
 	{
 		# clean up temp files
-		rm -f ${__lib_ff_tmpMask}*
+#		rm -f ${__lib_ff_tmpMask}*
 		
 		# exit with given code
 		exit $1
@@ -121,13 +121,10 @@ $expression
 	# Reads a list of targets that are piped in
 	__lib_ff_readPipe()
 	{
-		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
-		then
-			while read -r
-			do
-				__lib_ff_targetList[${#__lib_ff_targetList[@]}]=$REPLY
-			done
-		fi
+		while read -r
+		do
+			__lib_ff_targetList[${#__lib_ff_targetList[@]}]=$REPLY
+		done
 	}
 	
 	# handles parsing of command-line options
@@ -214,7 +211,7 @@ $expression
 		# handle user's script
 
 			# handle piped targets
-			__lib_ff_readPipe
+				[ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ] && __lib_ff_readPipe
 				
 			# check targets
 				if [ ${#__lib_ff_targetList[@]} -eq 0 ]
@@ -223,11 +220,9 @@ $expression
 					__lib_ff_exit 1
 				fi
 			
-			# load script into RAM
-			__lib_ff_loadScript
-			
-			# execute script
-			__ff_main
+			# load and execute script
+				__lib_ff_loadScript
+				__ff_main
 
 		# finished
 			__lib_ff_exit 0
