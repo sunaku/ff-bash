@@ -34,7 +34,8 @@
 
 	__lib_ff_version=1.6.8
 	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}.$$"
-	declare -a __lib_ff_cmdArgs		# array of command-line arguments
+	
+	declare -a __lib_ff_targetList		# array of targets
 	
 	# command line options
 	
@@ -212,16 +213,23 @@ $expression
 			
 		# handle user's script
 
-			# load script into RAM
-			__lib_ff_loadScript
-
 			# handle piped targets
 			__lib_ff_readPipe
 				
+			# check targets
+				if [ ${#__lib_ff_targetList[@]} -eq 0 ]
+				then
+					gettext "Error: No targets specified. Try %s." "\"$0 --$__lib_ff_options_longFlag_showHelp\""
+					__lib_ff_exit 1
+				fi
+			
+			# load script into RAM
+			__lib_ff_loadScript
+			
 			# execute script
 			__ff_main
 
 		# finished
-			__lib_ff_exit
+			__lib_ff_exit 0
 	}
 
