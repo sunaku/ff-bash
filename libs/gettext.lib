@@ -113,9 +113,7 @@
 	#
 	gettext()
 	{
-		local cache_index=0 query="\"$1\"" translation
-		
-		shift	# remove $1 from parameters
+		local cache_index=0 query translation
 		
 		# handle options
 		
@@ -128,8 +126,11 @@
 					;;
 				esac
 			done
-		
+			
 		# locate query in catalog cache
+		
+			query="\"$1\""
+			shift	# remove $1 from parameters
 		
 			while [ $cache_index -lt ${#_gte_cache_msgid[@]} ]
 			do
