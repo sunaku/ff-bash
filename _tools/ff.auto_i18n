@@ -4,7 +4,10 @@
 #
 # requirement:
 # 	input files must have extension .pot
+#	input files must not contain <p> & </p> tags.
 #
+
+script_name=ff.auto_i18n
 
 # place where files will be uploaded temporarily in order to do translations
 upload_scp_url="cyzsuraj@shell.sourceforge.net:htdocs/tmp/"
@@ -14,8 +17,8 @@ result_dir=../i18n
 scripts_dir=../scripts
 
 # delimiters
-salt_eol="111111"	# end of line
-salt_fmt="000000"	# value of "%s"
+salt="$$-$RANDOM"
+salt_fmt="fmt-$salt="	# value of "%s"
 
 begin()
 {
@@ -27,42 +30,47 @@ main()
 	raw_file=$fn.$$
 	enc_file=$raw_file.encode.html
 	
-	echo "handling file \"$f\""
+	echo "<$script_name> handling file \"$f\""
 
-#	read -p "remove gettext formatting and blank lines"
+	read -p "<$script_name> remove gettext formatting and blank lines" < /dev/null
 	( sed -re '/^#/d; s/^[:space:]*msg[a-z]* *"*//; s/["]$//' | grep -v '^$' ) < "$f" > "$raw_file"
 	
-#	read -p "encode formatting and line breaks"
-	( sed -r "s/\$/ $salt_eol./ ; s/%s/$salt_fmt/g" | tr '\n' ' ' ) < "$raw_file" > "$enc_file"
+	read -p "<$script_name> encode formatting and line breaks" < /dev/null
+	{
+		sed 's:^:<p>: ; s:$:</p>:' | awk 'BEGIN { print "<html><body>" } {print} END { print "</body></html>"}' | sed "s:\([^\\\\]\?\)%\(.\):\1<code>$salt_fmt\2</code>:g" 
+	} < "$raw_file" > "$enc_file"
 	
-#	read -p "upload"
+	read -p "<$script_name> upload" < /dev/null
 	! scp $enc_file $upload_scp_url && return
 	
-#	read -p "get translations"
+	read -p "<$script_name> get translations" < /dev/null
 	../ff -f $scripts_dir/ff.translate_url "$upload_web_url/$enc_file"
 	
-#	read -p "decode formatting and line breaks"	
+	read -p "<$script_name> decode formatting and line breaks"  < /dev/null
 	for x in ${enc_file}.*
 	do
-		( tr '\n' ' ' | sed -r "s/ ?$salt_eol\.* */\n/g ; s/$salt_fmt/ %s /g" ) < "$x" > "$x.decode"
+		{
+			tr '\n' ' ' | sed "s: *</\?p> *:\n:g ; s:<code> *$salt_fmt\(.\) *</code>:%\1:g ; s/  */ /g" | grep -v '^$' | sed '1d ; $d'
+		} < "$x" > "$x.decode"
 	done
 	
-#	read -p "combine original & translated strings"
+	read -p "<$script_name> combine original & translated strings" < /dev/null
 	../ff -e "paste -d '\n' $raw_file \$fn > \$fn.paste" ${enc_file}.*.decode
 	
-#	read -p "create gettext .po structure"
+	read -p "<$script_name> create gettext .po structure" < /dev/null
 	for x in ${enc_file}.*.paste
 	do
 		( awk '{ if(NR%2==0) { printf("msgstr \"%s\"\n", $0) } else { printf("msgid \"%s\"\n", $0) } }' | sed '/msgid ""/{N;d}' ) < "$x" > "$x.po"
 	done
 	
-#	read -p "finished"
+	read -p "<$script_name> finished" < /dev/null
 
 	# move files to result dir
 	../ff -e "x=\${fn#*html.}; x=\${x:0:2}; cp -vf \$f $result_dir/\${fn%.pot*}.\$x.po" ${enc_file}.*.po
 	
 	# remove temp files
-	read -p "delete temp files (yes/no)? [no] " < /dev/tty
+	read -p "<$script_name> delete temp files (yes/no)? [no] " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && rm -f ${raw_file}*
 	
 }
+
