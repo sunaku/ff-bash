@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Displays preset variables provided by "For each File".
+# Displays preset variables and control functions provided by "For each File".
 #
 ###
 #
@@ -26,9 +26,23 @@
 #
 ###
 
-echo "\$fn = '$fn'"
-echo "\$f = '$f'"
-echo "\$d = '$d'"
-echo "\$w = '$w'"
-echo
+main()
+{
+	echo -e "\nmain()"
+	echo "\$fn = '$fn'"
+	echo "\$f = '$f'"
+	echo "\$d = '$d'"
+	echo "\$w = '$w'"
+	echo
+}
+
+begin()
+{
+	echo "begin()"
+}
+
+end()
+{
+	echo "end()"
+}
 

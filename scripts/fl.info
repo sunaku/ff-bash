@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Displays preset variables provided by "For each Line".
+# Displays preset variables and control functions provided by "For each Line".
 #
 ###
 #
@@ -26,11 +26,35 @@
 #
 ###
 
-echo "\$fn = '$fn'"
-echo "\$f = '$f'"
-echo "\$d = '$d'"
-echo "\$w = '$w'"
-echo "\$i = '$i'"
-echo "\$l = '$l'"
-echo
+main()
+{
+	echo -e "\nmain()"
+	echo "\$fn = '$fn'"
+	echo "\$f = '$f'"
+	echo "\$d = '$d'"
+	echo "\$w = '$w'"
+	echo "\$i = '$i'"
+	echo "\$l = '$l'"
+	echo
+}
+
+begin()
+{
+	echo "begin()"
+}
+
+end()
+{
+	echo "end()"
+}
+
+begin_file()
+{
+	echo "begin_file()"
+}
+
+end_file()
+{
+	echo "end_file()"
+}
 
