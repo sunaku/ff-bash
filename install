@@ -76,7 +76,7 @@
 	
 	# init gettext emulation library
 	__lib_gettext_init
-	__lib_gettext_load ./i18n/install.${LC_MESSAGES:0:2}.po
+	__lib_gettext_load ./i18n/install.${LANG:0:2}.po
 	
 ## installation
 

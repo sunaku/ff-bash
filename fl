@@ -37,7 +37,7 @@
 	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
 	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
 	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n
-	__ff_myLang=${LC_MESSAGES:0:2}		# language code
+	__ff_myLang=${LANG:0:2}		# language code
 	
 ## libraries
 
