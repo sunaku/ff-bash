@@ -55,7 +55,7 @@
 	# XXX: speed hack: output messages
 		g_msgout_npt=$( gettext "Now processing target:" )
 		g_msgout_cta=$( gettext "Catalogging target as:" )
-		g_msgout_attitc=$( gettext "Accept this target into the catalog (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )
+		g_msgout_attitc=$( gettext "Accept this target into the catalog?" )
 		g_msgout_y=$( gettext "yes" )
 		g_msgout_ettdnhaoat=$( gettext "Error: This target does not have a %s or a %s tag." "ID3v1" "ID3v1.1" )
 		g_msgout_tthbcs=$( gettext "This target has been catalogged successfully." )
@@ -65,8 +65,6 @@
 
 	[ ${__LIB_ID3TAG__:-0} -eq 0 ] && source "$__ff_myResources_libs/id3tag.lib"
 	[ ${__LIB_DOCFMT__:-0} -eq 0 ] && source "$__ff_myResources_libs/DocFmt.lib"
-
-	__lib_gettext_load "$__ff_myResources_i18n/$g_scriptName.$__ff_myLang.po"
 
 ## helper functions
 
@@ -217,8 +215,7 @@
 	$( gettext "Catalog entry" ):	<u>$catalogged_target</u>
 " | __lib_DocFmt_formatTags
 
-					read -ep "%% $g_msgout_attitc" < /dev/tty
-					[[ -n "$REPLY" && "$REPLY" != "$g_msgout_y" ]] &&  return
+					__lib_util_queryYesNo "%% $g_msgout_attitc" 1 && return
 				fi
 
 				if [ ${g_options_isOn_ready:-0} -eq 1 ]

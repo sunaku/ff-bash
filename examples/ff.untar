@@ -46,8 +46,6 @@
 
 	[ ${__LIB_DOCFMT__:-0} -eq 0 ] && source "$__ff_myResources_libs/DocFmt.lib"
 
-	__lib_gettext_load "$__ff_myResources_i18n/$g_scriptName.$__ff_myLang.po"
-
 ## helper functions
 
 	# handles parsing of command-line options
@@ -150,8 +148,7 @@
 	{
 		if [ ${g_options_isOn_confirm:-0} -eq 1 ]
 		then
-			read -ep "%% $( gettext "Create directory: %s (%s/%s)? %s" "\"$1\"" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )" < /dev/tty
-			[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && return 1
+			__lib_util_queryYesNo "%% $( gettext "Create directory: %s ?" "\"$1\"" )" && return 1
 		fi
 
 		mkdir -vp "$1"	# create dir
@@ -177,14 +174,7 @@
 				else
 					# query user for different directory
 					echo "@@ $( gettext "Error: Unable to extract target into: %s" "$point" )" > /dev/tty
-					read -e -p "%% $( gettext "Please specify a different extraction point: %s" "[$unique]" ) " < /dev/tty
-
-						if [ -z "$REPLY" ]
-						then
-							point=$unique
-						else
-							point=$REPLY
-						fi
+					point=$( __lib_util_query "%% $( gettext "Please specify a different extraction point:" )" "[$unique]" )
 				fi
 			done
 		fi
@@ -287,8 +277,7 @@
 			then
 				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
 				then
-					read -ep "%% $( gettext "Proceed with extraction (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )" < /dev/tty
-					[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && return
+					__lib_util_queryYesNo "%% $( gettext "Proceed with extraction?" )" 1 && return
 				fi
 
 				tar "${g_tarOpts[@]}" -C "$base_outDir" $tar_type -xf "$p"
