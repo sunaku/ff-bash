@@ -47,7 +47,7 @@
 	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
 	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
 	
-	__ff_myLang=$( locale 2> /dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
+	__ff_myLang=$( locale 2>/dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 	
 ## libraries
 
@@ -152,7 +152,12 @@
 			# handle command-line targets
 			for d in "${__lib_ff_targetList[@]}"
 			do
-				[ -d "$d" ] && __ff_main_recursive_ "$d"
+				if [ -d "$d" ]	# XXX: same block is copied below
+				then
+					d=${d//+(\/)//}
+					d=${d%/}
+					__ff_main_recursive_ "$d"
+				fi
 			done
 			
 			# handle piped targets
@@ -160,7 +165,12 @@
 			then
 				while IFS= read -r d
 				do
-					[ -d "$d" ] && __ff_main_recursive_ "$d"
+					if [ -d "$d" ]
+					then
+						d=${d//+(\/)//}
+						d=${d%/}
+						__ff_main_recursive_ "$d"
+					fi
 				done
 			fi
 
