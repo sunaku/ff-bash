@@ -38,9 +38,9 @@ main()
 #	read -p "create gettext .po structure"	
 	for x in ${enc_file}.*.paste
 	do
-		awk '{ if(NR%2==0) { printf("msgstr \"%s\"\n", $0) } else { printf("msgid \"%s\"\n", $0) } }' < "$x" > "$x.po"
+		( awk '{ if(NR%2==0) { printf("msgstr \"%s\"\n", $0) } else { printf("msgid \"%s\"\n", $0) } }' | sed '/msgid ""/{N;d}' ) < "$x" > "$x.po"
 	done
 	
 #	read -p "finished"
-	../ff -e 'x=${fn#*html.}; x=${x:0:2}; mv -v $f ../i18n/${fn%.[0-9]*}.$x.po' ${enc_file}.*.po
+	../ff -e 'x=${fn#*html.}; x=${x:0:2}; cp -v $f ../i18n/${fn%.[0-9]*}.$x.po' ${enc_file}.*.po
 }
