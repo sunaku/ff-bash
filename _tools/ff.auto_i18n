@@ -42,5 +42,5 @@ main()
 	done
 	
 #	read -p "finished"
-	../ff -e 'x=${fn#*html.}; x=${x:0:2}; cp -v $f ../i18n/${fn%.[0-9]*}.$x.po' ${enc_file}.*.po
+	../ff -e 'x=${fn#*html.}; x=${x:0:2}; cp -vf $f ../i18n/${fn%.[0-9]*}.$x.po' ${enc_file}.*.po
 }
