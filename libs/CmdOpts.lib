@@ -35,7 +35,7 @@
 	
 	# Scans the array whose name is given by $1 for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from the array whose name is given by $1.
 	#
-	# @param	1	Name of the array which contains command-line arguments.
+	# @param	1	Name of the array which contains raw command-line arguments.
 	# @return	1	An illegal option was encountered. The name of this option is stored in the first index of the array whose name is given by $1.
 	__lib_CmdOpts_scanOptions()
 	{
@@ -57,55 +57,60 @@
 			
 			opt=${arr[$i]}
 			
-			if [ "${opt:0:2}" == "--" ]		# handle long opts
+			if [ "${opt:0:1}" == "-" ] # look for option prefix
 			then
 			
-				flag=${opt#--}
-				
-				__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
-				
-				if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
+				if [ "${opt:1:1}" == "-" ]	# handle long opts
 				then
-					# illegal option encountered
-					arr=$flag
-					isInvalid=1
-					break
-				fi
 				
-			elif [ "${opt:0:1}" == "-" ]	# handle short opts
-			then
-			
-				# handle multiple option flags that are jumbled into one word
-				k=1	# +1 to skip '-' prefix
-				while [ $k -lt ${#opt} ]
-				do
-					flag=${opt:$k:1}
+					flag=${opt#--}
 					
 					__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
 					
 					if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 					then
 						# illegal option encountered
-						arr=$flag
 						isInvalid=1
 						break
 					fi
 					
-					(( k += 1 ))
-				done
+				else	# handle short opts
+				
+					# handle multiple option flags that are jumbled into one word
+					k=1	# +1 to skip '-' prefix
+					while [ $k -lt ${#opt} ]
+					do
+						flag=${opt:$k:1}
+						
+						__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
+						
+						if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
+						then
+							# illegal option encountered
+							isInvalid=1
+							break
+						fi
+						
+						(( k += 1 ))
+					done
+				fi
 			fi
 			
-			# exit out of the loop
-			[ $isInvalid -eq 1 ] && break
+			# illegal option encountered
+			if [ $isInvalid -eq 1 ]
+			then
+				eval "$arrName=\$flag"
+				return 1
+			fi
 			
 			(( i += 1 ))
 		done
 	
 		# propogate changes in local array to caller's array
-		eval "$arrName=( "${arr[@]}" )"
+		eval "$arrName=( \"\${arr[@]}\" )"
 		
 #		declare -a ; read < /dev/tty
-		return $isInvalid
+		return 0
 	}
 	
 	# Handles the return value from '__lib_CmdOpts_handleOption()'. This function is meant to be used internally by this library.
