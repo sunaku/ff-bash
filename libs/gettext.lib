@@ -34,7 +34,7 @@
 ## functions
 
 	# Computes a hash value for a given string and prints it to stdout.
-	# The returned hash value consits of a string portion (limited by $2) and a number portion (which is less than the size of $1).
+	# The returned hash value consits of a string portion (whose length is bounded by the value of $2) and a number portion (whose length is less than that of $1).
 	# @param	1	string to hash
 	# @param	2	maximum length of the string portion of the hash value; default=6
 	__lib_gettext_hash()
@@ -112,7 +112,7 @@
 			# load file into cache
 			while IFS= read -r msgid && read -r msgstr
 			do
-				eval "__lib_gettext_cache_$( __lib_gettext_hash "$msgid" )=\$msgstr"	# insert entry into hash-table
+				eval "__lib_gettext_ht_$( __lib_gettext_hash "$msgid" )=\$msgstr"	# insert entry into hash-table
 			done < "$__lib_gettext_tempfile"
 			
 		done
@@ -148,25 +148,20 @@
 		local query response newline='\n'
 		
 		# handle options
-		
 			if [ "$1" == "-n" ]
 			then
 				newline=
-				shift	# remove $1
+				shift	# remove $1 from parameters
 			fi
 			
 			query=$1
 			shift	# remove $1 from parameters
 		
-		# determine translation
+		# perform translation
+			eval "response=\$__lib_gettext_ht_$( __lib_gettext_hash "$query" )" # hash-table lookup
+			[ -z "$response" ] && response=$query	# if translation is blank. use untranslated query.
 		
-			eval "response=\$__lib_gettext_cache_$( __lib_gettext_hash "$query" )" # hash-table lookup
-			
-			# if translation is blank. use untranslated query.
-			[ -z "$response" ] && response=$query
-		
-		# print result
-			printf "${response}${newline}" "${@}"
+		printf "${response}${newline}" "${@}"	# print result
 	}
 	
 	# function alias
