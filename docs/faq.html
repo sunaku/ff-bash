@@ -54,7 +54,6 @@
 				<blockquote>
 					<p>
 						There is one advantage which can be observed under the following condition: if <samp>find -exec</samp> is used to invoke an intermediate shell, then it will expend more system resources than <b>For each File</b>: <code>find . -exec bash -c '...' \;</code>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell); thus causing the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory; thus avoiding a context switch. This behavior reduces the number of process forks and thus expends less system resources as compared to <samp>find -exec</samp> under said condition.
-						</div>
 					</p>
 					
 					<p><a href="#qlist">Return to Question Listing.</a></p>
