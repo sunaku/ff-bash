@@ -45,66 +45,61 @@
 
 ## globals
 
-	# possible invocations of gettext
-	g_gettext_aliases=( gettext gettext_eval ngettext ngettext_eval )
-
 	declare g_stream_state g_word_state g_string g_string_quote g_string_lineBegin
 	
 	#XXX: assuming words separated by spaces
 	g_word_delimiter=" "
-	
-	# arrays to store strings before output
-	declare -a g_cache_strings g_cache_refs
 	
 ## helper functions
 	
 	# prints output to stdout
 	print_output()
 	{
-		local cache_index=0
+		local -a array_refs array_strings i=0
+		
+		# assemble names of cache hash-table variables
+		array_refs=( ${!g_cache_refs*} )
+		array_strings=( ${!g_cache_strings*} )
 		
 		# print header
 		echo "#. $f"
 		echo "#. $( date )"
-		echo "#. ${#g_cache_strings[@]} strings extracted."
+		echo "#. ${#array_strings[@]} strings extracted."
 		echo
 		
 		# print all strings in cache
-		while [ $cache_index -lt ${#g_cache_strings[@]} ]
+		i=0 
+		while (( i < ${#array_refs[@]} ))
 		do
-			echo "#:${g_cache_refs[$cache_index]}"
-			echo "msgid${g_cache_strings[$cache_index]}"
+			echo "#:${!array_refs[$i]}"
+			echo "msgid${!array_strings[$i]}"
 			echo 'msgstr ""'
 			echo
 			
-			(( cache_index += 1 )) # increment loop
+			(( i++ ))
 		done
+		
+#		declare | grep 'g_cache'
 	}
 	
 	# stores string and reference into cache
 	store_string()
 	{
-		local cache_index=0
+		local hash=${g_string##[^[:alnum:]]}
+		hash="${hash:1:1}${#g_string}"
 		
-		# try and find string in cache
-		while [ $cache_index -lt ${#g_cache_strings[@]} ]
-		do
-			[ "$g_string" == "${g_cache_strings[$cache_index]}" ] && break 
-			(( cache_index += 1 )) # increment loop
-		done
-		
-		# store reference
-		g_cache_refs[$cache_index]="${g_cache_refs[$cache_index]} $fn:$g_string_lineBegin"
+		# store reference line number
+		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$fn:\$g_string_lineBegin\""
 		
 		# store string
-		[ $cache_index -ge ${#g_cache_strings[@]} ] && g_cache_strings[$cache_index]=$g_string
+		eval "g_cache_strings_$hash=\$g_string"
 	}
 	
 	# prints debug info
 	# @param	$1	function that called this
 	print_debug()
 	{
-		echo "$1:$i:$g_stream_state:$g_word_state:word=$word"
+		echo "$1:i=$i:stream_state=$g_stream_state:word_state=$g_word_state:word=$word"
 	}
 
 	# parses a gettext string from a line
@@ -114,23 +109,23 @@
 		
 		for word in $l
 		do
+#			echo "line=$l" ; echo "word=$word"
 #			print_debug "handle_stream()"
 			
 			case "$g_stream_state" in
 				idle)
-					# skip comments
-					[ "${word:0:1}" == \# ] && break
-					
 					# look for gettext command
-					for a in "${g_gettext_aliases[@]}"
-					do
-						if [ "$word" == "$a" ]
-						then
+					case "$word" in
+						\#*)
+							break	# skip comments
+						;;
+						gettext|gettext_eval|ngettext|ngettext_eval)	# possible invocations of gettext
+							
 							# state changes
 							g_stream_state=parse
 							g_word_state=idle
-						fi
-					done
+						;;
+					esac
 				;;
 				parse)
 					handle_word
@@ -147,7 +142,7 @@
 		# look for start of quoted string
 		if [ "$g_word_state" == idle ]
 		then
-			if [[ ${word:0:1} == \" || ${word:0:1} == \' ]]
+			if [[ "${word:0:1}" == [\"\'] ]]
 			then
 				g_string_quote=${word:0:1}	# store which type of quote used
 				g_string=			# reset string
@@ -164,7 +159,7 @@
 			# accumulate words into string
 			g_string="${g_string}${g_word_delimiter}${word}"
 			
-			if [[ ${word%[^\\]${g_string_quote}} != "$word" || "$word" == "$g_string_quote" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
+			if [[ -z "${word##*!(\\)$g_string_quote}" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
 			then
 
 				store_string
@@ -179,18 +174,10 @@
 
 	begin()
 	{
-		# set IFS such that leading whitespace is removed
-		OLD_IFS=$IFS
-		IFS=' 	
-'
+		IFS=$' \t\n'	# do not preserve white-space
+		shopt -u nullglob	# file contents may contain pattern-like text that should not be nullified
 	}
 	
-	end()
-	{
-		# restore IFS
-		IFS=$OLD_IFS
-	}
-
 	main()
 	{
 		handle_stream
