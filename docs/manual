@@ -57,7 +57,7 @@ __lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed." "UNIX" )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "$( gettext "When both the %s and %s options are unspecified, shell commands will be interactively read from the user's terminal device %s until the %s signal is issued by pressing %s." "<b>--$__lib_ff_options_longFlag_evalExpr</b>" "<b>--$__lib_ff_options_longFlag_evalFile</b>" "/dev/tty" "EOT" "<CONTROL-D>" )"
+	__lib_DocFmt_blockItem "$( gettext "When both the %s and %s options are unspecified, shell commands will be interactively read from the user's terminal device %s until the end of transmission %s signal is issued by pressing %s." "<b>--$__lib_ff_options_longFlag_evalExpr</b>" "<b>--$__lib_ff_options_longFlag_evalFile</b>" "(/dev/tty)" "(EOT)" "[Ctrl][d]" )"
 	
 __lib_DocFmt_blockEnd
 
