@@ -1,14 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
-		<title>&quot;For each File&quot; &mdash; Record of Changes</title>
+		<title>For each File &mdash; Record of Changes</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-		<h1>&quot;For each File&quot; &mdash; Record of Changes</h1>
+		
+		<!-- list of available translations -->
+		<p>Translations: 
+			<a href="changes.zh.html">Chinese Simplified</a> |
+			<a href="changes.zt.html">Chinese Traditional</a> |
+			<a href="changes.nl.html">Dutch</a> |
+			<a href="changes.html">English</a> |
+			<a href="changes.fr.html">French</a> |
+			<a href="changes.de.html">German</a> |
+			<a href="changes.el.html">Greek</a> |
+			<a href="changes.it.html">Italian</a> |
+			<a href="changes.ja.html">Japanese</a> |
+			<a href="changes.ko.html">Korean</a> |
+			<a href="changes.pt.html">Portuguese</a> |
+			<a href="changes.ru.html">Russian</a> |
+			<a href="changes.es.html">Spanish</a>
+		</p>
+		
+		<!-- begin page content -->
+		<h1>For each File &mdash; Record of Changes</h1>
 		<blockquote>
-			<p>This document serves as a record of important changes between successive versions of the &quot;For each File&quot; package.</p>
+			<p>This document serves as a record of important changes between successive versions of the <b>For each File</b> package.</p>
 			
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 			
@@ -24,12 +43,21 @@
 		
 		<div id="newest"/>
 		
+		<h2>Version 1.7.1 (2004-XX-XX)</h2>
+		<ul>
+			<li>The German translation catalogs have been revised by Michael Wiedmann.</li>
+			<li>A defect causing illegal options to be treated as targets has been fixed.</li>
+			<li>In <samp>fl.xgettext</samp>, the option for producing raw output has been removed.</li>
+			<li>The documentation has been updated.</li>
+		</ul>
+		
 		<h2>Version 1.7.0 (2004-07-09)</h2>
 		<ul>
 			<li>A defect causing segmentation faults upon parsing shell-sensitive characters in target names has been fixed.</li>
 			<li>In <samp>fl.xgettext</samp>, a defect causing segmentation faults when parsing input files encoded in UTF-8 has been fixed.</li>
 			<li>The example script <samp>ff.translate_url</samp> has been updated to be more fault tolerant to responses given by the user.</li>
 			<li>Overall start-up time has been improved.</li>
+			<li>The example scripts <samp>ff.vars</samp> and <samp>fl.vars</samp> now display the invocation of control functions.</li>
 		</ul>
 		
 		<h2>Version 1.6.9 (2004-06-21)</h2>
@@ -46,7 +74,7 @@
 			<li>Completely redesigned the command-line interface and added new options.</li>
 			<li>Translated the documentation into various languages.</li>
 			<li>Added library for parsing command-line options.</li>
-			<li>Removed the preset variable <samp>${n}</samp> from the &quot;For each Line&quot; tool.</li>
+			<li>Removed the preset variable <samp>${n}</samp> from the <b>For each Line</b> tool.</li>
 			<li>Optimized several bottle-neck areas to increase performance.</li>
 			<li>Added <samp>GNU GPL</samp> notices in all source files of this package.</li>
 			<li>Updated and added to the example scripts.</li>
@@ -78,7 +106,7 @@
 		<h2>Version 1.6.4 (2004-03-24)</h2>
 		<ul>
 			<li>Added command line option which allows the user to bypass the size limit of the shell's argument buffer.</li>
-			<li>Added <samp>begin_file()</samp> and <samp>end_file()</samp> control functions to the &quot;For each Line&quot; tool.</li>
+			<li>Added <samp>begin_file()</samp> and <samp>end_file()</samp> control functions to the <b>For each Line</b> tool.</li>
 			<li>Updated documentation and examples.</li>
 		</ul>
 		
@@ -110,7 +138,7 @@
 		<h2>Version 1.6 (2004-03-11)</h2>
 		<ul>
 			<li>Fixed special characters handling in file names.</li>
-			<li>Added new &quot;For each Line&quot; tool to package.</li>
+			<li>Added new <b>For each Line</b> tool to package.</li>
 			<li>Updated documentation.</li>
 		</ul>
 		
