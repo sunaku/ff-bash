@@ -13,8 +13,10 @@
 
 ## vars
 
+pack_upload_scp_url=$UCSC_ID:public_html/pub/projects/ff/
 upload_scp_url=$UCSC_ID:public_html/pub/tmp/
 upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
+
 
 	# version of this release
 	pack_ver=$1
@@ -23,12 +25,13 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
 	
 	# files that need to be translated; these are automatically packaged
-	trans_in=( ../faq ../readme ../changelog )
+	doc_in=( ../docs/faq ../docs/readme ../docs/changes )
 	
 	# other files to be packaged
-	pack_in=( ../libs ../i18n ../docs ../scripts/ ../COPYING ../ff ../fl ../install )
+	pack_in=( ../libs ../docs ../scripts/ ../COPYING ../ff ../fl ../install )
 	
 	pack_dir=../_pack/ff-$pack_ver
+	pack_dir_docs=$pack_dir/docs
 	pack_tar=${pack_dir}.tar
 
 
@@ -39,7 +42,10 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
 	# create pack dir
 	mkdir -p $pack_dir
-
+	
+	# transfer unprocessable input files into dir
+	cp -vr "${pack_in[@]}" $pack_dir
+	../ff -e '[ "$fn" == "CVS" ] && rm -rf "$f"' -r $pack_dir # remove CVS dirs
 
 ## gettext translation
 
@@ -49,60 +55,53 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	echo "pack: translate *.pot files"
 	../ff -f ff.auto_i18n ../i18n/*
 
+	# copy result files
+	cp -vr ../i18n $pack_dir
 
 ## regular translation
 
 	# prepare input files and their URLs
 		i=0
-		while [ $i -lt ${#trans_in[@]} ]
+		while [ $i -lt ${#doc_in[@]} ]
 		do
 			# vars
 				# base name of the input file
-				trans_nom[$i]=${trans_in[$i]##*/}
+				doc_nom[$i]=${doc_in[$i]##*/}
 				
 				# name of temp .html files
-				trans_tmp[$i]=${trans_nom[$i]}.html
+				doc_tmp[$i]=${doc_nom[$i]}.html
 				
 				# web url to temp .html files
-				trans_url[$i]=${upload_web_url}${trans_tmp[$i]}
+				doc_url[$i]=${upload_web_url}${doc_tmp[$i]}
 			
 				# name of formatted copy of input file
-				trans_fmt[$i]=$pack_dir/${trans_nom[$i]}
+				doc_fmt[$i]=$pack_dir_docs/${doc_nom[$i]}
 			
 			# format input file
-				( sed 's/\t/    /g' | fmt -csw 80 ) < ${trans_in[$i]} > ${trans_fmt[$i]}
+				( sed 's/\t/    /g' | fmt -csw 80 ) < ${doc_in[$i]} > ${doc_fmt[$i]}
 				
 			# make temp file for translation processing
-				cp -v ${trans_fmt[$i]} ${trans_tmp[$i]}
+				cp -v ${doc_fmt[$i]} ${doc_tmp[$i]}
 			
 			let i=i+1
 		done
 		
 	# translate temp files
 		echo "pack: upload readme files"
-		scp "${trans_tmp[@]}" $upload_scp_url
+		scp "${doc_tmp[@]}" $upload_scp_url
 		
 		echo "pack: translate readme files"
-		../ff -f ../scripts/ff.translate_url "${trans_url[@]}"
+		../ff -f ../scripts/ff.translate_url "${doc_url[@]}"
 
 	# move translated files to pack dir
-		for x in "${trans_nom[@]}"
+		for x in "${doc_nom[@]}"
 		do
-			# for y in `seq 0 9`
-			# do
-				# touch $x.$y
-			# done
-			
-			../ff -e "mv -vf \$f $pack_dir/\${fn//.html/}" ${x}*
+			../ff -e "mv -vf \$f $pack_dir_docs/\${fn//.html/}" ${x}*
 		done
 
 
 ## package creation
 
-	# transfer input files into dir
-	cp -vr "${pack_in[@]}" $pack_dir
-	
-	# create packs
 	pushd $pack_dir/..
 		
 		tar -hjcf ${pack_tar}.bz2 ${pack_dir##*/}
@@ -113,7 +112,7 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
 ## distribution
 
-	# copy packs to server
-	scp $pack_dir/changelog ${pack_tar}* $UCSC_ID:'public_html/pub/projects/ff/'
+	echo "copy packs to server"
+	scp $pack_dir/docs/changes ${pack_tar}* $pack_upload_scp_url
 
 
