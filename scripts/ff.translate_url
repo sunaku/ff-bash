@@ -51,7 +51,7 @@
 	
 	# supported languages
 		
-		langNames=( "Chinese - Simplified" "Chinese - Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
+		langNames=( "Chinese Simplified" "Chinese Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
 		
 		langCodes=( zh zt nl en fr de el it ja ko pt ru es )
 		
@@ -86,7 +86,7 @@
 			while true
 			do
 				# read choice
-					read -p "Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
+					read -p "%% Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
 					[ -z "$REPLY" ] && return # user has accepted default value
 					
 				# validate choice
@@ -99,7 +99,7 @@
 						fi
 					done
 					
-				echo "Error: \"$REPLY\" is not a valid language code. Try again."
+				echo "%% Error: \"$REPLY\" is not a valid language code. Try again."
 			done
 	}
 
@@ -107,7 +107,7 @@
 
 	main()
 	{
-		docURL=${f#./}
+		docURL=$t
 		querySourceLang
 		
 		i=0
@@ -131,14 +131,14 @@
 					# try again after some time
 					timeout=${RANDOM:0:1}
 					
-					echo "The translation service is busy; trying again in $timeout seconds..."
+					echo "%% The translation service is busy; trying again in $timeout seconds..."
 					
 					sleep $timeout
 					continue
 				fi
 				
 				# remove added HTML header from and store output
-				sed '1d' < $$ > "$docDst"
+				sed '1s/^.*$/<html>/' < $$ > "$docDst"
 			fi
 			
 			let i=i+1
