@@ -53,9 +53,11 @@
 #
 #		If your script reads from the standard input, then the above
 #		commands will produce unwanted results. A solution is to
-#		redirect a named file descriptor (other than 0) for input:
+#		redirect a named file descriptor (other than 0, since it's
+#		used to feed an existing script into this tool) for input:
 #		
-#			read <&1 ; echo $REPLY
+#			# FDN stands for the file descriptor name
+#			read -u FDN ; echo $REPLY
 #
 #	(2) Entering a script via standard input.
 #
@@ -129,7 +131,7 @@
 	
 	if [ ! -r "$ff_libPath" ]
 	then
-		echo "Unable to source '$ff_libPath'."
+		echo "$0: Unable to source '$ff_libPath'."
 		exit 1
 	else
 		source "$ff_libPath"
@@ -162,7 +164,7 @@
 		begin
 		
 		# handle each target
-		while read f
+		for f in "${ff_targetArray[@]}"
 		do
 			if [ -f "$f" ] # handle non-directories only
 			then
@@ -201,8 +203,7 @@
 				# user function
 				end_file
 			fi
-			
-		done < "$ff_tmp_targetList"
+		done
 		
 		# user function
 		end
