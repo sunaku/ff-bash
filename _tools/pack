@@ -21,7 +21,7 @@
 	pack_ver=$1
 	
 	# files that use gettext
-	pot_in=( ../libs/ff.lib ../docs/*.man )
+	pot_in=( ../libs/ff.lib ../docs/manual )
 	
 	# files that need to be translated; these are automatically packaged
 	doc_in=( ../docs/*.html )
@@ -32,35 +32,35 @@
 	pack_dir=../_pack/ff-$pack_ver
 	pack_dir_docs=$pack_dir/docs
 
-## setup
+echo "<((pack))>  package-tree setup"
 
-	# remove previously generated files
-	rm -rvf $pack_dir ${pack_dir}.* ../i18n/*
+	echo "<((pack))>  removing previously generated files"
+		rm -rvf $pack_dir ${pack_dir}.* ../i18n/*
 
-	# create pack dir
-	mkdir -p $pack_dir
+	echo "<((pack))>  creating pack dir"
+		mkdir -p $pack_dir
 	
-	# transfer unprocessable input files into dir
-	cp -vr "${pack_in[@]}" $pack_dir
-	../ff -e '[ "$fn" == "CVS" ] || [ "${fn:0:1}" == . ] && rm -rfv "$f"' -ar $pack_dir # remove CVS dirs and hidden files
+	echo "<((pack))>  transferring unprocessable input files into pack dir"
+		cp -vr "${pack_in[@]}" $pack_dir
+		../ff -e '[ "$fn" == "CVS" ] || [ "${fn:0:1}" == . ] && rm -rfv "$f"' -ar $pack_dir # remove CVS dirs and hidden files
 
-## gettext translation
+echo "<((pack))>  gettext translation"
 
-	echo "pack: create *.pot files; say NO to raw output"
-	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
+	echo "<((pack))>  creating *.pot files"
+		../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > ../i18n/$fn.pot' "${pot_in[@]}"
 
-	echo "pack: translate *.pot files"
-	../ff -f ff.auto_i18n ../i18n/*
+	echo "<((pack))>  translating *.pot files"
+		../ff -f ff.auto_i18n ../i18n/*
 
-	# format PO files
-	../ff -e 'for x in ${f%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $f > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
+	echo "<((pack))>  formatting translated *.po files"
+		../ff -e 'for x in ${f%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $f > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
 	
-	# copy result files
-	cp -vr ../i18n $pack_dir
+	echo "<((pack))>  copying *.po files into pack dir"
+		cp -vr ../i18n $pack_dir
 
-## regular translation
+echo "<((pack))>  regular HTML translation"
 
-	# prepare input files and their URLs
+	echo "<((pack))>  preparing input files and their URLs"
 		i=0
 		while [ $i -lt ${#doc_in[@]} ]
 		do
@@ -69,46 +69,61 @@
 				doc_nom[$i]=${doc_in[$i]##*/}
 				
 				# web url to temp .html files
-				doc_url[$i]=${upload_web_url}${doc_nom[$i]}
+				doc_url[$i]="${upload_web_url}${doc_nom[$i]}"
 			
 			# put English copy into packd_dir
-				cp ${doc_in[$i]} $pack_dir_docs/${doc_nom[$i]}
+				cp "${doc_in[$i]}" "$pack_dir_docs/${doc_nom[$i]}"
 				
 			# make temp file for translation processing
-				cp -v ${doc_in[$i]} ${doc_nom[$i]}
+				cp -v "${doc_in[$i]}" "${doc_nom[$i]}"
 			
 			let i=i+1
 		done
 		
-	# translate temp files
-		echo "pack: upload readme files"
-		scp "${doc_nom[@]}" $upload_scp_url
+	echo "<((pack))>  translating temp files"
+	
+		echo "<((pack))>  upload HTML files"
+		scp "${doc_nom[@]}" "$upload_scp_url"
 		
-		echo "pack: translate readme files"
+		echo "<((pack))>  translate HTML files"
 		../ff -f ../scripts/ff.translate_url "${doc_url[@]}"
 
-	# move translated files to pack dir
-		for x in "${doc_nom[@]}"
-		do
-			# make id-anchor URLs local
-			../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
-		done
-
-		for f in $pack_dir_docs/*html
-		do 
-			sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
-		done
-
-## package creation
-
-	read -p "Now, make any last minute changes before creating packs..."
-
-	pushd $pack_dir/..
-		
-		tar -jcf ${pack_dir}.tar.bz2 ${pack_dir##*/}
-		tar -zcf ${pack_dir}.tar.gz ${pack_dir##*/}
-		zip -r ${pack_dir}.zip ${pack_dir##*/}
-		
-	popd
+	echo "<((pack))>  move translated files to pack dir"
 	
+		echo "<((pack))>  make id-anchor URLs local"
+			for x in "${doc_nom[@]}"
+			do
+				../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
+			done
+
+		echo "<((pack))>  remove altavista prefix from relative URLs"
+			for f in $pack_dir_docs/*html
+			do 
+				sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
+			done
+		
+	echo "<((pack))>  removing old release info from changes*.html files"
+	
+		mv $pack_dir_docs/changes*html .
+		
+		for f in changes*html
+		do
+			sed '/<!-- old-version/,/<!-- old-version/ d' "$f" > "$pack_dir_docs/$f"
+		done
+		
+echo "<((pack))>  package creation"
+
+	while read -p "Now, make any last minute changes before creating packs... (press EOT to continue)" ; do :; done
+
+	echo "<((pack))>  setting file permissions"
+		chmod -R u=rwx,g=rx,o=rx "$pack_dir"
+		find "$pack_dir" -type f -print | xargs chmod -x
+		chmod +x "$pack_dir"/f*	# make the tools executable
+	
+	echo "<((pack))>  creating packages"
+		pushd "$pack_dir"/..
+			tar -jcf ${pack_dir}.tar.bz2 ${pack_dir##*/}
+			tar -zcf ${pack_dir}.tar.gz ${pack_dir##*/}
+			zip -r ${pack_dir}.zip ${pack_dir##*/}
+		popd
 
