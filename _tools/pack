@@ -45,7 +45,7 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	
 	# transfer unprocessable input files into dir
 	cp -vr "${pack_in[@]}" $pack_dir
-	../ff -e '[ "$fn" == "CVS" ] && rm -rf "$f"' -r $pack_dir # remove CVS dirs
+	../ff -e '[ "$fn" == "CVS" ] || [ "${fn:0:1}" == . ] && rm -rfv "$f"' -ar $pack_dir # remove CVS dirs and hidden files
 
 ## gettext translation
 
@@ -55,6 +55,9 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	echo "pack: translate *.pot files"
 	../ff -f ff.auto_i18n ../i18n/*
 
+	# format PO files
+	../ff -e 'for x in ${f%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $f > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
+	
 	# copy result files
 	cp -vr ../i18n $pack_dir
 
@@ -108,6 +111,6 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 ## distribution
 
 	echo "copy packs to server"
-	scp $pack_dir/docs/changes ${pack_tar}* $pack_upload_scp_url
+	#scp $pack_dir/docs/changes ${pack_tar}* $pack_upload_scp_url
 
 
