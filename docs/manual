@@ -48,7 +48,7 @@ __lib_DocFmt_blockStart
 __lib_DocFmt_blockEnd
 
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "SYNOPSIS" )$( __lib_DocFmt_setFmt bold 0 )"
+__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "INVOCATION" )$( __lib_DocFmt_setFmt bold 0 )"
 __lib_DocFmt_blockStart
 	__lib_DocFmt_blockItem "$__ff_myName [$( __lib_DocFmt_setFmt underline 1 )$( gettext "option" )$( __lib_DocFmt_setFmt underline 0 )]... [$( __lib_DocFmt_setFmt underline 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt underline 0 )] $( __lib_DocFmt_setFmt underline 1 )$( gettext "target" )$( __lib_DocFmt_setFmt underline 0 )..."
 	
@@ -57,7 +57,7 @@ __lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed." "UNIX" )"
 	__lib_DocFmt_blockEnd	
 	
-	__lib_DocFmt_blockItem "$( gettext "The %s serves as a mechanism by which the command-line options parser can be stopped and the remaining command-line arguments can be treated as targets. This allows for targets whose name begins with a %s character to avoid being misinterpreted by the command-line options parser." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )-$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
+	__lib_DocFmt_blockItem "$( gettext "The %s flag serves as a mechanism by which the command-line options parser can be stopped and the remaining command-line arguments can be unconditionally accepted as targets. This behavior allows targets whose name begins with a %s character to avoid being misinterpreted by the command-line options parser." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )-$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
 	
 	__lib_DocFmt_blockItem "$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the user's terminal device (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )/dev/tty$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )[$( gettext "Control" )][$( gettext "D" )]$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
 __lib_DocFmt_blockEnd
@@ -105,7 +105,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )], $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )]"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Display this manual, in the language denoted by the %s (see %s), and exit. Note that if %s is unspecified, then the %s locale attribute is used in its place." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "ISO-639" "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "LC_MESSAGES" )"
+		__lib_DocFmt_blockItem "$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "$( __lib_DocFmt_setFmt bold 1 underline 1 )ISO-639$( __lib_DocFmt_setFmt bold 0 underline 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )LC_MESSAGES$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showVersion$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showVersion$( __lib_DocFmt_setFmt bold 0 )"
@@ -149,7 +149,7 @@ __lib_DocFmt_blockStart
 		
 		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$t$( __lib_DocFmt_setFmt bold 0 )"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "The original name or value, as specified by the user, of the current target." )"
+			__lib_DocFmt_blockItem "$( gettext "The original value, as specified by the user, of the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$fn$( __lib_DocFmt_setFmt bold 0 )"
