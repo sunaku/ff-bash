@@ -3,6 +3,8 @@
 
 ## globals
 
+	ff_version=1.6.6
+
 	# shell options
 	shopt -s nullglob
 
@@ -12,11 +14,12 @@
 	ff_tmp_swapFile=${ff_tmpMask}.swap
 	
 	# command line options
-	ff_baseOpts=ehs:t:
+	ff_baseOpts=ehs:t:v
 	ff_baseOpts_optFlg_useEditor=e
 	ff_baseOpts_optFlg_showHelp=h
 	ff_baseOpts_optFlg_saveInput=s
 	ff_baseOpts_optFlg_targetList=t
+	ff_baseOpts_optFlg_showVersion=v
 	
 	# targets
 	declare -a ff_targetArray
@@ -43,7 +46,7 @@
 		# save user's script to file
 		if [ ${ff_baseOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$ff_baseOpts_optArg_saveInput" ]
 		then
-			cp -i "$ff_tmp_userScript" "$ff_baseOpts_optArg_saveInput" <&1
+			cp -i "$ff_tmp_userScript" "$ff_baseOpts_optArg_saveInput" <&2
 		fi
 		
 		return 0
@@ -81,24 +84,32 @@
 	# setup the list of targets which will be performed upon
 	ff_setupTargets()
 	{
-		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ -s "$ff_baseOpts_optArg_targetList" ]
+		local arg
+		
+		if [[ ${ff_baseOpts_optEn_targetList:-0} -eq 1 && -s "$ff_baseOpts_optArg_targetList" ]]
 		then
 			# use targets listed in a file
-			local line
-			
-			while read line
+			while read arg
 			do
-				ff_targetArray[${#ff_targetArray[@]}]=$line
+				ff_targetArray[${#ff_targetArray[@]}]=$arg
 			done < "$ff_baseOpts_optArg_targetList"
 		else
 			# use targets given on command line
-			ff_targetArray=( "${@}" )
+			for arg
+			do
+				# exclude command line options and their arguments
+				if [[ ${arg:0:1} != "-" || ${ff_baseOpts_optEn_saveInput:-0} -eq 1 && "$arg" != "$ff_baseOpts_optArg_saveInput" ]]
+				then
+					ff_targetArray[${#ff_targetArray[@]}]=$arg
+				fi
+			done
 		fi
 	}
 	
 	# scan base options and set flags
-	# @return 	5 	if user asked to see help message
-	#		1	illegal option
+	# @return	1	illegal option
+	# 		2 	help message
+	#		3	version
 	# @param	$1	command line option flag to handle
 	ff_handleBaseOption()
 	{
@@ -117,7 +128,11 @@
 			$ff_baseOpts_optFlg_showHelp)
 				# display help message which happens to be the documentation header of this file
 				sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
-				return 5
+				return 2
+			;;
+			$ff_baseOpts_optFlg_showVersion)
+				echo $ff_version
+				return 3
 			;;
 			*)
 				return 1
@@ -132,32 +147,32 @@
 	{
 		# ensures proper clean up
 			trap 'ff_exit' INT EXIT
-		
+
 		# scan command line options
-			
+
 			ff_scanOptions "${@}"
-			
+
 			# exit if help message was displayed or illegal options were given
 			[ $? -gt 0 ] && ff_exit
-	
+
 		# get user's script & save it
-	
+
 			ff_getScript
-	
+
 			# exit if no script was given
 			[ $? -gt 0 ] && ff_exit
-	
+
 		# handle user's script
-	
+
 			# load script into RAM
 			ff_evalScript
-	
+
 			# generate list of targets to perform upon
 			ff_setupTargets "${@}"
-			
+
 			# execute script
 			ff_main
-	
+
 		# finished
 	}
 
