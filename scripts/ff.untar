@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Extracts compressed (gzip and bzip2) and uncompressed tar files into respectively named directories created for them. Note that if the tar file extracts into a directory whose name contains new-line characters, then this script will not work properly.
+# Extracts compressed (gzip and bzip2) and uncompressed tar archives into their own directories.
 #
 ###
 #
@@ -9,47 +9,218 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 ###
 
-# globals
+## globals
 
-	temp_file="${TMPDIR:-/tmp}/ff.untar_$$"
+	g_scriptName=${__lib_ff_options_value_evalFile##*/}
+	g_tempFile="${TMPDIR:-/tmp}/$g_scriptName-$$-$RANDOM"
+	g_tarOpts=	# extra options to pass to 'tar'
+	g_targetList=	# array of command-line args
 
-# functions
+	# command-line options
+	g_options_flag_ready=--ready
+	g_options_flag_confirm=--confirm
+	g_options_flag_relative=--relative
+	g_options_flag_help=--help
+	g_options_flag_outDir=--outdir
+	g_options_flag_tarOpts=--tar-opts
+	g_options_flag_autoDir=--auto-dir
+
+## libraries
+
+	[ ${__LIB_DOCFMT__:-0} -eq 0 ] && source "$__ff_myResources_libs/DocFmt.lib"
+
+	__lib_gettext_load "$__ff_myResources_i18n/$g_scriptName.$__ff_myLang.po"
+
+## helper functions
+
+	# handles parsing of command-line options
+	# @see __lib_CmdOpts_handleOption()
+	handleOption()
+	{
+		case $1 in
+			$g_options_flag_confirm)
+				g_options_isOn_confirm=1
+				return 1
+			;;
+			$g_options_flag_ready)
+				g_options_isOn_ready=1
+				return 1
+			;;
+			$g_options_flag_outDir)
+				g_options_value_outDir=$2
+				return 2
+			;;
+			$g_options_flag_relative)
+				g_options_isOn_relative=1
+				return 1
+			;;
+			$g_options_flag_tarOpts)
+				flag=g_tarOpts
+				return 254
+			;;
+			$g_options_flag_autoDir)
+				g_options_isOn_autoDir=1
+				return 1
+			;;
+			$g_options_flag_help) # display the documentation
+
+				{
+					echo \
+"<b>$( gettext "BREIF" )</b>
+	$( gettext "Extracts compressed %s, %s, and regular %s archives into their own directories." "<em>gzip</em>" "<em>bzip2</em>" "<em>tar</em>" )
+
+<b>$( gettext "USAGE" )</b>
+	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option")</u>]...
+
+<b>$( gettext "OPTIONS" )</b>
+
+	<b>$g_options_flag_help</b>
+		$( gettext "Display this help message and exit." )
+
+	<b>$g_options_flag_outDir</b> <u>$( gettext "directory" )</u>
+		$( gettext "Extract all targets, into their own directories, within %s. The %s option is ignored when this option is used." "<u>$( gettext "directory" )</u>" "<b>$g_options_flag_relative</b>" )
+
+	<b>$g_options_flag_ready</b>
+		$( gettext "Do not perform an experimental run; modify the file-system as necessary." )
+
+		$( gettext "The following subordinate options have no effect if used without this option." )
+
+		<b>$g_options_flag_autoDir</b>
+			$( gettext "If the default output directory exists, then automatically create a unique output directory instead of querying the user." )
+
+		<b>$g_options_flag_confirm</b>
+			$( gettext "Confirm each target before it is extracted." )
+
+		<b>$g_options_flag_tarOpts</b>
+			$( gettext "Pass all command-line arguments that are specified after this option to the %s utility. For example, one can specify %s in order to see verbose output from the %s utility." "<em>tar</em>" "<em>$g_options_flag_tarOpts -v</em>" "<em>tar</em>" )
+
+	<b>$g_options_flag_relative</b>
+		$( gettext "Extract targets relative to their parent directory instead of the default output directory, which is either the current working directory or a user specified directory. For example, a target named %s will be extracted into %s instead of %s." "<em>/foo/bar/baz.tar</em>" "<em>/foo/bar/baz/</em>" "<em>./baz/</em>" )
+"
+				} | __lib_DocFmt_formatTags | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
+
+				exit
+			;;
+			*)
+				return 0
+			;;
+		esac
+	}
+
+
+	# Prints the default output directory of TAR archive.
+	# @param	g_tempFile	Path to a temporary file (which is not deleted by this function).
+	# @param	1	Path to archive.
+	# @param	2	Type of archive's compression (e.g., "--gzip" or "--bzip2" or "" for none)
+	getDefaultExtractionPoint()
+	{
+		local outDir
+
+		# get archive contents
+		tar "$2" -tf "$1" > "$g_tempFile" 2> /dev/null
+
+		# get default output dir that is hard-coded into archive
+		outDir=$( grep -F / "$g_tempFile" 2> /dev/null | head -1 )
+
+		# are all files in archive relative to the default output dir?
+		if [ -n "$outDir" ] && grep -F "$outDir" "$g_tempFile" >& /dev/null
+		then
+			echo "$outDir"
+		fi
+	}
+
+	# @param	1	Path of directory to create.
+	createDirectory()
+	{
+		if [ ${g_options_isOn_confirm:-0} -eq 1 ]
+		then
+			read -ep "%% $( gettext "Create directory: %s (%s/%s)? %s" "\"$1\"" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )" < /dev/tty
+			[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && return 1
+		fi
+
+		mkdir -vp "$1"	# create dir
+		return $?
+	}
+
+	# Prints valid extraction point when finished.
+	# @param	1	initial extraction point
+	getValidExtractionPoint()
+	{
+		local point=$1 unique
+
+		if [ ${g_options_isOn_ready:-0} -eq 1 ]
+		then
+			# check primary generated output directory name
+			until [[ -d "$point" && -w "$point" ]] || createDirectory "$point"	# create directory
+			do
+				unique="${1}+$$$RANDOM+"	# generate unique directory name
+
+				if [ ${g_options_isOn_autoDir:-0} -eq 1 ]
+				then
+					point=$unique
+				else
+					# query user for different directory
+					echo "@@ $( gettext "Error: Unable to extract target into: %s" "$point" )" > /dev/tty
+					read -e -p "%% $( gettext "Please specify a different extraction point: %s" "[$unique]" ) " < /dev/tty
+
+						if [ -z "$REPLY" ]
+						then
+							point=$unique
+						else
+							point=$REPLY
+						fi
+				fi
+			done
+		fi
+
+		echo "$point"
+	}
+
+## control functions
 
 	begin()
 	{
-		read -p "%% Specify any additional options for 'tar': [none] " tar_opts < /dev/tty
-		
-		read -p "%% Extract to current working directory (yes/no)? [no] " < /dev/tty
-		[ "${REPLY#[Yy]}" != "$REPLY" ] && opts_exToWd=1
+		g_targetList=( "${@}" )	# init arguments array
+
+		# parse command-line options
+		if ! __lib_CmdOpts_scanOptions g_targetList handleOption
+		then
+			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag_scriptArgs $g_options_flag_help\""
+			exit 1
+		fi
 	}
-	
-	end()
+
+	finalize()
 	{
-		# clean up
-		rm -f "$temp_file"
+		rm -f "$g_tempFile"	# clean up
 	}
-	
+
 	main()
 	{
-		# determine tar-ball type
-		
+		local tar_type tar_outDir base_outDir effective_outDir valid_outDir
+
+		echo
+		echo "@@ $( gettext "Now processing target:" ) $f"
+
+		# determine archive type
+
 			case "$( file -b "$f" )"
 			in
 				*gzip*)
@@ -62,53 +233,66 @@
 				;;
 				*tar*)
 					# handle regular tar-balls
-					tar_type=
+					:
 				;;
 				*)
 					# not a tar-ball
-					return
+					return 1
 				;;
 			esac
-		
-		# determine extraction point
-		
-			if [ ${opts_exToWd:-0} -gt 0 ]
+
+		# determine base extraction point
+
+			if [ -n "$g_options_value_outDir" ]
 			then
-				# extract to user's working directory
-				tar_outdir=$PWD
+				base_outDir=$g_options_value_outDir	# extract to user specified location
+			elif [ ${g_options_isOn_relative:-0} -eq 1 ]
+			then
+				base_outDir=$d	# extract to wherever the target is located
 			else
-				# extract to wherever this file is located
-				tar_outdir=$d
+				base_outDir=$PWD	# extract to user's working directory
 			fi
-			
-			# check if tar-ball extracts into its own directory; if not, then create a directory for it
-			
-				tar $tar_type -tf "$f" > "$temp_file"	# get list of tar-ball contents
-				temp_outdir=$( grep -Fv / "$temp_file" 2>/dev/null | head -1 )	# possible hard-coded output dir in tar-ball
-				
-				if [ -z "$temp_outdir" ] || ! grep -Fv "$temp_outdir"
-				"$temp_file" >& /dev/null
+
+		# determine archive extraction point
+
+			tar_outDir=$( getDefaultExtractionPoint "$f" "$tar_type" )
+			[[ "$tar_outDir" != +(/) ]] && tar_outDir=${tar_outDir%%+(/)}	# remove trailing slashes
+
+			if [ -z "$tar_outDir" ]
+			then
+				echo "@@ $( gettext "Target does not extract into its own directory." )"
+
+				# validate archive extraction point
+				base_outDir=$( getValidExtractionPoint "$base_outDir/${fn%%.*}" )
+				effective_outDir=$base_outDir	# update value for displaying to user
+			else
+				echo "@@ $( gettext "Target already extracts into its own directory." )"
+
+				# validate archive extraction point
+				effective_outDir="$base_outDir/$tar_outDir"
+				valid_outDir=$( getValidExtractionPoint "$effective_outDir" )
+
+				if [ "$effective_outDir" != "$valid_outDir" ]
 				then
-					tar_outdir="$tar_outdir/${fn%.*}"	# strip off the file extension
-					new_outdir="${tar_outdir}__$$"	# generate unique output directory
-						
-					# if output directory exists, ask for a unique name
-					until mkdir -p "$tar_outdir" && [ -w "$tar_outdir" ]
-					do
-						echo "%% Error: output directory '$tar_outdir' cannot be written to."
-						read -e -p "%% Specify a different output directory: [$new_outdir] " < /dev/tty
-						
-						if [ -z "$REPLY" ]
-						then
-							tar_outdir=$new_outdir
-						else
-							tar_outdir=$REPLY
-						fi
-					done
+					base_outDir=$valid_outDir
+					effective_outDir=$base_outDir	# update value for displaying to user
 				fi
-			
-		# extract tar-ball
-			echo "%% Extracting '$f' into '$tar_outdir'"
-			tar $tar_opts -C "$tar_outdir" $tar_type -xf "$f" 
+			fi
+
+		# extract the target
+
+			# NOTE: $effective_outDir may not be the same as the real output directory ( which is stored in $base_outDir )
+			echo "@@ $( gettext "Extracting target into: %s" "$effective_outDir" )"
+
+			if [ ${g_options_isOn_ready:-0} -eq 1 ]
+			then
+				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
+				then
+					read -ep "%% $( gettext "Proceed with extraction (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )" < /dev/tty
+					[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && return
+				fi
+
+				tar "${g_tarOpts[@]}" -C "$base_outDir" $tar_type -xf "$f"
+			fi
 	}
 
