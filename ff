@@ -23,10 +23,15 @@
 	_ff_tmp_dirList=${_ff_tmpMask}.dirList
 
 	# command line options
-	_ff_cmdOpts=alr
-	_ff_cmdOpts_optFlg_handleHidden=a
-	_ff_cmdOpts_optFlg_followLinks=l
-	_ff_cmdOpts_optFlg_recursive=r
+	
+		_ff_cmdOpts_optFlgShort_handleHidden=a
+		_ff_cmdOpts_optFlgLong_handleHidden=all
+		
+		_ff_cmdOpts_optFlgShort_followLinks=l
+		_ff_cmdOpts_optFlgLong_followLinks=dereference
+		
+		_ff_cmdOpts_optFlgShort_recursive=r
+		_ff_cmdOpts_optFlgLong_recursive=recursive
 
 ## functions
 
@@ -34,15 +39,15 @@
 	_cmdOpts_handleOption()
 	{
 		case "$1" in
-			$_ff_cmdOpts_optFlg_handleHidden)
+			$_ff_cmdOpts_optFlgShort_handleHidden|$_ff_cmdOpts_optFlgLong_handleHidden)
 				_ff_cmdOpts_optEn_handleHidden=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlg_followLinks)
+			$_ff_cmdOpts_optFlgShort_followLinks|$_ff_cmdOpts_optFlgLong_followLinks)
 				_ff_cmdOpts_optEn_followLinks=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlg_recursive)
+			$_ff_cmdOpts_optFlgShort_recursive|$_ff_cmdOpts_optFlgLong_recursive)
 				_ff_cmdOpts_optEn_recursive=1
 				return 1
 			;;
@@ -72,24 +77,17 @@
 				if [ -d "$_ff_basedir" ] # handle directories only
 				then
 				
-					ls -1 -R${_ff_cmdOpts_optEn_followLinks:+L}${_ff_cmdOpts_optEn_handleHidden:+A} "$_ff_basedir" | sed 's/:$//' | 
-					while read fn
+					# make relative paths explicit
+					[ "${_ff_basedir:0:1}" != '/' ] && _ff_basedir="./$_ff_basedir"
+				
+					find "$_ff_basedir" ${_ff_cmdOpts_optEn_followLinks:+-follow} ${_ff_cmdOpts_optEn_handleHidden:--name '[^.]*'} |
+					while read f
 					do
-						# state machine based upon newlines between directory contents in the output of 'ls'
-						if [ -z "$fn" ]
-						then
-							d=
-							continue
-						elif [ -z "$d" ]
-						then
-							d=${fn%/}
-						fi
-						
 						# set scripting variables
-						f=$d/$fn
+						fn=${f##*/}
+						d=${f%/*}
 						
 						main	# user function
-						
 					done
 				fi
 			done
