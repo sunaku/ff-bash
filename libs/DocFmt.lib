@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# Documentation formatting and display library.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+## globals
+
+	__lib_DocFmt_indent=	# holds a string of tab characters
+
+## functions
+
+	# Prints text to the current block. The text can have
+	# escape sequences (such as '\n' for newline), and the
+	# some formatting tags:
+	#	<b> or <B>	bold
+	#	<u> or <U>	underline
+	#
+	# All tags must be properly enclosed.
+	# For example: "<tag>text</tag>"
+	#
+	# @param	$*	text to print.
+	#
+	__lib_DocFmt_blockItem()
+	{
+		local buff=$*
+		
+		# convert formatting tags to ANSI escape sequences
+		buff=${buff//<[bB]>/\\033\[1m}
+		buff=${buff//<\/[bB]>/\\033\[22m}
+		buff=${buff//<[uU]>/\\033\[4m}
+		buff=${buff//<\/[uU]>/\\033\[24m}
+		
+		echo -e "${__lib_DocFmt_indent}${buff}"
+	}
+
+	# begins a new indented block
+	__lib_DocFmt_blockStart()
+	{
+		__lib_DocFmt_indent="$__lib_DocFmt_indent\t"	# increase indent
+	}
+	
+	# terminates an indented block
+	__lib_DocFmt_blockEnd()
+	{
+		__lib_DocFmt_indent=${__lib_DocFmt_indent%\\t}	# decrease indent
+		echo
+	}
+
