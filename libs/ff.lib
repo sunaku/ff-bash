@@ -189,9 +189,6 @@ $expression
 			
 		# load and execute script
 			__lib_ff_loadScript
-			__ff_main	# invoke this library's client
-
-		# finished
-			exit 0
+			__ff_main	# invoke the client using this library
 	}
 
