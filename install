@@ -62,46 +62,54 @@
 		
 		return $rv
 	}
+	
+	# repeatedly query the user until a proper directory name is given
+	# @param	1	prompt
+	# @param	2	name of var in which to store user given directory
+	# @param	3	default directory value
+	install_mkdir_query()
+	{
+		local isLoop=1
+		
+		while [ $isLoop -eq 1 ]
+		do
+			read -rep "$1"
+		
+			# set default value
+			[ -z "$REPLY" ] && REPLY=$3
+	
+			# replace ~ with home path
+			[ "${REPLY:0:1}" == "~" ] && REPLY="${HOME}${REPLY#\~}"
+			
+			# store input values
+			eval "$2=\$REPLY"
+			
+			# create directory if doesn't exist
+			install_mkdir "$REPLY" && isLoop=0
+		done
+	}
+	
 
 ## installation
 
 	gettext "Instructions"
 	echo "- $( gettext "Press %s to cancel the installation at any time." "<CONTROL-C>" )"
-	echo "- $( gettext "Press %s to accept the value in square brackets." "<ENTER>" )" 
+	echo "- $( gettext "Press %s to accept the value in square brackets." "<ENTER>" )"
 	echo
 
 	# ask user for installation directory
-		isLoop=1
-		while [ $isLoop -eq 1 ]
-		do
-			read -p "$( gettext "Where shall I install this package? %s " "[$install_dir_default]" )" install_dir
+		install_mkdir_query "$( gettext "Where shall I install this package? %s " "[$install_dir_default]" )" install_dir "$install_dir_default"
 		
-				# set default value
-				[ -z "$install_dir" ] && install_dir=$install_dir_default
-		
-				# create directory if doesn't exist
-				install_mkdir "$install_dir" && isLoop=0
-		done
-	
 	# ask user for symlink directory
-		isLoop=1
-		while [ $isLoop -eq 1 ]
-		do
-			read -p "$( gettext "Where shall I install symbolic links? %s " "[$symlink_dir_default]" )" symlink_dir
-		
-				# set default value
-				[ -z "$symlink_dir" ] && symlink_dir=$symlink_dir_default
-		
-				# create directory if doesn't exist
-				install_mkdir "$symlink_dir" && isLoop=0
-		done
+	
+		install_mkdir_query "$( gettext "Where shall I install symbolic links? %s " "[$symlink_dir_default]" )" symlink_dir "$symlink_dir_default"
 	
 	# perform installation
 	
 		# echo install_dir=$install_dir
 		# echo package_dir=$package_dir
 		# echo symlink_dir=$symlink_dir
-	
+		
 		# copy files
 		gettext "Copying package files from %s to %s." "\"$package_dir\"" "\"$install_dir\""
 		
