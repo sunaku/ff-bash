@@ -6,12 +6,12 @@ install_dir="$HOME/bin"
 # create install_dir if doesn't exist
 if [ ! -e "$install_dir" ]
 then
-	mkdir -v "$install_dir"
+	mkdir "$install_dir"
 fi
 
 # make programs executable
 chmod u+x ff fl
 
 # copy programs
-cp -v ff fl "$install_dir"
+cp ff fl "$install_dir"
 
