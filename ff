@@ -84,7 +84,7 @@
 			;;
 			*)
 				# display help message, which happens to be the documentation header for this file
-				cat "$0" | sed -e '1d ; /^####/q' -e 's/^# *//' | more
+				cat "$0" | sed -e '/^####/q' -e 's/^# *//' | more
 				exit 0
 			;;
 		esac
@@ -119,7 +119,7 @@
 			then
 				
 				# assemble list of all subdirectories to be traversed, with the deepest sub-directories appearing first
-				subdir_list=$( ls -R "$param" | grep ':$' | sed -e 's/:$//' | sort -r )
+				subdir_list=$( ls -R "$param" | sed -n 's/:$//p' | sort -r )
 				subdir=""
 				
 				for d in $subdir_list
