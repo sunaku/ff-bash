@@ -32,7 +32,7 @@
 
 ## globals
 
-	__lib_ff_version=1.7.0
+	__lib_ff_version=1.7.1
 	
 	declare -a __lib_ff_targetList		# array of targets
 	
