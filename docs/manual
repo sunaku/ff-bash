@@ -202,11 +202,17 @@ $(
 
 	<b>$( gettext "LIBRARIES" )</b>
 
-		<b>$__ff_myResources_libs/CmdOpts.lib</b>
+		<b>CmdOpts.lib</b>
 			$( gettext "A library for parsing complex command-line options." )
 
-		<b>$__ff_myResources_libs/gettext.lib</b>
+		<b>DocFmt.lib</b>
+			$( gettext "A library for formatting output." )
+
+		<b>gettext.lib</b>
 			$( gettext "A library that emulates the behavior of %s and allows one to localize an application into the user's native language through the use of translation catalogs." "<em>GNU gettext</em>" )
+
+		<b>util.lib</b>
+			$( gettext "A library that contains commonly used utility functions." )
 
 <b>$( gettext "ENVIRONMENT" )</b>
 
@@ -223,6 +229,7 @@ $(
 		$( gettext "An automatically created directory in which user settings and resource files are stored. For example, the manual that you are currently viewing is cached within this directory." )
 
 <b>$( gettext "EXIT STATUS" )</b>
+
 	<b>0</b>
 		$( gettext "This tool performed its duties successfully." )
 
