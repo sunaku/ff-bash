@@ -32,6 +32,34 @@
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 		</blockquote>
 		
+		<h2>Version 1.7.2 (2004-07-25)</h2>
+		<ul>
+			<li>The recursive mode for <b>For each File</b> has been completely rewritten and no longer requires <samp>GNU find</samp>.
+				<ul>
+					<li>New-line characters in the names of targets specified on the command-line are supported.</li>
+					<li>The <samp>--dereference</samp> option has been removed because it was implemented by directly using <samp>GNU find</samp>.</li>
+					<li>An <samp>--ignore-links</samp> option has been added because the recursive mode traverses symbolic links to directories by default.</li>
+				</ul>
+			</li>
+			<li>This package has been made more portable and robust, thanks to an extensive review by <em>Stephane Chazelas</em>.
+				<ul>
+					<li>The <samp>DocFmt.lib</samp> library uses <samp>tput</samp> to change on-screen formatting instead of <samp>ANSI</samp> escape sequences.</li>
+					<li>Several mistakes and defects in the code, documentation, manuals, and example scripts have been fixed.</li>
+				</ul>
+			</li>
+			<li>The parsing of preset variables has been made more fault tolerant.
+				<ul>
+					<li><samp>${w}</samp> has been removed because <samp>${PWD}</samp> can be used in its place.</li>
+					<li>A defect causing the value of <samp>${d}</samp> to be empty when it should be <samp>/</samp> has been fixed.</li>
+					<li>A defect causing the values of <samp>${fn}</samp> and <samp>${f}</samp> to be empty when <samp>/</samp> is specified as the target has been fixed.</li>
+				</ul>
+			</li>
+			<li>Control functions written in the form <code>function main { ... }</code> are supported.</li>
+			<li>The shell options <samp>extglob</samp> and <samp>nullglob</samp> are enabled, by default, for scripts using this package.</li>
+			<li>A mechanism to stop the command line parser has been added.</li>
+			<li>The example script <samp>ff.untar</samp> now correctly determines the type of tar-ball and if the tar-ball extracts into its own directory.</li>
+		</ul>
+		
 		<h2>Version 1.7.1 (2004-07-16)</h2>
 		<ul>
 			<li>The German translation catalogs have been updated by <em>Michael Wiedmann</em>.</li>
@@ -50,7 +78,7 @@
 			<li>In <samp>fl.xgettext</samp>, a defect causing segmentation faults when parsing input files encoded in UTF-8 has been fixed.</li>
 			<li>The example script <samp>ff.translate_url</samp> has been updated to be more fault tolerant to responses given by the user.</li>
 			<li>Overall start-up time has been improved.</li>
-			<li>The example scripts <samp>ff.vars</samp> and <samp>fl.vars</samp> now display the invocation of control functions.</li>
+			<li>The example scripts <samp>ff.vars</samp> and <samp>fl.vars</samp> display the invocation of control functions.</li>
 		</ul>
 		
 		<h2>Version 1.6.9 (2004-06-21)</h2>
@@ -58,7 +86,7 @@
 			<li>Corrupted Unicode characters in the translations have been fixed.</li>
 			<li>The package documentation has been updated and converted to HTML to preserve formatting across translations.</li>
 			<li>The gettext emulation library has been optimized by using a hash-table implementation.</li>
-			<li>Shell commands are now read from the user's terminal when not specified on the command-line.</li>
+			<li>Shell commands are read from the user's terminal when not specified on the command-line.</li>
 			<li>The <samp>--mask</samp> option has been added for filename filtering in recursive mode.</li>
 		</ul>
 		
@@ -138,7 +166,7 @@
 		<h2>Version 1.5 (2004-02-03)</h2>
 		<ul>
 			<li>Implemented subdirectory recursing in an iterative fashion.</li>
-			<li>User scripts are now evaluated directly by the <samp>GNU BASH</samp> shell, via <samp>eval</samp>.</li>
+			<li>User scripts are evaluated directly by the <samp>GNU BASH</samp> shell, via <samp>eval</samp>.</li>
 		</ul>
 		
 		<h2>Version 1.4 (2004-01-25)</h2>
@@ -151,7 +179,7 @@
 		<h2>Version 1.3 (2003-08-30)</h2>
 		<ul>
 			<li>Initial import into <samp>CVS</samp>.</li>
-			<li>Command-line arguments are now handled iteratively.</li>
+			<li>Command-line arguments are handled iteratively.</li>
 		</ul>
 	</body>
 </html>
