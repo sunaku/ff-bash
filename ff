@@ -4,23 +4,31 @@
 #	ff - for each file
 #	<http://freshmeat.net/projects/ff/>
 #
+#
 # SYNOPSIS
-#	ff [-reh] file1 file2 ... [ < script ]
+#	ff [OPTIONS]... FILE...
+#
 #
 # OPTIONS
-#	-r	Handle subdirectories recursively.
-#		Directories are processed before files (non-directories).
+#	-e	Use the program specified in ${EDITOR} for entering scripting
+#		commands. Depending on how your text editor handles I/O
+#		redirection, this option may disable the ability to pipe output
+#		to other programs.
 #
-#	-e	Use a custom ${EDITOR} for entering scripting commands.
-#		Depending on how your text editor handles I/O redirection, this
-#		option may disable the ability to pipe output to other programs.
+#	-r	Handle subdirectories recursively; directories are processed
+#		before non-directories.
+#
+#	-a	Handle files prefixed with a period (hidden files).
+#		This applies in recursive mode only.
+#
+#	-l	Follow symbolic links to directories.
+#		This applies in recursive mode only.
+#
+#	-s FILE
+#		Save given scripting commands to the specified file.
 #
 #	-h	Display this help message.
 #
-# ARGUMENTS
-#	file	Path to a file (non-directory) or directory.
-#
-#	script	Path to an existing script file (non-directory).
 #
 # DESCRIPTION
 #	Allows the user to execute a Bash script recursively upon many files and
@@ -28,29 +36,64 @@
 #	mass file renaming. The script given by the user is interpreted directly
 #	by the Bash shell.
 #
-#	If you wish to invoke an existing script, you can do so via piping or 
-#	redirection. For example, to run a script named 'my_script' upon a 
-#	directory 'dir', and save the output to the file 'my_output', you
-#	would run the following.
 #
-#		Method 1: 	ff -r dir < my_script | tee my_output
+# INSTRUCTIONS
+#	(1) Invoking an existing script.
 #
-#		Method 2:	cat my_script | ff -r dir | tee my_output
+#		The existing script must be piped or redirected to this tool.
 #
-#	Notice that the '-e' option is not present. Depending on how your text
-#	editor handles I/O redirection, omitting '-e' may allow you to pipe or
-#	redirect input to this tool.
+#		For example, to run a script named 'my_script' upon a directory
+#		'my_dir', and save the output to the file 'my_output':
 #
-#	When an existing script is not invoked, the user will be prompted to
-#	type in scripting commands in the terminal.
-#	
-#	If you wish enter scripting commands using your favorite text editor,
-#	set a global shell variable ${EDITOR} to its path. For example, if your
-#	text editor was located at '/foo/bar', you would run the following.
-#	
-#		declare -x EDITOR=/foo/bar
+#			ff -r my_dir < my_script > my_output
 #
-# SCRIPT VARIABLES
+#			cat my_script | ff -r my_dir | tee my_output
+#
+#		Notice that the '-e' option is not present. Depending on how
+#		your text editor handles I/O redirection, omitting '-e' may
+#		allow you to pipe or redirect input to this tool.
+#
+#		If your script reads from the standard input, then the above
+#		commands will produce unwanted results. A solution is to
+#		redirect a named file descriptor (other than 0) for input:
+#		
+#			read <&1 ; echo $REPLY
+#
+#	(2) Entering a script via standard input.
+#
+#		The user's commands will be read from standard input until an
+#		EOT signal is detected. Multiple lines of input are allowed
+#		(press RETURN to begin a new line).
+#
+#	(3) Entering a script via a text editor.
+#
+#		A global shell variable ${EDITOR} must be set to the path of the
+#		user's desired text editor.
+#
+#		For example, if your text editor was located at '/foo/bar', you
+#		would run the following to set ${EDITOR}.
+#
+#			declare -x EDITOR=/foo/bar
+#
+#		The text editor will then be launched for the user to enter
+#		their script. Once the user has finished, they must save it in
+#		their text editor before exiting.
+#
+#
+# SCRIPTING FUNCTIONS
+# 	The following functions allow greater control over the execution of
+# 	commands in users' scripts. These are optional and need not be
+# 	implemented. However, if any of these are implemented, the primary
+# 	scripting commands must be located inside a function named 'main()'.
+#
+#	begin()		Invoked before any files are processed.
+#
+#	end()		Invoked after all files are processed.
+#
+#	main()		Invoked once per file to process it.
+#
+#
+# SCRIPTING VARIABLES
 #	The following variables are available for use in users' scripts.
 #
 #	$fn	Basename of current file (directory or non-directory).
@@ -62,141 +105,159 @@
 #
 #	$w	Absolute path of user's current working directory.
 #
+#
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
+#
 #
 # LICENSE
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation; either version 2 of the License, or   
+#	the Free Software Foundation; either version 2 of the License, or
 #	(at your option) any later version.
 #
 
-# globals
-	g_tmpfileMask="/tmp/$$"
-	g_tmpfile_UsrInput="${g_tmpfileMask}.UsrInput"
-	g_tmpfile_Subdirs="${g_tmpfileMask}.Subdirs"
+## includes
+	source "${0%/*}/ff-lib"
+
+## globals
+	
+	# files
+	ff_tmp_dirList=${ff_tmpMask}.dirList
 	
 	# option flags
-	g_options="reh"
-	g_opt_recurse=r
-	g_opt_editor=e
-	
-	# option enabled flags. enabled = 1, disabled = 0
-	g_optEn_recurse=0
-	g_optEn_editor=0
-	
-# scan options and set flags
+	ff_cmdOpts="aehlrs:"
+	ff_cmdOpts_opt_help=h
+	ff_cmdOpts_opt_useEditor=e
+	ff_cmdOpts_opt_recurse=r
+	ff_cmdOpts_opt_saveInput=s
+	ff_cmdOpts_opt_followLinks=l
+	ff_cmdOpts_opt_handleHidden=a
 
-	while getopts "$g_options" opt
-	do
-		case "$opt" in
-			$g_opt_recurse)
-				g_optEn_recurse=1
-			;;
-			$g_opt_editor)
-				g_optEn_editor=1
-			;;
-			*)
-				# display help message which happens to be the documentation header
-				sed -e '/^$/q' -e 's/^# *//' $0 | more
-				exit 0
-			;;
-		esac
-	done
-	
-	
-# allow user to input scripting commands
-	
-	if [ $g_optEn_editor -eq 1 ] && [ ! -z "$EDITOR" ] ; then
-		# launch user's editor
-		$EDITOR $g_tmpfile_UsrInput
-	else
-		# 'cat' allows piping and input redirection
-		cat > $g_tmpfile_UsrInput
-	fi
-	
-# check user script
-	if [ -z "$g_tmpfile_UsrInput" ] ; then
+## functions
+
+	# scan options and set flags
+	# returns 2 if user asked to see help message
+	ff_scanOptions()
+	{
+		while getopts $ff_cmdOpts opt
+		do
+			case $opt in
+				$ff_cmdOpts_opt_handleHidden)
+					ff_cmdOpts_optEn_handleHidden=1
+				;;
+				$ff_cmdOpts_opt_useEditor)
+					ff_cmdOpts_optEn_editor=1
+				;;
+				$ff_cmdOpts_opt_followLinks)
+					ff_cmdOpts_optEn_followLinks=1
+				;;
+				$ff_cmdOpts_opt_recurse)
+					ff_cmdOpts_optEn_recurse=1
+				;;
+				$ff_cmdOpts_opt_saveInput)
+					ff_cmdOpts_optEn_saveInput=1
+					ff_cmdOpts_optArg_saveInput=$OPTARG
+				;;
+				$ff_cmdOpts_opt_help)
+					# display help message which happens to be the documentation header of this file
+					sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
+					return 2
+				;;
+				*)
+					return 1
+				;;
+			esac
+		done
+	}
+
+	ff_main()
+	{
+		# set scripting variables
+		w=$PWD
+
+		# call user func
+		begin
+
+		# check method of operation: recursive or non-recursive
+		if [ ${ff_cmdOpts_optEn_recurse:-0} -eq 1 ] # recursive operation
+		then
 		
-		# user has aborted. clean up and exit
-		rm -f ${g_tmpfileMask}*
-		exit
-	else
-		g_input=$( cat "$g_tmpfile_UsrInput" )
-	fi
+			# declare local vars
+			local basedir
 
-# check method of operation: recursive or non-recursive
+			# loop through positional params
+			for basedir
+			do
+				if [ -d "$basedir" ]
+				then
+					# handle all subdirectories, starting with the deepest sub-directories first
+					ls -R${ff_cmdOpts_optEn_followLinks:+L}${ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | \
+					while read d
+					do
+						# for all files in subdir
+						for f in "$d"/* $( [ ! -z "$ff_cmdOpts_optEn_handleHidden" ] && echo "$d/.*" )
+						do
+							# set scripting variables
+							fn=${f##*/}
 
-	# set scripting variable
-	w="$PWD"
-
-	if [ $g_optEn_recurse -eq 1 ] # recursive operation
-	then
-	
-		# loop through positional params
-		for param
-		do
-			if [ -d "$param" ] 
-			then
-				# assemble list of all subdirectories with the deepest sub-directories appearing first
-				ls -R "$param" | grep -v '^$' | sed -n 's/:$//p' | sort -r > "$g_tmpfile_Subdirs"
-				
-				# determine number of subdirectories
-				n=$( wc -l "$g_tmpfile_Subdirs" | awk '{ print $1 }' )
-				i=1
-				
-				# handle each subdir
-				while [ $i -le $n ]
-				do
-					# read subdir from file
-					subdir=$( sed -n "$i p" "$g_tmpfile_Subdirs" )
-					
-					# check if subdir is empty
-					if [ $( ls "$subdir" | wc -l ) -gt 0 ]
-					then
-					
-						# step into subdir
-						pushd "$subdir" >& /dev/null
-						
-							# set scripting variable
-							d="$PWD"
-						
-							# for all files in subdir
-							for f in *
-							do
-								# set scripting variable
-								fn="$f"
-								f="$d/$f"
-								
-								# execute user specified commands
-								eval "$g_input"
-							done
-						
-						# step out of subdir
-						popd >& /dev/null
-					fi
-					
-					# increment subdir
-					let "i = i + 1"
-				done
-			fi
-		done
-	
-	else # non-recursive operation
-	
-		# loop through positional params
-		for f
-		do
-			# set scripting variables
-			d=$( dirname "$f" )
-			fn=$( basename "$f" )
+							# execute user specified commands
+							main
+						done
+					done
+				fi
+			done
 			
-			# execute user specified commands
-			eval "$g_input"
-		done
-	fi
+		else # non-recursive operation
+
+			# loop through positional params
+			for f
+			do
+				# set scripting variables
+				f=${f%/}
+				fn=${f##*/}
+				if [ "$fn" == "$f" ] ; then d=$PWD ; else d=${f%/*} ; fi
+
+				# execute user specified commands
+				main
+			done
+		fi
+
+		# call user func
+		end
+	}
+
+## main script logic
+
+	# scan user options
+
+		ff_scanOptions "${@}"
+
+		# exit if help message was displayed
+		# or if illegal options were given
+		[ $? -gt 0 ] && ff_exit
+
+	# get user script
+
+		ff_getScript
+
+		# exit if no script was given
+		[ $? -gt 0 ] && ff_exit
+
+	# handle options
+	ff_saveScript
+
+	# handle user's script
 	
-# cleanup
-	rm -f ${g_tmpfileMask}*
+		# validate script
+		ff_checkScriptMain
+
+		# load script into RAM
+		ff_evalScript
+		
+		# execute script
+		ff_main "${@}"
+
+	# clean up and exit
+	ff_exit
 

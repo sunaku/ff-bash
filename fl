@@ -4,50 +4,86 @@
 #	fl - for each line
 #	<http://freshmeat.net/projects/ff/>
 #
+#
 # SYNOPSIS
-#	fl [-eh] file1 file2 ... [ < script ]
+#	fl [OPTIONS]... NON-DIRECTORY...
+#
 #
 # OPTIONS
-#	-e	Use a custom ${EDITOR} for entering scripting commands.
-#		Depending on how your text editor handles I/O redirection, this
-#		option may disable the ability to pipe output to other programs.
+#	-e	Use the program specified in ${EDITOR} for entering scripting
+#		commands. Depending on how your text editor handles I/O
+#		redirection, this option may disable the ability to pipe output
+#		to other programs.
+#
+#	-s FILE
+#		Save given scripting commands to the specified file.
 #		
 #	-h	Display this help message.
 #
-# ARGUMENTS
-#	file	Path to a file (non-directory).
-#
-#	script	Path to an existing script file (non-directory).
 #
 # DESCRIPTION
 #	Allows the user to execute a Bash script for each line in the specified
 #	files. The script given by the user is interpreted directly by the BASH
 #	shell.
 #
-#	If you wish to invoke an existing script, you can do so via piping or 
-#	redirection. For example, to run a script named 'my_script' upon a 
-#	file 'my_file', and save the output to the file 'my_output', you would
-#	run the following.
 #
-#		Method 1: 	fl my_file < my_script | tee my_output
+# INSTRUCTIONS
+#	(1) Invoking an existing script.
+#
+#		The existing script must be piped or redirected to this tool.
+#
+#		For example, to run a script named 'my_script' upon a file
+#		'my_text', and save the output to the file 'my_output':
+#
+#			fl my_text < my_script > my_output
+#
+#			cat my_script | fl my_text | tee my_output
+#
+#		Notice that the '-e' option is not present. Depending on how
+#		your text editor handles I/O redirection, omitting '-e' may
+#		allow you to pipe or redirect input to this tool.
+#
+#		If your script reads from the standard input, then the above
+#		commands will produce unwanted results. A solution is to
+#		redirect a named file descriptor (other than 0) for input:
 #		
-#		Method 2:	cat my_script | fl my_file | tee my_output
+#			read <&1 ; echo $REPLY
 #
-#	Notice that the '-e' option is not present. Depending on how your text
-#	editor handles I/O redirection, omitting '-e' may allow you to pipe or
-#	redirect input to this tool.
+#	(2) Entering a script via standard input.
 #
-#	When an existing script is not invoked, the user will be prompted to
-#	type in scripting commands in the terminal.
-#	
-#	If you wish enter scripting commands using your favorite text editor,
-#	set a global shell variable ${EDITOR} to its path. For example, if your
-#	text editor was located at '/foo/bar', you would run the following.
-#	
-#		declare -x EDITOR=/foo/bar
+#		The user's commands will be read from standard input until an
+#		EOT signal is detected. Multiple lines of input are allowed
+#		(press RETURN to begin a new line).
+#
+#	(3) Entering a script via a text editor.
+#
+#		A global shell variable ${EDITOR} must be set to the path of the
+#		user's desired text editor.
+#
+#		For example, if your text editor was located at '/foo/bar', you
+#		would run the following to set ${EDITOR}.
+#
+#			declare -x EDITOR=/foo/bar
+#
+#		The text editor will then be launched for the user to enter
+#		their script. Once the user has finished, they must save it in
+#		their text editor before exiting.
 #
 #
-# SCRIPT VARIABLES
+# SCRIPTING FUNCTIONS
+# 	The following functions allow greater control over the execution of
+# 	commands in users' scripts. These are optional and need not be
+# 	implemented. However, if any of these are implemented, the primary
+# 	scripting commands must be located inside a function named 'main()'.
+#
+#	begin()		Invoked before any lines are processed.
+#
+#	end()		Invoked after all lines are processed.
+#
+#	main()		Invoked once per line to process it.
+#
+#
+# SCRIPTING VARIABLES
 #	The following variables are available for use in users' scripts.
 #
 #	$fn	Basename of current file (non-directory).
@@ -62,7 +98,7 @@
 #
 #	$i	Index or line number of current line.
 #
-#	$l	Contents of current line.
+#	$l	Contents of current line with leading whitespace stripped off.
 #
 #
 # AUTHORS
@@ -75,83 +111,109 @@
 #	(at your option) any later version.
 #
 
+# includes
+	source "${0%/*}/ff-lib"
+
 # globals
-	g_tmpfileMask="/tmp/$$"
-	g_tmpfile_UsrInput="${g_tmpfileMask}.usrInput"
 	
 	# option flags
-	g_options="eh"
-	g_opt_editor=e
+	ff_cmdOpts="ehs:"
+	ff_cmdOpts_opt_help=h
+	ff_cmdOpts_opt_useEditor=e
+	ff_cmdOpts_opt_saveInput=s
 	
-	# option enabled flags. enabled = 1, disabled = 0
-	g_optEn_editor=0
-	
-# scan options and set flags
+## functions
 
-	while getopts "$g_options" opt
-	do
-		case "$opt" in
-			$g_opt_editor)
-				g_optEn_editor=1
-			;;
-			*)
-				# display help message which happens to be the documentation header
-				sed -e '/^$/q' -e 's/^# *//' $0 | more
-				exit 0
-			;;
-		esac
-	done
-	
-	
-# allow user to input scripting commands
-	
-	if [ $g_optEn_editor -eq 1 ] && [ ! -z "$EDITOR" ] ; then
-		# launch user's editor
-		$EDITOR $g_tmpfile_UsrInput
-	else
-		# 'cat' allows piping and input redirection
-		cat > $g_tmpfile_UsrInput
-	fi
-	
-# check user script
-	if [ -z "$g_tmpfile_UsrInput" ] ; then
-		
-		# user has aborted. clean up and exit
-		rm -f ${g_tmpfileMask}*
-		exit
-	else
-		g_input=$( cat "$g_tmpfile_UsrInput" )
-	fi
-
-# non-recursive operation
-	
-	# set scripting variable
-	w="$PWD"
-	
-	# loop through positional params
-	for f
-	do
-		# set scripting variables
-		d=$( dirname "$f" )
-		fn=$( basename "$f" )
-		
-		# determine file size
-		n=$( wc -l "$f" | awk '{ print $1 }' )
-		let "i = 1"
-		
-		while [ $i -le $n ]
+	# scan options and set flags
+	# returns 2 if user asked to see help message
+	ff_scanOptions()
+	{
+		while getopts $ff_cmdOpts opt
 		do
-			# read line from file
-			l=$( sed -n "${i}p" "$f" )
-			
-			# execute user specified commands
-			eval "$g_input"
-			
-			# increment line number
-			let "i = i + 1"
+			case $opt in
+				$ff_cmdOpts_opt_useEditor)
+					ff_cmdOpts_optEn_editor=1
+				;;
+				$ff_cmdOpts_opt_saveInput)
+					ff_cmdOpts_optEn_saveInput=1
+					ff_cmdOpts_optArg_saveInput=$OPTARG
+				;;
+				$ff_cmdOpts_opt_help)
+					# display help message which happens to be the documentation header of this file
+					sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
+					return 2
+				;;
+				*)
+					return 1
+				;;
+			esac
 		done
-	done
+	}
 	
-# cleanup
-	rm -f ${g_tmpfileMask}*
+	ff_main()
+	{
+		# set scripting variable
+		w=$PWD
+		
+		# loop through positional params
+		for f
+		do
+			# set scripting variables
+			f=${f%/}
+			fn=${f##*/}
+			if [ "$fn" == "$f" ] ; then d=$PWD ; else d=${f%/*} ; fi
+			n=$( wc -l "$f" | awk '{print $1}' )
+			i=1
+			
+			# call user func
+			begin
+			
+			while read l
+			do
+				# execute user specified commands
+				main
+				
+				# increment line number
+				let i=i+1
+				
+			done < "$f"
+			
+			# call user func
+			end
+		done
+	}
+	
+## main script logic
+
+	# scan user options
+
+		ff_scanOptions "${@}"
+
+		# exit if help message was displayed
+		# or if illegal options were given
+		[ $? -gt 0 ] && ff_exit
+
+	# get user script
+
+		ff_getScript
+
+		# exit if no script was given
+		[ $? -gt 0 ] && ff_exit
+
+	# handle options
+	ff_saveScript
+
+	# handle user's script
+	
+		# validate script
+		ff_checkScriptMain
+
+		# load script into RAM
+		ff_evalScript
+		
+		# execute script
+		ff_main "${@}"
+
+	# clean up and exit
+	ff_exit
 
