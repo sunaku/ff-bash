@@ -1,0 +1,42 @@
+#!/bin/bash
+
+upload_scp_url=$UCSC_ID:public_html/pub/tmp/
+upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
+
+salt_eol="111111"
+salt_fmt="000000"
+
+main()
+{
+	raw_file=$fn.$$
+	enc_file=$raw_file.encode.html
+	
+	echo "handling file \"$f\""
+	
+#	read -p "remove blank lines"
+	grep -v '^$' < "$f" > "$raw_file"
+	
+#	read -p "encode formatting and line breaks"
+	sed -r "s/\$/ $salt_eol./ ; s/%s/$salt_fmt/g" < "$raw_file" > "$enc_file"
+	
+#	read -p "upload"
+	! scp $enc_file $upload_scp_url && return
+	
+#	read -p "get translations"
+	../ff -f ../scripts/ff.translate_url "$upload_web_url/$enc_file"
+	
+#	read -p "decode formatting and line breaks"
+	../ff -e "cat "\$f" | tr -d '\n' | sed -r 's/ ?$salt_eol\.? */\n/g ; s/$salt_fmt/ %s /g ; s/\'/\\\'/g ' > \$f.decode" ${enc_file}.*
+	
+#	read -p "combine original & translated strings"
+	../ff -e "paste -d '\n' $raw_file \$fn > \$fn.paste" ${enc_file}.*.decode
+	
+#	read -p "create gettext .po structure"	
+	for x in ${enc_file}.*.paste
+	do
+		awk '{ if(NR%2==0) { printf("msgstr \"%s\"\n", $0) } else { printf("msgid \"%s\"\n", $0) } }' < "$x" > "$x.po"
+	done
+	
+#	read -p "finished"
+	#../ff -e "mv -v \$f $fn.\${fn#$enc_file}po
+}
