@@ -64,7 +64,7 @@ then
 "
 else
 	echo \
-"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters by the delimiters defined in the variable named %s. To preserve leading and trailing white-space, the empty string is used as the default delimiter." "GNU BASH" "<em>\$IFS</em>" )
+"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters by the delimiters defined in %s. To preserve leading and trailing white-space, the empty string is used as the default delimiter." "GNU BASH" "<em>\$IFS</em>" )
 "
 fi
 
@@ -78,22 +78,28 @@ echo \
 		<u>$( gettext "target" )</u>
 			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed. Note that a target need not necessarily be the name of or the path to a file; it can be a %s, string, number, or any other form of abstraction the user requires." "UNIX" "URL" )
 
-	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues an end-of-transmission signal by pressing %s." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "<em>$( gettext "Control" )-$( gettext "D" )</em>" )
+	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues the %s signal by pressing %s." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "EOT" "<em>$( gettext "Control" )-$( gettext "D" )</em>" )
 
 <b>$( gettext "OPTIONS" )</b>"
 
 echo \
 "	<b>$__lib_ff_options_flag_endOpts</b>
-		$( gettext "Stop the command-line-options parser and accept the remaining command-line arguments as targets. This option allows the user to specify targets, whose names begin with a %s character, that may otherwise be misinterpreted as being command-line options. For example, we can specify two targets named %s and %s by writing them as %s or %s." "<em>-</em>" "<em>-foo</em>" "<em>-bar</em>" "<em>$__lib_ff_options_flag_endOpts -foo -bar</em>" "<em>./-foo ./-bar</em>" )
-			
+		$( gettext "Stop the command-line options parser and accept the remaining command-line arguments as targets. This option allows the user to specify targets, whose names begin with a %s character, that may otherwise be misinterpreted as being command-line options. For example, we can specify two targets named %s and %s by writing them as %s or %s." "<em>-</em>" "<em>-foo</em>" "<em>-bar</em>" "<em>$__lib_ff_options_flag_endOpts -foo -bar</em>" "<em>./-foo ./-bar</em>" )
+
+	<b>$__lib_ff_options_flag_scriptArgs</b>
+		$( gettext "Pass all command-line arguments that are specified after this option to %s. This option allows one to specify command-line arguments for the user's shell commands." "<em>begin()</em>" )
+
 	<b>$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
 		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
 
 	<b>$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>
 		$( gettext "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )
 
-	<b>$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]
+	<b>$__lib_ff_options_flag_showHelp</b> [<u>$( gettext "language-code" )</u>]
 		$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "ISO-639 <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
+
+	<b>$__lib_ff_options_flag_language</b> <u>$( gettext "language-code" )</u>
+		$( gettext "Assume that the language code of the current locale is %s and ignore the value defined by the %s locale attribute." "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
 
 	<b>$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
 		$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )
@@ -105,20 +111,20 @@ then
 		$( gettext "Recursively traverse directories and symbolic links that reference directories in post-order fashion: files at the deepest level of the file-system hierarchy are handled before those above them." )
 
 		$( gettext "The following subordinate options have no effect if used without the %s option." "<b>$__ff_myOptions_longFlag_recursive</b>" )
-		
+
 			<b>$__ff_myOptions_shortFlag_handleHidden</b>, <b>$__ff_myOptions_longFlag_handleHidden</b>
 				$( gettext "Do not ignore targets whose names begin with a %s character." "<em>.</em>"  )
-	
+
 			<b>$__ff_myOptions_shortFlag_ignoreLinks</b>, <b>$__ff_myOptions_longFlag_ignoreLinks</b>
 				$( gettext "Do not traverse symbolic links that reference directories." )
-	
+
 			<b>$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>
 				$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target's name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<em>*</em>" "<em>?</em>" "<em>[]</em>" "<em>.</em>" )
 "
 fi
 echo \
-"	<b>$__lib_ff_options_shortFlag_showVersion</b>, <b>$__lib_ff_options_longFlag_showVersion</b>
-		$( gettext "Display the version number and exit." )
+"	<b>$__lib_ff_options_flag_showVersion</b>
+		$( gettext "Display the version information and exit." )
 
 <b>$( gettext "RESERVED NAMES" )</b>
 	$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. It is requested that the user's shell commands not modify the constructs in these name-spaces, because doing so may yield unpredictable behavior." "<em>__lib</em>" "<em>__ff</em>" )
@@ -127,13 +133,13 @@ echo \
 	$( gettext "These functions allow for greater control over the execution of the user's shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "<em>main()</em>" )
 
 	<b>begin()</b>
-		$( gettext "This function is invoked before any targets have been handled." )
+		$( gettext "This function is invoked before any targets have been handled. Note that if any command-line arguments are specified for the user's shell commands, then they are passed directly to this function." )
 
 	<b>main()</b>
 		$( gettext "This function is invoked once per each target." )
 
 	<b>end()</b>
-		$( gettext "This function is invoked after all targets have been handled." )
+		$( gettext "This function is invoked after all targets have been handled. Note that this function is a good place to put clean up routines because it is called even if this tool is forcefully terminated." )
 "
 if [ "$__ff_myName" != ff ]
 then
@@ -168,7 +174,7 @@ then
 	echo \
 "	<b>\$i</b>
 		$( gettext "The number or index of the current line. The value of this variable ranges from 1 to <em>N</em>, where <em>N</em> is the total number of lines in the current target." )
-		
+
 	<b>\$l</b>
 		$( gettext "The contents of the current line." )
 "
@@ -184,3 +190,4 @@ echo \
 	Copyright 2003, 2004 Suraj N. Kurapati.
 	$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
 "
+
