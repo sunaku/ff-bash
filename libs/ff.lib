@@ -8,7 +8,7 @@
 #
 ###
 #
-# Copyright 2003-2004 Suraj N. Kurapati.
+# Copyright 2003, 2004 Suraj N. Kurapati.
 #
 ###
 #
@@ -168,7 +168,7 @@ $expression
 			
 			$__lib_ff_options_shortFlag_showHelp | $__lib_ff_options_longFlag_showHelp)
 				
-				local __lib_ff_docFile="$__ff_myResources_docs/man/$__ff_myName.docfmt" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
+				local __lib_ff_docFile="$__ff_myResources_docs/$__ff_myName.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
 					
 				# choose translation catalog
 				
