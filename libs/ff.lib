@@ -158,7 +158,7 @@ $expression
 				
 				# display the documentation
 				
-					__lib_ff_docCached="$__ff_myConf/$__lib_ff_docFile.$__lib_ff_docLang"	# cached copies are stored in user settings directory
+					__lib_ff_docCached="$__ff_myConf/$__ff_myName.$__lib_ff_docFile.$__lib_ff_docLang"	# cached copies are stored in user settings directory
 					
 					{
 						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docLang" == en || "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
