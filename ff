@@ -1,174 +1,53 @@
 #!/bin/bash
-#
-# NAME
-#	ff - for each file
-#	<http://freshmeat.net/projects/ff/>
-#
-#
-# SYNOPSIS
-#	ff [OPTIONS]... FILE...
-#
-#
-# OPTIONS
-#	-a	Handle hidden files, whose names are prefixed with a period.
-#		Note that this applies in recursive mode only.
-#
-#	-e	Use the program specified in ${EDITOR} for entering scripting
-#		commands. Depending on how your text editor handles I/O
-#		redirection, this option may disable the ability to pipe output
-#		to other programs.
-#
-#	-h	Display this help message.
-#
-#	-l	Follow symbolic links to directories. Note that this applies in
-#		recursive mode only.
-#
-#	-r	Handle subdirectories recursively. Note that directories are
-#		handled before non-directories.
-#
-#	-s FILE
-#		Save scripting commands to the specified file.
-#
-#	-t FILE
-#		Perform upon targets (non-directories or directories) listed in
-#		the specified file, and ignore targets given on the command
-#		line. Note that one target should be listed per line in the
-#		specified file and either a relative or absolute path can be
-#		used to specify a target.
-#
-#	-v	Display program version.
-#
-#
-# DESCRIPTION
-#	Allows the user to execute a Bash script recursively upon many files and
-#	directories. It is ideal for performing a repetitive procedure such as
-#	mass file renaming. The script given by the user is interpreted directly
-#	by the Bash shell.
-#
-# INSTRUCTIONS
-#	(1) Invoking an existing script.
-#
-#		The existing script must be piped or redirected to this tool.
-#
-#		For example, to run a script named 'my_script' upon a directory
-#		'my_dir', and save the output to the file 'my_output':
-#
-#			ff -r my_dir < my_script > my_output
-#
-#			cat my_script | ff -r my_dir | tee my_output
-#
-#		Notice that the '-e' option is not present. Depending on how
-#		your text editor handles I/O redirection, omitting '-e' may
-#		allow you to pipe or redirect input to this tool.
-#
-#		If your script reads from the standard input, then the above
-#		commands will produce unwanted results. A solution is to
-#		redirect a named file descriptor (other than 0, since it's
-#		used to feed an existing script into this tool) for input:
-#		
-#			# FDN stands for the file descriptor name
-#			read -u FDN ; echo $REPLY
-#
-#	(2) Entering a script via standard input.
-#
-#		The user's commands will be read from standard input until an
-#		EOT signal is detected. Multiple lines of input are allowed
-#		(press RETURN to begin a new line).
-#
-#	(3) Entering a script via a text editor.
-#
-#		A global shell variable ${EDITOR} must be set to the path of the
-#		user's desired text editor.
-#
-#		For example, if your text editor was located at '/foo/bar', you
-#		would run the following to set ${EDITOR}.
-#
-#			declare -x EDITOR=/foo/bar
-#
-#		The text editor will then be launched for the user to enter
-#		their script. Once the user has finished, they must save it in
-#		their text editor before exiting.
-#
-#
-# SCRIPTING FUNCTIONS
-# 	The following functions allow greater control over the execution of
-# 	commands in users' scripts. These are optional and need not be
-# 	implemented. However, if any of these are implemented, the primary
-# 	scripting commands must be located inside a function named 'main()'.
-#
-#	begin()		Invoked before any files are processed.
-#
-#	end()		Invoked after all files are processed.
-#
-#	main()		Invoked once per file to process it.
-#
-#
-# SCRIPTING VARIABLES
-#	The following variables are available for use in users' scripts.
-#
-#	$fn	Basename of current file (directory or non-directory).
-#
-#	$f	Path of current file (directory or non-directory).
-#
-#	$d	Path of directory which contains current file (directory or
-#		non-directory).
-#
-#	$w	Absolute path of user's current working directory.
-#
-#
-# AUTHORS
-# 	Suraj Kurapati <skurapat@ucsc.edu>
-#
-#
-# LICENSE
-#	This program is free software; you can redistribute it and/or modify
-#	it under the terms of the GNU General Public License as published by
-#	the Free Software Foundation; either version 2 of the License, or
-#	(at your option) any later version.
-#
+# For each File (ff)
+# This file is distributed under the same license as the "ff" package.
 
-## includes
-	ff_libPath=${0%/*}/ff-lib
+## global paths
+
+	_ff_path=$0			# path to this program
+	[ -L "$_ff_path" ] && _ff_path=$( find "$_ff_path" -printf "%l" )	# dereference if path is symlink
 	
-	if [ ! -r "$ff_libPath" ]
-	then
-		echo "$0: Unable to source '$ff_libPath'."
-		exit 1
-	else
-		source "$ff_libPath"
-	fi
+	_ff_name=${_ff_path#*/}		# basename of this program
+	_ff_base=${_ff_path%/*}		# dirname of this program
+	_ff_base_lib=${_ff_base}/lib	# libraries
+	_ff_base_doc=${_ff_base}/doc	# documentation
+	_ff_base_i18n=${_ff_base}/i18n	# i18n resources
+	
+## libraries
 
-## globals
+	source ${_ff_base_lib}/ff_common
+
+## global variables
 
 	# temporary files
-	ff_tmp_dirList=${ff_tmpMask}.dirList
+	_ff_tmp_dirList=${_ff_tmpMask}.dirList
 
 	# command line options
-	ff_cmdOpts=alr
-	ff_cmdOpts_optFlg_handleHidden=a
-	ff_cmdOpts_optFlg_followLinks=l
-	ff_cmdOpts_optFlg_recursive=r
+	_ff_cmdOpts=alr
+	_ff_cmdOpts_optFlg_handleHidden=a
+	_ff_cmdOpts_optFlg_followLinks=l
+	_ff_cmdOpts_optFlg_recursive=r
 
 ## functions
 
 	# scan options and set flags
 	# @return	1	illegeal options
-	ff_scanOptions()
+	_ff_scanOptions()
 	{
-		while getopts ${ff_baseOpts}${ff_cmdOpts} opt
+		while getopts ${_ff_baseOpts}${_ff_cmdOpts} opt
 		do
 			case $opt in
-				$ff_cmdOpts_optFlg_handleHidden)
-					ff_cmdOpts_optEn_handleHidden=1
+				$_ff_cmdOpts_optFlg_handleHidden)
+					_ff_cmdOpts_optEn_handleHidden=1
 				;;
-				$ff_cmdOpts_optFlg_followLinks)
-					ff_cmdOpts_optEn_followLinks=1
+				$_ff_cmdOpts_optFlg_followLinks)
+					_ff_cmdOpts_optEn_followLinks=1
 				;;
-				$ff_cmdOpts_optFlg_recursive)
-					ff_cmdOpts_optEn_recursive=1
+				$_ff_cmdOpts_optFlg_recursive)
+					_ff_cmdOpts_optEn_recursive=1
 				;;
 				*) # handle base options
-					ff_handleBaseOption $opt
+					_ff_handleBaseOption $opt
 					[ $? -gt 0 ] && return 1
 				;;
 			esac
@@ -177,49 +56,52 @@
 		return 0
 	}
 
-	ff_main()
+	_ff_main()
 	{
-		# set scripting variables
-		w=$PWD
-
-		# user function
-		begin
+		# scripting variables
+		local w=$PWD d f fn
+		
+		begin	# user function
 
 		# check method of operation: recursive or non-recursive
-		if [ ${ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
+		if [ ${_ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
 		then
-			local basedir
-
-			# handle each target
-			for basedir in "${ff_targetArray[@]}"
-			do
-				if [ -d "$basedir" ] # handle directories only
-				then
-					# handle all subdirectories, starting with the deepest sub-directories first
-					ls -R${ff_cmdOpts_optEn_followLinks:+L}${ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | 
-					while read d
-					do
-						# set scripting variables
-						d=${d%/}
-						
-						# for all files in subdir
-						for f in "$d"/* $( [ ! -z "$ff_cmdOpts_optEn_handleHidden" ] && echo "$d/.*" )
+			(
+				shopt -s nullglob
+			
+				local basedir filelist
+	
+				# handle each target
+				for basedir in "${_ff_targetArray[@]}"
+				do
+					if [ -d "$basedir" ] # handle directories only
+					then
+						# handle all subdirectories, starting with the deepest sub-directories first
+						ls -R${_ff_cmdOpts_optEn_followLinks:+L}${_ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | 
+						while read d
 						do
 							# set scripting variables
-							fn=${f##*/}
-
-							# user function
-							main
+							d=${d%/}
+							
+							# for all files in subdir
+							for f in "$d"/* $( [ ! -z "$_ff_cmdOpts_optEn_handleHidden" ] && echo "$d/.*" )
+							do
+								# set scripting variables
+								fn=${f##*/}
+	
+								# user function
+								main
+							done
 						done
-					done
-				fi
-				
-			done
+					fi
+					
+				done
+			)
 
 		else # non-recursive operation
 
 			# handle each target
-			for f in "${ff_targetArray[@]}"
+			for f in "${_ff_targetArray[@]}"
 			do
 				# set scripting variables
 				
@@ -236,15 +118,12 @@
 					fi
 				
 				# handle user's script
-
-					# user function
-					main
+				main	# user function
 			
 			done
 		fi
 
-		# user function
-		end
+		end	# user function
 	}
 
 ## main script logic
@@ -255,5 +134,5 @@
 	main() { :; }
 	
 	# begin script
-	ff_baseLogic "${@}"
+	_ff_baseLogic "${@}"
 
