@@ -171,7 +171,7 @@ $expression
 				## libraries
 					source ${__ff_myResources_libs}/DocFmt.lib
 				
-				local __lib_ff_docFile="${__ff_myResources_docs}/${__ff_myName}.man" __lib_ff_docLang=$__ff_myLang 				__lib_ff_docI18n
+				local __lib_ff_docFile="${__ff_myResources_docs}/${__ff_myName}.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
 					
 				# choose translation catalog
 				
@@ -196,7 +196,7 @@ $expression
 					fi
 				
 				# display documentation
-					source "$__lib_ff_docFile" | sed 's/\t/    /' | fmt -us | less -R
+					source "$__lib_ff_docFile" | sed 's/\t/    /' | fmt -w 80 | less -R
 				
 				__lib_ff_exit
 			;;
