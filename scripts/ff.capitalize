@@ -4,13 +4,37 @@
 #
 # Note: works only for file names in ASCII character code
 #
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
 
 script_name=ff.capitalize
 
 begin()
 {
 	# check if user is ready
-	read -p "($script_name) move files (yes/no)? [no] : " < /dev/tty
+	read -p "($script_name) move files (yes/no)? [no] " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 }
 
@@ -22,7 +46,7 @@ main()
 	for word in $fn
 	do
 		char=${word:0:1}
-		word=$(echo $char | tr '[:lower:]' '[:upper:]')${word:1:${#word}}
+		word="$(echo $char | tr '[:lower:]' '[:upper:]')${word:1:${#word}} "
 		
 		new_name=${new_name}${word}
 	done
