@@ -105,7 +105,7 @@
 			if [ -d "$f" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$f" ]]
 			then
 				
-				echo "(recursive) entering '$f'"
+#				echo "(recursive) entering '$f'"
 				__ff_main_recursive_ "$f"
 			fi
 		done
@@ -113,29 +113,20 @@
 		# handle all files
 		for f in "$d"/${__ff_myOptions_value_fileMask:-*}
 		do
-			# set scripting variables
+			# update preset variables
 			fn=${f##*/}	# keep everything after the last slash
 			
-			main	# user function
+			main	# user's control function
 		done
 		
-		echo "(recursive) leaving '$d'"
+#		echo "(recursive) leaving '$d'"
 	}
 	
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
-		# make implicit relative paths explicit; ex: "foo" becomes "./foo"
-		[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" && "${f:0:3}" != "../" ]] && f="./$f"
-			
-		# update preset variables
-		f=${f%%*(/)}	# remove all trailing slashes; ex: "foo////" becomes "foo"
-		fn=${f##*/}	# keep everything after the last slash
-		d=${f%/*}	# keep everything before the last slash
-		d=${d:-/}	# special case: $d is empty when it should be /
-		
-		# invoke control functions
-		main
+		__lib_ff_updateVars_linear	# update preset variables
+		main	# user's control function
 	}
 	
 	__ff_main()
@@ -161,7 +152,7 @@
 			# handle piped targets
 			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 			then
-				while read -r d
+				while IFS= read -r d
 				do
 					[ -d "$d" ] && __ff_main_recursive_ "$d"
 				done
@@ -178,7 +169,7 @@
 			# handle piped targets
 			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 			then
-				while read -r f
+				while IFS= read -r f
 				do
 					__ff_main_linear_
 				done

@@ -173,6 +173,19 @@ $expression
 		return 0
 	}
 	
+	# updates the values of preset variables during non-recursive mode
+	__lib_ff_updateVars_linear()
+	{
+		# make implicit relative paths explicit; ex: "foo" becomes "./foo"
+		[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" && "${f:0:3}" != "../" ]] && f="./$f"
+			
+		# update preset variables
+		f=${f%%*(/)}	# remove all trailing slashes; ex: "foo////" becomes "foo"
+		fn=${f##*/}	# keep everything after the last slash
+		d=${f%/*}	# keep everything before the last slash
+		d=${d:-/}	# special case: $d is empty when it should be /
+	}
+	
 	# base application logic
 	__lib_ff_main()
 	{
