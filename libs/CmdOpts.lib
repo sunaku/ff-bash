@@ -119,13 +119,13 @@
 	{
 		case $1 in
 			2)
-				unset -v arr[$j] arr[$i]	# remove the option's name & argument
+				unset -v "arr[$j]" "arr[$i]"	# remove the option's name & argument
 				
 				(( j += 1 ))	# increment argument index
 			;;
 			
 			1)
-				unset -v arr[$i]	# remove the option's name
+				unset -v "arr[$i]"	# remove the option's name
 			;;
 			
 			*)
