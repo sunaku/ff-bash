@@ -1,50 +1,53 @@
 ff-changelog
 
-v1.6.5 (2004-04-01):
-* Fixed bug where targets given on command line were being misinterpreted.
-* Updated documentation and examples.
+Version 1.6.6 (2004-04-05):
+- Fixed bug where the argument of the -s option was evaluated as a target.
+- Fixed errors about undefined user functions (Andy Kirkpatrick).
+- Added uninstallation feature to install script.
 
-v1.6.4 (2004-03-24):
-* Added command line option which allows the user to bypass the size limit of
-  the shell's argument buffer.
-* Added 'begin_file()' and 'end_file()' control functions for 'fl'.
-* Updated documentation and examples.
+Version 1.6.5 (2004-04-01):
+- Fixed bug where targets given on command line were being misinterpreted.
+- Updated documentation and examples.
 
-v1.6.3 (2004-03-21):
-* Modularized and optimized the code (~951% speed-up).
-* Added 'begin()' and 'end()' control functions, which are similar to the
-  'BEGIN' and 'END' control blocks in 'awk'.
-* Added more command line options.
-* Updated installation script, documentation, and examples.
+Version 1.6.4 (2004-03-24):
+- Added command line option which allows the user to bypass the size limit of the shell's argument buffer.
+- Added 'begin_file()' and 'end_file()' control functions for 'fl'.
+- Updated documentation and examples.
 
-v1.6.2 (2004-03-14):
-* Fixed inconsistency in scripting variables between non/recursive modes.
-* Fixed several bugs in example scripts.
-* Removed obsolete scripting variable: ${p}.
-* Added new scripting variables ${w} and ${fn}.
-* Updated help and source documentation.
+Version 1.6.3 (2004-03-21):
+- Modularized and optimized the code (~951% speed-up).
+- Added 'begin()' and 'end()' control functions, which are similar to the 'BEGIN' and 'END' control blocks in 'awk'.
+- Added more command line options.
+- Updated installation script, documentation, and examples.
 
-v1.6.1 (2004-03-13):
-* Added new scripting variable: ${p}.
-* Added MP3 cataloging and ID3 tagging examples.
-* Added installation script.
-* Updated documentation.
+Version 1.6.2 (2004-03-14):
+- Fixed inconsistency in scripting variables between non/recursive modes.
+- Fixed several bugs in example scripts.
+- Removed obsolete scripting variable: ${p}.
+- Added new scripting variables ${w} and ${fn}.
+- Updated help and source documentation.
 
-v1.6 (2004-03-11):
-* Fixed special characters handling in file names.
-* Added new script 'fl' to package.
-* Updated documentation.
+Version 1.6.1 (2004-03-13):
+- Added new scripting variable: ${p}.
+- Added MP3 cataloging and ID3 tagging examples.
+- Added installation script.
+- Updated documentation.
 
-v1.5 (2004-02-03):
-* Implemented subdirectory recursing in an iterative fashion.
-* User scripts are now evaluated directly by BASH shell, via 'eval'.
+Version 1.6 (2004-03-11):
+- Fixed special characters handling in file names.
+- Added new script 'fl' to package.
+- Updated documentation.
 
-v1.4 (2004-01-25):
-* Implemented solution for handling fragmented filenames.
-* Removed obsolete 'ffr' script. Use 'ff -r' instead.
-* Added command line options, documentation, and help message.
+Version 1.5 (2004-02-03):
+- Implemented subdirectory recursing in an iterative fashion.
+- User scripts are now evaluated directly by BASH shell, via 'eval'.
 
-v1.3 (2003-08-30):
-* Initial import into CVS.
-* Command-line arguments are now handled iteratively.
+Version 1.4 (2004-01-25):
+- Implemented solution for handling fragmented filenames.
+- Removed obsolete 'ffr' script. Use 'ff -r' instead.
+- Added command line options, documentation, and help message.
+
+Version 1.3 (2003-08-30):
+- Initial import into CVS.
+- Command-line arguments are now handled iteratively.
 
