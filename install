@@ -32,7 +32,7 @@
 	package_dir=${0%/*}
 
 	# default installation directory
-	install_dir_default=$HOME/ff-$( ./ff -v )
+	install_dir_default=$HOME/ff-$( $package_dir/ff -v )
 	symlink_dir_default=$HOME/bin
 	
 	# executable files
@@ -40,8 +40,8 @@
 
 ## libraries
 
-	source ./libs/gettext.lib
-	__lib_gettext_load ./i18n/install.${LANG:0:2}.po
+	source $package_dir/libs/gettext.lib
+	__lib_gettext_load $package_dir/i18n/install.${LANG:0:2}.po
 
 ## functions
 
