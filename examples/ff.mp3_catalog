@@ -53,13 +53,12 @@
 		g_options_flag_outDir=--outdir
 
 	# XXX: speed hack: output messages
-		g_msgout_npt=$( gettext "Now processing target:" )
-		g_msgout_cta=$( gettext "Catalogging target as:" )
-		g_msgout_attitc=$( gettext "Accept this target into the catalog?" )
-		g_msgout_y=$( gettext "yes" )
-		g_msgout_ettdnhaoat=$( gettext "Error: This target does not have a %s or a %s tag." "ID3v1" "ID3v1.1" )
-		g_msgout_tthbcs=$( gettext "This target has been catalogged successfully." )
-		g_msgout_eutpttitc=$( gettext "Error: Unable to put this target into the catalog." )
+		g_msgout_nowHandling=$( gettext "Now processing target:" )
+		g_msgout_cataloggingAs=$( gettext "Catalogging target as:" )
+		g_msgout_acceptTarget=$( gettext "Accept this target into the catalog?" )
+		g_msgout_errNoTag=$( gettext "Error: This target does not have a %s or a %s tag." "ID3v1" "ID3v1.1" )
+		g_msgout_success=$( gettext "This target has been catalogged successfully." )
+		g_msgout_failure=$( gettext "Error: Unable to put this target into the catalog." )
 
 ## libraries
 
@@ -173,7 +172,7 @@
 	main()
 	{
 		echo
-		echo "@@ $g_msgout_npt $p"
+		echo "@@ $g_msgout_nowHandling $p"
 
 		if __lib_id3tag_readTag g_tagData "$p"
 		then
@@ -199,7 +198,7 @@
 
 			# catalog the target
 				eval "catalogged_target=$g_catalogFmt"
-				echo "@@ $g_msgout_cta $catalogged_target"
+				echo "@@ $g_msgout_cataloggingAs $catalogged_target"
 
 				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
 				then
@@ -215,7 +214,7 @@
 	$( gettext "Catalog entry" ):	<u>$catalogged_target</u>
 " | __lib_DocFmt_formatTags
 
-					__lib_util_queryYesNo "%% $g_msgout_attitc" 1 && return
+					__lib_util_queryYesNo "%% $g_msgout_acceptTarget" && return
 				fi
 
 				if [ ${g_options_isOn_ready:-0} -eq 1 ]
@@ -227,15 +226,15 @@
 
 					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$p" "$g_catalogDir/$catalogged_target" 2>> "$g_catalogDir/$g_outError"
 					then
-						echo "@@ $g_msgout_eutpttitc"
+						echo "@@ $g_msgout_failure"
 						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outFail"
 					else
-						echo "@@ $g_msgout_tthbcs"
+						echo "@@ $g_msgout_success"
 						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outPass"
 					fi
 				fi
 		else
-			echo "@@ $g_msgout_ettdnhaoat"
+			echo "@@ $g_msgout_errNoTag"
 			[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outFail"
 		fi
 	}
