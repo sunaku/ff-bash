@@ -37,7 +37,7 @@
 	{
 		read tar_opts -p "please specify any additional options for 'tar': [none] " < /dev/tty
 		
-		read -p "extract to current working directory '$w'? (y/n) " < /dev/tty
+		read -p "extract to current working directory '$w' (yes/no)? [no]  " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && opts_exToWd=1
 	}
 	

@@ -35,7 +35,7 @@
 begin()
 {
 	# check if user is ready
-	read -p "update ID3 tags? (y/n) " < /dev/tty
+	read -p "update ID3 tags (yes/no)? [no]  " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 }
 
