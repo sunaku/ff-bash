@@ -71,11 +71,18 @@
 	__lib_gettext_load()
 	{
 		# variables
-		local file line
+		local file line exit_status=0
 		
 		# parse catalog files
 		for file
 		do
+			# check file perms
+			if [[ ! -r "$file" || ! -f "$file" ]]
+			then
+				exit_status=1
+				continue
+			fi
+			
 			# get all strings onto one line
 			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$__lib_gettext_tempfile"
 			echo -e '\n' >> "$__lib_gettext_tempfile"
@@ -94,6 +101,8 @@
 		
 		# clean up
 		rm -f "$__lib_gettext_tempfile"
+		
+		return $exit_status
 	}
 	
 	# Frees cached translation catalog data from memory.
