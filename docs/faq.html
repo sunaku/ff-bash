@@ -8,13 +8,13 @@ HAVE A QUESTION?
 	E-mail: 	<skurapat@ucsc.edu>
 
 
-
 QUESTIONS
 
 	1. What's the advantage of using this instead of 'find -exec'?
 	2. How can I use the results of 'find' with this tool?
 	3. How can I specify scripting commands on the command line?
-
+	4. Why is the 'read' in my script being ignored?
+	5. How can I use my favorite text editor for entering commands?
 
 
 ANSWERS
@@ -136,4 +136,27 @@ ANSWERS
 	$ echo 'echo $fn' | ff *.c
 
 
+4. Why is the 'read' in my script being ignored?
+
+	The Bash 'read' builtin expects to read user input from stdin. However,
+	the stdin is already used by piping or redirecting a script to this
+	tool. To get around this you will have to make 'read' read from a
+	different input stream. A common choice is stderr (file descriptor 2):
+	
+		# before: doesn't work
+		1. read ; echo $REPLY
+		
+		# after: now it works
+		1. read -u 2 ; echo $REPLY
+		2. read <&2 ; echo $REPLY
+
+
+5. How can I set the EDITOR variable?
+
+	If your text editor was located at '/foo/bar', you can run one of the
+	following to set the EDITOR variable.
+	
+		1. declare -x EDITOR=/foo/bar
+		2. export EDITOR=/foo/bar
+	
 
