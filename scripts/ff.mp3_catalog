@@ -5,6 +5,7 @@
 #
 # Caution:
 #	Adjust the lines preceded by '###' to suit your needs.
+#	Pass absolute paths as targets so the created symbolic links in the catalog directory are valid.
 #
 # Requirements:
 #	mp3info	- Program used to read ID3 tag informationn.
@@ -57,10 +58,10 @@
 		output_dir="$w/mp3_catalog_$$/"
 		
 		### Files that do not have ID3 tags are reported here
-		output_unprocessed="$w/$script_name-unprocessed.log"
+		output_unprocessed="$output_dir/unprocessed.log"
 		
 		### Links that were created successfully are reported here
-		output_processed="$w/$script_name-processed.log"
+		output_processed="$output_dir/processed.log"
 	}
 	
 	main()
