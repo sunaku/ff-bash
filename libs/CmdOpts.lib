@@ -30,38 +30,46 @@
 
 ## globals
 
-	declare -a __lib_CmdOpts_argList
 
 ## functions
 	
-	# /**
-	# Scans the array '__lib_CmdOpts_argList' for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '__lib_CmdOpts_argList'.
+	#/**
+	# Scans the array whose name is given by $1 for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from the array whose name is given by $1.
 	#
-	# @return	1	An illegal option was encountered. The name of this option is stored in '__lib_CmdOpts_argList'.
-	# */
+	# @param	1	Name of the array which contains command-line arguments.
+	# @return	1	An illegal option was encountered. The name of this option is stored in the first index of the array whose name is given by $1.
+	#*/
 	__lib_CmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt flag max=${#__lib_CmdOpts_argList[@]}
+		local i=0 j=0 k opt flag arr arrName arrLen
+		declare -a arr
 		
-		while [ $i -lt $max ]
+		arrName=$1
+		shift # remove the array name from this func's args
+		
+		# make local copy of caller's array
+		eval "arr=( \"\${$arrName[@]}\" )"
+		arrLen=${#arr[@]}
+		
+		while [ $i -lt $arrLen ]
 		do
 			let j=i+1
 			
-			opt=${__lib_CmdOpts_argList[$i]}
+			opt=${arr[$i]}
 			
 			if [ "${opt:0:2}" == "--" ]		# handle long opts
 			then
 			
 				flag=${opt#--}
 				
-				__lib_CmdOpts_handleOption "$flag" "${__lib_CmdOpts_argList[$j]}"
+				__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
 				
-				if ! __lib_CmdOpts_scanOptions_handleReturnValue $?
+				if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 				then
 					# illegal option encountered
-					__lib_CmdOpts_argList=$flag
+					arr=$flag
 					return 1
 				fi
 				
@@ -74,12 +82,12 @@
 				do
 					flag=${opt:$k:1}
 					
-					__lib_CmdOpts_handleOption "$flag" "${__lib_CmdOpts_argList[$j]}"
+					__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
 					
-					if ! __lib_CmdOpts_scanOptions_handleReturnValue $?
+					if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 					then
 						# illegal option encountered
-						__lib_CmdOpts_argList=$flag
+						arr=$flag
 						return 1
 					fi
 					
@@ -90,27 +98,31 @@
 			let i=i+1
 		done
 	
+		# propogate changes in local array to caller's array
+		eval "$arrName=( "${arr[@]}" )"
+		
 #		declare -a ; read < /dev/tty
 		return 0
 	}
 	
-	# /**
-	# Handles the return value from '__lib_CmdOpts_handleOption()'.
+	#/**
+	# Handles the return value from '__lib_CmdOpts_handleOption()'. This function is meant to be used internally by this library.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
-	# */
-	__lib_CmdOpts_scanOptions_handleReturnValue()
+	#*/
+	__lib_CmdOpts_scanOptions_handleReturnValue_()
 	{
 		case $1 in
 			2)
-				unset -v __lib_CmdOpts_argList[$j]	# remove the option's argument
-				unset -v __lib_CmdOpts_argList[$i]	# remove the option's name
+				unset -v arr[$j] arr[$i]	# remove the option's name & argument
 				
 				let j=j+1	# increment argument index
 			;;
+			
 			1)
-				unset -v __lib_CmdOpts_argList[$i]	# remove the option's name
+				unset -v arr[$i]	# remove the option's name
 			;;
+			
 			*)
 				return 1	# illegal option
 		esac
@@ -118,7 +130,7 @@
 		return 0
 	}
 	
-	# /**
+	#/**
 	# Handles the parsing of a command-line option.
 	#
 	# @param	1	option's name
@@ -128,6 +140,6 @@
 	# @return	0	The given option is illegal.
 	# @return	1	The given option has no argument.
 	# @return	2	The given option has an argument.
-	# */
+	#*/
 	__lib_CmdOpts_handleOption() { return 0; }
 
