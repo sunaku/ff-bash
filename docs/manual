@@ -139,7 +139,10 @@ echo \
 		$( gettext "This function is invoked once per each target." )
 
 	<b>end()</b>
-		$( gettext "This function is invoked after all targets have been handled. Note that this function is a good place to put clean up routines because it is called even if this tool is forcefully terminated." )
+		$( gettext "This function is invoked after all targets have been handled." )
+
+	<b>finalize()</b>
+		$( gettext "This function is invoked just before this tool terminates. It is a good place to remove any temporary files that were created." )
 "
 if [ "$__ff_myName" != ff ]
 then

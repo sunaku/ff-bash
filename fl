@@ -118,6 +118,7 @@
 	main() { :; }
 	begin_file() { :; }
 	end_file() { :; }
+	finalize() { :; }
 
 	# begin script
 	__lib_ff_targetList=( "${@}" )	# init arguments array

@@ -201,6 +201,7 @@
 	begin() { :; }
 	end() { :; }
 	main() { :; }
+	finalize() { :; }
 	
 	__lib_ff_targetList=( "${@}" )	# init arguments array
 	__lib_ff_main

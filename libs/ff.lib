@@ -257,7 +257,7 @@ $expression
 	{
 		# ensures proper clean up
 			trap 'exit 255' INT KILL TERM HUP
-			trap 'end' EXIT	# call clean-up routines in user's script
+			trap 'finalize' EXIT	# call clean-up routines in user's script
 
 		# set behavior of current sub-shell
 			shopt -s nullglob extglob interactive_comments
