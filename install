@@ -1,21 +1,84 @@
 #!/bin/bash
 # simple installation script
+echo "(ff-install) $Revision$"
+echo
 
-# default installation directory
-default_dir=$HOME/bin
+# globals
 
-# ask user for installation directory
-read -p "(ff-install) Please specify installation directory [$default_dir]: " install_dir
-[ -z "$install_dir" ] && install_dir=$default_dir
+	# default installation directory
+	default_dir=$HOME/bin
+	
+	# uninstall info file
+	install_log=$HOME/.ff-install.log
+	
+	# options
+	cmdOpts=u
+	cmdOpts_optFlg_remove=u
+	
+	# installation files
+	files_copy=( "ff-lib" "ff" "fl" )
+	files_exec=( "ff" "fl" )
 
-# create installation directory if doesn't exist
-[ ! -e "$install_dir" ] && mkdir -p "$install_dir"
+# handle options
 
-# perform installation
-if chmod +x ff fl && cp ff-lib ff fl "$install_dir"
-then
-	echo "(ff-install) Installation was successful."
-else
-	echo "(ff-install) Installation was not successful."
-fi
+	while getopts $cmdOpts opt
+	do
+		case $opt in
+			$cmdOpts_optFlg_remove)
+				cmdOpts_optEn_remove=1
+			;;
+		esac
+	done
 
+# determine operation
+
+	if [ ${cmdOpts_optEn_remove:-0} -eq 1 ]
+	then # uninstallation
+		
+		if [[ -f "$install_log" ]]
+		then
+			install_dir=$( < "$install_log" )
+			
+			if pushd "$install_dir" >& /dev/null \
+			&& rm -f "${files_copy[@]}" \
+			&& popd >& /dev/null
+			then
+				# remove log
+				rm -f "$install_log"
+				echo "Uninstallation successful."
+			else
+				echo "Cannot remove files."
+			fi
+		else
+			echo "Uninstall info file is missing: '$install_log'."
+		fi
+	
+	else # installation
+	
+		echo "To cancel the installation at any time, press Control-C."
+		echo
+		echo "To accept the value in square brackets, press Return."
+		echo
+	
+		# ask user for installation directory
+		
+			read -p "Please specify installation directory [$default_dir]: " install_dir
+			echo
+			[ -z "$install_dir" ] && install_dir=$default_dir
+		
+		# create installation directory if doesn't exist
+			[ ! -e "$install_dir" ] && mkdir -p "$install_dir"
+			
+		# perform installation
+		
+			if chmod +x "${files_exec[@]}" && cp "${files_copy[@]}" "$install_dir"
+			then
+				# write log file to disk
+				echo $install_dir > "$install_log"
+				echo "Installation successful; uninstall info written to '$install_log'."
+			else
+				echo "Installation failed, check file permissions."
+			fi
+	fi
+	
+echo
