@@ -28,7 +28,7 @@
 		if [ "${l#msgstr}" != "$l" ]
 		then
 			# display msgstr from data file instead of the POT file
-			grep -A 1 "$msg_id" "$PO_FMT_DATA" | head -2 | tail -1
+			grep -A 1 "$msg_id" "$PO_FMT_DATA" | sed -n '2p'
 		else
 			
 			# store next msgid from POT
