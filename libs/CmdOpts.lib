@@ -46,6 +46,7 @@
 		# @return	0	The given option is illegal.
 		# @return	1	The given option has no argument.
 		# @return	2	The given option has one argument.
+		# @return	255	Stop scanning for command-line options and the given option has no argument.
 		#
 	# @return	0	Success.
 	# @return	1	An illegal option was encountered. In the array whose name is given by $1, the name of the illegal option is stored in the first index and its possible argument is stored in the second index. The rest of the array's contents are unaccounted for.
@@ -54,14 +55,14 @@
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt flag arrLen isInvalid=0
+		local i=0 j=0 k opt flag arrLen isInvalid=0 amActive=1
 		local -a arr
 		
 		# make local copy of caller's array
 		eval "arr=( \"\${$1[@]}\" )"
 		arrLen=${#arr[@]}
 		
-		while (( i < arrLen ))
+		while (( i < arrLen && amActive == 1 ))
 		do
 			(( j = i + 1 ))
 			
@@ -72,9 +73,9 @@
 			
 				if [ "${opt:1:1}" == "-" ]	# handle long option names
 				then
-					flag=${opt#--}
+					flag=$opt
 					
-					"$2" "$flag" "${arr[$j]}"
+					"$2" "$flag" "${arr[$j]}"	# invoke user func to handle option
 					
 					if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 					then
@@ -88,11 +89,13 @@
 					
 					k=1	# flag index; +1 to skip '-' prefix
 					
+					# TODO: special case: $#opt == 1
+					
 					while (( k < ${#opt} ))
 					do
-						flag=${opt:$k:1}
+						flag="-${opt:$k:1}"	# prepend '-' prefix to option name
 						
-						"$2" "$flag" "${arr[$j]}"
+						"$2" "$flag" "${arr[$j]}"	# invoke user func to handle option
 						
 						if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 						then
@@ -107,7 +110,7 @@
 			fi
 			
 			# illegal option encountered
-			if [ $isInvalid -eq 1 ]
+			if (( isInvalid == 1 ))
 			then
 				eval "$1[0]=\$flag ; $1[1]=\${arr[$j]}"
 				return 1
@@ -139,6 +142,11 @@
 				unset -v "arr[$i]"	# remove the option's name
 			;;
 			
+			255)
+				amActive=0	# stop scanning for more options
+				unset -v "arr[$i]"	# remove the option's name
+			;;
+
 			*)
 				return 1	# illegal option
 		esac
