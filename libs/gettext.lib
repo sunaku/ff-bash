@@ -124,13 +124,13 @@
 	#
 	gettext()
 	{
-		local query response
+		local query response newline
 		
 		# handle options
 		
 			if [ "$1" == "-n" ]
 			then
-				__lib_gettext_options_isOn_noNewline=1
+				newline=' '
 				shift	# remove $1
 			fi
 			
@@ -145,7 +145,7 @@
 			[ -z "$response" ] && response=$query
 		
 		# print result
-			printf "${response}${__lib_gettext_options_isOn_noNewline:-\n}" "${@}"
+			printf "${response}${newline:-\n}" "${@}"
 	}
 	
 	# function alias
