@@ -39,9 +39,14 @@
 	
 	__ff_myName=${__ff_myPath##*/}	# basename of this program
 	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
+	
+	__ff_myConf="$HOME/.ff"	# path to user settings directory
+		[ ! -e "$__ff_myConf" ] && mkdir -p "$__ff_myConf"	# create if needed
+	
 	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
 	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
 	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
+	
 	__ff_myLang=$( locale | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 	
 ## libraries
