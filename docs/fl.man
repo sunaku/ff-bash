@@ -42,7 +42,7 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "DESCRIPTION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute a set of shell commands upon the contents of a set of files. File contents are logically divided into disjoint sets of characters (lines) by the delimiters defined in %s." "\"\$IFS\"" )"
+	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute a set of shell commands upon the contents of a set of files. File contents are logically divided into disjoint sets of characters (lines) by the delimiters defined in %s. By default, the newline character %s is used as the delimiter." "\"\$IFS\"" '"\\n"' )"
 __lib_DocFmt_blockEnd
 
 
