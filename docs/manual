@@ -44,7 +44,7 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "DESCRIPTION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem $( gettext "This tool allows the user to execute a set of shell commands upon a set of files." )
+	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute a set of shell commands upon a set of files." )"
 __lib_DocFmt_blockEnd
 
 
@@ -54,9 +54,8 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<u>$( gettext "target" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed." UNIX )
+		__lib_DocFmt_blockItem "$( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed." "UNIX" )"
 	__lib_DocFmt_blockEnd
-	
 __lib_DocFmt_blockEnd
 
 
@@ -65,33 +64,43 @@ __lib_DocFmt_blockStart
 
 	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_recursive</b>, <b>--$__ff_myOptions_longFlag_recursive</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext "Handle subdirectories recursively, starting at the deepest level of the filesystem hierarchy and moving upward." )
+		__lib_DocFmt_blockItem "$( gettext "Handle subdirectories recursively. Files at the deepest level of the filesystem hierarchy are handled before those above them." )"
+	__lib_DocFmt_blockEnd
+	
+	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_handleHidden</b>, <b>--$__ff_myOptions_longFlag_handleHidden</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem "$( gettext "Handle files whose names begin with a %s. This option works only if used along with the %s option." "<u>.</u> (period)" "<b>--$__ff_myOptions_longFlag_recursive</b>" )"
+	__lib_DocFmt_blockEnd
+	
+	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_followLinks</b>, <b>--$__ff_myOptions_longFlag_followLinks</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem "$( gettext "Dereference symbolic links which point to directories. This option works only if used along with the %s option." "<b>--$__ff_myOptions_longFlag_recursive</b>" )"
 	__lib_DocFmt_blockEnd
 
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>--$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>string</u>.")
+		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "string." )</u>" )"
 	__lib_DocFmt_blockEnd
 
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>--$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>script-file</u>.")
+		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_readPipe</b>, <b>--$__lib_ff_options_longFlag_readPipe</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )
+		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>lang-code</u>], <b>--$__lib_ff_options_longFlag_showHelp</b> [<u>lang-code</u>]"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext "Translate this documentation into the language denoted by the two character %s, display it, and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>lang-code</u>" "<u>lang-code</u>" "'\$LC_MESSAGES'" )
+		__lib_DocFmt_blockItem "$( gettext "Display this documentation in the language denoted by %s (refer to %s for a list of supported language codes) if possible and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>lang-code</u>" "ISO-639" "<u>lang-code</u>" "\"\$LC_MESSAGES\"" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showVersion</b>, <b>--$__lib_ff_options_longFlag_showVersion</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem $( gettext "Display the version information and exit." )
+		__lib_DocFmt_blockItem "$( gettext "Display the version information and exit." )"
 	__lib_DocFmt_blockEnd
 	
 __lib_DocFmt_blockEnd
@@ -100,52 +109,52 @@ __lib_DocFmt_blockEnd
 __lib_DocFmt_blockItem "<b>$( gettext "SHELL COMMANDS" )</b>"
 __lib_DocFmt_blockStart
 
-	__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not utilize constructs whose names are prefixed with '%s' and '%s'; this tool depends upon the integrity of these constructs in order to operate properly." "__lib" "__ff" )\n"
+	__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not utilize constructs whose names are prefixed with %s and %s; this tool depends upon the integrity of these constructs in order to operate properly." "\"__lib\"" "\"__ff\"" )\n"
 
 	__lib_DocFmt_blockItem "$( gettext "In addition to those provided by the BASH language, the following constructs are available for use in the user\'s shell commands." )\n"
 
 	__lib_DocFmt_blockItem "<b>$( gettext "CONTROL FUNCTIONS" )</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "These functions allow greater control over the execution of user\'s shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the '%s' function will automatically be created to encapsulate the user\'s shell commands. However, if the user decides to implement any combination of these functions, the '%s' function must be manually implemented." "main()" "main()" )\n"
+		__lib_DocFmt_blockItem "$( gettext "These functions allow greater control over the execution of user\'s shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the %s function will automatically be created to encapsulate the user\'s shell commands. However, if the user decides to implement any combination of these functions, the %s function must be manually implemented." "\"main()\"" "\"main()\"" )\n"
 		
 		__lib_DocFmt_blockItem "<b>begin()</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Invoked before any targets have been handled." )
+			__lib_DocFmt_blockItem "$( gettext "Invoked before any targets have been handled." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>main()</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Invoked once per each target." )
+			__lib_DocFmt_blockItem "$( gettext "Invoked once per each target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>end()</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Invoked after all targets have been handled." )
+			__lib_DocFmt_blockItem "$( gettext "Invoked after all targets have been handled." )"
 		__lib_DocFmt_blockEnd
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>$( gettext "PRESET VARIABLES" )</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not modify the values of these variables because they may not be restored each time '%s' is invoked." "main()" )\n"
+		__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not modify the values of these variables because they may not be restored each time %s is invoked." "\"main()\"" )\n"
 		
 		__lib_DocFmt_blockItem "<b>\$fn</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem	$( gettext "Basename of the current target." )
+			__lib_DocFmt_blockItem "$( gettext "Basename of the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>\$f</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Path (either relative or absolute) to the current target." )
+			__lib_DocFmt_blockItem "$( gettext "Path (either relative or absolute) to the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>\$d</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Path (either relative or absolute) to the directory which contains the current target." )
+			__lib_DocFmt_blockItem "$( gettext "Path (either relative or absolute) to the directory which contains the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>\$w</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem $( gettext "Absolute path to the user\'s working directory." )
+			__lib_DocFmt_blockItem "$( gettext "Absolute path to the user\'s working directory." )"
 		__lib_DocFmt_blockEnd
 	__lib_DocFmt_blockEnd
 	
@@ -154,24 +163,24 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "AUTHOR" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "Written by" ) Suraj N. Kurapati."
+	__lib_DocFmt_blockItem "$( gettext "Written by %s." "Suraj N. Kurapati <skurapat@ucsc.edu>" )"
 __lib_DocFmt_blockEnd
 
 
 __lib_DocFmt_blockItem "<b>$( gettext "RESOURCES" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "You can find source updates and additional resources at" ) <http://freshmeat.net/projects/ff/>."
+	__lib_DocFmt_blockItem "$( gettext "You can find software updates and additional resources at %s." "<http://freshmeat.net/projects/ff/>" )"
 __lib_DocFmt_blockEnd
 
 
 __lib_DocFmt_blockItem "<b>$( gettext "TRANSLATION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem $( gettext "This document was translated from English by the '%s' online translation service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog (located at '%s') as necessary." "AltaVista Babel Fish" "gettext" "$__lib_ff_docI18n" )
+	__lib_DocFmt_blockItem "$( gettext "This document was translated from English using the %s online translation service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "\"Translation Experts\" <http://www.tranexp.com/InterTran/FreeTranslation.html>" "gettext" "\"$__lib_ff_docI18n\"" )"
 __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem $( gettext "Please report defects to %s." "<skurapat@ucsc.edu>" )
+	__lib_DocFmt_blockItem "$( gettext "Please report defects to the author." )"
 __lib_DocFmt_blockEnd
 
 
@@ -180,7 +189,7 @@ __lib_DocFmt_blockStart
 
 	__lib_DocFmt_blockItem "Copyright 2003-2004 Suraj N. Kurapati."
 	
-	__lib_DocFmt_blockItem $( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
+	__lib_DocFmt_blockItem "$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )"
 
 __lib_DocFmt_blockEnd
 
