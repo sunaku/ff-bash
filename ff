@@ -4,7 +4,7 @@
 #	ff - for each file
 #
 # SYNOPSIS
-#	ff [-reh] targets ...
+#	ff [-reh] target ...
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed
@@ -19,6 +19,16 @@
 #	global shell variable ${EDITOR} to the path of your favorite text 
 #	editor. For example: `export EDITOR='path to editor'`.
 #
+#	If you wish to invoke an existing script, you can do so via piping or 
+#	redirection. For example, to run a script named 'ff.script' upon a 
+#	directory 'dir', you would run the following.
+#
+#		Method 1: 	ff -r dir < ff.script
+#		Method 2:	cat ff.script | ff -r dir
+#
+#	Notice that the '-e' option is not present. Omitting '-e' allows you to
+#	pipe or redirect input to 'ff'.
+#
 # PRESET VARIABLES
 #	The following preset variables are available for use in users' scripts.
 #
@@ -26,7 +36,8 @@
 #	$d	relative path to current directory
 #
 # OPTIONS
-#	-r	Recurse the given sub-directories.
+#	-r	Apply to files and subdirectories recursively. Order of 
+#		traversal is: sub-directories, and then files.
 #
 #	-e	Use a custom ${EDITOR} for entering scripting commands. 
 #		This option disables the ability to pipe or redirect data 
@@ -36,7 +47,6 @@
 #
 # AUTHORS
 # 	Suraj Kurapati
-# 	$Revision$, $Date$
 #
 # LICENSE
 #	This program is free software; you can redistribute it and/or modify
