@@ -6,9 +6,13 @@ li {
 }
 
 code {
-	font-weight: bold;
+	color: red;
 }
 
-code.color {
-	color: red;
+samp {
+	text-decoration: underline;
+}
+
+.diagram {
+	border: thin solid black;
 }
