@@ -55,7 +55,7 @@
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 		
 		### symbolic links will be placed here
-		output_dir="$w/mp3_catalog_$$/"
+		output_dir="$PWD/mp3_catalog_$$/"
 		
 		### Files that do not have ID3 tags are reported here
 		output_unprocessed="$output_dir/unprocessed.log"

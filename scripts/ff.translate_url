@@ -114,7 +114,7 @@
 		while [ $i -lt ${#service_URL_langFlag_codes[@]} ]
 		do
 			langFlag=${service_URL_langFlag_codes[$i]}
-			docDst=$w/$fn.${langFlag#*_}
+			docDst="$PWD/$fn.${langFlag#*_}"
 			
 			# check source language in flag
 			if [ "$langSrc" == "${langFlag%_*}" ]
