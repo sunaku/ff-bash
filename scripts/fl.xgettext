@@ -81,8 +81,8 @@
 			while [ $cache_index -lt ${#g_cache_strings[@]} ]
 			do
 				echo "#:${g_cache_refs[$cache_index]}"
-				echo "msgid ${g_string_quote}${g_cache_strings[$cache_index]}${g_string_quote}"
-				echo "msgstr ${g_string_quote}${g_string_quote}"
+				echo "msgid${g_cache_strings[$cache_index]}"
+				echo 'msgstr ""'
 				echo
 				
 				let cache_index=cache_index+1	# increment loop
@@ -173,12 +173,9 @@
 			# accumulate words into string
 			g_string="${g_string}${g_word_delimiter}${word}"
 			
-			if [[ ${word%[^\\]${g_string_quote}*} != "$word" || "$word" == "$g_string_quote" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
+			if [[ ${word%[^\\]${g_string_quote}} != "$word" || "$word" == "$g_string_quote" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
 			then
-				# provide the string w/o bounding quotes
-				g_string=${g_string#${g_word_delimiter}${g_string_quote}}
-				g_string=${g_string%${g_string_quote}*}	# also remove stuff after quote
-				
+
 				store_string
 				
 				# state changes
