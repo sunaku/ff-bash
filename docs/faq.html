@@ -1,7 +1,6 @@
-TRANSLATION
+FREQUENTLY ASKED QUESTIONS
 
-	This document was translated from English using the "AltaVista - Babel Fish Translation" <http://babelfish.altavista.com/> service. For this reason, the examples and shell commands in this document may have become garbled. If this is the case, please refer to the English version of this document for the correct examples and shell commands.
-
+	This document was translated from English using the "AltaVista - Babel Fish Translation" <http://babelfish.altavista.com/> service. For this reason, some examples and shell commands in this document may have become garbled. If this is the case, please refer to the English version of this document for the correct text.
 
 HAVE A QUESTION?
 
@@ -10,8 +9,6 @@ HAVE A QUESTION?
 	Web-site: 	<http://freshmeat.net/projects/ff/>
 	E-mail: 	<skurapat@ucsc.edu>
 
-
-
 CONTENTS
 
 	1. What's the advantage of using this instead of 'find -exec'?
@@ -19,8 +16,6 @@ CONTENTS
 	2. How can I use the results of 'find' with this tool?
 	
 	3. Why is the 'read' command in my script being ignored?
-
-
 
 QUESTIONS AND ANSWERS
 
@@ -78,8 +73,6 @@ QUESTIONS AND ANSWERS
 
 	In conclusion, this tool simply allows for a different kind of approach to perform filesystem tasks. It is not meant to replace any UNIX tools such as 'find'.
 
-
-
 2. How can I use the results of 'find' with this tool?
 
 	Write the results of 'find' to a file and invoke this tool with the '--pipe' option. For example, consider recursively printing the basename of all
@@ -87,13 +80,9 @@ QUESTIONS AND ANSWERS
 	
 		$ find -name '*.c' | ff -pe 'echo $fn'
 
-
-
 3. Why is the 'read' command in my script being ignored?
 
 	The BASH 'read' builtin expects to read user input from the standard input stream. However, the standard input stream may sometimes be in use by the '--pipe' option. To get around this, you can have the 'read' builtin read from the user's terminal:
 	
 		read < /dev/tty
-
-
 
