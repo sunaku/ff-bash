@@ -53,7 +53,7 @@
 				<h3>What are the advantages of using <b>For each File</b> instead of <samp>find -exec</samp>?</h3>
 				<blockquote>
 					<p>
-						There is one advantage, which can be observed under the following conditions. If <samp>find -exec</samp> is used to invoke an intermediate shell: <code>$ find . -exec sh -c '...' \;</code>, then it will expend more system resources than <b>For each File</b>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell) and thereby cause the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory and thus does not cause a context switch. This behavior reduces the number of process forks and thereby expends less system resources as compared to <samp>find -exec</samp> under said conditions.
+						There is one advantage which can be observed under the following condition: if <samp>find -exec</samp> is used to invoke an intermediate shell, then it will expend more system resources than <b>For each File</b>: <code>find . -exec bash -c '...' \;</code>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell); thus causing the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory; thus avoiding a context switch. This behavior reduces the number of process forks and thus expends less system resources as compared to <samp>find -exec</samp> under said condition.
 						</div>
 					</p>
 					
@@ -75,7 +75,7 @@
 			<li id="shell_arg_buffer">
 				<h3>Why does the tool crash when a large number of targets are specified on the command-line?</h3>
 				<blockquote>
-					<p>The <samp>GNU BASH</samp> shell employs a buffer, of finite capacity, in which it stores command-line arguments. When this buffer is filled beyond its capacity by a user's command, the user's command may crash. A solution is to pipe the large list of targets to the tool whilst invoking it with the <samp>--pipe</samp> option.</p>
+					<p>The number of targets specified may be too large for the <samp>execle</samp> system call to handle. A solution is to pipe the large list of targets to the tool whilst invoking it with the <samp>--pipe</samp> option. Another solution is to use the recursive mode of this tool to traverse a directory which contains, either physically or indirectly via symbolic or hard links, the large number of targets.</p>
 					
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
@@ -84,7 +84,7 @@
 			<li id="targets_garbled">
 				<h3>Why are some targets given on the command-line handled improperly?</h3>
 				<blockquote>
-					<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to feed a list of the target names to the tool whilst invoking it with the <samp>--pipe</samp> option. This ensures that target names bypass the scrutiny of both the shell and tool, thus avoiding misinterpretation.</p>
+					<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to precede the list of targets using <samp>--</samp>, which signals the command-line options parser to stop parsing the remaining targets: <code>ff -- -foo --bar ...</code>. A more fault-tolerant solution is to feed a list of the target names to the tool whilst invoking it with the <samp>--pipe</samp> option. This ensures that target names bypass the scrutiny of both the shell and tool, thus avoiding misinterpretation.</p>
 					
 					<p><a href="#qlist">Return to Question Listing.</a></p>
 				</blockquote>
