@@ -1,66 +1,111 @@
-Version 1.6.8 (2004-06-18):
-- Updated the command-line interface and added new options.
-- Translated the documentation into various languages.
-- Added library for parsing command-line options.
-- Optimized several bottle-neck areas.
-- Added GPL notices in all source files of this package.
-- Updated example scripts and added new ones.
-- Updated installation script.
-
-Version 1.6.7 (2004-04-13):
-- Added support for i18n/l10n via a pseudo gettext library.
-- Removed installation script as it was unnecessary.
-- Modularized the package tree and source code.
-
-Version 1.6.6 (2004-04-05):
-- Fixed bug where the argument of the -s option was evaluated as a target.
-- Fixed errors about undefined user functions.
-- Added UN-installation feature to install script.
-- Added command line option to display program version.
-
-Version 1.6.5 (2004-04-01):
-- Fixed bug where targets given on command line were being misinterpreted.
-- Updated documentation and examples.
-
-Version 1.6.4 (2004-03-24):
-- Added command line option which allows the user to bypass the size limit of the shell's argument buffer.
-- Added 'begin_file()' and 'end_file()' control functions for 'fl'.
-- Updated documentation and examples.
-
-Version 1.6.3 (2004-03-21):
-- Modularized and optimized the code (~951% speed-up).
-- Added 'begin()' and 'end()' control functions, which are similar to the 'BEGIN' and 'END' control blocks in 'awk'.
-- Added more command line options.
-- Updated installation script, documentation, and examples.
-
-Version 1.6.2 (2004-03-14):
-- Fixed inconsistency in scripting variables between non/recursive modes.
-- Fixed several bugs in example scripts.
-- Removed obsolete scripting variable: ${p}.
-- Added new scripting variables ${w} and ${fn}.
-- Updated help and source documentation.
-
-Version 1.6.1 (2004-03-13):
-- Added new scripting variable: ${p}.
-- Added MP3 cataloging and ID3 tagging examples.
-- Added installation script.
-- Updated documentation.
-
-Version 1.6 (2004-03-11):
-- Fixed special characters handling in file names.
-- Added new script 'fl' to package.
-- Updated documentation.
-
-Version 1.5 (2004-02-03):
-- Implemented subdirectory recursing in an iterative fashion.
-- User scripts are now evaluated directly by BASH shell, via 'eval'.
-
-Version 1.4 (2004-01-25):
-- Implemented solution for handling fragmented filenames.
-- Removed obsolete 'ffr' script. Use 'ff -r' instead.
-- Added command line options, documentation, and help message.
-
-Version 1.3 (2003-08-30):
-- Initial import into CVS.
-- Command-line arguments are now handled iteratively.
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>&quot;For each File&quot; &mdash; Record of Changes</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+		<h1>&quot;For each File&quot; &mdash; Record of Changes</h1>
+		<blockquote>
+			<p>This document records important changes between successive versions of the &quot;For each File&quot; package. Visit the project web site at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> for the latest software updates, documentation, and additional resources.</p>
+			<p>Copyright &copy; 2003, 2004 Suraj N. Kurapati.</p>
+			<p>This file is part of "For each File".</p>
+			<p>"For each File" is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
+			<p>"For each File" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
+			<p>You should have received a copy of the GNU General Public License along with "For each File"; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
+		</blockquote>
+		
+		<h2>Version 1.6.8 (2004-06-18)</h2>
+		<ul>
+			<li>Completely redesigned the command-line interface and added new options.</li>
+			<li>Translated the documentation into various languages.</li>
+			<li>Added library for parsing command-line options.</li>
+			<li>Removed the preset variable <samp>${n}</samp> from the &quot;For each Line&quot; tool.</li>
+			<li>Optimized several bottle-neck areas to increase performance.</li>
+			<li>Added <samp>GNU GPL</samp> notices in all source files of this package.</li>
+			<li>Updated and added to the example scripts.</li>
+			<li>Updated the installation script and localized it.</li>
+			<li>Added example script which fetches translations for <samp>URL</samp>s using the <samp>AltaVista Babel Fish</samp> translation service.</li>
+		</ul>
+		
+		<h2>Version 1.6.7 (2004-04-13)</h2>
+		<ul>
+			<li>Added support for internationalization/localization through a gettext emulation library.</li>
+			<li>Removed installation script as it was unnecessary.</li>
+			<li>Modularized the package tree and source code.</li>
+		</ul>
+		
+		<h2>Version 1.6.6 (2004-04-05)</h2>
+		<ul>
+			<li>Fixed bug where the argument of the <samp>-s</samp> option was evaluated as a target.</li>
+			<li>Fixed errors about undefined user functions.</li>
+			<li>Added an uninstallation feature to the install script.</li>
+			<li>Added command line option to display program version.</li>
+		</ul>
+		
+		<h2>Version 1.6.5 (2004-04-01)</h2>
+		<ul>
+			<li>Fixed bug where targets given on command line were being misinterpreted.</li>
+			<li>Updated documentation and examples.</li>
+		</ul>
+		
+		<h2>Version 1.6.4 (2004-03-24)</h2>
+		<ul>
+			<li>Added command line option which allows the user to bypass the size limit of the shell's argument buffer.</li>
+			<li>Added <samp>begin_file()</samp> and <samp>end_file()</samp> control functions to the &quot;For each Line&quot; tool.</li>
+			<li>Updated documentation and examples.</li>
+		</ul>
+		
+		<h2>Version 1.6.3 (2004-03-21)</h2>
+		<ul>
+			<li>Modularized and optimized the code (~951% speed-up).</li>
+			<li>Added <samp>begin()</samp> and <samp>end()</samp> control functions, which are similar to the <samp>BEGIN</samp> and <samp>END</samp> control blocks of the <samp>awk</samp> tool.</li>
+			<li>Added more command line options.</li>
+			<li>Updated installation script, documentation, and examples.</li>
+		</ul>
+		
+		<h2>Version 1.6.2 (2004-03-14)</h2>
+		<ul>
+			<li>Fixed inconsistency in scripting variables between non/recursive modes.</li>
+			<li>Fixed several bugs in example scripts.</li>
+			<li>Removed obsolete scripting variable: <samp>${p}</samp>.</li>
+			<li>Added new scripting variables <samp>${w}</samp> and <samp>${fn}</samp>.</li>
+			<li>Updated help and source documentation.</li>
+		</ul>
+		
+		<h2>Version 1.6.1 (2004-03-13)</h2>
+		<ul>
+			<li>Added new scripting variable: <samp>${p}</samp>.</li>
+			<li>Added <samp>MP3</samp> cataloging and <samp>ID3</samp> tagging examples.</li>
+			<li>Added installation script.</li>
+			<li>Updated documentation.</li>
+		</ul>
+		
+		<h2>Version 1.6 (2004-03-11)</h2>
+		<ul>
+			<li>Fixed special characters handling in file names.</li>
+			<li>Added new &quot;For each Line&quot; tool to package.</li>
+			<li>Updated documentation.</li>
+		</ul>
+		
+		<h2>Version 1.5 (2004-02-03)</h2>
+		<ul>
+			<li>Implemented subdirectory recursing in an iterative fashion.</li>
+			<li>User scripts are now evaluated directly by the <samp>GNU BASH</samp> shell, via <samp>eval</samp>.</li>
+		</ul>
+		
+		<h2>Version 1.4 (2004-01-25)</h2>
+		<ul>
+			<li>Implemented solution for handling fragmented filenames.</li>
+			<li>Removed obsolete <samp>ffr</samp> tool. Use <samp>ff -r</samp> instead.</li>
+			<li>Added command line options, documentation, and help message.</li>
+		</ul>
+		
+		<h2>Version 1.3 (2003-08-30)</h2>
+		<ul>
+			<li>Initial import into <samp>CVS</samp>.</li>
+			<li>Command-line arguments are now handled iteratively.</li>
+		</ul>
+	</body>
+</html>
