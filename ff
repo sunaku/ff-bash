@@ -1,32 +1,48 @@
 #!/bin/bash
 #
-# Usage:
-#	ff [-reh] <files>
+# NAME
+#	ff - for each file
 #
-# Options:
-#	-r	Recurse subdirectories.
+# SYNOPSIS
+#	ff [-reh] targets ...
 #
-#	-e	Use ${EDITOR} for entering scripting commands 
-#		instead of using 'cat'.
+# DESCRIPTION
+#	Allows the user to write an embedded BASH script which will be executed
+#	for the specified files. This tool is ideal for performing a procedure
+#	upon a group of files or directories, such as mass re-naming.
+#
+#	The procedure given by the user is interpreted directly by the BASH
+#	shell. So you can think of this tool as a way to iteratively execute a 
+#	BASH script upon a large number of files or directories.
+#
+#	If you wish to input your custom script using a text editor, set a 
+#	global shell variable ${EDITOR} to the path of your favorite text 
+#	editor. For example: `export EDITOR='path to editor'`.
+#
+# PRESET VARIABLES
+#	The following preset variables are available for use in users' scripts.
+#
+#	$f	basename of current file
+#	$d	relative path to current directory
+#
+# OPTIONS
+#	-r	Recurse the given sub-directories.
+#
+#	-e	Use a custom ${EDITOR} for entering scripting commands. 
+#		This option disables the ability to pipe or redirect data 
+#		to this tool.
 #
 #	-h	Display this help message.
 #
-# User scripting variables:
-#	$f = current file
-#	$d = current directory
+# AUTHORS
+# 	Suraj Kurapati
+# 	$Revision$, $Date$
 #
-# Description:
-#
-# Performs the given commands for every file in the current dir,
-# or only the files specified as arguments. Filenames containing special
-# characters, such as spaces, should be quoted.
-#
-# if you wish to input your custom script using a text editor, set a global 
-# shell variable "$EDITOR" to the path of your favorite text editor.
-#
-#
-# @author	Suraj Kurapati
-# @version	$Revision$, $Date$
+# LICENSE
+#	This program is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; either version 2 of the License, or   
+#	(at your option) any later version.
 #
 ####
 
@@ -34,12 +50,12 @@
 	g_tmpfileMask="/tmp/$$"
 	g_tmpfile_UsrInput="${g_tmpfileMask}.usrInput"
 	
-	# options
+	# option flags
 	g_options="reh"
 	g_opt_recurse=r
 	g_opt_editor=e
 	
-	# option enabled flags
+	# option enabled flags. enabled = 1, disabled = 0
 	g_optEn_recurse=0
 	g_optEn_editor=0
 	
@@ -56,14 +72,14 @@
 			;;
 			*)
 				# display help message, which happens to be the documentation header for this file
-				sed '/^####/q' "$0" | more
+				cat "$0" | sed -e '1d ; /^####/q' -e 's/^# *//' | more
 				exit 0
 			;;
 		esac
 	done
 	
 	
-# get user script
+# allow user to input scripting commands
 	
 	if [ $g_optEn_editor -eq 1 ] && [ "$EDITOR" != "" ] ; then
 		$EDITOR $g_tmpfile_UsrInput
@@ -147,7 +163,4 @@
 	
 # cleanup
 	rm -f ${g_tmpfileMask}*
-	
-# functions
 
-	
