@@ -34,7 +34,11 @@
 		<h2>Version 1.7.3 (2004-08-13)</h2>
 		<ul>
 			<li>The start-up time has been made the same for all language codes.</li>
-			<li>Command-line arguments can now be passed to a user's script via the <samp>--args</samp> option.</li>
+			<li>Command-line arguments can now be passed to a user's script via the <samp>--args</samp> option.
+				<ul>
+					<li><samp>ff.untar</samp> and <samp>ff.mp3_catalog</samp> now support command-line options and have their own help manuals.</li>
+				</ul>
+			</li>
 			<li><samp>id3tag.lib</samp>, a library for reading ID3v1 and ID3v1.1 tags, has been added.
 				<ul>
 					<li><samp>ff.mp3_catalog</samp> now uses the new <samp>id3tag.lib</samp> library instead of the <samp>mp3info</samp> program, and the new <samp>--args</samp> option instead of querying the user.</li>
