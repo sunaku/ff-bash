@@ -85,8 +85,7 @@
 	# stores string and reference into cache
 	store_string()
 	{
-		local hash=${g_string##[^[:alnum:]]}
-		hash="${hash:1:1}${#g_string}"
+		local hash=$( __lib_gettext_hash "$g_string" )
 		
 		# store reference line number
 		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$fn:\$g_string_lineBegin\""
@@ -163,6 +162,10 @@
 			then
 
 				store_string
+#				echo "#: $fn:$g_string_lineBegin"
+#				echo "msgid$g_string"
+#				echo 'msgstr ""'
+#				echo
 				
 				# state changes
 				g_stream_state=idle
