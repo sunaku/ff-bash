@@ -228,7 +228,7 @@
 					# create directory if it doesn't exist
 					[ ! -e "$catalogged_dir" ] && mkdir -p "$catalogged_dir"
 
-					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$p" "$g_catalogDir/$catalogged_target" 2> "$g_catalogDir/$g_outError"
+					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$p" "$g_catalogDir/$catalogged_target" 2>> "$g_catalogDir/$g_outError"
 					then
 						echo "@@ $g_msgout_eutpttitc"
 						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outFail"
