@@ -61,7 +61,7 @@
 			fi
 		
 		# load script into RAM
-			g_input=$( cat "$ff_tmp_userScript" )
+			g_input=$( < "$ff_tmp_userScript" )
 			eval "$g_input"
 			g_input=
 	}
@@ -85,7 +85,10 @@
 			cp "$ff_baseOpts_optArg_targetList" "$ff_tmp_targetList"
 		else
 			# write command line arguments to target list
-			ls -d "${@}" > "$ff_tmp_targetList"
+			for arg
+			do
+				echo "$arg" >> "$ff_tmp_targetList"
+			done
 		fi
 	}
 	
@@ -118,5 +121,37 @@
 		esac
 		
 		return 0
+	}
+	
+	# base application logic
+	ff_baseLogic()
+	{
+		# scan command line options
+			
+			ff_scanOptions "${@}"
+			
+			# exit if help message was displayed or illegal options were given
+			[ $? -gt 0 ] && ff_exit
+	
+		# get user's script & save it
+	
+			ff_getScript
+	
+			# exit if no script was given
+			[ $? -gt 0 ] && ff_exit
+	
+		# handle user's script
+	
+			# load script into RAM
+			ff_evalScript
+	
+			# generate list of targets to perform upon
+			ff_setupTargets "${@}"
+			
+			# execute script
+			ff_main
+	
+		# clean up and exit
+		ff_exit
 	}
 
