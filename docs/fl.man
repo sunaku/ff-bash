@@ -48,7 +48,7 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "SYNOPSIS" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$__ff_myName -[e|f] [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
+	__lib_DocFmt_blockItem "$__ff_myName -[ef] [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
 	
 	__lib_DocFmt_blockItem "<u>$( gettext "target" )</u>"
 	__lib_DocFmt_blockStart
@@ -77,9 +77,9 @@ __lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>lang-code</u>], <b>--$__lib_ff_options_longFlag_showHelp</b> [<u>lang-code</u>]"
+	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>--$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Display this documentation in the language denoted by %s (refer to %s for a list of supported language codes) if possible and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>lang-code</u>" "ISO-639" "<u>lang-code</u>" "\"\$LANG\"" )"
+		__lib_DocFmt_blockItem "$( gettext "Display this documentation in the language denoted by %s (refer to %s for a list of supported language codes) if possible and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>$( gettext "language-code" )</u>" "ISO-639" "<u>$( gettext "language-code" )</u>" "\"\$LANG\"" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showVersion</b>, <b>--$__lib_ff_options_longFlag_showVersion</b>"
