@@ -54,7 +54,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<u>$( gettext "target" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed." "UNIX" )"
+		__lib_DocFmt_blockItem "$( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed. It is not required for a target to be present in the file-system." "UNIX" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "$( gettext "When both the %s and %s options are unspecified, shell commands will be interactively read from the user's terminal device %s until the end of transmission %s signal is issued by pressing %s." "<b>--$__lib_ff_options_longFlag_evalExpr</b>" "<b>--$__lib_ff_options_longFlag_evalFile</b>" "(/dev/tty)" "(EOT)" "[Ctrl][d]" )"
@@ -104,7 +104,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_readPipe</b>, <b>--$__lib_ff_options_longFlag_readPipe</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )"
+		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line. Targets specified on the command-line are handled before those in the standard input stream." )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>--$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]"
