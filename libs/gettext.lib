@@ -1,7 +1,6 @@
 #!/bin/bash
 # gettext emulation library (gte)
 # Provides BASH functions which emulate the GNU "gettext" program.
-# Note: all library variables begin with an underscore
 #
 # This file is distributed under the same license as the "ff" package.
 
@@ -11,8 +10,9 @@
 
 	_gte_tempfile=${TMP:-/tmp}/$$
 	
-	# arrays to cache the catalog data
-	declare -a _gte_cache_msgid _gte_cache_msgstr
+	# even index: msgid
+	# odd index: msgstr
+	declare -a _gte_cache
 	
 	# options for gettext()
 	_gte_gettext_opts=n
@@ -23,7 +23,7 @@
 	# Loads a gettext Portable-Object translation catalog into cache.
 	# Cache is not cleared before loading new data.
 	#
-	# @usage	_gte_load FILE
+	# @usage	_gte_load FILE...
 	#
 	# @param	FILE	Path of Portable-Object file to load.
 	#
@@ -31,63 +31,127 @@
 	#
 	# Catalog file Requirements
 	# ----------------------------------
-	# +	Strings should be properly quoted. For example:
+	# +	Strings should be properly quoted, using double quotes. 
+	#	For example:
 	#
 	#		msgid "hello world"
 	#		msgstr ""
 	#
-	# +	Multi-line strings are not supported. You must use '\n' instead.
-	#	For example, instead of this:
+	# +	Multi-line strings are also supported.
+	#	For example:
 	#
 	#		msgstr "This"
 	#		  "spans multiple lines"
 	#		  "..."
 	#
-	#	Use this:
-	#		msgstr "This\nspans multiple lines\n..."
+	#	And this:
+	#		msgstr "This
+	#		  spans multiple lines
+	#		  ..."
 	#
 	# -------------------------------------
 	#
 	_gte_load()
 	{
-		# check arguments
-		[[ ! -r "$1" || ! -f "$1" ]] && return 1
+		# variables
+		local file line exit_status=0
 		
-		# parse catalog file
+		# parse catalog files
+		for file
+		do
 		
-			# write entries to file because problems when piping output to 'while read'
-			sed -n 's/^msg\([is][dt]r\?\) *\(.*\)$/\1 \2/p' "$1" > "$_gte_tempfile"
+			# check file perms
+			if [[ ! -r "$file" || ! -f "$file" ]]
+			then
+				exit_status=1
+				continue
+			fi
 			
-			# load string values of entries into cache
-			while read str
+			# get all strings onto one line
+			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$_gte_tempfile"
+			
+			# load file
+			while read line
 			do
-#				echo "key='${str%% *}'"
-#				echo "value='${str#* }'"
-#				echo "index=${#_gte_cache_msgid[@]}"
-				
-				case ${str%% *} in
-					id)
-						_gte_cache_msgid[${#_gte_cache_msgid[@]}]=${str#* }
-					;;
-					str)
-						_gte_cache_msgstr[${#_gte_cache_msgstr[@]}]=${str#* }
-					;;
-				esac
-				
+				_gte_cache[${#_gte_cache[@]}]=$line
 			done < "$_gte_tempfile"
-			
-			# clean up
-			rm -f "$_gte_tempfile"
-			
-		# finished
-		return 0
+		done
+		
+		# clean up
+		rm -f "$_gte_tempfile"
+		
+		return $exit_status
 	}
+	
+	
+	# parsing state machine:: VERY SLOW!
+#	_gte_load_stateMachine()
+#	{
+#		# read words for current string
+#		if [ "$state" == read ]
+#		then
+#			# conditions that stop from reading
+#			if [[ "$word" == "msgid" || "$word" == "msgstr" ]]
+#			then
+#				# note: new string_type is in $word
+#				
+#				# state changes
+#				state=setup
+#				
+#			elif [ ! -z "$string_type" ]
+#			then
+#				# determine quote
+#				if [ -z "$string_quote" ]
+#				then
+#					string_quote=${word:0:1}
+#				else
+#					# strip multi-line quotes
+#					if [[ "$string" != "${string%$string_quote}" && "$string_quote" == ${word:0:1} ]]
+#					then
+#						string=${string%$string_quote}
+#						word=${word#$string_quote}
+##						echo ">>> stripping multi-line quote"
+#					fi
+#				fi
+#				
+#				# accumulate string 
+#				string="$string $word"	# note: this adds initial space at start of string
+#				
+#			fi
+#		fi
+#		
+#		# setup variables for next string
+#		if [ "$state" == setup ]
+#		then
+#		
+#			# process data
+#			string=${string# }		# remove initial space added during first accumulation
+#			string=${string#$string_quote}	# strip bounding quotes
+#			string=${string%$string_quote}
+#		
+#			# store data
+#			if [ "$string_type" == "msgid" ]
+#			then
+#				_gte_cache_msgid[${#_gte_cache_msgid[@]}]=$string
+#			elif [ "$string_type" == "msgstr" ]
+#			then
+#				_gte_cache_msgstr[${#_gte_cache_msgstr[@]}]=$string
+#			fi
+#			
+#			# reset vars
+#			string=
+#			string_type=$word
+#			string_quote=
+#			
+#			# state changes
+#			state=read
+#		fi
+#	}
 	
 	# Frees cached translation catalog data from memory.
 	_gte_free()
 	{
-		unset _gte_cache_msgid
-		unset _gte_cache_msgstr
+		unset _gte_cache
 	}
 	
 	
@@ -129,24 +193,26 @@
 			
 		# locate query in catalog cache
 		
-			query="\"$1\""
+			query=$1
 			shift	# remove $1 from parameters
 		
-			while [ $cache_index -lt ${#_gte_cache_msgid[@]} ]
+			while [ $cache_index -lt ${#_gte_cache[@]} ]
 			do
-				[ "$query" == "${_gte_cache_msgid[$cache_index]}" ] && break
-				let cache_index=cache_index+1	# increment loop
+				[ "$query" == "${_gte_cache[$cache_index]}" ] && break
+				let cache_index=cache_index+2	# increment loop
 			done
+			
+			let string_index=cache_index+1
 			
 #			echo "cache_index=$cache_index"
 #			echo "cache size=${#_gte_cache_msgid[@]}"
-			
+#			echo "msgstr='${_gte_cache_msgstr[$cache_index]}'"
 			
 		# determine translation
 		
-			if [ ! -z "${_gte_cache_msgstr[$cache_index]}" ]
+			if [ ! -z "${_gte_cache[$string_index]}" ]
 			then
-				translation=${_gte_cache_msgstr[$cache_index]}
+				translation=${_gte_cache[$string_index]}
 			else
 				# translation is blank. use untranslated query.
 				translation=$query
@@ -158,9 +224,23 @@
 			translation=${translation#\"}
 			translation=${translation%\"}
 			
-			printf "${translation}${_gte_gettext_optEn_noNewline:-\n}" "${@}"
+			# add trailing newline
+			[ ${_gte_gettext_optEn_noNewline:-0} -eq 0 ] && translation=${translation}\\n
+			
+			printf "${translation}" "${@}"
 			
 		# finished
 		return 0
 	}
 	
+	# function alias
+	eval_gettext()
+	{
+		gettext "${@}"
+	}
+	
+	# function alias 
+	eval_ngettext()
+	{
+		ngettext "${@}"
+	}
