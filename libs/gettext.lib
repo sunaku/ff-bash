@@ -30,31 +30,29 @@
 ## globals
 
 	__lib_gettext_tempfile="${TMPDIR:-/tmp}/__lib_gettext.$$"
+	#__lib_gettext_hashChars="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	
 ## functions
 
 	# Computes a hash value for a given string and prints it to stdout.
-	# The returned hash value consits of a string portion (whose length is bounded by the value of $2) and a number portion (whose length is less than that of $1).
 	# @param	1	string to hash
-	# @param	2	maximum length of the string portion of the hash value; default=6
 	__lib_gettext_hash()
 	{
-		local c h i=0 j=0 k=0 n=${#1} m=${2:-6}
+		local c h i=0 k=0 n=${#1}
 		
-		for (( ; i < n && j < m; i++ ))
+		for (( ; i < n ; i++ ))
 		do
 			c=${1:$i:1}	# next character in string
 			
 			if [[ $c == [[:alnum:]] ]]	# check character
 			then
-				h=$h$c	# accumulate hashed value
-				(( j++ ))	# count number of alnum chars
+				echo -n $c	# incrementally output the string portion of hash
 			else
 				(( k++ ))	# count number of non-alnum chars
 			fi
 		done
 		
-		echo $h$k$n	# output the hashed value
+		echo "$k$n"	# output the remainder of the hash
 		
 #		read -p "__lib_gettext_hash(str=$1, max=$m)=$h$k$n" </dev/tty
 	}
