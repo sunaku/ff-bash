@@ -171,7 +171,7 @@ $expression
 							
 							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached" # generate & cache the documentation
 						fi
-					} | expand -t 4 | fmt -w $( tput cols ) | ${PAGER:-less -r}
+					} | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
 				
 				exit
 			;;
