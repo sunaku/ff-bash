@@ -67,15 +67,12 @@
 		echo
 
 		# print all strings in cache
-		i=0
-		while (( i < ${#array_refs[@]} ))
+		for (( i=0 ; i < ${#array_refs[@]} ; i++ ))
 		do
 			echo "#:${!array_refs[$i]}"
 			echo "msgid${!array_strings[$i]}"
 			echo 'msgstr ""'
 			echo
-
-			(( i++ ))
 		done
 
 #		declare | grep 'g_cache'
