@@ -30,10 +30,7 @@
 ## globals
 
 	__lib_gettext_tempfile="${TMP:-/tmp}/__lib_gettext.$$"
-	
-	# even index: msgid
-	# odd index: msgstr
-	declare -a __lib_gettext_cache
+	__lib_gettext_cachePrefix=__lib_gettext_cache_
 	
 ## functions
 
@@ -71,54 +68,39 @@
 	__lib_gettext_load()
 	{
 		# variables
-		local file line exit_status=0 oldIFS=$IFS
+		local file msgid msgstr exit_status=0 oldIFS=$IFS
 		
-		# preserve whitespace
+		# preserve whitespace in input file
 		IFS='
 '
 		# parse catalog files
 		for file
 		do
 			# check file perms
-			if [[ ! -r "$file" || ! -f "$file" ]]
+			if ! [[ -r "$file" && -f "$file" ]]
 			then
 				exit_status=1
 				continue
 			fi
 			
 			# get all strings onto one line
-			( sed -e '/^$/d ; /^[ \t]*\#/d' | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g ; s/msg[si][td]r\?[ \t]*/\n/g' | sed -e '1d ; s/^ *"// ; s/" *$//' ) < "$file" > "$__lib_gettext_tempfile"
+			sed '/^$/d ; /^[ \t]*\#/d' "$file" | tr '\n' ' ' | sed 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g ; s/msg[si][td]r\?[ \t]*/\n/g' | sed '1d ; s/^ *"// ; s/" *$// ; $a\
+' > "$__lib_gettext_tempfile"
 			
-			# append new line so that the last gettext string is read
-			echo -e '\n' >> "$__lib_gettext_tempfile"
-			
-			# load file
-			while read -r line
+			# load file into cache
+			while read -r msgid && read -r msgstr
 			do
-				__lib_gettext_cache[${#__lib_gettext_cache[@]}]=$line
+				eval "${__lib_gettext_cachePrefix}${msgid:0:1}${#msgid}=\$msgstr"
 			done < "$__lib_gettext_tempfile"
 			
-			# remove blank entry at end of cache
-			unset -v __lib_gettext_cache[$(( ${#__lib_gettext_cache[@]} - 1 ))]
-			
-#			declare -a ; read -u 2
 		done
 		
 		# clean up
 		rm -f "$__lib_gettext_tempfile"
-		
-		# restore IFS
 		IFS=$oldIFS
 		
 		return $exit_status
 	}
-	
-	# Frees cached translation catalog data from memory.
-	__lib_gettext_free()
-	{
-		unset __lib_gettext_cache
-	}
-	
 	
 	# Prints a translated string using the loaded catalog data.
 	# If a translation is not available, the given query is printed.
@@ -142,7 +124,7 @@
 	#
 	gettext()
 	{
-		local query translation cacheIndex=0
+		local query response
 		
 		# handle options
 		
@@ -152,38 +134,18 @@
 				shift	# remove $1
 			fi
 			
-		# locate query in catalog cache
-		
 			query=$1
 			shift	# remove $1 from parameters
 		
-			while [ $cacheIndex -lt ${#__lib_gettext_cache[@]} ]
-			do
-				[ "$query" == "${__lib_gettext_cache[$cacheIndex]}" ] && break
-				let cacheIndex=cacheIndex+2	# increment loop
-			done
-			
-			let string_index=cacheIndex+1
-			
 		# determine translation
-		
-			if [ ! -z "${__lib_gettext_cache[$string_index]}" ]
-			then
-				translation=${__lib_gettext_cache[$string_index]}
-			else
-				# translation is blank. use untranslated query.
-				translation=$query
-			fi
+			response=${__lib_gettext_cachePrefix}${query:0:1}${#query} # perform hash
+			response=${!response}
+			
+			# if translation is blank. use untranslated query.
+			[ -z "$response" ] && response=$query
 		
 		# print result
-		
-			# add trailing newline
-			[ ${__lib_gettext_options_isOn_noNewline:-0} -eq 0 ] && translation=${translation}\\n
-			
-			printf "${translation}" "${@}"
-			
-		# finished
-		return 0
+			printf "${response}${__lib_gettext_options_isOn_noNewline:-\n}" "${@}"
 	}
 	
 	# function alias
