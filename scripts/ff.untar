@@ -29,44 +29,51 @@
 # globals
 
 	### extra options passed to 'tar'
-	tar_opts=
+	declare -a tar_opts
+	temp_file=${TMP:-/tmp}/$$_ff.untar
 
 # functions
 
 	begin()
 	{
-		read -p "please specify any additional options for 'tar': [none] " tar_opts < /dev/tty
+		read -p "Specify any additional options for 'tar': [none] " tar_opts < /dev/tty
 		
-		read -p "extract to current working directory '$w' (yes/no)? [no] " < /dev/tty
+		read -p "Extract to current working directory '$w' (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && opts_exToWd=1
+	}
+	
+	end()
+	{
+		# clean up
+		rm -f $temp_file
 	}
 	
 	main()
 	{
+		echo
+		echo "Now handling: \"$f\""
+		
 		# determine tar-ball type
 		
-			if [ "${fn%%.*gz}" != "$fn" ]
-			then
-				# handle gzipped tar-balls
-				tar_type=z
-				
-			elif [ "${fn%%.*bz*}" != "$fn" ]
-			then
-			
-				# handle bzipped tar-balls
-				tar_type=j
-				
-			elif [ "${fn%%.*tar}" != "$fn" ]
-			then
-			
-				# handle regular tar-balls
-				tar_type=
-				
-			else
-				# not a tar-ball
-				return
-			fi
+			case "$fn"
+			in
+				*gz)
+					# handle gzipped tar-balls
+					tar_type=z
+				;;
+				*bz2?)
+					# handle bzipped tar-balls
+					tar_type=j
+				;;
+				*)
+					# handle regular tar-balls
+					tar_type=
+				;;
+			esac
 		
+			# check if valid tar-ball
+			! tar -${tar_type}tf "$f" > $temp_file && return
+			
 		# determine extraction point
 		
 			if [ ${opts_exToWd:-0} -gt 0 ]
@@ -79,17 +86,19 @@
 			fi
 			
 			# if the tar-ball doesn't extract into its own directory, create one
-			if [ ! -z "$(tar -${tar_type}tf "$f" | grep -v '/')" ]
+			if grep -v '^/' $temp_file >& /dev/null
 			then
 				# strip off the file extension
-				tar_outdir=$tar_outdir/${fn%%.*}
+				tar_outdir="$tar_outdir/${fn%.*}"
 				
-				# if output directory exists, ask for a unique name
-				if [ -e "$tar_outdir" ]
-				then
-					new_outdir=${tar_outdir}__$$
+				# generate unique filename
+				new_outdir="${tar_outdir}__$$"
 					
-					read -p "output directory '$tar_outdir' exists; please specify a different directory name: [$new_outdir] " < /dev/tty
+				# if output directory exists, ask for a unique name
+				until mkdir -p "$tar_outdir" && [ -w "$tar_outdir" ]
+				do
+					echo "Error: output directory '$tar_outdir' cannot be written to."
+					read -e -p "Specify a different output directory: [$new_outdir] " < /dev/tty
 					
 					if [ -z "$REPLY" ]
 					then
@@ -97,17 +106,11 @@
 					else
 						tar_outdir=$REPLY
 					fi
-				fi
-				
-				mkdir -p "$tar_outdir"
+				done
 			fi
 		
 		# extract tar-ball
-		
-			# notify user
-			echo "extracting '$f' into '$tar_outdir'."
-			
-			# extract the file
-			tar $tar_opts $( [ ! -z "$tar_outdir" ] && echo "-C $tar_outdir" ) -${tar_type}xf "$f"
+			echo "Extracting '$f' into '$tar_outdir'"
+			tar "${tar_opts[@]}" -C "$tar_outdir" -${tar_type}xf "$f" 
 	}
 
