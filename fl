@@ -73,7 +73,7 @@
 	# option enabled flags. enabled = 1, disabled = 0
 	g_optEn_editor=0
 	
-# scan options
+# scan options and set flags
 
 	while getopts "$g_options" opt
 	do
@@ -92,20 +92,25 @@
 	
 # allow user to input scripting commands
 	
-	if [ $g_optEn_editor -eq 1 ] && [ "$EDITOR" != "" ] ; then
+	if [ $g_optEn_editor -eq 1 ] && [ ! -z "$EDITOR" ] ; then
+		# launch user's editor
 		$EDITOR $g_tmpfile_UsrInput
 	else
+		# 'cat' allows piping and input redirection
 		cat > $g_tmpfile_UsrInput
 	fi
 	
 # check user script
-	if [ -z $g_tmpfile_UsrInput ] ; then
-		g_input=break
+	if [ -z "$g_tmpfile_UsrInput" ] ; then
+		
+		# user has aborted. clean up and exit
+		rm -f ${g_tmpfileMask}*
+		exit
 	else
-		g_input=$( cat $g_tmpfile_UsrInput )
+		g_input=$( cat "$g_tmpfile_UsrInput" )
 	fi
 
-# operate on given files, don't handle subdirs
+# operate iteratively on given files, don't handle subdirs
 	
 	# set path of current directory
 	d="$PWD"
