@@ -9,17 +9,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -30,25 +30,25 @@
 ## global paths
 
 	__ff_myPath=$0	# path to this program
-	
+
 		# dereference symbolic-links until full path is obtained
 		while [ -L "$__ff_myPath" ]
 		do
 			__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
 		done
-	
+
 	__ff_myName=${__ff_myPath##*/}	# basename of this program
 	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
-	
+
 	__ff_myConf="$HOME/.ff"	# path to user settings directory
 		[ ! -e "$__ff_myConf" ] && mkdir -p "$__ff_myConf"	# create if needed
-	
+
 	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
 	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
 	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
-	
+
 	__ff_myLang=$( locale 2>/dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
-	
+
 ## libraries
 
 	source "$__ff_myResources_libs/ff.lib"
@@ -58,13 +58,13 @@
 	# command line options
 	__ff_myOptions_shortFlag_handleHidden=-a
 	__ff_myOptions_longFlag_handleHidden=--all
-	
+
 	__ff_myOptions_shortFlag_ignoreLinks=-l
 	__ff_myOptions_longFlag_ignoreLinks=--ignore-links
-	
+
 	__ff_myOptions_shortFlag_recursive=-r
 	__ff_myOptions_longFlag_recursive=--recursive
-	
+
 	__ff_myOptions_shortFlag_fileMask=-m
 	__ff_myOptions_longFlag_fileMask=--mask
 
@@ -103,52 +103,52 @@
 	__ff_main_recursive_()
 	{
 		local d=$1
-		
+
 		# handle all directories
 		for f in "$d"/*
 		do
 			if [ -d "$f" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$f" ]]
 			then
-				
+
 #				echo "(recursive) entering '$f'"
 				__ff_main_recursive_ "$f"
 			fi
 		done
-		
+
 		# handle all files
 		for t in "$d"/${__ff_myOptions_value_fileMask:-*}
 		do
 			# update preset variables
 			f=$t
 			fn=${f##*/}	# keep everything after the last slash
-			
+
 			main	# user's control function
 		done
-		
+
 #		echo "(recursive) leaving '$d'"
 	}
-	
+
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
 		__lib_ff_updateVars_linear	# update preset variables
 		main	# user's control function
 	}
-	
+
 	__ff_main()
 	{
 		# preset variables
 		local t d f fn
-		
+
 		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
 
 		# check method of operation: recursive or non-recursive
 		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation
 		then
-		
+
 			# handle hidden file-names
 			[ ${__ff_myOptions_isOn_handleHidden:-0} -eq 1 ] && shopt -s dotglob
-		
+
 			# handle command-line targets
 			for d in "${__lib_ff_targetList[@]}"
 			do
@@ -159,18 +159,24 @@
 					__ff_main_recursive_ "$d"
 				fi
 			done
-			
+
 			# handle piped targets
 			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 			then
-				while IFS= read -r d
+
+				[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
+
+				while IFS= read -r
 				do
-					if [ -d "$d" ]
-					then
-						d=${d//+(\/)//}
-						d=${d%/}
-						__ff_main_recursive_ "$d"
-					fi
+					for d in $REPLY
+					do
+						if [ -d "$d" ]
+						then
+							d=${d//+(\/)//}
+							d=${d%/}
+							__ff_main_recursive_ "$d"
+						fi
+					done
 				done
 			fi
 
@@ -181,13 +187,19 @@
 			do
 				__ff_main_linear_
 			done
-			
+
 			# handle piped targets
 			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 			then
-				while IFS= read -r t
+
+				[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
+
+				while IFS= read -r
 				do
-					__ff_main_linear_
+					for t in $REPLY
+					do
+						__ff_main_linear_
+					done
 				done
 			fi
 		fi
@@ -202,7 +214,7 @@
 	end() { :; }
 	main() { :; }
 	finalize() { :; }
-	
+
 	__lib_ff_targetList=( "${@}" )	# init arguments array
 	__lib_ff_main
 

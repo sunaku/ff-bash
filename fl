@@ -9,20 +9,20 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 ###
 
@@ -30,25 +30,25 @@
 ## global paths
 
 	__ff_myPath=$0	# path to this program
-	
+
 		# dereference symbolic-links until full path is obtained
 		while [ -L "$__ff_myPath" ]
 		do
 			__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
 		done
-	
+
 	__ff_myName=${__ff_myPath##*/}	# basename of this program
 	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
-	
+
 	__ff_myConf="$HOME/.ff"	# path to user settings directory
 		[ ! -e "$__ff_myConf" ] && mkdir -p "$__ff_myConf"	# create if needed
-	
+
 	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
 	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
 	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
-	
+
 	__ff_myLang=$( locale 2> /dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
-	
+
 ## libraries
 
 	source "$__ff_myResources_libs/ff.lib"
@@ -61,55 +61,61 @@
 		__lib_ff_handleBaseOption "$1" "$2"
 		return $?
 	}
-	
+
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
 		if [[ -f "$t" && -r "$t" ]] # check permissions
 		then
-		
+
 			# update preset variables
 			__lib_ff_updateVars_linear
-		
+
 			begin_file	# user's control function
-			
+
 			i=1
 			while read -r l	# don't nullify IFS here because user can specify their own custom IFS
 			do
 				main	# user's control function
 				(( i += 1 ))	# increment line number
 			done < "$f"
-			
+
 			end_file	# user's control function
 		fi
 	}
-	
+
 	__ff_main()
 	{
 		# scripting variables
 		local t d f fn i l
 		IFS=	# nullify to preserve whitespace
-		
+
 		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
-		
+
 		# handle command-line targets
 		for t in "${__lib_ff_targetList[@]}"
 		do
 			__ff_main_linear_
 		done
-		
+
 		# handle piped targets
 		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 		then
-			while IFS= read -r t
+
+			[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
+
+			while IFS= read -r
 			do
-				__ff_main_linear_
+				for t in $REPLY
+				do
+					__ff_main_linear_
+				done
 			done
 		fi
-		
+
 		end	# user's control function
 	}
-	
+
 ## main script logic
 
 	# dummy control functions

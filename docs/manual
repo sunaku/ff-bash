@@ -87,7 +87,13 @@ echo \
 		$( gettext "Assume that the language code of the current locale is %s and ignore the value defined by the %s locale attribute." "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
 
 	<b>$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
-		$( gettext "Read the standard input stream for a list of targets, which are delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )
+		$( gettext "Read the standard input stream for a list of targets, which by default are delimited by the new-line character, in addition to those specified on the command-line. Note that targets specified on the command-line are handled before those specified using this option." )
+
+		$( gettext "The following subordinate options have no effect if used without this option." )
+
+		<b>$__lib_ff_options_flag_pipeDelim</b> <u>$( gettext "delimiter" )</u>
+			$( gettext "Assume that targets listed on the standard input stream are seperated by %s instead of the new-line character. Note that at least one new-line character must be present at the very end of the list of targets that are specified on the standard input stream." "<u>$( gettext "delimiter" )</u>" )
+
 $(
 	if [ "$__ff_myName" == ff ]
 	then
