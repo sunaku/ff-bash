@@ -178,6 +178,9 @@ $expression
 		# ensures proper clean up
 			trap 'exit 9' INT KILL TERM HUP
 
+		# set current sub-shell options
+			shopt -s nullglob
+			
 		# scan command line options
 
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized
@@ -186,7 +189,7 @@ $expression
 				gettext "Error: %s is not a valid option. Try %s." "\"$__lib_ff_targetList\"" "\"--$__lib_ff_options_longFlag_showHelp\""
 				exit 1
 			fi
-			
+		
 		# load and execute script
 			__lib_ff_loadScript
 			__ff_main	# invoke the client using this library
