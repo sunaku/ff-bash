@@ -30,15 +30,6 @@
 			<p>This document attempts to answer frequently asked questions about the <b>For each File</b> package.</p>
 			
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
-			
-			<h3>Copyright and License Information</h3>
-			<blockquote>
-				<p>Copyright &copy; 2003, 2004 Suraj N. Kurapati.</p>
-				<p>This file is part of "For each File".</p>
-				<p>"For each File" is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
-				<p>"For each File" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
-				<p>You should have received a copy of the GNU General Public License along with "For each File"; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
-			</blockquote>
 		</blockquote>
 
 		<h2>Have a Question?</h2>
@@ -57,49 +48,47 @@
 		</blockquote>
 		
 		<h2>Questions and Answers</h2>
-		<blockquote>
-			<ol>
-				<li id="find_exec">
-					<h3>What are the advantages of using <b>For each File</b> instead of <samp>find -exec</samp>?</h3>
-					<blockquote>
-						<p>
-							There is one advantage, which can be observed under the following conditions. If <samp>find -exec</samp> is used to invoke an intermediate shell: <code>$ find . -exec sh -c '...' \;</code>, then it will expend more system resources than <b>For each File</b>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell) and thereby cause the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory and thus does not cause a context switch. This behavior reduces the number of process forks and thereby expends less system resources as compared to <samp>find -exec</samp> under said conditions.
-							</div>
-						</p>
-						
-						<p><a href="#qlist">Return to Question Listing.</a></p>
-					</blockquote>
-				</li>
-				
-				<li id="read_ignored">
-					<h3>Why is the <samp>read</samp> built-in command in my script being ignored?</h3>
-					<blockquote>
-						<p>By default, the <samp>read</samp> built-in command attempts to read user input from the standard input stream. However, the standard input stream may be in use if this tool is invoked with the <samp>--pipe</samp> option.</p>
-						
-						<p>If your intention is to read input from the user, a solution is to have the <samp>read</samp> built-in command read directly from the user's terminal rather than the standard input stream: <code>read &lt; /dev/tty</code></p>
-						
-						<p><a href="#qlist">Return to Question Listing.</a></p>
-					</blockquote>
-				</li>
-				
-				<li id="shell_arg_buffer">
-					<h3>Why does the tool crash when a large number of targets are specified on the command-line?</h3>
-					<blockquote>
-						<p>The <samp>GNU BASH</samp> shell employs a buffer, of finite capacity, in which it stores command-line arguments. When this buffer is filled beyond its capacity by a user's command, the user's command may crash. A solution is to pipe the large list of targets to the tool using the <samp>--pipe</samp> option.</p>
-						
-						<p><a href="#qlist">Return to Question Listing.</a></p>
-					</blockquote>
-				</li>
-				
-				<li id="targets_garbled">
-					<h3>Why are some targets given on the command-line handled improperly?</h3>
-					<blockquote>
-						<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to use the <samp>--pipe</samp> option to feed a list of the target names to the tool. This option ensures that the tool treats target names as raw strings and does not attempt to interpret them.</p>
-						
-						<p><a href="#qlist">Return to Question Listing.</a></p>
-					</blockquote>
-				</li>
-			</ol>
-		</blockquote>
+		<ol>
+			<li id="find_exec">
+				<h3>What are the advantages of using <b>For each File</b> instead of <samp>find -exec</samp>?</h3>
+				<blockquote>
+					<p>
+						There is one advantage, which can be observed under the following conditions. If <samp>find -exec</samp> is used to invoke an intermediate shell: <code>$ find . -exec sh -c '...' \;</code>, then it will expend more system resources than <b>For each File</b>. This is because, for each file it handles, <samp>find -exec</samp> will fork a child process (the intermediate shell) and thereby cause the operating system to perform a context switch. In contrast, <b>For each File</b> will invoke a <samp>GNU BASH</samp> function that is already loaded into memory and thus does not cause a context switch. This behavior reduces the number of process forks and thereby expends less system resources as compared to <samp>find -exec</samp> under said conditions.
+						</div>
+					</p>
+					
+					<p><a href="#qlist">Return to Question Listing.</a></p>
+				</blockquote>
+			</li>
+			
+			<li id="read_ignored">
+				<h3>Why is the <samp>read</samp> built-in command in my script being ignored?</h3>
+				<blockquote>
+					<p>By default, the <samp>read</samp> built-in command attempts to read user input from the standard input stream. However, the standard input stream may be in use if this tool is invoked with the <samp>--pipe</samp> option.</p>
+					
+					<p>If your intention is to read input from the user, a solution is to have the <samp>read</samp> built-in command read directly from the user's terminal rather than the standard input stream: <code>read &lt; /dev/tty</code></p>
+					
+					<p><a href="#qlist">Return to Question Listing.</a></p>
+				</blockquote>
+			</li>
+			
+			<li id="shell_arg_buffer">
+				<h3>Why does the tool crash when a large number of targets are specified on the command-line?</h3>
+				<blockquote>
+					<p>The <samp>GNU BASH</samp> shell employs a buffer, of finite capacity, in which it stores command-line arguments. When this buffer is filled beyond its capacity by a user's command, the user's command may crash. A solution is to pipe the large list of targets to the tool whilst invoking it with the <samp>--pipe</samp> option.</p>
+					
+					<p><a href="#qlist">Return to Question Listing.</a></p>
+				</blockquote>
+			</li>
+			
+			<li id="targets_garbled">
+				<h3>Why are some targets given on the command-line handled improperly?</h3>
+				<blockquote>
+					<p>The names of these targets may contain characters that are being misinterpreted by the tool or the shell. A solution is to feed a list of the target names to the tool whilst invoking it with the <samp>--pipe</samp> option. This ensures that target names bypass the scrutiny of both the shell and tool, thus avoiding misinterpretation.</p>
+					
+					<p><a href="#qlist">Return to Question Listing.</a></p>
+				</blockquote>
+			</li>
+		</ol>
 	</body>
 </html>
