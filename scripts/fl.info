@@ -31,12 +31,11 @@
 print_info()
 {
 	echo "$1 {"
-	echo "\$fn = '$fn'"
-	echo "\$f = '$f'"
-	echo "\$d = '$d'"
-	echo "\$w = '$w'"
-	echo "\$i = '$i'"
-	echo "\$l = '$l'"
+	echo "\$fn = \"$fn\""
+	echo "\$f  = \"$f\""
+	echo "\$d  = \"$d\""
+	echo "\$i  = \"$i\""
+	echo "\$l  = \"$l\""
 	echo "}"
 }
 
