@@ -112,7 +112,7 @@
 						<li><samp>./fl</samp> &mdash; <i>The <b>For each Line</b> tool.</i></li>
 						<li><samp>./i18n/</samp> &mdash; <i>Contains internationalization resources.</i></li>
 						<li><samp>./libs/</samp> &mdash; <i>Contains libraries for use by shell scripts.</i></li>
-						<li><samp>./scripts/</samp> &mdash; <i>Contains example scripts that are usable by the tools of this package.</i></li>
+						<li><samp>./examples/</samp> &mdash; <i>Contains example scripts that are usable by the tools of this package.</i></li>
 					</ul>
 				</blockquote>
 			</li>
@@ -129,20 +129,20 @@
 			<li>
 				<h2 id="uda">Example Scripts</h2>
 				<blockquote>
-					<p>In the <samp>./scripts/</samp> directory there are several example scripts that can be invoked with the tools of this package. These scripts are named such that their names begin with the name of the tool for which they were designed to be invoked by. For example, an example script named <samp>foo.bar</samp> is to be used invoked with the <samp>foo</samp> tool. Also note that scripts written to be invoked by one tool may not produce correct results if invoked with another.</p>
+					<p>In the <samp>./examples/</samp> directory there are several example scripts that can be invoked with the tools of this package. These scripts are named such that their names begin with the name of the tool for which they were designed to be invoked by. For example, an example script named <samp>foo.bar</samp> is to be used invoked with the <samp>foo</samp> tool. Also note that scripts written to be invoked by one tool may not produce correct results if invoked with another.</p>
 
-					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>:
-						<code>./ff -f ./scripts/ff.info .///* | ${PAGER:-less}</code><br/>
-						<code>./ff -rf ./scripts/ff.info ./// | ${PAGER:-less}</code><br/>
-						<code>./ff -f ./scripts/ff.info ///bin///* | ${PAGER:-less}</code><br/>
-						<code>./ff -rf ./scripts/ff.info ///bin | ${PAGER:-less}</code><br/>
-						<code>./ff -rf ./scripts/ff.info ///bin -m 'g*' | ${PAGER:-less}</code><br/>
-						<code>./fl -f ./scripts/fl.info .//docs///gpl.txt | ${PAGER:-less}</code><br/>
-						<code>./ff -f ./scripts/ff.info --args .///* | ${PAGER:-less}</code><br/>
-						<code>./fl -f ./scripts/fl.info --args ./* | ${PAGER:-less}</code><br/>
+					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./examples/ff.info</samp> and <samp>./examples/fl.info</samp>:
+						<code>./ff -f ./examples/ff.info .///* | ${PAGER:-less}</code><br/>
+						<code>./ff -rf ./examples/ff.info ./// | ${PAGER:-less}</code><br/>
+						<code>./ff -f ./examples/ff.info ///bin///* | ${PAGER:-less}</code><br/>
+						<code>./ff -rf ./examples/ff.info ///bin | ${PAGER:-less}</code><br/>
+						<code>./ff -rf ./examples/ff.info ///bin -m 'g*' | ${PAGER:-less}</code><br/>
+						<code>./fl -f ./examples/fl.info .//docs///gpl.txt | ${PAGER:-less}</code><br/>
+						<code>./ff -f ./examples/ff.info --args .///* | ${PAGER:-less}</code><br/>
+						<code>./fl -f ./examples/fl.info --args ./* | ${PAGER:-less}</code><br/>
 					</p>
 
-					<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>head ./scripts/* | ${PAGER:-less}</code></p>
+					<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>head ./examples/* | ${PAGER:-less}</code></p>
 				</blockquote>
 			</li>
 			<li>
