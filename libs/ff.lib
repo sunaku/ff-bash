@@ -138,13 +138,14 @@ $expression
 			;;
 			$__lib_ff_options_flag_showHelp)
 
-				local __lib_ff_docFile=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
+				local __lib_ff_docFileName=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
+				local __lib_ff_docFilePath="$__ff_myResources_docs/$__lib_ff_docFileName"
 
 				# NOTE: there are no translation catalogs for English because the documentation is written in English
 
 				# determine which translation catalog to use
 					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}	# parse user's choice
-					__lib_ff_docI18n="$__ff_myResources_i18n/$__lib_ff_docFile.$__lib_ff_docLang.po"
+					__lib_ff_docI18n="$__ff_myResources_i18n/$__lib_ff_docFileName.$__lib_ff_docLang.po"
 
 				# check if the chosen translation catalog is available
 					if ! [ -r "$__lib_ff_docI18n" -a -f "$__lib_ff_docI18n" ]
@@ -163,10 +164,10 @@ $expression
 
 				# display the documentation
 
-					__lib_ff_docCached="$__ff_myConf/$__ff_myName.$__lib_ff_docFile.$__lib_ff_docLang"	# cached copies are stored in user settings directory
+					__lib_ff_docCached="$__ff_myConf/$__ff_myName.$__lib_ff_docFileName.$__lib_ff_docLang"	# cached copies are stored in user settings directory
 
 					{
-						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docLang" == en || "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
+						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docFilePath" -ot "$__lib_ff_docCached" && "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
 						then
 							cat "$__lib_ff_docCached"	# display cached file
 						else
@@ -175,7 +176,7 @@ $expression
 							__lib_gettext_load "$__lib_ff_docI18n"
 
 							# generate & cache the documentation
-							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
+							source "$__lib_ff_docFilePath" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
 						fi
 					} | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
 
@@ -258,7 +259,7 @@ $expression
 		# scan command line options
 
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized by the client script of this library
-			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList" "__lib_ff_handleOption"
+			if ! __lib_CmdOpts_scanOptions __lib_ff_targetList __lib_ff_handleOption
 			then
 				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"$__lib_ff_options_flag_showHelp\""
 				exit 1
