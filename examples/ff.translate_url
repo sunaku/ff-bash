@@ -14,17 +14,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -38,67 +38,65 @@
 		g_service_URL='http://babelfish.altavista.com/babelfish/trurl_pagecontent?'
 		g_service_URL_flags_langCombo='&lp='
 		g_service_URL_flags_docURL='&url='
-		
+
 		# output produced by service when it is busy
 		g_service_busyMessage1='<title>[^<>]*Error[^<>]*</title>'
 		g_service_busyMessage2='n/a'
-		
+
 		# encoding of service's output
-		g_service_encoding="UTF-8"
-		
+		g_service_encoding='UTF-8'
+
 		# possible values for the service's $langFlag
 		g_service_langCombos=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
-	
+
 	# supported languages
-		
-		g_langNames=( "Chinese Simplified" "Chinese Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
-		
+
+		g_langNames=( "$( gettext "Chinese Simplified" )" "$( gettext "Chinese Traditional" )" "$( gettext "Dutch" )" "$( gettext "English" )" "$( gettext "French" )" "$( gettext "German" )" "$( gettext "Greek" )" "$( gettext "Italian" )" "$( gettext "Japanese" )" "$( gettext "Korean" )" "$( gettext "Portuguese" )" "$( gettext "Russian" )" "$( gettext "Spanish" )" )
+
 		g_langCodes=( zh zt nl en fr de el it ja ko pt ru es )
-		
-	# source document
-	
-		g_langSrc=$__ff_myLang	# default language
-		
+
+	g_langSrc=$__ff_myLang	# default language
+
+	MAX_RETRY=2	# maximum number of retries
+
 ## helper functions
 
 	# query user for language of source documents
 	querySourceLang()
 	{
-		local i
-		
+		local i lang
+
 		# display menu
-		
-			echo "Code	Language"
-			echo "----	--------"
-			
+
+			echo "$( gettext "CODE" )	$( gettext "LANGUAGE" )"
+
 			i=0
 			while [ $i -lt ${#g_langCodes[@]} ]
 			do
 				echo "${g_langCodes[$i]}	${g_langNames[$i]}"
 				(( i++ ))	# increment loop
 			done
-			
+
 			echo
-				
+
 		# read & validate choice
-		
+
 			while true
 			do
 				# read choice
-					read -p "%% Please specify the code for the language in which \"$docURL\" is written: [$g_langSrc] " < /dev/tty
-					[ -z "$REPLY" ] && return # user has accepted default value
-					
+					lang=$( __lib_util_query "%% $( gettext "Please specify the code of the language in which %s is written:" "\"$docURL\"" )" "$g_langSrc" )
+
 				# validate choice
 					for i in "${g_langCodes[@]}"
 					do
-						if [ "$i" == "$REPLY" ]
+						if [ "$i" == "$lang" ]
 						then
-							g_langSrc=$REPLY
+							g_langSrc=$lang
 							return
 						fi
 					done
-					
-				echo "%% Error: \"$REPLY\" is not a valid language code. Try again."
+
+				echo "%% $( gettext "Error: %s is not a valid language code. Try again." "\"$lang\"" )"
 			done
 	}
 
@@ -106,44 +104,57 @@
 
 	main()
 	{
-		local i docURL=$o docDst langDst langCombo queryURL
-		
+		local i docURL=$o docDst langDst langCombo queryURL failures
+
 		querySourceLang	# query user about the source document's language
-		
+
 		i=0
+		failures=0
 		while [ $i -lt ${#g_service_langCombos[@]} ]
 		do
 			langCombo=${g_service_langCombos[$i]}	# current translation combination
 			langDst=${langCombo#*_}
-			
+
 			docDst="$n.$langDst"	# path to downloaded translation file
-			
+
 			# check if source language matches the current combination flag
 			if [ "$g_langSrc" == "${langCombo%_*}" ]
 			then
-		
+
 				# display status message
-				echo "%% Translating from \"$g_langSrc\" to \"$langDst\"."
-			
-				# assemble URL to query service with
+				echo "%% $( gettext "Translating from %s into %s." "\"$g_langSrc\"" "\"$langDst\"" )"
+
+				# fetch translation
 				queryURL="${g_service_URL}${g_service_URL_flags_docURL}${docURL}${g_service_URL_flags_langCombo}${langCombo}"
 				
-				# fetch translation
 				wget -q --header="Accept-Charset: $g_service_encoding" -O "$docDst" "$queryURL"
-				
+
 				# check for errors
 				if grep -i "$g_service_busyMessage1" "$docDst" >& /dev/null || [ "$( tr -d '[:space:]' < "$docDst" )" == "$g_service_busyMessage2" ]
 				then
-					# try again after some time
+					(( failures++ ))
+
+					if [ $failures -gt $MAX_RETRY ]	# ask: try again?
+					then
+						__lib_util_queryYesNo "%% $( gettext "Skip translation into current language?" )"
+
+						if [ $? -eq 0 ]
+						then
+							failures=0
+						else
+							(( i++ ))
+							continue
+						fi
+					fi
+
 					timeout=${RANDOM:0:1}	# determine wait time
-					echo -e "%% The translation service is busy or an error occured.\n Trying again in $timeout second(s)..."	# display status message
-					
-					sleep $timeout	# perform waiting
+					echo -e "%% $( gettext "The translation service is busy or an error occured.\n Retrying after %s seconds." "$timeout" )"	# display status message
+
+					sleep $timeout
 					continue
 				fi
 			fi
-			
-			(( i++ ))	# increment loop
+
+			(( i++ ))
 		done
 	}
-
