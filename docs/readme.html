@@ -49,16 +49,41 @@
 			<li>
 				<h2 id="limits">Limitations</h2>
 				<ul>
-					<li>File names containing new-line characters are not handled properly.</li>
+					<li>Target names containing new-line characters are not handled properly if they are specified via the <samp>--pipe</samp> option.</li>
+					<li>The translations may be rough and incoherent at times because they were translated using software.</li>
 				</ul>
 			</li>
 			<li>
 				<h2 id="reqs">Requirements</h2>
 				<blockquote>
-					<p>It is recommended that the latest available versions of the following software be used.</p>
+					<p>It is recommended that the latest available versions of the following software be used, as newer releases tend to have less defects. Also, the paths to the software below must be listed before those of their native counterparts in the user's <samp>$PATH</samp> variable. For example, on a non <samp>GNU/Linux</samp> system: <code>PATH=/gnu/bin:/bin</code></p>
 					<ul>
-						<li><samp><a href="http://www.gnu.org/software/bash/bash.html">GNU BASH</a></samp> Shell &mdash; <i>This package has been tested with version <samp>2.05b</samp>.</i></li>
-						<li><samp><a href="http://www.gnu.org/software/coreutils/">GNU Core Utilities</a></samp> &mdash; <i>This package has been tested with version <samp>5.2.1</samp>.</i></li>
+						<li><a href="http://www.gnu.org/software/bash/bash.html"><samp>GNU BASH</samp></a> (Shell)
+							<ul>
+								<li>Version <samp>2.05b</samp> has been tested successfully with this package.</li>
+								<li>The shell must be accessible via: <samp>/bin/bash</samp>. If this is not possible, then the user can adjust the line <samp>#!/bin/bash</samp> to reflect the path on their system in each of the shell scripts provided by this package: <code>for f in ./f* ./libs/* ./scripts/* ./docs/*.man ; do sed -e "1s;/bin/bash;${0};" "$f" > ./$$ &amp;&amp; mv -f ./$$ "$f" ; done ; rm -f $$</code></li>
+							</ul>
+						</li>
+						<li><a href="http://www.gnu.org/software/coreutils/"><samp>GNU coreutils</samp></a> (Core Utilities)
+							<ul>
+								<li>Version <samp>5.2.1</samp> has been tested successfully with this package.</li>
+							</ul>
+						</li>
+						<li><a href="http://www.gnu.org/software/termutils/"><samp>GNU termutils</samp></a> (Terminal Utilities)
+							<ul>
+								<li>Version <samp>2.0</samp> has been tested successfully with this package.</li>
+							</ul>
+						</li>
+						<li><a href="http://www.gnu.org/software/sed/"><samp>GNU sed</samp></a> (Stream Editor)
+							<ul>
+								<li>Version <samp>4.0.8</samp> has been tested successfully with this package.</li>
+							</ul>
+						</li>
+						<li><a href="http://www.gnu.org/software/less/"><samp>GNU less</samp></a> (Pager)
+							<ul>
+								<li>Version <samp>382</samp> has been tested successfully with this package.</li>
+							</ul>
+						</li>
 					</ul>
 				</blockquote>
 			</li>
@@ -70,16 +95,16 @@
 					<ul>
 						<li><samp>./ff</samp> &mdash; <i>The <b>For each File</b> tool.</i></li>
 						<li><samp>./fl</samp> &mdash; <i>The <b>For each Line</b> tool.</i></li>
-						<li><samp>./docs/</samp> &mdash; <i>Contains documentation for this package.</i>
+						<li><samp>./docs/</samp> &mdash; <i>Contains documentation.</i>
 							<ul>
-								<li><samp>readme.html</samp> &mdash; <i>This document.</i></li>
+								<li><samp>readme.html</samp> &mdash; <i>Package overview (this document).</i></li>
 								<li><samp>changes.html</samp> &mdash; <i>A list of changes between versions of this package.</i></li>
 								<li><samp>faq.html</samp> &mdash; <i>Answers to frequently asked questions.</i></li>
 								<li><samp>gpl.txt</samp> &mdash; <i>A copy of the <a href="http://www.gnu.org/licenses/gpl.txt">GNU General Public License: Version 2</a>.</i></li>
 							</ul>
 						</li>
 						<li><samp>./i18n/</samp> &mdash; <i>Contains internationalization resources.</i></li>
-						<li><samp>./libs/</samp> &mdash; <i>Contains libraries for shell scripts.</i></li>
+						<li><samp>./libs/</samp> &mdash; <i>Contains libraries for use by shell scripts.</i></li>
 						<li><samp>./scripts/</samp> &mdash; <i>Contains example scripts usable by the tools of this package.</i></li>
 					</ul>
 				</blockquote>
@@ -88,9 +113,9 @@
 				<h2 id="install">Installation</h2>
 				<blockquote>
 					<ol>
-						<li>Make the tools in the package directory executable: <code>$ chmod +x ./f[fl]</code></li>
-						<li>Move or copy the package directory to a location of your choice: <code>$ mv . <var>your_location</var></code></li>
-						<li>(Optional) Create symbolic links to the tools in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>: <code>$ cp -l <var>your_location</var>/f[fl] $HOME/bin/</code></li>
+						<li>Make the tools in the package directory executable: <code>chmod +x ./f*</code></li>
+						<li>Move or copy the package directory to a location of your choice: <code>mv . <var>your_location</var></code></li>
+						<li>(Optional) Create symbolic links to the tools in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>: <code>cp -l <var>your_location</var>/f* $HOME/bin/</code></li>
 					</ol>
 				</blockquote>
 			</li>
@@ -101,15 +126,15 @@
 					
 					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>: 
 						<code>
-							$ ./ff * -f ./scripts/ff.info | less<br/>
-							$ ./ff . -rf ./scripts/ff.info | less<br/>
-							$ ./ff /bin/* -f ./scripts/ff.info | less<br/>
-							$ ./ff /bin/ -rf ./scripts/ff.info | less<br/>
-							$ ./fl ./docs/gpl.txt -f ./scripts/fl.info | less<br/>
+							./ff ./* -f ./scripts/ff.info | less<br/>
+							./ff . -rf ./scripts/ff.info | less<br/>
+							./ff /bin/* -f ./scripts/ff.info | less<br/>
+							./ff /bin/ -rf ./scripts/ff.info | less<br/>
+							./fl ./docs/gpl.txt -f ./scripts/fl.info | less<br/>
 						</code>
 					</p>
 		
-					<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>$ head ./scripts/* | less</code></p>
+					<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>head ./scripts/* | less</code></p>
 				</blockquote>
 			</li>
 			<li>
@@ -128,14 +153,14 @@
 						<li>Determine the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp></a> code of the language you wish to write translations for.</li>
 						<li>Make a copy of the translation catalog template file:
 							<code>
-								$ cd ./i18n/<br/>
-								$ cp <var>catalog_name</var>.pot <var>catalog_name</var>.<var>ISO-639_code</var>.po
+								cd ./i18n/<br/>
+								cp <var>catalog_name</var>.pot <var>catalog_name</var>.<var>ISO-639_code</var>.po
 							</code>
 						</li>
 						<li>Write your translations in the copy: 
 							<blockquote>
 								<samp>msgid</samp> &quot;Untranslated text.&quot;<br/>
-								<samp>msgstr</samp> &quot;<var>Your translation.</var>&quot;
+								<samp>msgstr</samp> &quot;<i>Your translation.</i>&quot;
 							</blockquote>
 						</li>
 					</ol>
