@@ -169,25 +169,19 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "AUTHOR" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "Written by %s." "Suraj N. Kurapati <skurapat@ucsc.edu>" )"
-__lib_DocFmt_blockEnd
-
-
-__lib_DocFmt_blockItem "<b>$( gettext "RESOURCES" )</b>"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "You can find software updates and additional resources at %s." "<http://freshmeat.net/projects/ff/>" )"
+	__lib_DocFmt_blockItem "$( gettext "Written by %s." "Suraj N. Kurapati" )"
 __lib_DocFmt_blockEnd
 
 
 __lib_DocFmt_blockItem "<b>$( gettext "TRANSLATION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "gettext" "\"$__lib_ff_docI18n\"" )"
+	__lib_DocFmt_blockItem "$( gettext "If you find this translation to be unsatisfactory, feel free to modify the translation catalog, located at %s." "\"$__lib_ff_docI18n\"" )"
 __lib_DocFmt_blockEnd
 
 
-__lib_DocFmt_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
+__lib_DocFmt_blockItem "<b>$( gettext "RESOURCES" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "Please report defects to the author." )"
+	__lib_DocFmt_blockItem "$( gettext "You can find announcements for new releases at %s and additional resources at %s." "<u>http://freshmeat.net/projects/ff/</u>" "<u>http://sourceforge.net/tracker/?group_id=106777</u>")"
 __lib_DocFmt_blockEnd
 
 
@@ -197,5 +191,5 @@ __lib_DocFmt_blockStart
 	__lib_DocFmt_blockItem "Copyright 2003, 2004 Suraj N. Kurapati."
 	
 	__lib_DocFmt_blockItem "$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )"
-
 __lib_DocFmt_blockEnd
+
