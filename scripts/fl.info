@@ -9,17 +9,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -30,38 +30,60 @@
 # @param	1	name of caller function
 print_info()
 {
-	echo "$1 {"
-	echo "\$t  = \"$t\""
-	echo "\$fn = \"$fn\""
-	echo "\$f  = \"$f\""
-	echo "\$d  = \"$d\""
-	echo "\$i  = \"$i\""
-	echo "\$l  = \"$l\""
-	echo "}"
+	echo "
+    \$t = \"$t\"
+    \$fn = \"$fn\"
+    \$f = \"$f\"
+    \$d = \"$d\"
+    \$i = \"$i\"
+    \$l = \"$l\"
+"
 }
 
 main()
 {
-	print_info "main()"
+	echo "main() {"
+		print_info	# display variables
+	echo "}"
 }
 
 begin()
 {
-	print_info "begin()"
+	echo "begin() {"
+
+		# display command-line args
+			local i=0 arg
+
+			for arg
+			do
+				echo "\$$i  = $arg"
+				(( i++ ))
+			done
+			echo
+
+		print_info	# display variables
+
+	echo "}"
 }
 
 end()
 {
-	print_info "end()"
+	echo "end() {"
+		print_info	# display variables
+	echo "}"
 }
 
 begin_file()
 {
-	print_info "begin_file()"
+	echo "begin_file() {"
+		print_info	# display variables
+	echo "}"
 }
 
 end_file()
 {
-	print_info "end_file()"
+	echo "end_file() {"
+		print_info	# display variables
+	echo "}"
 }
 

@@ -29,10 +29,12 @@
 # displays values of preset variables
 print_info()
 {
-	echo "\$t  = \"$t\""
-	echo "\$fn = \"$fn\""
-	echo "\$f  = \"$f\""
-	echo "\$d  = \"$d\""
+	echo "
+    \$t = \"$t\"
+    \$fn = \"$fn\"
+    \$f = \"$f\"
+    \$d = \"$d\"
+"
 }
 
 main()
@@ -47,11 +49,12 @@ begin()
 	echo "begin() {"
 
 		# display command-line args
-			local i=1 arg
+			local i=0 arg
 
 			for arg
 			do
-				echo "\$$i  = $arg"
+				echo -n "
+    \$$i = \"$arg\""
 				(( i++ ))
 			done
 			echo
