@@ -70,7 +70,7 @@ fi
 
 echo \
 "<b>$( gettext "SYNOPSIS" )</b>
-	$__ff_myName [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...
+	$__ff_myName [ <u>$( gettext "option" )</u> | <u>$( gettext "target" )</u> ]...
 
 		<u>$( gettext "option" )</u>
 			$( gettext "A mechanism by which the behavior of this tool can be altered. Note that a series of short options can be grouped together into one word. For example, the sequence %s can be written as %s." "<em>-a 1 -b 2 -c 3</em>" "<em>-abc 1 2 3</em>" )
