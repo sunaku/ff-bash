@@ -31,9 +31,10 @@
 #
 # PRESET VARIABLES
 #	The following preset variables are available for use in users' scripts.
+#	Note that the UNIX term 'file' can refer to either a file or directory.
 #
-#	$f	basename of current file
-#	$d	relative path to current directory
+#	$f	basename of current file (or directory)
+#	$d	relative path to current working directory
 #
 # OPTIONS
 #	-r	Apply to files and subdirectories recursively. Order of 
