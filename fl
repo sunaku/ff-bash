@@ -6,7 +6,7 @@
 #
 #
 # SYNOPSIS
-#	fl [OPTIONS]... NON-DIRECTORY...
+#	fl [OPTIONS]... FILE...
 #
 #
 # OPTIONS
@@ -22,16 +22,18 @@
 #
 #	-t FILE
 #		Perform upon targets (non-directories or directories) listed in
-#		the specified file. One target should be listed per line, and
-#		either a relative or absolute path can be used to specify a
-#		target.
+#		the specified file, and ignore targets given on the command
+#		line. Note that one target should be listed per line in the
+#		specified file and either a relative or absolute path can be
+#		used to specify a target.
 #
 #
 # DESCRIPTION
 #	Allows the user to execute a Bash script for each line in the specified
-#	files. The script given by the user is interpreted directly by the BASH
+#	files. The script given by the user is interpreted directly by the Bash
 #	shell.
 #
+#	If a directory is given as a target (non-directories) it is ignored.
 #
 # INSTRUCTIONS
 #	(1) Invoking an existing script.
@@ -162,20 +164,22 @@
 		# handle each target
 		while read f
 		do
+			if [ -f "$f" ] # handle non-directories only
+			then
 			# set scripting variables
 			
 				f=${f%/}
 				fn=${f##*/}
 				
 				# determine directory path
-				if [ "$fn" != "$f" ]
+				if [ "$fn" == "$f" ]
 				then
-					d=${f%/*}
-				else
 					d=.
 					f=./$f
+				else
+					d=${f%/*}
 				fi
-					
+				
 				n=$( awk 'END {print NR}' "$f" )
 				i=1
 			
@@ -196,6 +200,7 @@
 				
 				# user function
 				end_file
+			fi
 			
 		done < "$ff_tmp_targetList"
 		
@@ -205,31 +210,5 @@
 	
 ## main script logic
 
-	# scan command line options
-		
-		ff_scanOptions "${@}"
-		
-		# exit if help message was displayed or illegal options were given
-		[ $? -gt 0 ] && ff_exit
-
-	# get user's script & save it
-
-		ff_getScript
-
-		# exit if no script was given
-		[ $? -gt 0 ] && ff_exit
-
-	# handle user's script
-
-		# load script into RAM
-		ff_evalScript
-
-		# generate list of targets to perform upon
-		ff_setupTargets "${@}"
-		
-		# execute script
-		ff_main
-
-	# clean up and exit
-	ff_exit
+	ff_baseLogic "${@}"
 
