@@ -7,9 +7,24 @@
 	</head>
 	<body>
 	
-		<!-- sf.net logo -->
-		<a href="http://sourceforge.net"><img style="float: right" src="http://sourceforge.net/sflogo.php?group_id=106777&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
-	
+		<!-- list of available translations -->
+		<p>Translations: 
+			<a href="readme.zh.html">Chinese Simplified</a> |
+			<a href="readme.zt.html">Chinese Traditional</a> |
+			<a href="readme.nl.html">Dutch</a> |
+			<a href="readme.html">English</a> |
+			<a href="readme.fr.html">French</a> |
+			<a href="readme.de.html">German</a> |
+			<a href="readme.el.html">Greek</a> |
+			<a href="readme.it.html">Italian</a> |
+			<a href="readme.ja.html">Japanese</a> |
+			<a href="readme.ko.html">Korean</a> |
+			<a href="readme.pt.html">Portuguese</a> |
+			<a href="readme.ru.html">Russian</a> |
+			<a href="readme.es.html">Spanish</a>
+		</p>
+		
+		<!-- begin page content -->
 		<h1>For each File &mdash; Package Overview</h1>
 		<blockquote>
 			<p>This document provides a brief overview of the <b>For each File</b> package.</p>
@@ -83,8 +98,8 @@
 		<blockquote>
 			<ol>
 				<li>Make the tools in the package directory executable: <code>$ chmod +x f[fl]</code></li>
-				<li>Move or copy the package directory to a location of your choice: <code>$ mv <var>package_dir</var> <var>my_location</var></code></li>
-				<li>(Optional) Create symbolic links to the tools in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>: <code>$ cp -l <var>my_location</var>/f[fl] $HOME/bin/</code></li>
+				<li>Move or copy the package directory to a location of your choice: <code>$ mv <var>package_directory</var> <var>your_location</var></code></li>
+				<li>(Optional) Create symbolic links to the tools in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>: <code>$ cp -l <var>your_location</var>/f[fl] $HOME/bin/</code></li>
 			</ol>
 		</blockquote>
 		
@@ -118,11 +133,11 @@
 			<h3 id="contrib_newtrans">Writing New Translations</h3>
 			<blockquote>
 				<ol>
-					<li>Determine the two character <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp> language code</a> of the language you wish to write translations for.</li>
+					<li>Determine the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp></a> code of the language you wish to write translations for.</li>
 					<li>Make a copy of the translation catalog template file:
 						<code>
 							$ cd ./i18n/<br/>
-							$ cp <var>catalog_name</var>.pot <var>catalog_name</var>.<var>language_code</var>.po
+							$ cp <var>catalog_name</var>.pot <var>catalog_name</var>.<var>ISO-639_code</var>.po
 						</code>
 					</li>
 					<li>Write your translations in the copy: 
