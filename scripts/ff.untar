@@ -216,11 +216,11 @@
 		local tar_type tar_outDir base_outDir effective_outDir valid_outDir
 
 		echo
-		echo "@@ $( gettext "Now processing target:" ) $f"
+		echo "@@ $( gettext "Now processing target:" ) $p"
 
 		# determine archive type
 
-			case "$( file -b "$f" )"
+			case "$( file -b "$p" )"
 			in
 				*gzip*)
 					# handle gzipped tar-balls
@@ -254,7 +254,7 @@
 
 		# determine archive extraction point
 
-			tar_outDir=$( getDefaultExtractionPoint "$f" "$tar_type" )
+			tar_outDir=$( getDefaultExtractionPoint "$p" "$tar_type" )
 			[[ "$tar_outDir" != +(/) ]] && tar_outDir=${tar_outDir%%+(/)}	# remove trailing slashes
 
 			if [ -z "$tar_outDir" ]
@@ -262,7 +262,7 @@
 				echo "@@ $( gettext "Target does not extract into its own directory." )"
 
 				# validate archive extraction point
-				base_outDir=$( getValidExtractionPoint "$base_outDir/${fn%%.*}" )
+				base_outDir=$( getValidExtractionPoint "$base_outDir/${n%%.*}" )
 				effective_outDir=$base_outDir	# update value for displaying to user
 			else
 				echo "@@ $( gettext "Target already extracts into its own directory." )"
@@ -291,7 +291,7 @@
 					[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && return
 				fi
 
-				tar "${g_tarOpts[@]}" -C "$base_outDir" $tar_type -xf "$f"
+				tar "${g_tarOpts[@]}" -C "$base_outDir" $tar_type -xf "$p"
 			fi
 	}
 

@@ -175,9 +175,9 @@
 	main()
 	{
 		echo
-		echo "@@ $g_msgout_npt $f"
+		echo "@@ $g_msgout_npt $p"
 
-		if __lib_id3tag_readTag g_tagData "$f"
+		if __lib_id3tag_readTag g_tagData "$p"
 		then
 
 			# clean up sensitive characters in tag-data
@@ -228,18 +228,18 @@
 					# create directory if it doesn't exist
 					[ ! -e "$catalogged_dir" ] && mkdir -p "$catalogged_dir"
 
-					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$f" "$g_catalogDir/$catalogged_target" 2> "$g_catalogDir/$g_outError"
+					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$p" "$g_catalogDir/$catalogged_target" 2> "$g_catalogDir/$g_outError"
 					then
 						echo "@@ $g_msgout_eutpttitc"
-						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outFail"
+						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outFail"
 					else
 						echo "@@ $g_msgout_tthbcs"
-						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outPass"
+						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outPass"
 					fi
 				fi
 		else
 			echo "@@ $g_msgout_ettdnhaoat"
-			[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outFail"
+			[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$p" >> "$g_catalogDir/$g_outFail"
 		fi
 	}
 

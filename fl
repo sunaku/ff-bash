@@ -65,7 +65,7 @@
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
-		if [[ -f "$t" && -r "$t" ]] # check permissions
+		if [[ -f "$o" && -r "$o" ]] # check permissions
 		then
 
 			# update preset variables
@@ -78,7 +78,7 @@
 			do
 				main	# user's control function
 				(( i += 1 ))	# increment line number
-			done < "$f"
+			done < "$p"
 
 			end_file	# user's control function
 		fi
@@ -87,13 +87,13 @@
 	__ff_main()
 	{
 		# scripting variables
-		local t d f fn i l
+		local o d p n i l
 		IFS=	# nullify to preserve whitespace
 
 		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
 
 		# handle command-line targets
-		for t in "${__lib_ff_targetList[@]}"
+		for o in "${__lib_ff_targetList[@]}"
 		do
 			__ff_main_linear_
 		done
@@ -106,7 +106,7 @@
 
 			while IFS= read -r
 			do
-				for t in $REPLY
+				for o in $REPLY
 				do
 					__ff_main_linear_
 				done

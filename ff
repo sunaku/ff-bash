@@ -105,22 +105,22 @@
 		local d=$1
 
 		# handle all directories
-		for f in "$d"/*
+		for p in "$d"/*
 		do
-			if [ -d "$f" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$f" ]]
+			if [ -d "$p" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$p" ]]
 			then
 
-#				echo "(recursive) entering '$f'"
-				__ff_main_recursive_ "$f"
+#				echo "(recursive) entering '$p'"
+				__ff_main_recursive_ "$p"
 			fi
 		done
 
 		# handle all files
-		for t in "$d"/${__ff_myOptions_value_fileMask:-*}
+		for o in "$d"/${__ff_myOptions_value_fileMask:-*}
 		do
 			# update preset variables
-			f=$t
-			fn=${f##*/}	# keep everything after the last slash
+			p=$o	# redundant slashes have already been removed
+			n=${p##*/}	# keep everything after the last slash
 
 			main	# user's control function
 		done
@@ -138,7 +138,7 @@
 	__ff_main()
 	{
 		# preset variables
-		local t d f fn
+		local o d p n
 
 		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
 
@@ -183,7 +183,7 @@
 		else # non-recursive operation
 
 			# handle command-line targets
-			for t in "${__lib_ff_targetList[@]}"
+			for o in "${__lib_ff_targetList[@]}"
 			do
 				__ff_main_linear_
 			done
@@ -196,7 +196,7 @@
 
 				while IFS= read -r
 				do
-					for t in $REPLY
+					for o in $REPLY
 					do
 						__ff_main_linear_
 					done

@@ -209,22 +209,22 @@ $expression
 	# updates the values of preset variables during non-recursive mode
 	__lib_ff_updateVars_linear()
 	{
-		f=$t
+		p=$o
 
 		# handle special cases
-		case "$f" in
+		case "$p" in
 			/)
-				fn=/
+				n=/
 				d=/
 				return
 			;;
 			.)
-				fn=.
+				n=.
 				d=.
 				return
 			;;
 			..)
-				fn=..
+				n=..
 				d=.
 				return
 			;;
@@ -232,15 +232,15 @@ $expression
 			/*|./*|../*) ;;	# path is already explicit
 
 			*)
-				f="./$f" # make implicit relative paths explicit
+				p="./$p" # make implicit relative paths explicit
 			;;
 		esac
 
 		# update preset variables
-		f=${f//+(\/)//}	# remove redundant slashes
-		f=${f%/}	# remove trailing slash
-		fn=${f##*/}	# keep everything after the last slash
-		d=${f%/*}	# keep everything before the last slash
+		p=${p//+(\/)//}	# remove redundant slashes
+		p=${p%/}	# remove trailing slash
+		n=${p##*/}	# keep everything after the last slash
+		d=${p%/*}	# keep everything before the last slash
 		[ -z "$d" ] && d=/	# special case: $d is empty when it should be /
 	}
 

@@ -106,7 +106,7 @@
 
 	main()
 	{
-		local i docURL=$t docDst langDst langCombo queryURL
+		local i docURL=$o docDst langDst langCombo queryURL
 		
 		querySourceLang	# query user about the source document's language
 		
@@ -116,7 +116,7 @@
 			langCombo=${g_service_langCombos[$i]}	# current translation combination
 			langDst=${langCombo#*_}
 			
-			docDst="$fn.$langDst"	# path to downloaded translation file
+			docDst="$n.$langDst"	# path to downloaded translation file
 			
 			# check if source language matches the current combination flag
 			if [ "$g_langSrc" == "${langCombo%_*}" ]
