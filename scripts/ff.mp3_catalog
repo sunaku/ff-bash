@@ -7,10 +7,6 @@
 #	Adjust the lines preceded by '###' to suit your needs.
 #	Pass absolute paths as targets so the created symbolic links in the catalog directory are valid.
 #
-# Requirements:
-#	mp3info	- Program used to read ID3 tag informationn.
-#
-#
 ###
 #
 # Copyright 2003, 2004 Suraj N. Kurapati.
@@ -18,165 +14,232 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 ###
 
+## globals
+
+	g_scriptName="ff.mp3_catalog"
+
+	declare -a g_tagData g_targetList
+	g_catalogFmt='${genre:-Unknown}/$artist/$album/$track${track:+-}$title.mp3'
+
+	# files
+		g_catalogDir="$g_scriptName$$+$RANDOM"
+		g_outPass=pass.log
+		g_outFail=fail.log
+		g_outError=error.log
+
+	# command-line options
+		g_options_flag_ready=--ready
+		g_options_flag_confirm=--confirm
+		g_options_flag_move=--move
+		g_options_flag_format=--format
+		g_options_flag_help=--help
+		g_options_flag_outdir=--out-dir
+
+	# speed hack: output messages
+		g_msgout_npt=$( gettext "Now processing target:" )
+		g_msgout_cta=$( gettext "Catalogging target as:" )
+		g_msgout_attitc=$( gettext "Accept this target into the catalog (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )
+		g_msgout_y=$( gettext "yes" )
+		g_msgout_ettdnhaoat=$( gettext "Error: This target does not have a %s or a %s tag." "ID3v1" "ID3v1.1" )
+		g_msgout_tthbcs=$( gettext "This target has been catalogged successfully." )
+		g_msgout_eutpttitc=$( gettext "Error: Unable to put this target into the catalog." )
+
+## libraries
+
+	source "$__ff_myResources_libs/id3tag.lib"
+	source "$__ff_myResources_libs/DocFmt.lib"
+
+	__lib_gettext_load "$__ff_myResources_i18n/$g_scriptName.$__ff_myLang.po"
+
 ## helper functions
 
-	# report this file
-	# $1 	message
-	# $2	log file
-	report_file()
+	# handles parsing of command-line options
+	# @see __lib_CmdOpts_handleOption()
+	handleOption()
 	{
-		echo "$1"
-		echo "$f" >> "$2"
+		case $1 in
+			$g_options_flag_confirm)
+				g_options_isOn_confirm=1
+				return 1
+			;;
+			$g_options_flag_format)
+				g_catalogFmt=$2
+				return 2
+			;;
+			$g_options_flag_move)
+				g_options_isOn_move=1
+				return 1
+			;;
+			$g_options_flag_ready)
+				g_options_isOn_ready=1
+				return 1
+			;;
+			$g_options_flag_outdir)
+				g_catalogDir=$2
+				return 2
+			;;
+			$g_options_flag_help) # display the documentation
+
+				{
+					echo \
+"<b>$( gettext "BREIF" )</b>
+	$( gettext "Organizes %s files, according to a user specified formatting string which is based upon their %s or %s tags, into a catalog." MP3 ID3v1 ID3v1.1 )
+
+<b>$( gettext "USAGE" )</b>
+	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option")</u>]...
+
+<b>$( gettext "OPTIONS" )</b>
+	<b>$g_options_flag_confirm</b>
+		$( gettext "Confirm each target before it is put into the catalog." )
+
+	<b>$g_options_flag_format</b> [<u>$( gettext "string" )</u>]
+		$( gettext "The %s argument dictates how a target is placed into the catalog. It is a standard %s string expression and thus can utilize constructs such as command substitutions and variables.
+
+		If %s is unspecified, then the default value of %s will be used.
+
+		The following variables are available for use in %s:" "<u>$( gettext "string" )</u>" "GNU BASH" "<u>$( gettext "string" )</u>" "<em>$g_catalogFmt</em>" "<u>$( gettext "string" )</u>" )
+
+		<b>\$title</b>
+			$( gettext "The title or the name of the song." )
+
+		<b>\$artist</b>
+			$( gettext "The name of the artist who published the song." )
+
+		<b>\$album</b>
+			$( gettext "The album in which the song was published." )
+
+		<b>\$year</b>
+			$( gettext "The year in which the song was published." )
+
+		<b>\$comment</b>
+			$( gettext "A comment or a note about the song." )
+
+		<b>\$genre</b>
+			$( gettext "The category of music in which the song belongs." )
+
+		<b>\$track</b>
+			$( gettext "The track number of the song in its album." )
+
+	<b>$g_options_flag_help</b>
+		$( gettext "Display this help message and exit." )
+
+	<b>$g_options_flag_move</b>
+		$( gettext "Physically move targets into the catalog instead of creating symbolic links to them. If this option is not used, then be sure to specify absolute paths to targets so that the created symbolic links will be valid." )
+
+	<b>$g_options_flag_outdir</b> <u>$( gettext "directory" )</u>
+		$( gettext "Use %s as the output directory for the catalog." "<u>$( gettext "directory" )</u>" )
+
+	<b>$g_options_flag_ready</b>
+		$( gettext "Do not perform an experimental run." )
+"
+				} | __lib_DocFmt_formatTags | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
+
+				exit
+			;;
+		esac
+
+		return 0
 	}
 
 ## control functions
 
 	begin()
 	{
-		# check if user is ready
-		read -p "%% Build catalog (yes/no)? [no] " < /dev/tty
-		[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
-		
-		### symbolic links will be placed here
-		output_dir="$PWD/mp3_catalog_$$/"
-		
-		### Files that do not have ID3 tags are reported here
-		output_unprocessed="$output_dir/unprocessed.log"
-		
-		### Links that were created successfully are reported here
-		output_processed="$output_dir/processed.log"
-	}
-	
-	main()
-	{
-		# check if this is an MP3 file
-		if [ "${fn##*.}" == "mp3" ]
+		g_targetList=( "${@}" )
+
+		# parse command-line options
+		if ! __lib_CmdOpts_scanOptions g_targetList handleOption
 		then
-		
-			echo
-			echo "%% Now processing file: $f"
-		
-			# check if mp3 has an ID3 tag
-			
-				mp3info "$f" 2>&1 | grep ' does not have an ID3 1.x tag.' >& /dev/null
-				
-				if [ $? -eq 0 ]
-				then
-					report_file "%% Error: ID3 tag is missing" "$output_unprocessed"
-					return
-				fi
-			
-			# get ID3 tag information
-			
-				# refer to man page of 'mp3info' for the formatting options
-				album=$( mp3info -p "%l" "$f" )
-				artist=$( mp3info -p "%a" "$f" )
-				title=$( mp3info -p "%t" "$f" )
-				track=$( mp3info -p "%n" "$f" )
-				genre=$( mp3info -p "%g" "$f" )
-				
-				### uncomment these if you need to use them
-				#genre_id=$( mp3info -p "%G" "$f" )
-				#year=$( mp3info -p "%y" "$f" )
-				#copyright=$( mp3info -p "%C" "$f" )
-				#comment=$( mp3info -p "%c" "$f" )
-	
-			### assemble new file name
-				
-				# reset new file name
-				new_name=
-			
-				if [ ! -z "$track" ]
-				then
-					# prefix single digit track numbers with zero
-					# ex: '2' -> '02'
-					if [ ${track:-0} -lt 10 ]; then
-						track="0$track"
-					fi
-					
-					# accumulate info into filename
-					new_name="${new_name}${track}-"
-				fi
-				
-				if [ ! -z "$artist" ]
-				then
-					# accumulate info into filename
-					new_name="${new_name}${artist}-"
-				fi
-				
-				if [ ! -z "$title" ]
-				then
-					# accumulate info into filename
-					new_name="${new_name}${title}"
-				fi
-				
-				# convert directory separator characters in filename
-				new_name=${new_name//\//+}
-				
-			
-			# check if the new filename is meaningless (no ID3 tag in MP3 file)
-			if [ -z "$new_name" ]
-			then
-				report_file "%% Warning: Generated file-name is meaningless: $new_name"  "$output_unprocessed"
-				return
-			else
-			
-				# display parsed ID3 info
-				echo "%% album='$album'"
-				echo "%% track='$track'"
-				echo "%% artist='$artist'"
-				echo "%% title='$title'"
-				echo "%% genre='$genre'"
-				
-				### uncomment these if you need to use them
-				#echo "%% genre_id='$genre_id'"
-				#echo "%% year='$year'"
-				#echo "%% copyright='$copyright'"
-				#echo "%% comment='$comment'"
-	
-				# append file extension to new filename
-				new_name="${new_name}.mp3"
-				echo "%% new_name='$new_name'"
-			
-				## assemble new path
-				new_path="${output_dir}/${genre:-_default_}/${album}/${artist}/"
-				echo "%% new_path='$new_path'"
-				
-				# display link source & destination
-				echo "%% source:	'$f'"
-				echo "%% destination:	'$new_path/$new_name'"
-				
-				if [ ${ready:-0} -gt 0 ]
-				then
-					# create new path directory
-					if [ ! -e "$new_path" ] ; then
-						mkdir -p "$new_path"
-					fi
-					
-					# link the source mp3 file to its new destination
-					ln -s "$f" "$new_path/$new_name"
-					
-					# report the link
-					report_file "%% Info: Symbolic-link created successfully" "$output_processed"
-				fi
-			fi
+			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag_scriptArgs $g_options_flag_help\""
+			exit 1
 		fi
 	}
-	
+
+	main()
+	{
+		echo
+		echo "@@ $g_msgout_npt $f"
+
+		if __lib_id3tag_readTag g_tagData "$f"
+		then
+
+			# clean up sensitive characters in tag-data
+				n=${#g_tagData[@]}
+
+				for (( i=0; i < n ; i++ ))
+				do
+					g_tagData[$i]=${g_tagData[$i]%%+( |	|
+)}	# remove trailing white-space
+					g_tagData[$i]=${g_tagData[$i]//\//+}	# convert directory separators
+				done
+
+			# store ID3 tag information into variables
+				title=${g_tagData[1]}
+				artist=${g_tagData[2]}
+				album=${g_tagData[3]}
+				year=${g_tagData[4]}
+				comment=${g_tagData[5]}
+				genre=${__lib_id3tag_genreNames[${g_tagData[6]}]}
+				track=${g_tagData[7]}
+
+			# catalog the target
+				eval "catalogged_target=$g_catalogFmt"
+				echo "@@ $g_msgout_cta $catalogged_target"
+
+				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
+				then
+					echo "
+	$( gettext "Title" ):	<u>$title</u>
+	$( gettext "Artist" ):	<u>$artist</u>
+	$( gettext "Album" ):	<u>$album</u>
+	$( gettext "Year" ):	<u>$year</u>
+	$( gettext "Comment" ):	<u>$comment</u>
+	$( gettext "Genre" ):	<u>$genre</u>
+	$( gettext "Track" ):	<u>$track</u>
+
+	$( gettext "Catalog Entry" ):	<u>$catalogged_target</u>
+" | __lib_DocFmt_formatTags
+
+					read -ep "%% $g_msgout_attitc" < /dev/tty
+					[[ -n "$REPLY" && "$REPLY" != "$g_msgout_y" ]] &&  return
+				fi
+
+				if [ ${g_options_isOn_ready:-0} -eq 1 ]
+				then
+					catalogged_dir="$g_catalogDir/${catalogged_target%/*}"
+
+					# create directory if it doesn't exist
+					[ ! -e "$catalogged_dir" ] && mkdir -p "$catalogged_dir"
+
+					if ! $( [ ${g_options_isOn_move:-0} -eq 1 ] && echo "mv -v" || echo "ln -vs" ) "$f" "$g_catalogDir/$catalogged_target" 2> "$g_catalogDir/$g_outError"
+					then
+						echo "@@ $g_msgout_eutpttitc"
+						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outFail"
+					else
+						echo "@@ $g_msgout_tthbcs"
+						[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outPass"
+					fi
+				fi
+		else
+			echo "@@ $g_msgout_ettdnhaoat"
+			[ ${g_options_isOn_ready:-0} -eq 1 ] && echo "$f" >> "$g_catalogDir/$g_outFail"
+		fi
+	}
+
