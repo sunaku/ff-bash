@@ -17,12 +17,19 @@
 	# options for gettext()
 	_gte_gettext_opts=n
 	_gte_gettext_optFlg_noNewline=n
-
+	
 ## functions
 	
 	# Loads a gettext Portable-Object translation catalog into cache.
+	# Cache is not cleared before loading new data.
 	#
-	# Portable-Object file Requirements
+	# @usage	_gte_load FILE
+	#
+	# @param	FILE	Path of Portable-Object file to load.
+	#
+	# @return	Standard UNIX exit status.
+	#
+	# Catalog file Requirements
 	# ----------------------------------
 	# +	Strings should be properly quoted. For example:
 	#
@@ -41,23 +48,10 @@
 	#
 	# -------------------------------------
 	#
-	# @param	$1	Path of Portable-Object file to load.
-	#
-	# @param	$2	If 0, the new catalog data is appended to 
-	#			previously loaded catalog data.
-	#
-	#			If 1, previously loaded catalog data is 
-	#			replaced by the new catalog data.
-	#
-	# @return	Standard UNIX exit status.
-	#
 	_gte_load()
 	{
-		# check catalog file
+		# check arguments
 		[[ ! -r "$1" || ! -f "$1" ]] && return 1
-		
-		# remove previous catalog data
-		[ ${2:-0} -eq 1 ] && _gte_free
 		
 		# parse catalog file
 		
