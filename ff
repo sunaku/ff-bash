@@ -52,7 +52,7 @@
 		__ff_myOptions_shortFlag_handleHidden=a
 		__ff_myOptions_longFlag_handleHidden=all
 		
-		__ff_myOptions_shortFlag_followLinks=l
+		__ff_myOptions_shortFlag_followLinks=d
 		__ff_myOptions_longFlag_followLinks=dereference
 		
 		__ff_myOptions_shortFlag_recursive=r
