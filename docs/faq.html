@@ -1,101 +1,139 @@
-ff-faq
+$Id$
 
-Have a question?
+HAVE A QUESTION?
 
-  Post your question on the project website, located at:
-  <http://freshmeat.net/projects/ff/>.
-
-
-Questions
-
-  1. What's the advantage of using this instead of find -exec?
+	Post your question on the project website or send me an email.
+	
+	Website: 	<http://freshmeat.net/projects/ff/>
+	E-mail: 	<skurapat@ucsc.edu>
 
 
-Answers
 
-  1. What's the advantage of using this instead of find -exec?
+QUESTIONS
 
-    In comparison to using 'find -exec', key advantages are:
-    - better performance (less system resources used)
-    - flexibility (user can perform tasks without a separate script)
-    - simplicity (saves time and effort)
-
-    In order to justify these claims, consider the following cases.
-
-    (1) Case 1: Executing an existing script.
-
-        For every file it handles, 'find -exec' forks a separate
-        child-process to execute the user's commands. On a large input
-        size, this behavior yields poor performance.
-
-        This tool uses less system resources, and thereby yields better
-        performance, by employing only one Bash process (in both
-        non/recursive modes). Separate child-processes are not forked
-        because user commands are evaluated by the same Bash process.
-
-        This tool also provides preset scripting variables to save
-        users' time. Although it is a trivial matter to assemble these
-        variables within a script, it becomes wasteful and tedious for
-        quick tasks.
+	1. What's the advantage of using this instead of 'find -exec'?
+	2. How can I use the results of 'find' with this tool?
+	3. How can I specify scripting commands on the command line?
 
 
-    (2) Case 2: Performing complex tasks at the terminal without the use of
-        a separate script.
 
-        As the complexity of the problem increases, using 'find -exec'
-        to implement solutions at the terminal becomes cryptic and time
-        consuming. One possibility is to write a separate script and use
-        it with 'find -exec'. In which case, this tool already puts the
-        power of the Bash shell at the user's disposal, without having
-        to manually create a separate script each time.
+ANSWERS
 
-        Using this tool, the user can, but is not forced to, enter
-        scripting commands on one line. Entering commands is often made
-        more efficient when this tool is launched with the editor
-        option. This option allows the user to enter scripting commands
-        via their favorite text editor, rather than fiddling with a
-        one-line script at the terminal.
+1. What's the advantage of using this instead of 'find -exec'?
 
-        Consider the following examples.
+	In comparison to using 'find -exec', key advantages are:
+	- better performance (less system resources used)
+	- flexibility (user can perform tasks without a separate script)
+	- simplicity (saves time and effort)
 
-        (2a) Example A: We wish to extract all tar-ball files in the
-             current working directory.
+	In order to justify these claims, consider the following cases.
 
-            $ ls
-            bar.tgz  foo.tgz
+	(1) Case 1: Executing an existing script.
 
-            (2a-1) Using this tool:
+		For every file it handles, 'find -exec' forks a separate
+		child-process to execute the user's commands. On a large input
+		size, this behavior yields poor performance.
 
-                $ ff *tgz
-                tar -zxf "$f"
+		This tool uses less system resources, and thereby yields better
+		performance, by employing only one Bash process (in both
+		non/recursive modes). Separate child-processes are not forked
+		because user commands are evaluated by the same Bash process.
 
-            (2a-2) Using 'find -exec':
-
-                $ find . -name '*tgz' -exec tar -zxf '{}' ';'
-
-        (2b) Example B: We wish to rename the file extension 'tgz' to
-             'tar.gz' and display the original filename.
-
-            $ ls some_tgz/tgz_dir/
-            bar.tgz  b a z.tgz  foo.tgz
-
-            (2b-1) Using this tool:
-
-                $ ff some_tgz/tgz_dir/*tgz
-                mv "$f" "$d/${fn/%tgz/tar.gz}"
-                echo $fn
-
-            (2b-2) Using 'find -exec':
-
-                $ find some_tgz/tgz_dir/ -name '*tgz' -exec sh -c 'mv "{}" `dirname "{}"`/`basename "{}" | sed "s/tgz/tar.gz/"`; echo {}' \;
-
-            Notice that we invoked a shell with 'find -exec' for this task.
-            It is possible to perform the task without the aid of an
-            intermediate shell, but one can imagine how time consuming and
-            error prone that would be.
+		This tool also provides preset scripting variables to save
+		users' time. Although it is a trivial matter to assemble these
+		variables within a script, it becomes wasteful and tedious for
+		quick tasks.
 
 
-    In conclusion, this tool gives the user flexibility while saving them
-    time and maintaining low usage of system resources.
+	(2) Case 2: Performing complex tasks at the terminal without the use of
+	    a separate script.
+
+		Consider the following examples.
+
+		(2a) Example A: We wish to extract all tar-ball files in the
+		     current working directory.
+
+			$ ls -1
+			bar.tgz
+			foo.tgz
+
+			(2a-1) Using this tool:
+
+				$ ff *tgz
+				tar -zxf "$f"
+				^D
+				
+			Or, alternatively:
+				
+				$ echo 'tar -zxf "$f"' | ff *tgz
+
+			(2a-2) Using 'find -exec':
+
+				$ find . -name '*tgz' -exec tar -zxf '{}' ';'
+
+		(2b) Example B: We wish to rename the file extension 'tgz' to
+		     'tar.gz' and display the original filename.
+
+			$ ls -1 some_tgz/tgz_dir/
+			bar.tgz
+			b a z.tgz
+			foo.tgz
+
+			(2b-1) Using this tool:
+
+				$ ff some_tgz/tgz_dir/*tgz
+				mv "$f" "$d/${fn/%tgz/tar.gz}"
+				echo $fn
+				^D
+				
+			Or, alternatively:
+				
+				$ echo 'mv "$f" "$d/${fn/%tgz/tar.gz}" ; echo $fn' | ff some_tgz/tgz_dir/*tgz
+
+			(2b-2) Using 'find -exec':
+
+				$ find some_tgz/tgz_dir/ -name '*tgz' -exec sh -c 'mv "{}" `dirname "{}"`/`basename "{}" | sed "s/tgz/tar.gz/"`; `basename "{}"`' \;
+
+	Notice that we invoked a shell with 'find -exec' for this task. It is
+	possible to perform the task without the aid of an intermediate shell,
+	but one can imagine how time consuming and error prone that would be.
+	
+	As the complexity of the problem increases, using 'find -exec' to
+	implement solutions at the terminal becomes cryptic and time consuming.
+	One possibility is to write a separate script and use it with 'find
+	-exec'. In which case, this tool already puts the power of the Bash
+	shell at the user's disposal, without having to manually create a
+	separate script each time.
+
+	Using this tool, the user can, but is not forced to, enter scripting
+	commands on one line. Entering commands is often made more efficient
+	when this tool is launched with the editor option. This option allows
+	the user to enter scripting commands via their favorite text editor,
+	rather than fiddling with a one-line script at the terminal.
+
+	In conclusion, this tool gives the user flexibility while saving them
+	time and maintaining low usage of system resources.
+
+
+
+2. How can I use the results of 'find' with this tool?
+
+	Write the results of 'find' to a file and invoke this tool with the '-t'
+	option. For example, consider recursively printing the basename of all
+	.c files in the current working directory:
+	
+	$ find -name '*.c' > temp_file && ff -t temp_file
+	echo $fn
+	^D
+
+
+
+3. How can I specify scripting commands on the command line?
+
+	Simply pipe your scripting commands to this tool. For example, consider
+	printing the basename of all .c files in the current working directory:
+	
+	$ echo 'echo $fn' | ff *.c
+
 
 
