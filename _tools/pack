@@ -22,23 +22,21 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	pack_ver=$1
 	
 	# files that use gettext
-	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
+	pot_in=( ../libs/ff.lib ../docs/*.man )
 	
 	# files that need to be translated; these are automatically packaged
 	doc_in=( ../docs/*.html )
 	
 	# other files to be packaged
-	pack_in=( ../libs ../docs ../scripts/ ../ff ../fl ../install )
+	pack_in=( ../libs ../docs ../scripts/ ../ff ../fl )
 	
 	pack_dir=../_pack/ff-$pack_ver
 	pack_dir_docs=$pack_dir/docs
-	pack_tar=${pack_dir}.tar
-
 
 ## setup
 
 	# remove previously generated files
-	rm -rvf $pack_dir ${pack_tar}* ../i18n/*
+	rm -rvf $pack_dir ${pack_dir}.* ../i18n/*
 
 	# create pack dir
 	mkdir -p $pack_dir
@@ -97,20 +95,21 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 			../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
 		done
 
+		for f in $pack_dir_docs/*html
+		do 
+			sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fpeople.ucsc.edu%2f%7eskurapat%2fpub%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
+		done
 
 ## package creation
 
+	read -p "Now, make any last minute changes before creating packs..."
+
 	pushd $pack_dir/..
 		
-		tar -hjcf ${pack_tar}.bz2 ${pack_dir##*/}
-#		tar -hzcf ${pack_tar}.gz ${pack_dir##*/}
+		tar -jcf ${pack_dir}.tar.bz2 ${pack_dir##*/}
+		tar -zcf ${pack_dir}.tar.gz ${pack_dir##*/}
+		zip -r ${pack_dir}.zip ${pack_dir##*/}
 		
 	popd
 	
-
-## distribution
-
-	echo "copy packs to server"
-	#scp $pack_dir/docs/changes ${pack_tar}* $pack_upload_scp_url
-
 
