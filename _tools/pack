@@ -38,7 +38,7 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
 ## gettext translation
 
-	echo "pack: create *.pot files; NOT raw output"
+	echo "pack: create *.pot files; say NO to raw output"
 	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
 
 	echo "pack: translate *.pot files"
