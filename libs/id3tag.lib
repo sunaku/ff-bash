@@ -28,18 +28,6 @@
 
 ## globals
 
-	# index	value
-	# -----	-----
-	# 0	version of ID3 tag
-	# 1	song title
-	# 2	artist
-	# 3	album
-	# 4	year
-	# 5	comment
-	# 6	genre number
-	# 7	track number
-	declare -a __lib_id3tag_tagData
-
 	__lib_id3tag_genreNames=( "Blues" "Classic Rock" "Country" "Dance" "Disco" "Funk" "Grunge" "Hip-Hop" "Jazz" "Metal" "New Age" "Oldies" "Other" "Pop" "R&B" "Rap" "Reggae" "Rock" "Techno" "Industrial" "Alternative" "Ska" "Death Metal" "Pranks" "Soundtrack" "Euro-Techno" "Ambient" "Trip-Hop" "Vocal" "Jazz+Funk" "Fusion" "Trance" "Classical" "Instrumental" "Acid" "House" "Game" "Sound Clip" "Gospel" "Noise" "Alt. Rock" "Bass" "Soul" "Punk" "Space" "Meditative" "Instrum. Pop" "Instrum. Rock" "Ethnic" "Gothic" "Darkwave" "Techno-Indust." "Electronic" "Pop-Folk" "Eurodance" "Dream" "Southern Rock" "Comedy" "Cult" "Gangsta" "Top 40" "Christian Rap" "Pop/Funk" "Jungle" "Native American" "Cabaret" "New Wave" "Psychadelic" "Rave" "Showtunes" "Trailer" "Lo-Fi" "Tribal" "Acid Punk" "Acid Jazz" "Polka" "Retro" "Musical" "Rock & Roll" "Hard Rock" "Folk" "Folk/Rock" "National Folk" "Swing" "Fusion" "Bebob" "Latin" "Revival" "Celtic" "Bluegrass" "Avantgarde" "Gothic Rock" "Progress. Rock" "Psychadel. Rock" "Symphonic Rock" "Slow Rock" "Big Band" "Chorus" "Easy Listening" "Acoustic" "Humour" "Speech" "Chanson" "Opera" "Chamber Music" "Sonata" "Symphony" "Booty Bass" "Primus" "Porn Groove" "Satire" "Slow Jam" "Club" "Tango" "Samba" "Folklore" "Ballad" "Power Ballad" "Rhythmic Soul" "Freestyle" "Duet" "Punk Rock" "Drum Solo" "A Capella" "Euro-House" "Dance Hall" "Goa" "Drum & Bass" "Club-House" "Hardcore" "Terror" "Indie" "BritPop" "Negerpunk" "Polsk Punk" "Beat" "Christian Gangsta Rap" "Heavy Metal" "Black Metal" "Crossover" "Contemporary Christian" "Christian Rock" "Merengue" "Salsa" "Thrash Metal" "Anime" "Jpop" "Synthpop" )
 
 	# a substitute value for the NUL byte
@@ -47,50 +35,67 @@
 
 ## functions
 
-	# Reads an ID3v1 or ID3v1.1 tag from the given file and places the result into the $__lib_id3tag_tagData array.
+	# Reads an ID3v1 or ID3v1.1 tag from the given file and places the result into the array variable whose name is given.
 	#
-	# @param	1	Path to an MP3 file.
+	# @param	1	Name of the array variable in which to store parsed data.
+	#				The contents of this array are as follows:
+	#
+	# 	index	value
+	# 	-----	-----
+	# 	0	version of ID3 tag
+	# 	1	song title
+	# 	2	artist
+	# 	3	album
+	# 	4	year
+	# 	5	comment
+	# 	6	genre number
+	# 	7	track number
+	#
+	# @param	2	Path to an MP3 file.
 	# @return	Standard UNIX exit status.
 	#
 	__lib_id3tag_readTag()
 	{
-		local data genre i
+		local tag data genre i
 
 		# read ID3 tag
-			data=$( tail -c 128 "$1" | tr '\0' "$__lib_id3tag_NUL" )
+			data=$( tail -c 128 "$2" | tr '\0' "$__lib_id3tag_NUL" )
 			[ "${data:0:3}" != 'TAG' ] && return 1	# validate tag
 
 		# parse ID3 tag
-			__lib_id3tag_tagData[1]=${data:3:30}	# title
-			__lib_id3tag_tagData[2]=${data:33:30}	# artist
-			__lib_id3tag_tagData[3]=${data:63:30}	# album
-			__lib_id3tag_tagData[4]=${data:93:4}	# year
+			tag[1]=${data:3:30}	# title
+			tag[2]=${data:33:30}	# artist
+			tag[3]=${data:63:30}	# album
+			tag[4]=${data:93:4}	# year
 
 			genre=${data:127:1}	# genre id
 			if [ "$genre" == "$__lib_id3tag_NUL" ]
 			then
-				__lib_id3tag_tagData[6]=0
+				tag[6]=0
 			else
-				__lib_id3tag_tagData[6]=$( echo "$genre" | od -An -N1 -tu1 | tr -d '[:space:]' )
+				tag[6]=$( echo "$genre" | od -An -N1 -tu1 | tr -d '[:space:]' )
 			fi
 
 			# In the comment field, if the second last byte is NUL and the last byte is not NUL, then the entire tag is ID3v1.1
 			if [[ "${data:125:1}" == "$__lib_id3tag_NUL" && "${data:126:1}" != "$__lib_id3tag_NUL" ]]
 			then
-				__lib_id3tag_tagData[0]=1.1	# version
-				__lib_id3tag_tagData[5]=${data:97:28}	# comment
-				__lib_id3tag_tagData[7]=$( echo "${data:126:1}" | od -An -N1 -tu1 | tr -d '[:space:]' )	# track
+				tag[0]=1.1	# version
+				tag[5]=${data:97:28}	# comment
+				tag[7]=$( echo "${data:126:1}" | od -An -N1 -tu1 | tr -d '[:space:]' )	# track
 			else
-				__lib_id3tag_tagData[0]=1	# version
-				__lib_id3tag_tagData[5]=${data:97:30}	# comment
-				__lib_id3tag_tagData[7]=	# track
+				tag[0]=1	# version
+				tag[5]=${data:97:30}	# comment
+				tag[7]=	# track
 			fi
 
 		# remove trailing NUL bytes
-			for i in 1 2 3 5
+			for i in 1 2 3 4 5
 			do
-				__lib_id3tag_tagData[$i]=${__lib_id3tag_tagData[$i]%%${__lib_id3tag_NUL}*}
+				tag[$i]=${tag[$i]%%${__lib_id3tag_NUL}*}
 			done
+			
+		# propogate changes in local array to caller's array
+			eval "$1=( \"\${tag[@]}\" )"
 
 		return 0
 	}
