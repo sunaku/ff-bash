@@ -22,7 +22,7 @@
 #
 #	-l	Follow symbolic links to directories. Note that this applies in
 #		recursive mode only.
-#		
+#
 #	-r	Handle subdirectories recursively. Note that directories are
 #		handled before non-directories.
 #
@@ -32,9 +32,9 @@
 #	-t FILE
 #		Perform upon targets (non-directories or directories) listed in
 #		the specified file, and ignore targets given on the command
-#		line. Only one target should be listed per line in the specified
-#		file. Note that either a relative or absolute path can be used
-#		to specify a target.
+#		line. Note that one target should be listed per line in the
+#		specified file and either a relative or absolute path can be
+#		used to specify a target.
 #
 #
 # DESCRIPTION
@@ -42,7 +42,6 @@
 #	directories. It is ideal for performing a repetitive procedure such as
 #	mass file renaming. The script given by the user is interpreted directly
 #	by the Bash shell.
-#
 #
 # INSTRUCTIONS
 #	(1) Invoking an existing script.
@@ -190,7 +189,7 @@
 			# handle each target
 			while read basedir
 			do
-				if [ -d "$basedir" ]
+				if [ -d "$basedir" ] # handle directories only
 				then
 					# handle all subdirectories, starting with the deepest sub-directories first
 					ls -R${ff_cmdOpts_optEn_followLinks:+L}${ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | \
@@ -210,6 +209,7 @@
 						done
 					done
 				fi
+				
 			done < "$ff_tmp_targetList"
 
 		else # non-recursive operation
@@ -245,31 +245,5 @@
 
 ## main script logic
 
-	# scan command line options
-		
-		ff_scanOptions "${@}"
-		
-		# exit if help message was displayed or illegal options were given
-		[ $? -gt 0 ] && ff_exit
-
-	# get user's script & save it
-
-		ff_getScript
-
-		# exit if no script was given
-		[ $? -gt 0 ] && ff_exit
-
-	# handle user's script
-
-		# load script into RAM
-		ff_evalScript
-
-		# generate list of targets to perform upon
-		ff_setupTargets "${@}"
-		
-		# execute script
-		ff_main
-
-	# clean up and exit
-	ff_exit
+	ff_baseLogic "${@}"
 
