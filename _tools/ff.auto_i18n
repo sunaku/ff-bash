@@ -61,7 +61,7 @@ main()
 	../ff -e "x=\${fn#*html.}; x=\${x:0:2}; cp -vf \$f $result_dir/\${fn%.pot*}.\$x.po" ${enc_file}.*.po
 	
 	# remove temp files
-	read -p "delete temp files (yes/no)? [no]  " < /dev/tty
+	read -p "delete temp files (yes/no)? [no] " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && rm -f ${raw_file}*
 	
 }
