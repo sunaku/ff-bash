@@ -13,17 +13,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -33,44 +33,45 @@
 ## globals
 
 	__lib_ff_version=1.7.3
-	
-	declare -a __lib_ff_targetList		# array of targets
-	
+
+	declare -a __lib_ff_targetList __lib_ff_scriptArgs
+
 	# command line options
-	
 		__lib_ff_options_shortFlag_evalExpr=-e
 		__lib_ff_options_longFlag_evalExpr=--expression
-		
+
 		__lib_ff_options_shortFlag_evalFile=-f
 		__lib_ff_options_longFlag_evalFile=--file
-		
+
 		__lib_ff_options_shortFlag_readPipe=-p
 		__lib_ff_options_longFlag_readPipe=--pipe
-		
+
 		__lib_ff_options_shortFlag_showHelp=-h
 		__lib_ff_options_longFlag_showHelp=--help
-		
+
 		__lib_ff_options_shortFlag_showVersion=-v
 		__lib_ff_options_longFlag_showVersion=--version
-		
+
 		__lib_ff_options_flag_endOpts=--
+
+		__lib_ff_options_flag_scriptArgs=--args
 
 ## libraries
 
 	source "$__ff_myResources_libs/CmdOpts.lib"
-		
+
 	source "$__ff_myResources_libs/gettext.lib"
 	__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
-	
+
 ## functions
 
 	# load user's script into RAM
 	__lib_ff_loadScript()
 	{
 		local expression=":;"
-			
+
 		# store input
-		
+
 			if [ ${__lib_ff_options_isOn_evalExpr:-0} -eq 1 ]
 			then
 				# read command-line argument
@@ -93,9 +94,9 @@
 $REPLY"
 				done
 			fi
-			
+
 		# check input for control functions
-		
+
 			if [[ -n "${expression/*main*( |	)\(*( |	)\)*/}" && -n "${expression/*function+( |	)main*/}" ]]
 			then
 				expression="
@@ -103,11 +104,11 @@ main(){
 $expression
 :;}"
 			fi
-	
+
 		# load script into RAM
 			eval "$expression"
 	}
-	
+
 	# handles parsing of common command-line options
 	# @see __lib_CmdOpts_handleOption()
 	__lib_ff_handleBaseOption()
@@ -118,47 +119,47 @@ $expression
 				__lib_ff_options_value_evalExpr=$2
 				return 2
 			;;
-			
+
 			"$__lib_ff_options_shortFlag_evalFile" | "$__lib_ff_options_longFlag_evalFile")
 				__lib_ff_options_isOn_evalFile=1
 				__lib_ff_options_value_evalFile=$2
 				return 2
 			;;
-			
+
 			"$__lib_ff_options_shortFlag_readPipe" | "$__lib_ff_options_longFlag_readPipe")
 				__lib_ff_options_isOn_readPipe=1
 				return 1
 			;;
-			
+
 			"$__lib_ff_options_shortFlag_showHelp" | "$__lib_ff_options_longFlag_showHelp")
-			
+
 				local __lib_ff_docFile=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
-				
+
 				# NOTE: there are no translation catalogs for English because the documentation is written in English
-			
+
 				# determine which translation catalog to use
 					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}	# parse user's choice
 					__lib_ff_docI18n="$__ff_myResources_i18n/$__lib_ff_docFile.$__lib_ff_docLang.po"
-					
+
 				# check if the chosen translation catalog is available
-					if ! [ -r "$__lib_ff_docI18n" -a -f "$__lib_ff_docI18n" ] 
+					if ! [ -r "$__lib_ff_docI18n" -a -f "$__lib_ff_docI18n" ]
 					then
 						if [ -n "${__lib_ff_docLang/*+(en|C|POSIX)*/}" ]	# check for English's language code equivalencies
 						then
 							gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
-							
-							read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
-							
+
+							read -ep "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
+
 							[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && exit
 						fi
-						
+
 						__lib_ff_docLang=en
 					fi
-				
+
 				# display the documentation
-				
+
 					__lib_ff_docCached="$__ff_myConf/$__ff_myName.$__lib_ff_docFile.$__lib_ff_docLang"	# cached copies are stored in user settings directory
-					
+
 					{
 						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docLang" == en || "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
 						then
@@ -167,15 +168,15 @@ $expression
 							# load dependencies
 							source "$__ff_myResources_libs/DocFmt.lib"
 							__lib_gettext_load "$__lib_ff_docI18n"
-							
+
 							# generate & cache the documentation
 							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
 						fi
 					} | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
-				
+
 				exit
 			;;
-			
+
 			"$__lib_ff_options_shortFlag_showVersion" | "$__lib_ff_options_longFlag_showVersion")
 				echo $__lib_ff_version
 				exit
@@ -183,19 +184,30 @@ $expression
 			"$__lib_ff_options_flag_endOpts")
 				return 255
 			;;
+			"$__lib_ff_options_flag_scriptArgs")
+
+				# XXX: the following undeclared vars are inherited from CmdOpts.lib
+
+				local x
+
+				# copy remaining args into scriptArgs array
+					for (( x = i + 1 ; x < arrLen ; x++))
+					do
+						__lib_ff_scriptArgs[${#__lib_ff_scriptArgs[@]}]=${arr[$x]}
+						unset -v "arr[$x]"	# remove arg from target array
+					done
+
+				return 1
+			;;
 		esac
-		
+
 		return 0
 	}
-	
+
 	# updates the values of preset variables during non-recursive mode
 	__lib_ff_updateVars_linear()
 	{
 		f=$t
-		
-#		echo "target=$f"
-#		echo "name=$( basename "$f" )"
-#		echo "parent=$( dirname "$f" )"
 
 		# handle special cases
 		case "$f" in
@@ -221,24 +233,26 @@ $expression
 				f="./$f" # make implicit relative paths explicit
 			;;
 		esac
-		
+
 		# update preset variables
-		f=${f//+(\/)/\/}	# remove redundant slashes
+		f=${f//+(\/)//}	# remove redundant slashes
 		f=${f%/}	# remove trailing slash
 		fn=${f##*/}	# keep everything after the last slash
 		d=${f%/*}	# keep everything before the last slash
 		[ -z "$d" ] && d=/	# special case: $d is empty when it should be /
 	}
-	
+
 	# base application logic
 	__lib_ff_main()
 	{
 		# ensures proper clean up
-			trap 'exit 9' INT KILL TERM HUP
+			trap 'exit 255' INT KILL TERM HUP
+			trap 'end' EXIT	# call clean-up routines in user's script
 
 		# set behavior of current sub-shell
 			shopt -s nullglob extglob interactive_comments
-			
+			shopt -u cmdhist
+
 		# scan command line options
 
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized by the client script of this library
@@ -247,7 +261,7 @@ $expression
 				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"$__lib_ff_options_longFlag_showHelp\""
 				exit 1
 			fi
-		
+
 		# load and execute script
 			__lib_ff_loadScript
 			__ff_main	# invoke the client script that is currently using this library
