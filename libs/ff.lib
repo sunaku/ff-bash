@@ -32,8 +32,8 @@
 
 ## globals
 
-	__lib_ff_version_number=1.7.3-rc2
-	__lib_ff_version_date=2004-08-13
+	__lib_ff_version_number=1.7.3
+	__lib_ff_version_date=2004-09-10
 
 	declare -a __lib_ff_targetList __lib_ff_scriptArgs
 
@@ -49,24 +49,24 @@
 		__lib_ff_options_flag_pipeDelim=--pipe-delim
 
 		__lib_ff_options_flag_showHelp=--help
-
 		__lib_ff_options_flag_showVersion=--version
-
 		__lib_ff_options_flag_endOpts=--
-
 		__lib_ff_options_flag_scriptArgs=--args
-
 		__lib_ff_options_flag_language=--lang
 
 
 ## libraries
-
+	source "$__ff_myResources_libs/gettext.lib"
+	source "$__ff_myResources_libs/util.lib"
 	source "$__ff_myResources_libs/CmdOpts.lib"
 
-	source "$__ff_myResources_libs/gettext.lib"
-	__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
-
 ## functions
+
+	__lib_ff_loadI18N()
+	{
+		__lib_gettext_clear
+		__lib_gettext_load "${__ff_myResources_i18n}"/*."${__ff_myLang}.po"
+	}
 
 	# load user's script into RAM
 	__lib_ff_loadScript()
@@ -154,9 +154,7 @@ $expression
 						then
 							gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
 
-							read -ep "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
-
-							[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && exit
+							__lib_util_queryYesNo "$( gettext "Would you like to view the documentation in English?" )" 1 && exit
 						fi
 
 						__lib_ff_docLang=en
@@ -187,12 +185,11 @@ $expression
 				exit
 			;;
 			$__lib_ff_options_flag_language)
-				__ff_myLang=$2
-
-				# reload i18n resources
-					__lib_gettext_clear
-					__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
-
+				if [ -n "$2" ]
+				then
+					__ff_myLang=$2
+					__lib_ff_loadI18N	# reload I18N catalogs
+				fi
 				return 2
 			;;
 			$__lib_ff_options_flag_endOpts)
@@ -255,6 +252,9 @@ $expression
 		# set behavior of current sub-shell
 			shopt -s nullglob extglob interactive_comments
 			shopt -u cmdhist
+
+		# load resources
+			__lib_ff_loadI18N	# translation catalogs
 
 		# scan command line options
 
