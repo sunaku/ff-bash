@@ -132,36 +132,46 @@ $expression
 			;;
 			
 			"$__lib_ff_options_shortFlag_showHelp" | "$__lib_ff_options_longFlag_showHelp")
+			
+				local __lib_ff_docFile="$__ff_myName.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
 				
-				# load help document formatting library
-				source "$__ff_myResources_libs/DocFmt.lib"
-				
-				local __lib_ff_docFile="$__ff_myResources_docs/$__ff_myName.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
+				# NOTE: there are no translation catalogs for English because the documentation is written in English
+			
+				# determine which translation catalog to use
+					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}	# parse user's choice
+					__lib_ff_docI18n="$__ff_myResources_i18n/$__lib_ff_docFile.$__lib_ff_docLang.po"
 					
-				# choose translation catalog
-				
-					# allow user choice of translation language
-					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}
-					
-					__lib_ff_docI18n="$__ff_myResources_i18n/${__lib_ff_docFile##*/}.$__lib_ff_docLang.po"
-					
-				# load translation catalog
-					if [[ -f "$__lib_ff_docI18n" && -r "$__lib_ff_docI18n" ]]
+				# check if the chosen translation catalog is available
+					if ! [ -r "$__lib_ff_docI18n" -a -f "$__lib_ff_docI18n" ] 
 					then
-						__lib_gettext_load "$__lib_ff_docI18n"
-					
-					elif [ -n "${__lib_ff_docLang/*+(en|C|POSIX)*/}" ]	# no need to translate from English
-					then
-						gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
+						if [ -n "${__lib_ff_docLang/*+(en|C|POSIX)*/}" ]	# check for English's language code equivalencies
+						then
+							gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
+							
+							read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
+							
+							[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && exit
+						fi
 						
-						# query user to display English docs
-						read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
-						
-						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && exit
+						__lib_ff_docLang=en
 					fi
 				
-				# display documentation
-				source "$__lib_ff_docFile" | expand -t 4 | fmt -w $( tput cols ) | ${PAGER:-less -r}
+				# display the documentation
+				
+					__lib_ff_docCached="$__ff_myConf/$__lib_ff_docFile.$__lib_ff_docLang"	# cached copies are stored in user settings directory
+					
+					{
+						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docLang" == en || "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
+						then
+							cat "$__lib_ff_docCached"	# display cached file
+						else
+							# load dependencies
+								source "$__ff_myResources_libs/DocFmt.lib"
+								__lib_gettext_load "$__lib_ff_docI18n"
+							
+							source "$__ff_myResources_docs/$__lib_ff_docFile" | tee "$__lib_ff_docCached" # generate & cache the documentation
+						fi
+					} | expand -t 4 | fmt -w $( tput cols ) | ${PAGER:-less -r}
 				
 				exit
 			;;
