@@ -29,14 +29,19 @@
 
 ## global paths
 
-	__ff_myPath=$0			# path to this program
-	[ -L "$__ff_myPath" ] && __ff_myPath=$( find "$__ff_myPath" -printf "%l" )	# dereference if path is symlink
+	# path to this program
+	if [ -L "$0" ] # dereference if path is symlink
+	then
+		__ff_myPath=$( find "$0" -printf "%l" )
+	else
+		__ff_myPath=$0
+	fi
 	
 	__ff_myName=${__ff_myPath##*/}		# basename of this program
 	__ff_myHome=${__ff_myPath%/*}		# dirname of this program
-	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
-	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
-	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n
+	__ff_myResources_libs="${__ff_myHome}/libs"	# libraries
+	__ff_myResources_docs="${__ff_myHome}/docs"	# documentation
+	__ff_myResources_i18n="${__ff_myHome}/i18n"	# i18n resources
 	__ff_myLang=${LANG:0:2}		# language code
 	
 ## libraries
@@ -59,6 +64,34 @@
 		return $?
 	}
 	
+	# code for non-recursive mode
+	__ff_main_linear_()
+	{
+		if [[ -f "$f" && -r "$f" ]] # check perms
+		then
+		
+			# make implicit relative paths explicit
+			[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
+		
+			# set scripting variables
+			f=${f%/}
+			fn=${f##*/}
+			d=${f%/*}
+			i=1
+		
+			# handle user's script
+			begin_file	# user function
+			
+			while read -r l
+			do
+				main	# user function
+				(( i += 1 ))	# increment line number
+			done < "$f"
+			
+			end_file	# user function
+		fi
+	}
+	
 	__ff_main()
 	{
 		# scripting variables
@@ -70,34 +103,20 @@
 		
 		begin	# user function
 		
-		# handle each target
+		# handle command-line targets
 		for f in "${__lib_ff_targetList[@]}"
 		do
-			if [[ -f "$f" && -r "$f" ]] # check perms
-			then
-			
-				# make implicit relative paths explicit
-				[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
-			
-				# set scripting variables
-				f=${f%/}
-				fn=${f##*/}
-				d=${f%/*}
-				i=1
-			
-				# handle user's script
-				begin_file		# user function
-				
-				while read -r l
-				do
-					main		# user function
-					(( i += 1 ))	# increment line number
-					
-				done < "$f"
-				
-				end_file		# user function
-			fi
+			__ff_main_linear_
 		done
+		
+		# handle piped targets
+		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
+		then
+			while read -r f
+			do
+				__ff_main_linear_
+			done
+		fi
 		
 		end	# user function
 		
