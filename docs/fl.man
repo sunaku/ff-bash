@@ -133,7 +133,7 @@ __lib_DocFmt_blockStart
 		
 		__lib_DocFmt_blockItem "<b>\$fn</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Basename of the current target." )"
+			__lib_DocFmt_blockItem "$( gettext "Base name of the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>\$f</b>"
