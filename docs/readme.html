@@ -1,105 +1,118 @@
-ff-readme
+$Id$
 
-Contents
+CONTENTS
 
-  * license
-  * description
-  * files
-  * documentation
-  * installation
-  * examples
-  * limitations
-
-
-
-License
-
-  These programs are free software; you can redistribute them and/or modify them
-  under the terms of the GNU General Public License as published by the Free
-  Software Foundation; either version 2 of the License, or (at your option) any
-  later version.
-
-  All items distributed with this package are also released under the GNU GPL
-  version 2. A copy of this document is provided in the file 'COPYING'.
+	- license
+	- description
+	- files
+	- limitations
+	- documentation
+	- installation & removal
+	- examples
 
 
-Description
+LICENSE
 
-  ff - For each File
+	These programs are free software; you can redistribute them and/or
+	modify them under the terms of the GNU General Public License as
+	published by the Free Software Foundation; either version 2 of the
+	License, or (at your option) any later version.
 
-      For each File allows users to execute a Bash script recursively upon
-      many files and directories. It is ideal for performing a repetitive
-      procedure such as mass file renaming.
-
-  fl - For each Line
-
-      Allows users to execute a Bash script once for each line in a file. It
-      is ideal for performing complex text processing procedures.
+	All items distributed with this package are also released under the GNU
+	GPL version 2. A copy of this document is provided in the file
+	'COPYING'.
 
 
+DESCRIPTION
 
-Files
-
-  COPYING        A copy of the GNU GPL version 2 license.
-
-  FAQ            Answers to frequently asked questions.
-
-  changelog      A list of important changes in this version.
-
-  install        Installation script.
-
-  ff             For each File program.
-
-  fl             For each Line program.
-
-  ff-lib         Function library for programs in this package.
-
-  examples/      Contains sample scripts to get you started.
+	For each File (ff)
+	
+		Allows users to execute a Bash script recursively
+		upon many files and directories. It is ideal for performing a
+		repetitive procedure such as mass file renaming.
 
 
-
-Documentation
-
-  1. View help message for "For each File" by executing:
-
-      ./ff -h
-
-  2. View help message for "For each Line" by executing:
-
-      ./fl -h
-
-  3. Examine the source code of these programs (they are Bash scripts!).
+	For each Line (fl)
+	
+		Allows users to execute a Bash script once for each line in a
+		file. It is ideal for performing complex text processing
+		procedures.
 
 
+FILES
 
-Installation
+	COPYING
+	- A copy of the GNU GPL version 2 license.
 
-  Run the installation script './install', or perform a manual installation.
+	CHANGELOG
+	- A list of important changes in this version.
+	
+	FAQ
+	- Answers to frequently asked questions.
+
+	install
+	- Installation and uninstallation script.
+
+	ff
+	- For each File program.
+
+	fl
+	- For each Line program.
+
+	ff-lib
+	- Function library for programs in this package.
+
+	examples/
+	- Contains sample scripts to get you started.
 
 
-Examples
+LIMITATIONS
 
-  I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
-  to see how the scripting variables behave.
-
-  Try the following commands:
-
-      ./ff * < ./examples/ff.vars | more
-      ./ff -r . < ./examples/ff.vars | more
-
-      ./ff /bin/* < ./examples/ff.vars | more
-      ./ff -r /bin/ < ./examples/ff.vars | more
-
-      ./fl README < ./examples/fl.vars | more
-
-  Notice that the scripting variables are consistent between recursive and
-  non-recursive modes.
+	- Leading and trailing whitespace is automatically removed from lines
+	when using 'fl'. This is an unwanted side-effect of using the Bash
+	builtin 'read' to fetch a line of text from a file.
 
 
+DOCUMENTATION
 
-Limitations
+	1. View help message for "For each File" by executing:
 
-  * Leading whitespace is automatically stripped from lines when using 'fl'.
-    This is an unwanted side-effect of using the Bash builtin 'read' to fetch a
-    line of text from a file.
+		./ff -h
+
+	2. View help message for "For each Line" by executing:
+
+		./fl -h
+
+	3. Examine the source code of these programs (they are Bash scripts!).
+
+
+INSTALLATION & REMOVAL
+
+	To install, manually copy files in this directory or run:
+
+		./install
+
+	To remove, manually remove copied files or run:
+
+		./install -u
+
+
+EXAMPLES
+
+	I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
+	to see how the scripting variables behave.
+
+	Try the following commands:
+
+		./ff * < ./examples/ff.vars | more
+		./ff -r . < ./examples/ff.vars | more
+
+		./ff /bin/* < ./examples/ff.vars | more
+		./ff -r /bin/ < ./examples/ff.vars | more
+
+		./fl README < ./examples/fl.vars | more
+
+	Notice that the scripting variables are consistent between recursive and
+	non-recursive modes.
+
 
