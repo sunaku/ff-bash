@@ -29,7 +29,7 @@
 
 ## globals
 
-	declare -a __lib_gettext_catalogList
+	declare -a __lib_gettext_catalogList=( /dev/null )
 	
 ## functions
 
