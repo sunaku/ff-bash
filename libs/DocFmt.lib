@@ -4,6 +4,11 @@
 #
 ###
 #
+# Requires:
+#	tput	- part of "GNU termutils" package
+#
+###
+#
 # Copyright 2003, 2004 Suraj N. Kurapati.
 #
 ###
@@ -43,9 +48,11 @@
 
 ## functions
 
-	# Converts text with formatting tags to the proper on-screen formatting commands using `tput`.
+	# Converts text with formatting tags to the proper on-screen formatting commands using the `tput` program.
 	#
-	# Formatting Tags (must be properly enclosed, ie: <tag></tag> ):
+	# The following formatting tags are supported:
+	#	+ must be properly enclosed, ie: <tag></tag>
+	#	+ can be upper or lower case, ie: <t> or <T>
 	#
 	#	<s>	Stand out
 	#	<u>	Underline
@@ -61,6 +68,8 @@
 	#	&lt;	<
 	#	&gt;	>
 	#
+	# NOTE: The nesting of formatting tags is not yet supported; for example: "<b><u>...</u></b>" will not work as expected.
+	#
 	# @param	stdin	Text with formatting tags.
 	#
 	# @usage	pipe or redirect the @param to this function.
@@ -68,22 +77,19 @@
 	__lib_DocFmt_formatTags()
 	{
 		sed "
-			s:<s>:$( __lib_DocFmt_setFmt standout 1 ):gi
-			s:</s>:$( __lib_DocFmt_setFmt standout 0 ):gi
-			s:<u>:$( __lib_DocFmt_setFmt underline 1 ):gi
-			s:</u>:$( __lib_DocFmt_setFmt underline 0 ):gi
-			s:<l>:$( __lib_DocFmt_setFmt blink 1 ):gi
-			s:</l>:$( __lib_DocFmt_setFmt blink 0 ):gi
-			s:<d>:$( __lib_DocFmt_setFmt dim 1 ):gi
-			s:</d>:$( __lib_DocFmt_setFmt dim 0 ):gi
-			s:<b>:$( __lib_DocFmt_setFmt bold 1 ):gi
-			s:</b>:$( __lib_DocFmt_setFmt bold 0 ):gi
-			s:<v>:$( __lib_DocFmt_setFmt invisible 1 ):gi
-			s:</v>:$( __lib_DocFmt_setFmt invisible 0 ):gi
-			s:<o>:$( __lib_DocFmt_setFmt protect 1 ):gi
-			s:</o>:$( __lib_DocFmt_setFmt protect 0 ):gi
-			s:<c>:$( __lib_DocFmt_setFmt altcharset 1 ):gi
-			s:</c>:$( __lib_DocFmt_setFmt altcharset 0 ):gi
+			s:<s>:$( tput smso ):gi
+			s:</s>:$( tput rmso ):gi
+			s:<u>:$( tput smul ):gi
+			s:</u>:$( tput rmul ):gi
+			s:<l>:$( tput blink ):gi
+			s:<r>:$( tput rev ):gi
+			s:<d>:$( tput dim ):gi
+			s:<b>:$( tput bold ):gi
+			s:<v>:$( tput invis):gi
+			s:<o>:$( tput prot ):gi
+			s:<c>:$( tput smacs ):gi
+			s:</c>:$( tput rmacs ):gi
+			s:</[lbrdvo]>:$( tput sgr0 ):gi
 			s:&lt;:<:gi
 			s:&gt;:>:gi
 		"
