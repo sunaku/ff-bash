@@ -58,9 +58,15 @@
 	# Sets the formatting of output printed after the invocation of this function.
 	# @param	1	The value of an item in $__lib_DocFmt_sgrNames
 	# @param	2	Either 0 (disable) or 1 (enable).
+	# @param	... More pairs of formatting parameters.
 	__lib_DocFmt_setFmt()
 	{
-		eval "__lib_DocFmt_sgrModes[\$__lib_DocFmt_sgrNames_$1]=$2"	# store new mode value in hash-table
+		while (( $# >= 2 ))
+		do
+			eval "__lib_DocFmt_sgrModes[\$__lib_DocFmt_sgrNames_$1]=$2"	# store new mode value in hash-table
+			shift 2
+		done
+		
 		tput sgr "${__lib_DocFmt_sgrModes[@]}" # apply the mode
 	}
 
