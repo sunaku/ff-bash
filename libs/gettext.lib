@@ -130,7 +130,7 @@
 		
 			if [ "$1" == "-n" ]
 			then
-				newline=' '
+				newline='\n'
 				shift	# remove $1
 			fi
 			
@@ -145,7 +145,7 @@
 			[ -z "$response" ] && response=$query
 		
 		# print result
-			printf "${response}${newline:-\n}" "${@}"
+			printf "${response}${newline}" "${@}"
 	}
 	
 	# function alias
