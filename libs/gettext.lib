@@ -87,7 +87,9 @@
 			fi
 			
 			# get all strings onto one line
-			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$__lib_gettext_tempfile"
+			( sed -e '/^$/d ; /^[ \t]*\#/d' | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g ; s/msg[si][td]r\?[ \t]*/\n/g' | sed -e '1d ; s/^ *"// ; s/" *$//' ) < "$file" > "$__lib_gettext_tempfile"
+			
+			# append new line so that the last gettext string is read
 			echo -e '\n' >> "$__lib_gettext_tempfile"
 			
 			# load file
@@ -96,8 +98,8 @@
 				__lib_gettext_cache[${#__lib_gettext_cache[@]}]=$line
 			done < "$__lib_gettext_tempfile"
 			
-			# ensure there are even number of items in cache
-			(( ${#__lib_gettext_cache[@]} % 2 != 0 )) && unset -v __lib_gettext_cache[$(( ${#__lib_gettext_cache[@]} - 1 ))]
+			# remove blank entry at end of cache
+			unset -v __lib_gettext_cache[$(( ${#__lib_gettext_cache[@]} - 1 ))]
 			
 #			declare -a ; read -u 2
 		done
