@@ -1,14 +1,22 @@
 #!/bin/bash
-
+#
 # usage: ff <files>
 #
-# scripting vars:
+# performs the given commands for every file in the current dir,
+# or only the files specified as arguments
+#
+# user scripting vars:
 # $f = current file
 # $d = current directory
+#
+# @author	Suraj Kurapati
+# @version	$Revision$, $Date$
+#
 
-g_tmpfileMask="/tmp/$$"
-g_script="${g_tmpfileMask}.script"
-g_args=$*
+# globals
+	g_tmpfileMask="/tmp/$$"
+	g_script="${g_tmpfileMask}.script"
+	g_args=$*
 
 # check for args
 	if [[ "$g_args" == "" ]]
