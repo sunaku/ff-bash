@@ -30,32 +30,12 @@
 ## globals
 
 	__lib_gettext_tempfile="${TMP:-/tmp}/__lib_gettext.$$"
-	__lib_gettext_tempfile_cacheIndex="$__lib_gettext_tempfile.index"
 	
 	# even index: msgid
 	# odd index: msgstr
 	declare -a __lib_gettext_cache
 	
 ## functions
-	
-	# Initializes internal library structures
-	# This function must be invoked before using any other the library functions
-	__lib_gettext_init()
-	{
-		# setup shared cacheIndex
-		echo 0 > "$__lib_gettext_tempfile_cacheIndex"
-	}
-	
-	# Performs clean up of internal library structures
-	# This function must be invoked before exiting the program
-	__lib_gettext_fin()
-	{
-		# free memory
-		__lib_gettext_free
-		
-		# clean up temp files
-		rm -f ${__lib_gettext_tempfile}*
-	}
 
 	# Loads a gettext Portable-Object translation catalog into cache.
 	# Cache is not cleared before loading new data.
@@ -91,18 +71,11 @@
 	__lib_gettext_load()
 	{
 		# variables
-		local file line exit_status=0
+		local file line
 		
 		# parse catalog files
 		for file
 		do
-			# check file perms
-			if [[ ! -r "$file" || ! -f "$file" ]]
-			then
-				exit_status=1
-				continue
-			fi
-			
 			# get all strings onto one line
 			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$__lib_gettext_tempfile"
 			echo -e '\n' >> "$__lib_gettext_tempfile"
@@ -121,74 +94,7 @@
 		
 		# clean up
 		rm -f "$__lib_gettext_tempfile"
-		
-		return $exit_status
 	}
-	
-	
-	# parsing state machine:: VERY SLOW!
-#	__lib_gettext_load_stateMachine()
-#	{
-#		# read words for current string
-#		if [ "$state" == read ]
-#		then
-#			# conditions that stop from reading
-#			if [[ "$word" == "msgid" || "$word" == "msgstr" ]]
-#			then
-#				# note: new string_type is in $word
-#				
-#				# state changes
-#				state=setup
-#				
-#			elif [ ! -z "$string_type" ]
-#			then
-#				# determine quote
-#				if [ -z "$string_quote" ]
-#				then
-#					string_quote=${word:0:1}
-#				else
-#					# strip multi-line quotes
-#					if [[ "$string" != "${string%$string_quote}" && "$string_quote" == ${word:0:1} ]]
-#					then
-#						string=${string%$string_quote}
-#						word=${word#$string_quote}
-##						echo ">>> stripping multi-line quote"
-#					fi
-#				fi
-#				
-#				# accumulate string 
-#				string="$string $word"	# note: this adds initial space at start of string
-#				
-#			fi
-#		fi
-#		
-#		# setup variables for next string
-#		if [ "$state" == setup ]
-#		then
-#		
-#			# process data
-#			string=${string# }		# remove initial space added during first accumulation
-#			string=${string#$string_quote}	# strip bounding quotes
-#			string=${string%$string_quote}
-#		
-#			# store data
-#			if [ "$string_type" == "msgid" ]
-#			then
-#				__lib_gettext_cache_msgid[${#__lib_gettext_cache_msgid[@]}]=$string
-#			elif [ "$string_type" == "msgstr" ]
-#			then
-#				__lib_gettext_cache_msgstr[${#__lib_gettext_cache_msgstr[@]}]=$string
-#			fi
-#			
-#			# reset vars
-#			string=
-#			string_type=$word
-#			string_quote=
-#			
-#			# state changes
-#			state=read
-#		fi
-#	}
 	
 	# Frees cached translation catalog data from memory.
 	__lib_gettext_free()
@@ -219,10 +125,7 @@
 	#
 	gettext()
 	{
-		local query translation cacheIndex=$( < "$__lib_gettext_tempfile_cacheIndex" )
-		
-#		echo "__lib_gettext_tempfile_cacheIndex=$__lib_gettext_tempfile_cacheIndex"
-#		cat $__lib_gettext_tempfile_cacheIndex
+		local query translation cacheIndex=0
 		
 		# handle options
 		
@@ -248,10 +151,6 @@
 			
 			let string_index=cacheIndex+1
 			
-#			echo "cacheIndex=$cacheIndex"
-#			echo "cache size=${#__lib_gettext_cache_msgid[@]}"
-#			echo "msgstr='${__lib_gettext_cache_msgstr[$cacheIndex]}'"
-			
 		# determine translation
 		
 			if [ ! -z "${__lib_gettext_cache[$string_index]}" ]
@@ -270,8 +169,6 @@
 			printf "${translation}" "${@}"
 			
 		# finished
-		echo $cacheIndex > "$__lib_gettext_tempfile_cacheIndex"
-#		cat "$__lib_gettext_tempfile_cacheIndex"
 		return 0
 	}
 	
@@ -286,3 +183,10 @@
 	{
 		ngettext "${@}"
 	}
+	
+	# function alias
+	__()
+	{
+		gettext "${@}"
+	}
+	
