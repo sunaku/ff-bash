@@ -33,13 +33,13 @@
 
 ## globals
 
-	g_scriptName="ff.mp3_catalog"
-
-	declare -a g_tagData g_targetList
+	g_scriptName=${__lib_ff_options_value_evalFile##*/}
 	g_catalogFmt='${genre:-Unknown}/$artist/$album/$track${track:+-}$title.mp3'
 
+	declare -a g_tagData g_targetList
+
 	# files
-		g_catalogDir="$g_scriptName$$+$RANDOM"
+		g_catalogDir="$g_scriptName-$$-$RANDOM"
 		g_outPass=pass.log
 		g_outFail=fail.log
 		g_outError=error.log
@@ -50,9 +50,9 @@
 		g_options_flag_move=--move
 		g_options_flag_format=--format
 		g_options_flag_help=--help
-		g_options_flag_outdir=--out-dir
+		g_options_flag_outDir=--outdir
 
-	# speed hack: output messages
+	# XXX: speed hack: output messages
 		g_msgout_npt=$( gettext "Now processing target:" )
 		g_msgout_cta=$( gettext "Catalogging target as:" )
 		g_msgout_attitc=$( gettext "Accept this target into the catalog (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )] " )
@@ -63,8 +63,8 @@
 
 ## libraries
 
-	source "$__ff_myResources_libs/id3tag.lib"
-	source "$__ff_myResources_libs/DocFmt.lib"
+	[ ${__LIB_ID3TAG__:-0} -eq 0 ] && source "$__ff_myResources_libs/id3tag.lib"
+	[ ${__LIB_DOCFMT__:-0} -eq 0 ] && source "$__ff_myResources_libs/DocFmt.lib"
 
 	__lib_gettext_load "$__ff_myResources_i18n/$g_scriptName.$__ff_myLang.po"
 
@@ -91,7 +91,7 @@
 				g_options_isOn_ready=1
 				return 1
 			;;
-			$g_options_flag_outdir)
+			$g_options_flag_outDir)
 				g_catalogDir=$2
 				return 2
 			;;
@@ -141,9 +141,9 @@
 		$( gettext "Display this help message and exit." )
 
 	<b>$g_options_flag_move</b>
-		$( gettext "Physically move targets into the catalog instead of creating symbolic links to them. If this option is not used, then be sure to specify absolute paths to targets so that the created symbolic links will be valid." )
+		$( gettext "Physically move targets into the catalog instead of creating symbolic links to them. If this option is not used, then be sure to specify absolute paths to targets so that the created symbolic links will be valid regardless of your current working directory. For example, if your current working directory is %s, then symbolic links created to files in %s may not be valid if your current working directory changes to %s." "<em>/foo/bar/baz</em>" "<em>../tea</em>" "<em>/chai</em>" )
 
-	<b>$g_options_flag_outdir</b> <u>$( gettext "directory" )</u>
+	<b>$g_options_flag_outDir</b> <u>$( gettext "directory" )</u>
 		$( gettext "Use %s as the output directory for the catalog." "<u>$( gettext "directory" )</u>" )
 
 	<b>$g_options_flag_ready</b>
@@ -214,7 +214,7 @@
 	$( gettext "Genre" ):	<u>$genre</u>
 	$( gettext "Track" ):	<u>$track</u>
 
-	$( gettext "Catalog Entry" ):	<u>$catalogged_target</u>
+	$( gettext "Catalog entry" ):	<u>$catalogged_target</u>
 " | __lib_DocFmt_formatTags
 
 					read -ep "%% $g_msgout_attitc" < /dev/tty
