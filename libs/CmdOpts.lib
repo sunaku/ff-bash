@@ -2,8 +2,6 @@
 #
 # Command-line options parsing library.
 #
-# Note: the function '__lib_CmdOpts_handleOption()' must be overridden by the client script.
-#
 ###
 #
 # Copyright 2003, 2004 Suraj N. Kurapati.
@@ -33,39 +31,50 @@
 
 ## functions
 	
-	# Scans the array whose name is given by $1 for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from the array whose name is given by $1.
+	# Scans the array whose name is given by $1 for command-line options. When an option is found, the function whose name is given by $2 is invoked. If $2 does not report that the option given to it is illegal, then the option and its possible argument are then removed from the array whose name is given by $1.
 	#
-	# @param	1	Name of the array which contains raw command-line arguments.
-	# @return	1	An illegal option was encountered. The name of this option is stored in the first index of the array whose name is given by $1.
+	# @param	1	Name of the array which contains raw command-line arguments. Once this scanOptions() function has properly terminated, the array whose name is given by $1 will contain only items that are unrelated to the command-line options.
+	#
+	# @param	2	Name of the function that handles option flags. The following behavior must be supported by the function whose name is given by $2:
+		#
+		# Handles the parsing of a command-line option.
+		#
+		# @param	1	option's name (flag)
+		# @param	2	option's argument
+		#
+		# One of the following values must be returned:
+		# @return	0	The given option is illegal.
+		# @return	1	The given option has no argument.
+		# @return	2	The given option has one argument.
+		#
+	# @return	0	Success.
+	# @return	1	An illegal option was encountered. In the array whose name is given by $1, the name of the illegal option is stored in the first index and its possible argument is stored in the second index. The rest of the array's contents are unaccounted for.
+	#
 	__lib_CmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt flag arr arrName arrLen isInvalid=0
-		declare -a arr
-		
-		arrName=$1
-		shift # remove the array name from this func's args
+		local i=0 j=0 k opt flag arrLen isInvalid=0
+		local -a arr
 		
 		# make local copy of caller's array
-		eval "arr=( \"\${$arrName[@]}\" )"
+		eval "arr=( \"\${$1[@]}\" )"
 		arrLen=${#arr[@]}
 		
-		while [ $i -lt $arrLen ]
+		while (( i < arrLen ))
 		do
 			(( j = i + 1 ))
 			
-			opt=${arr[$i]}
+			opt=${arr[$i]}	# make a copy of the next option flag, because it may be deleted from the array before subsequent short options that it may contain are processed
 			
 			if [ "${opt:0:1}" == "-" ] # look for option prefix
 			then
 			
-				if [ "${opt:1:1}" == "-" ]	# handle long opts
+				if [ "${opt:1:1}" == "-" ]	# handle long option names
 				then
-				
 					flag=${opt#--}
 					
-					__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
+					"$2" "$flag" "${arr[$j]}"
 					
 					if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 					then
@@ -73,15 +82,17 @@
 						isInvalid=1
 					fi
 					
-				else	# handle short opts
+				else	# handle short option names
 				
-					# handle multiple option flags that are jumbled into one word
-					k=1	# +1 to skip '-' prefix
-					while [ $k -lt ${#opt} ]
+					# handle multiple flags that are jumbled into one option; ex: "-efm" is equivalent to "-e -f -m"
+					
+					k=1	# flag index; +1 to skip '-' prefix
+					
+					while (( k < ${#opt} ))
 					do
 						flag=${opt:$k:1}
 						
-						__lib_CmdOpts_handleOption "$flag" "${arr[$j]}"
+						"$2" "$flag" "${arr[$j]}"
 						
 						if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 						then
@@ -98,7 +109,7 @@
 			# illegal option encountered
 			if [ $isInvalid -eq 1 ]
 			then
-				eval "$arrName=\$flag"
+				eval "$1[0]=\$flag ; $1[1]=\${arr[$j]}"
 				return 1
 			fi
 			
@@ -106,18 +117,18 @@
 		done
 	
 		# propogate changes in local array to caller's array
-		eval "$arrName=( \"\${arr[@]}\" )"
+		eval "$1=( \"\${arr[@]}\" )"
 		
 #		declare -a ; read < /dev/tty
 		return 0
 	}
 	
-	# Handles the return value from '__lib_CmdOpts_handleOption()'. This function is meant to be used internally by this library.
+	# Handles the return value from the function whose name is given in $2 of scanOptions(). This function is meant to be used internally by this library.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
 	__lib_CmdOpts_scanOptions_handleReturnValue_()
 	{
-		case $1 in
+		case "$1" in
 			2)
 				unset -v "arr[$j]" "arr[$i]"	# remove the option's name & argument
 				
@@ -134,15 +145,3 @@
 		
 		return 0
 	}
-	
-	# Handles the parsing of a command-line option.
-	#
-	# @param	1	option's name
-	# @param	2	option's argument
-	#
-	# One of the following values must be returned:
-	# @return	0	The given option is illegal.
-	# @return	1	The given option has no argument.
-	# @return	2	The given option has an argument.
-	__lib_CmdOpts_handleOption() { return 0; }
-
