@@ -10,7 +10,6 @@
 	ff_tmpMask=${TMP:-/tmp}/ff_tmp$$
 	ff_tmp_userScript=${ff_tmpMask}.script
 	ff_tmp_swapFile=${ff_tmpMask}.swap
-	ff_tmp_targetList=${ff_tmpMask}.list
 	
 	# command line options
 	ff_baseOpts=ehs:t:
@@ -18,6 +17,9 @@
 	ff_baseOpts_optFlg_showHelp=h
 	ff_baseOpts_optFlg_saveInput=s
 	ff_baseOpts_optFlg_targetList=t
+	
+	# targets
+	declare -a ff_targetArray
 
 ## functions
 	
@@ -79,16 +81,18 @@
 	# setup the list of targets which will be performed upon
 	ff_setupTargets()
 	{
-		# use user's target list if specified
-		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ ! -z "$ff_baseOpts_optArg_targetList" ]
+		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ -n "$ff_baseOpts_optArg_targetList" ]
 		then
-			cp "$ff_baseOpts_optArg_targetList" "$ff_tmp_targetList"
-		else
-			# write command line arguments to target list
-			for arg
+			# use targets listed in a file
+			local line
+			
+			while read line
 			do
-				echo "$arg" >> "$ff_tmp_targetList"
-			done
+				ff_targetArray[${#ff_targetArray[@]}]=$line
+			done < "$ff_baseOpts_optArg_targetList"
+		else
+			# use targets given on command line
+			ff_targetArray=( "${@}" )
 		fi
 	}
 	
@@ -126,6 +130,9 @@
 	# base application logic
 	ff_baseLogic()
 	{
+		# ensures proper clean up
+			trap 'ff_exit' INT EXIT
+		
 		# scan command line options
 			
 			ff_scanOptions "${@}"
@@ -151,7 +158,6 @@
 			# execute script
 			ff_main
 	
-		# clean up and exit
-		ff_exit
+		# finished
 	}
 
