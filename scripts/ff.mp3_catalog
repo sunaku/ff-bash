@@ -100,7 +100,7 @@
 				{
 					echo \
 "<b>$( gettext "BREIF" )</b>
-	$( gettext "Organizes %s files, according to a user specified formatting string which is based upon their %s or %s tags, into a catalog." MP3 ID3v1 ID3v1.1 )
+	$( gettext "Organizes %s files into a catalog according their %s or %s tags." MP3 ID3v1 ID3v1.1 )
 
 <b>$( gettext "USAGE" )</b>
 	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option")</u>]...
