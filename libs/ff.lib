@@ -88,14 +88,13 @@
 			elif [ ${__lib_ff_options_isOn_evalFile:-0} -eq 1 ]
 			then
 				# read script file
-				if [ -r "$__lib_ff_options_value_evalFile" ]
-				then 
+				if [[ -f "$__lib_ff_options_value_evalFile" && -r "$__lib_ff_options_value_evalFile" ]]
+				then
 					expression=$( < "$__lib_ff_options_value_evalFile" )
 				else
-					gettext "Error: Unable to read file: '%s'." "$__lib_ff_options_value_evalFile"
+					gettext "Error: Unable to read file '%s'." "$__lib_ff_options_value_evalFile"
 					__lib_ff_exit 2
 				fi
-				
 			fi
 			
 		# check input 
@@ -105,17 +104,16 @@
 				gettext "Error: No shell commands specified."
 				__lib_ff_exit 1
 			fi
-		
 		# check input for control functions
 		
-			if [ "${expression//main()/}" == "$expression" ]
+			if ! echo "$expression" | grep 'main *\( *\)' >& /dev/null
 			then
 				expression="
 main(){
 $expression
 :;}"
 			fi
-		
+	
 		# load script into RAM
 			eval "$expression"
 	}
@@ -192,7 +190,7 @@ $expression
 						gettext "Error: Unable to read the translation catalog for language code '%s'." "$__lib_ff_docLang"
 						
 						# query user to display English docs
-						read -p "$( gettext "Shall I display the documentation in English instead? [yes]" ) " < /dev/tty
+						read -p "$( gettext "Shall I display the documentation in English instead? [yes]" ): " < /dev/tty
 						
 						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && __lib_ff_exit
 					fi
@@ -216,7 +214,7 @@ $expression
 	__lib_ff_main()
 	{
 		# ensures proper clean up
-			trap '__lib_ff_exit 3' INT KILL TERM
+			trap '__lib_ff_exit 9' INT KILL TERM HUP
 
 		# scan command line options
 
