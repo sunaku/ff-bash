@@ -4,9 +4,8 @@
 #
 ##
 #
-# Requirements:
-#
-#	wget	- downloads a document given its URL
+# Requires:
+#	GNU wget
 #
 ###
 #
@@ -36,29 +35,29 @@
 
 	# translation service
 
-		service_URL='http://babelfish.altavista.com/babelfish/trurl_pagecontent?'
-		service_URL_langFlag='&lp='
-		service_URL_documentFlag='&url='
+		g_service_URL='http://babelfish.altavista.com/babelfish/trurl_pagecontent?'
+		g_service_URL_flags_langCombo='&lp='
+		g_service_URL_flags_docURL='&url='
 		
-		service_busyMessage1='<title>[^<>]*Error[^<>]*</title>'
-		service_busyMessage2='n/a'
+		# output produced by service when it is busy
+		g_service_busyMessage1='<title>[^<>]*Error[^<>]*</title>'
+		g_service_busyMessage2='n/a'
 		
 		# encoding of service's output
-		service_encoding="UTF-8"
+		g_service_encoding="UTF-8"
 		
-		# possible values for the URL flag
-		service_URL_langFlag_codes=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
+		# possible values for the service's $langFlag
+		g_service_langCombos=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
 	
 	# supported languages
 		
-		langNames=( "Chinese Simplified" "Chinese Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
+		g_langNames=( "Chinese Simplified" "Chinese Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
 		
-		langCodes=( zh zt nl en fr de el it ja ko pt ru es )
+		g_langCodes=( zh zt nl en fr de el it ja ko pt ru es )
 		
 	# source document
 	
-		# default language
-		langSrc=en
+		g_langSrc=$__ff_myLang	# default language
 		
 ## helper functions
 
@@ -68,15 +67,15 @@
 		local i
 		
 		# display menu
-				
+		
 			echo "Code	Language"
 			echo "----	--------"
 			
 			i=0
-			while [ $i -lt ${#langCodes[@]} ]
+			while [ $i -lt ${#g_langCodes[@]} ]
 			do
-				echo "${langCodes[$i]}	${langNames[$i]}"
-				let i=i+1
+				echo "${g_langCodes[$i]}	${g_langNames[$i]}"
+				(( i++ ))	# increment loop
 			done
 			
 			echo
@@ -86,15 +85,15 @@
 			while true
 			do
 				# read choice
-					read -p "%% Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
+					read -p "%% Please specify the code for the language in which \"$docURL\" is written: [$g_langSrc] " < /dev/tty
 					[ -z "$REPLY" ] && return # user has accepted default value
 					
 				# validate choice
-					for i in "${langCodes[@]}"
+					for i in "${g_langCodes[@]}"
 					do
 						if [ "$i" == "$REPLY" ]
 						then
-							langSrc=$REPLY
+							g_langSrc=$REPLY
 							return
 						fi
 					done
@@ -107,43 +106,44 @@
 
 	main()
 	{
-		docURL=$t
-		querySourceLang
+		local i docURL=$t docDst langDst langCombo queryURL
+		
+		querySourceLang	# query user about the source document's language
 		
 		i=0
-		while [ $i -lt ${#service_URL_langFlag_codes[@]} ]
+		while [ $i -lt ${#g_service_langCombos[@]} ]
 		do
-			langFlag=${service_URL_langFlag_codes[$i]}
-			docDst="$PWD/$fn.${langFlag#*_}"
+			langCombo=${g_service_langCombos[$i]}	# current translation combination
+			langDst=${langCombo#*_}
 			
-			# check source language in flag
-			if [ "$langSrc" == "${langFlag%_*}" ]
+			docDst="$fn.$langDst"	# path to downloaded translation file
+			
+			# check if source language matches the current combination flag
+			if [ "$g_langSrc" == "${langCombo%_*}" ]
 			then
 		
-				queryURL="${service_URL}${service_URL_documentFlag}${docURL}${service_URL_langFlag}${langFlag}"
+				# display status message
+				echo "%% Translating from \"$g_langSrc\" to \"$langDst\"."
+			
+				# assemble URL to query service with
+				queryURL="${g_service_URL}${g_service_URL_flags_docURL}${docURL}${g_service_URL_flags_langCombo}${langCombo}"
 				
 				# fetch translation
-				wget --header="Accept-Charset: $service_encoding" -O $$ "$queryURL"
+				wget -q --header="Accept-Charset: $g_service_encoding" -O "$docDst" "$queryURL"
 				
 				# check for errors
-				if grep -i "$service_busyMessage1" < $$ || [ "$( tr -d '[:space:]' < $$ )" == "$service_busyMessage2" ]
+				if grep -i "$g_service_busyMessage1" "$docDst" >& /dev/null || [ "$( tr -d '[:space:]' < "$docDst" )" == "$g_service_busyMessage2" ]
 				then
 					# try again after some time
-					timeout=${RANDOM:0:1}
+					timeout=${RANDOM:0:1}	# determine wait time
+					echo -e "%% The translation service is busy or an error occured.\n Trying again in $timeout second(s)..."	# display status message
 					
-					echo "%% The translation service is busy; trying again in $timeout seconds..."
-					
-					sleep $timeout
+					sleep $timeout	# perform waiting
 					continue
 				fi
-				
-				# remove added HTML header from and store output
-				sed '1s/^.*$/<html>/' < $$ > "$docDst"
 			fi
 			
-			let i=i+1
+			(( i++ ))	# increment loop
 		done
-		
-		rm -f $$
 	}
 
