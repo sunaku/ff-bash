@@ -57,7 +57,7 @@
 
 	g_langSrc=$__ff_myLang	# default language
 
-	MAX_RETRY=2	# maximum number of retries
+	MAX_RETRY=3	# maximum number of retries
 
 ## helper functions
 
@@ -68,23 +68,20 @@
 
 		# display menu
 
-			echo "$( gettext "CODE" )	$( gettext "LANGUAGE" )"
+			__lib_DocFmt_formatTags <<< "<b>$( gettext "CODE" )	$( gettext "LANGUAGE" )</b>"
 
-			i=0
-			while [ $i -lt ${#g_langCodes[@]} ]
+			for (( i=0 ; i < ${#g_langCodes[@]} ; i++ ))
 			do
 				echo "${g_langCodes[$i]}	${g_langNames[$i]}"
-				(( i++ ))	# increment loop
 			done
-
-			echo
 
 		# read & validate choice
 
 			while true
 			do
 				# read choice
-					lang=$( __lib_util_query "%% $( gettext "Please specify the code of the language in which %s is written:" "\"$docURL\"" )" "$g_langSrc" )
+					echo
+					lang=$( __lib_util_query "$( __lib_DocFmt_formatTags <<< "$( gettext "Please specify the code of the language in which %s is written." "<em>$docURL</em>" )" )" "$g_langSrc" )
 
 				# validate choice
 					for i in "${g_langCodes[@]}"
@@ -125,9 +122,9 @@
 				echo "%% $( gettext "Translating from %s into %s." "\"$g_langSrc\"" "\"$langDst\"" )"
 
 				# fetch translation
-				queryURL="${g_service_URL}${g_service_URL_flags_docURL}${docURL}${g_service_URL_flags_langCombo}${langCombo}"
-				
-				wget -q --header="Accept-Charset: $g_service_encoding" -O "$docDst" "$queryURL"
+					queryURL="${g_service_URL}${g_service_URL_flags_docURL}${docURL}${g_service_URL_flags_langCombo}${langCombo}"
+	
+					wget -q --header="Accept-Charset: $g_service_encoding" -O "$docDst" "$queryURL"
 
 				# check for errors
 				if grep -i "$g_service_busyMessage1" "$docDst" >& /dev/null || [ "$( tr -d '[:space:]' < "$docDst" )" == "$g_service_busyMessage2" ]
@@ -136,7 +133,7 @@
 
 					if [ $failures -gt $MAX_RETRY ]	# ask: try again?
 					then
-						__lib_util_queryYesNo "%% $( gettext "Skip translation into current language?" )"
+						__lib_util_queryYesNo "%% $( gettext "Skip translation of language: %s ?" "\"$langDst\"" )"
 
 						if [ $? -eq 0 ]
 						then
@@ -148,7 +145,7 @@
 					fi
 
 					timeout=${RANDOM:0:1}	# determine wait time
-					echo -e "%% $( gettext "The translation service is busy or an error occured.\n Retrying after %s seconds." "$timeout" )"	# display status message
+					echo "%% $( gettext "The translation service is busy or an error occured.\n I will retry after %s seconds." "$timeout" )"	# display status message
 
 					sleep $timeout
 					continue

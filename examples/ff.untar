@@ -174,7 +174,7 @@
 				else
 					# query user for different directory
 					echo "@@ $( gettext "Error: Unable to extract target into: %s" "$point" )" > /dev/tty
-					point=$( __lib_util_query "%% $( gettext "Please specify a different extraction point:" )" "[$unique]" )
+					point=$( __lib_util_query "%% $( gettext "Please specify a different extraction point." )" "$unique" )
 				fi
 			done
 		fi
@@ -277,7 +277,7 @@
 			then
 				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
 				then
-					__lib_util_queryYesNo "%% $( gettext "Proceed with extraction?" )" 1 && return
+					__lib_util_queryYesNo "%% $( gettext "Proceed with extraction?" )" && return
 				fi
 
 				tar "${g_tarOpts[@]}" -C "$base_outDir" $tar_type -xf "$p"

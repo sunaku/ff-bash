@@ -41,7 +41,7 @@
 	# 			1 = Yes
 	__lib_util_queryYesNo()
 	{
-		echo "$1" | fmt -w ${COLUMNS:-80}
+		echo "$1" | fmt -w ${COLUMNS:-80} > /dev/tty
 
 		while true
 		do
@@ -60,7 +60,9 @@
 	{
 		local def=$2 rv=1
 
-		read -e -p "$1 $( [ -n "$def" ] && echo "[$def] " )" < /dev/tty
+		echo "$1" | fmt -w ${COLUMNS:-80} > /dev/tty
+		
+		read -e -p "( $( gettext "Default: %s" "$def" ) ) " < /dev/tty
 
 		if [ -z "$REPLY" ]
 		then

@@ -95,7 +95,7 @@
 				then
 					expression=$( < "$__lib_ff_options_value_evalFile" )
 				else
-					gettext "Error: Unable to read script-file %s." "\"$__lib_ff_options_value_evalFile\""
+					gettext "Error: Unable to read file: %s." "\"$__lib_ff_options_value_evalFile\""
 					exit 2
 				fi
 			else

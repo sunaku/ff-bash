@@ -53,8 +53,8 @@
 		g_options_flag_outDir=--outdir
 
 	# XXX: speed hack: output messages
-		g_msgout_nowHandling=$( gettext "Now processing target:" )
-		g_msgout_cataloggingAs=$( gettext "Catalogging target as:" )
+		g_msgout_nowHandling=$( gettext "Handling target:" )
+		g_msgout_cataloggingAs=$( gettext "Catalog entry:" )
 		g_msgout_acceptTarget=$( gettext "Accept this target into the catalog?" )
 		g_msgout_errNoTag=$( gettext "Error: This target does not have a %s or a %s tag." "ID3v1" "ID3v1.1" )
 		g_msgout_success=$( gettext "This target has been catalogged successfully." )
@@ -202,7 +202,7 @@
 
 				if [ ${g_options_isOn_confirm:-0} -eq 1 ]
 				then
-					echo "
+					__lib_DocFmt_formatTags <<< "
 	$( gettext "Title" ):	<u>$title</u>
 	$( gettext "Artist" ):	<u>$artist</u>
 	$( gettext "Album" ):	<u>$album</u>
@@ -212,7 +212,7 @@
 	$( gettext "Track" ):	<u>$track</u>
 
 	$( gettext "Catalog entry" ):	<u>$catalogged_target</u>
-" | __lib_DocFmt_formatTags
+"
 
 					__lib_util_queryYesNo "%% $g_msgout_acceptTarget" && return
 				fi
