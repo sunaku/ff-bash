@@ -6,13 +6,14 @@ li {
 }
 
 code {
-	color: red;
+	display: block;
+	border: thin solid black;
+	background-color: beige;
+	padding: 1em;
+	margin: 1em;
 }
 
 samp {
 	text-decoration: underline;
-}
-
-.diagram {
-	border: thin solid black;
+	font-weight: bold;
 }
