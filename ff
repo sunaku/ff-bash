@@ -63,37 +63,36 @@
 		# check method of operation: recursive or non-recursive
 		if [ ${_ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
 		then
-			(
-				shopt -s nullglob
-			
-				local basedir filelist
-	
-				# handle each target
-				for basedir in "${_cmdOpts_argList[@]}"
-				do
-					if [ -d "$basedir" ] # handle directories only
-					then
-						# handle all subdirectories, starting with the deepest sub-directories first
-						ls -R${_ff_cmdOpts_optEn_followLinks:+L}${_ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | 
-						while read d
-						do
-							# set scripting variables
-							d=${d%/}
-							
-							# for all files in subdir
-							for f in "$d"/* $( [ ! -z "$_ff_cmdOpts_optEn_handleHidden" ] && echo "$d/.*" )
-							do
-								# set scripting variables
-								fn=${f##*/}
-	
-								# user function
-								main
-							done
-						done
-					fi
-					
-				done
-			)
+		
+			local _ff_basedir
+
+			# handle each target
+			for _ff_basedir in "${_cmdOpts_argList[@]}"
+			do
+				if [ -d "$_ff_basedir" ] # handle directories only
+				then
+				
+					ls -1 -R${_ff_cmdOpts_optEn_followLinks:+L}${_ff_cmdOpts_optEn_handleHidden:+A} "$_ff_basedir" | sed 's/:$//' | 
+					while read fn
+					do
+						# state machine based upon newlines between directory contents in the output of 'ls'
+						if [ -z "$fn" ]
+						then
+							d=
+							continue
+						elif [ -z "$d" ]
+						then
+							d=${fn%/}
+						fi
+						
+						# set scripting variables
+						f=$d/$fn
+						
+						main	# user function
+						
+					done
+				fi
+			done
 
 		else # non-recursive operation
 
