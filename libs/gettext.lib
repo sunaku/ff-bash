@@ -1,10 +1,10 @@
 #!/bin/bash
 # gettext emulation library (gte)
+# Provides BASH functions which emulate the GNU "gettext" program.
+# Note: all library variables begin with an underscore
 #
-# This library provides BASH functions which emulate the GNU "gettext" program.
 # This file is distributed under the same license as the "ff" package.
-#
-# Note: all library variables begin with an underscore: _.
+
 
 
 ## globals
@@ -12,15 +12,34 @@
 	_gte_tempfile=${TMP:-/tmp}/$$
 	
 	# arrays to cache the catalog data
-	declare -a _gte_cache
+	declare -a _gte_cache_msgid _gte_cache_msgstr
 	
+	# options for gettext()
+	_gte_gettext_opts=n
+	_gte_gettext_optFlg_noNewline=n
 
 ## functions
 	
 	# Loads a gettext Portable-Object translation catalog into cache.
-	# Assumes all strings are quoted with double quotes: ".
 	#
-	# Note: Multi-line strings are not yet supported.
+	# Portable-Object file Requirements
+	# ----------------------------------
+	# +	Strings should be properly quoted. For example:
+	#
+	#		msgid "hello world"
+	#		msgstr ""
+	#
+	# +	Multi-line strings are not supported. You must use '\n' instead.
+	#	For example, instead of this:
+	#
+	#		msgstr "This"
+	#		  "spans multiple lines"
+	#		  "..."
+	#
+	#	Use this:
+	#		msgstr "This\nspans multiple lines\n..."
+	#
+	# -------------------------------------
 	#
 	# @param	$1	Path of Portable-Object file to load.
 	#
@@ -34,23 +53,23 @@
 	#
 	_gte_load()
 	{
-		# check arguments
+		# check catalog file
 		[[ ! -r "$1" || ! -f "$1" ]] && return 1
 		
 		# remove previous catalog data
 		[ ${2:-0} -eq 1 ] && _gte_free
 		
-		# parse Portable-Object file
+		# parse catalog file
 		
-			# write entries to file; problems when piping output to 'while read'
-			sed -n 's/^msg\([is][dt]r\?\) *\"\(.*\)\"$/\1 \2/p' "$1" > "$_gte_tempfile"
+			# write entries to file because problems when piping output to 'while read'
+			sed -n 's/^msg\([is][dt]r\?\) *\(.*\)$/\1 \2/p' "$1" > "$_gte_tempfile"
 			
-			# load entries into cache
+			# load string values of entries into cache
 			while read str
 			do
-				echo "key='${str%% *}'"
-				echo "value='${str#* }'"
-				echo "index=${#_gte_cache_msgid[@]}"
+#				echo "key='${str%% *}'"
+#				echo "value='${str#* }'"
+#				echo "index=${#_gte_cache_msgid[@]}"
 				
 				case ${str%% *} in
 					id)
@@ -60,6 +79,7 @@
 						_gte_cache_msgstr[${#_gte_cache_msgstr[@]}]=${str#* }
 					;;
 				esac
+				
 			done < "$_gte_tempfile"
 			
 			# clean up
@@ -77,14 +97,17 @@
 	}
 	
 	
-	# Returns a translation for a string, using the loaded catalog data.
+	# Prints a translated string using the loaded catalog data.
+	# If a translation is not available, the given query is printed.
 	# Escaped sequences such as '\n' are automatically expanded.
 	#
 	# @see		printf
 	#
-	# @usage	gettext [STRING] [ARGUMENT]...
+	# @usage	gettext [OPTION] [QUERY] [ARGUMENT]...
 	#
-	# @param	$1	String to translate. This string can have
+	# @option	-n	Suppress trailing newline.
+	#
+	# @param	$1	QUERY to translate. This string can have
 	#			placeholders which are prefixed with '%' the
 	#			percent symbol.
 	#
@@ -96,45 +119,51 @@
 	#
 	gettext()
 	{
-		local cache_index=0
-		local translation=
+		local cache_index=0 query="\"$1\"" translation
 		
-		# locate argument string in catalog cache
+		shift	# remove $1 from parameters
 		
-			# slow linear search
+		# handle options
+		
+			while getopts $_gte_gettext_opts opt
+			do
+				case $opt in
+					$_gte_gettext_optFlg_noNewline)
+						_gte_gettext_optEn_noNewline=1
+						shift	# remove from args
+					;;
+				esac
+			done
+		
+		# locate query in catalog cache
+		
 			while [ $cache_index -lt ${#_gte_cache_msgid[@]} ]
 			do
-				# exit if argument string exists in catalog cache
-				[ "$1" == "${_gte_cache_msgid[$cache_index]}" ] && break
-				
-				# increment
-				let cache_index=cache_index+1
+				[ "$query" == "${_gte_cache_msgid[$cache_index]}" ] && break
+				let cache_index=cache_index+1	# increment loop
 			done
 			
 #			echo "cache_index=$cache_index"
 #			echo "cache size=${#_gte_cache_msgid[@]}"
 			
-			# invalid argument string
-			[ $cache_index -ge ${#_gte_cache_msgid[@]} ] && return 1
-		
-		
+			
 		# determine translation
 		
-			if [ -z "${_gte_cache_msgstr[$cache_index]}" ]
+			if [ ! -z "${_gte_cache_msgstr[$cache_index]}" ]
 			then
-				# translation is blank
-				translation=${_gte_cache_msgid[$cache_index]}
-			else
 				translation=${_gte_cache_msgstr[$cache_index]}
+			else
+				# translation is blank. use untranslated query.
+				translation=$query
 			fi
-			
-			
+		
 		# print result
 		
-			# remove argument string
-			shift
-		
-			printf "$translation" "${@}"
+			# strip bounding quotes before printing
+			translation=${translation#\"}
+			translation=${translation%\"}
+			
+			printf "${translation}${_gte_gettext_optEn_noNewline:-\n}" "${@}"
 			
 		# finished
 		return 0
