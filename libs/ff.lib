@@ -32,7 +32,7 @@
 
 ## globals
 
-	__lib_ff_version_number=1.7.3
+	__lib_ff_version_number=1.7.3-rc2
 	__lib_ff_version_date=2004-08-13
 
 	declare -a __lib_ff_targetList __lib_ff_scriptArgs
