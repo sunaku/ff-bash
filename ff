@@ -33,7 +33,7 @@
 	[ -L "$__ff_myPath" ] && __ff_myPath=$( find "$__ff_myPath" -printf "%l" )	# dereference if path is symlink
 	
 	__ff_myName=${__ff_myPath##*/}		# basename of this program
-	__ff_myHome=${__ff_myPath%/*}			# dirname of this program
+	__ff_myHome=${__ff_myPath%/*}		# dirname of this program
 	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
 	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
 	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n resources
@@ -97,12 +97,12 @@
 			local __ff_baseDir
 
 			# handle each target
-			for __ff_baseDir in "${__lib_CmdOpts_argList[@]}"
+			for __ff_baseDir in "${__lib_ff_targetList[@]}"
 			do
 				if [ -d "$__ff_baseDir" ] # handle directories only
 				then
 					# make implicit relative paths explicit
-					[[ "${__ff_baseDir:0:1}" != '/' && "${__ff_baseDir:0:1}" != '.' ]] && __ff_baseDir="./$__ff_baseDir"
+					[[ "${__ff_baseDir:0:1}" != '/' && "${__ff_baseDir:0:2}" != "./" ]] && __ff_baseDir="./$__ff_baseDir"
 				
 					find "$__ff_baseDir" -depth | #${__ff_myOptions_isOn_followLinks:--follow} ${__ff_myOptions_isOn_handleHidden:--name '[^.]*'} |
 					while read f
@@ -119,10 +119,10 @@
 		else # non-recursive operation
 
 			# handle each target
-			for f in "${__lib_CmdOpts_argList[@]}"
+			for f in "${__lib_ff_targetList[@]}"
 			do
 				# make implicit relative paths explicit
-				[[ "${f:0:1}" != '/' && "${f:0:1}" != '.' ]] && f="./$f"
+				[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
 				
 				# set scripting variables
 				f=${f%/}
@@ -145,6 +145,6 @@
 	main() { :; }
 	
 	# begin script
-	__lib_CmdOpts_argList=( "${@}" )	# init arguments array
+	__lib_ff_targetList=( "${@}" )	# init arguments array
 	__lib_ff_main
 

@@ -67,13 +67,13 @@
 		begin	# user function
 		
 		# handle each target
-		for f in "${__lib_CmdOpts_argList[@]}"
+		for f in "${__lib_ff_targetList[@]}"
 		do
 			if [[ -f "$f" && -r "$f" ]] # check perms
 			then
 			
 				# make implicit relative paths explicit
-				[[ "${f:0:1}" != '/' && "${f:0:1}" != '.' ]] && f="./$f"
+				[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
 			
 				# set scripting variables
 				f=${f%/}
@@ -108,6 +108,6 @@
 	end_file() { :; }
 
 	# begin script
-	__lib_CmdOpts_argList=( "${@}" )	# init arguments array
+	__lib_ff_targetList=( "${@}" )	# init arguments array
 	__lib_ff_main
 
