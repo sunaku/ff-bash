@@ -1,102 +1,109 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
-		<title>&quot;For each File&quot; Package Read-Me</title>
-		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<title>&quot;For each File&quot; &mdash; Package Overview</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-		<h1>&quot;For each File&quot; Package Read-Me</h1>
+		<h1>&quot;For each File&quot; &mdash; Package Overview</h1>
 		<blockquote>
-			This document was translated from English using the <a href="http://babelfish.altavista.com/">AltaVista Babel Fish</a> translation service.
-		</blockquote>
-		
-		<h2>Contents</h2>
-		<blockquote>
-			<ul>
-				<li><a href="#copy">Copyright</a></li>
-				<li><a href="#tree">Package Tree</a></li>
-				<li><a href="#inst">Installation</a></li>
-				<li><a href="#trans">Translation</a></li>
-				<li><a href="#eg">Example Scripts</a></li>
-			</ul>
-		</blockquote>
-
-		<h2 id="copy">Copyright</h2>
-		<blockquote>
-			<p>Copyright &copy; 2003-2004 Suraj N. Kurapati.</p>
+			<p>This document provides a brief overview of the &quot;For each File&quot; package. Visit the project web site at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> for the latest software updates, documentation, and additional resources.</p>
+			<p>Copyright &copy; 2003, 2004 Suraj N. Kurapati.</p>
 			<p>This file is part of "For each File".</p>
 			<p>"For each File" is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
 			<p>"For each File" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
 			<p>You should have received a copy of the GNU General Public License along with "For each File"; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
 		</blockquote>
 		
+		<h2>Contents</h2>
+		<blockquote>
+			<ul>
+				<li><a href="#reqs">Requirements</a></li>
+				<li><a href="#tree">Package Tree</a></li>
+				<li><a href="#inst">Installation</a></li>
+				<li><a href="#trans">Translation</a></li>
+				<li><a href="#examp">Example Scripts</a></li>
+			</ul>
+		</blockquote>
+
+		<h2 id="reqs">Requirements</h2>
+		<blockquote>
+			<p>It is recommended that the latest available versions of the following software be used.</p>
+			<ul>
+				<li><samp><a href="http://www.gnu.org/software/bash/bash.html">GNU BASH</a></samp> Shell &mdash; <i>The &quot;For each File&quot; package has been tested with versions <samp>2.03</samp> and <samp>2.05b</samp>.</i></li>
+				<li><samp><a href="http://www.gnu.org/software/coreutils/">GNU Core Utilities</a></samp> &mdash; <i>The &quot;For each File&quot; package has been tested with version <samp>5.2.1</samp>.</i></li>
+			</ul>
+		</blockquote>
+		
 		<h2 id="tree">Package Tree</h2>
 		<blockquote>
-			<p>The following diagram shows the hiearchical structure of this package. All paths shown in the diagram are relative to the directory that contains the package. Also, subordinate files have been omitted from the diagram for brevity.</p>
+			<p>The following diagram shows the hierarchical structure of this package. All paths shown in the diagram are relative to the directory that contains the package. Also, subordinate files have been omitted from the diagram for brevity.</p>
 			
-			<ul>
-				<li><code>./ff</code> &mdash; <i>The &quot;For each File&quot; tool.</i></li>
-				<li><code>./fl</code> &mdash; <i>The &quot;For each Line&quot; tool.</i></li>
-				<li><code>./install</code> &mdash; <i>Installation tool for this package.</i></li>
-				<li><code>./docs/</code> &mdash; <i>Contains documentation for this package.</i>
+			<ul class="diagram">
+				<li><samp>./ff</samp> &mdash; <i>The &quot;For each File&quot; tool.</i></li>
+				<li><samp>./fl</samp> &mdash; <i>The &quot;For each Line&quot; tool.</i></li>
+				<li><samp>./install</samp> &mdash; <i>Installation tool for this package.</i></li>
+				<li><samp>./docs/</samp> &mdash; <i>Contains documentation for this package.</i>
 					<ul>
-						<li><code>readme.html</code> &mdash; <i>This document.</i></li>
-						<li><code>changes.html</code> &mdash; <i>A list of changes between versions of this package.</i></li>
-						<li><code>faq.html</code> &mdash; <i>Answers to frequently asked questions.</i></li>
-						<li><code>gpl.txt</code> &mdash; <i>A copy of the <a href="http://www.gnu.org/licenses/gpl.txt">GNU General Public License: Version 2</a>.</i></li>
+						<li><samp>readme.html</samp> &mdash; <i>This document.</i></li>
+						<li><samp>changes.html</samp> &mdash; <i>A list of changes between versions of this package.</i></li>
+						<li><samp>faq.html</samp> &mdash; <i>Answers to frequently asked questions.</i></li>
+						<li><samp>gpl.txt</samp> &mdash; <i>A copy of the <a href="http://www.gnu.org/licenses/gpl.txt">GNU General Public License: Version 2</a>.</i></li>
 					</ul>
 				</li>
-				<li><code>./i18n/</code> &mdash; <i>Contains internationalization resources.</i></li>
-				<li><code>./libs/</code> &mdash; <i>Contains libraries for shell scripts.</i></li>
-				<li><code>./scripts/</code> &mdash; <i>Contains example scripts usable by the &quot;For each File&quot; and &quot;For each Line&quot; tools.</i></li>
+				<li><samp>./i18n/</samp> &mdash; <i>Contains internationalization resources.</i></li>
+				<li><samp>./libs/</samp> &mdash; <i>Contains libraries for shell scripts.</i></li>
+				<li><samp>./scripts/</samp> &mdash; <i>Contains example scripts usable by the &quot;For each File&quot; and &quot;For each Line&quot; tools.</i></li>
 			</ul>
 		</blockquote>
 
 		<h2 id="inst">Installation</h2>
 		<blockquote>
-			<p>You can either run the installation script by executing <code class="color">$ ./install</code> or perform a manual installation as follows:</p>
+			<p>You can either run the installation script by executing <code>$ ./install</code> or perform a manual installation as follows:</p>
 			
 			<ol>
 				<li>Simply move or copy the directory containing this package to a location of your choice.</li>
-				<li>For easy access, you can create symbolic links, to the tools in this package, in a directory that is listed in your <code>$PATH</code> variable, such as <code>$HOME/bin/</code>.</li>
+				<li>For easy access, you can create symbolic links, to the tools in this package, in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>.</li>
 			</ol>
 		</blockquote>
 
 		<h2 id="trans">Translation</h2>
 		<blockquote>
-			<p>Translation is performed dynamically through the use of <a href="http://www.gnu.org/software/gettext/gettext.html">gettext</a> translation catalogs. These catalogs are located in the <code>i18n/</code> directory.</p>
+			<p>Translation is performed dynamically through the use of <samp><a href="http://www.gnu.org/software/gettext/gettext.html">GNU gettext</a></samp> translation catalogs located in <samp>./i18n/</samp>.</p>
 			
-			<p>Feel free to contribute localizations for new languages and revise the existing translation catalogs. New and updated translation catalogs will be made available at <code>http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/</code> as they are contributed.</p>
+			<p>Feel free to contribute localizations for new languages and revise the existing translation catalogs. New and updated translation catalogs will be made available at <a href="http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/">http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/</a> as they are contributed.</p>
 			
 			<h3>Writing new translations</h3>
 			<blockquote>
-				<p>First, we must identify the <a href="http://www.geo-guide.de/info/tools/languagecode.html">ISO-639 language code</a> for the language we wish to write new translations in. Second, we must make a copy of the gettext translation catalog template file with the appropriate file name. Finally, we can begin translating by editing the copy.</p>
+				<p>First, we must identify the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp> language code</a> for the language we wish to write new translations in. Second, we must make a copy of the gettext translation catalog template file with the appropriate file name. Finally, we can begin translating by editing the copy.</p>
 				<p>
-					For example, consider this scenario: we wish to translate some documentation for the language whose ISO-639 language code is <i>XX</i>. The translation catalog template for documentation is named <code>foo.pot</code>
+					For example, consider this scenario: we wish to translate some documentation for the language whose <samp>ISO-639</samp> language code is <var>XX</var>. The translation catalog template for documentation is named &quot;<samp>foo.pot</samp>&quot;.
 	
 					<ol>
-						<li>We make a copy of the template file.<br/><code class="color">$ cp foo.pot foo.<i>XX</i>.po</code></li>
-						<li>We edit the lines that begin with &quot;<code>msgstr</code>&quot; in the copy.</li>
+						<li>We make a copy of the template file.<br/><code>$ cp foo.pot foo.<var>XX</var>.po</code></li>
+						<li>We edit the lines that begin with &quot;<samp>msgstr</samp>&quot; in the copy.</li>
 					</ol>
 				</p>
 			</blockquote>
 		</blockquote>
 
-		<h3 id="eg">Example Scripts</h3>
+		<h3 id="examp">Example Scripts</h3>
 		<blockquote>
 
-			<p>First try executing (see example below) the scripts named <code>./scripts/ff.vars</code> and <code>./scripts/fl.vars</code>, to see how the preset variables behave. You will notice that the preset variables are consistent between recursive and non-recursive modes.</p>
+			<p>First try executing (see example below) the scripts named <samp>./scripts/ff.vars</samp> and <samp>./scripts/fl.vars</samp>, to see how the preset variables behave. You will notice that the preset variables are consistent between recursive and non-recursive modes.</p>
 		
-			<ul>
-				<li><code class="color">$ ./ff * -f ./scripts/ff.vars | more</code></li>
-				<li><code class="color">$ ./ff . -rf ./scripts/ff.vars | more</code></li>
-				<li><code class="color">$ ./ff /bin/* -f ./scripts/ff.vars | more</code></li>
-				<li><code class="color">$ ./ff /bin/ -rf ./scripts/ff.vars | more</code></li>
-				<li><code class="color">$ ./fl ./docs/gpl.txt -f ./scripts/fl.vars | more</code></li>
-			</ul>
+			<blockquote>
+			<code>
+				$ ./ff * -f ./scripts/ff.vars | less<br/>
+				$ ./ff . -rf ./scripts/ff.vars | less<br/>
+				$ ./ff /bin/* -f ./scripts/ff.vars | less<br/>
+				$ ./ff /bin/ -rf ./scripts/ff.vars | less<br/>
+				$ ./fl ./docs/gpl.txt -f ./scripts/fl.vars | less<br/>
+			</code>
+			</blockquote>
 
-			<p>You can also try executing the other example scripts in the <code>scripts/</code> directory. Also, the first few lines of each script file describes its purpose, thus you can execute <code class="color">$ head ./scripts/* | more</code> to see these descriptions.</p>
+			<p>You can also try executing the other example scripts in the <samp>./scripts/</samp> directory. Also, the first few lines of each script file describes its purpose, thus you can execute <code>$ head ./scripts/* | less</code> to see the descriptions.</p>
 		</blockquote>
 	</body>
 </html>
