@@ -123,7 +123,7 @@ $expression
 	{
 		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 		then
-			while read
+			while read -r
 			do
 				__lib_ff_targetList[${#__lib_ff_targetList[@]}]=$REPLY
 			done
