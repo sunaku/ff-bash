@@ -1,3 +1,7 @@
+README
+
+	This document was translated from English using the "AltaVista - Babel Fish Translation" <http://babelfish.altavista.com/> service. For this reason, some examples and shell commands in this document may have become garbled. If this is the case, please refer to the English version of this document for the correct text.
+
 CONTENTS
 
 	- copyright
@@ -25,12 +29,12 @@ FILES
 	COPYING
 	+ A copy of the GNU GPL version 2 license.
 
-	CHANGELOG
+	changelog
 	+ A list of important changes in this version.
 	
-	FAQ
+	faq
 	+ Answers to frequently asked questions.
-
+	
 	ff
 	+ The "For each File" tool.
 
@@ -40,24 +44,27 @@ FILES
 	install
 	+ An installation script.
 	
+	readme
+	+ This document.
+	
 	docs/
-	+ contains documentation.
+	+ Contains documentation and templates.
 	
 	i18n/
-	+ contains Internationalization resources.
+	+ Contains Internationalization resources.
 	
 	libs/
-	+ contains script libraries.
+	+ Contains libraries for use by BASH scripts.
 
 	scripts/
-	+ Contains useful scripts that can be used with the 'ff' and 'fl' tools.
+	+ Contains useful scripts that can be used with the "For each File" and "For each Line" tools.
 
 
 LIMITATIONS
 
-	* Leading and trailing whitespace is automatically removed from lines when using 'fl'. This is because 'fl' uses the 'read' builtin to fetch lines of text from files.
-
-	* Multi-byte characters are, as of this version, not displayed properly in documentation because the 'read' builtin strips them out.
+	* Multi-byte characters may not displayed properly in documentation because the 'read' builtin may strip them out depending upon your locale. You can try setting LC_ALL to the value "C" (shown below), and try viewing the documentation again.
+	
+		$ declare -x LC_ALL=C
 
 DOCUMENTATION
 
@@ -72,11 +79,14 @@ DOCUMENTATION
 INSTALLATION
 
 	Run the installation script by executing:
+	
 		./install
 
 	Or perform a manual installation as follows:
 	
-		Move this directory to a location of your choice. Then create symbolic links to the files named 'ff' and 'fl' in a directory that is listed in your $PATH variable (for example: "$HOME/bin/").
+		Simply move or copy the directory that contains this document to a location of your choice.
+		
+		For easy access, you can create symbolic links, to the tools in this package, in a directory that is listed in your $PATH variable (for example: "$HOME/bin/").
 
 TRANSLATION
 
@@ -86,32 +96,37 @@ TRANSLATION
 	
 	New and updated translation catalogs will be made available, as they are contributed, at this URL: <http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/>.
 	
-	To write translations for a new language, copy the appropriate *.pot file located in i18n/ to *.${ISO_639_CODE}.po and write your translations like so:
+	To write translations for a new language, copy the appropriate *.pot file located in i18n/ to *.${ISO_639_CODE}.po. ${ISO_639_CODE} is language code defined in the ISO-639 standard.
 	
-		msgid "A message in English."
-		msgstr "Un mensaje en Ingl�s."	<-- your translation
+		Example: We wish to create a translation for the language whose ISO-639 code is "XX". (1) we copy the template file, and (2) we fill in the translations in the copy.
+	
+		(1) $ cp catalog.pot catalog.XX.po
+
+		(2) Before editing:
 		
-	${ISO_639_CODE} is language code defined in the ISO-639 standard. For example, the language code for Italian is 'it'.
-	
+				msgid "A message in English."
+				msgstr ""
+			
+			After editing:
+			
+				msgid "A message in English."
+				msgstr "Your translation is placed here."
+				
 	Also note that you can use UNICODE characters (UTF-8) in the translation catalogs. However, as of this version, some of these characters may not be displayed properly (see the LIMITATIONS section).
 
 EXAMPLES
 
-	First try out the examples named 'ff.vars' and 'fl.vars', to see how the preset variables behave.
+	First try out the examples named 'ff.vars' and 'fl.vars', to see how the preset variables behave. Notice how the preset variables are consistent between recursive and non-recursive modes.
 
-	Try the following commands:
+		./ff * -f./scripts/ff.vars | less
+		./ff . -rf ./scripts/ff.vars | less
 
-		./ff * -f./scripts/ff.vars | more
-		./ff . -rf ./scripts/ff.vars | more
+		./ff /bin/* -f ./scripts/ff.vars | less
+		./ff /bin/ -rf ./scripts/ff.vars | less
 
-		./ff /bin/* -f ./scripts/ff.vars | more
-		./ff /bin/ -rf ./scripts/ff.vars | more
-
-		./fl COPYING -f ./scripts/fl.vars | more
-
-	Notice that the scripting variables are consistent between recursive and non-recursive modes.
+		./fl ./COPYING -f ./scripts/fl.vars | less
 
 	You can also try out the other example scripts in the scripts/ directory. Also, the first few lines of each script file describes its purpose, thus you can execute the following to see these descriptions:
 	
-		head ./scripts/* | more
+		head ./scripts/* | less
 
