@@ -3,8 +3,9 @@
 upload_scp_url=$UCSC_ID:public_html/pub/tmp/
 upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
-salt_eol="111111"
-salt_fmt="000000"
+# delimiters
+salt_eol="111111"	# end of line
+salt_fmt="000000"	# value of "%s"
 
 main()
 {
@@ -17,7 +18,7 @@ main()
 	grep -v '^$' < "$f" > "$raw_file"
 	
 #	read -p "encode formatting and line breaks"
-	sed -r "s/\$/ $salt_eol./ ; s/%s/$salt_fmt/g" < "$raw_file" > "$enc_file"
+	( sed -r "s/\$/ $salt_eol./ ; s/%s/$salt_fmt/g" | tr '\n' ' ' ) < "$raw_file" > "$enc_file"
 	
 #	read -p "upload"
 	! scp $enc_file $upload_scp_url && return
@@ -25,8 +26,11 @@ main()
 #	read -p "get translations"
 	../ff -f ../scripts/ff.translate_url "$upload_web_url/$enc_file"
 	
-#	read -p "decode formatting and line breaks"
-	../ff -e "cat "\$f" | tr -d '\n' | sed -r 's/ ?$salt_eol\.? */\n/g ; s/$salt_fmt/ %s /g ; s/\'/\\\'/g ' > \$f.decode" ${enc_file}.*
+#	read -p "decode formatting and line breaks"	
+	for x in ${enc_file}.*
+	do
+		( tr '\n' ' ' | sed -r "s/ ?$salt_eol\.* */\n/g ; s/$salt_fmt/ %s /g" ) < "$x" > "$x.decode"
+	done
 	
 #	read -p "combine original & translated strings"
 	../ff -e "paste -d '\n' $raw_file \$fn > \$fn.paste" ${enc_file}.*.decode
@@ -38,5 +42,5 @@ main()
 	done
 	
 #	read -p "finished"
-	#../ff -e "mv -v \$f $fn.\${fn#$enc_file}po
+	../ff -e 'x=${fn#*html.}; x=${x:0:2}; mv -v $f ../i18n/${fn%.[0-9]*}.$x.po' ${enc_file}.*.po
 }
