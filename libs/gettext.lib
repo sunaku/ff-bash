@@ -157,9 +157,6 @@
 			query=$1
 			shift	# remove $1 from parameters
 		
-			# check index bounds
-			[ $cacheIndex -ge ${#__lib_gettext_cache[@]} ] && cacheIndex=0
-			
 			while [ $cacheIndex -lt ${#__lib_gettext_cache[@]} ]
 			do
 				[ "$query" == "${__lib_gettext_cache[$cacheIndex]}" ] && break
