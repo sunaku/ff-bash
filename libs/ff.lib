@@ -169,7 +169,7 @@ $expression
 								source "$__ff_myResources_libs/DocFmt.lib"
 								__lib_gettext_load "$__lib_ff_docI18n"
 							
-							source "$__ff_myResources_docs/$__lib_ff_docFile" | tee "$__lib_ff_docCached" # generate & cache the documentation
+							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached" # generate & cache the documentation
 						fi
 					} | expand -t 4 | fmt -w $( tput cols ) | ${PAGER:-less -r}
 				
