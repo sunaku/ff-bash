@@ -11,17 +11,14 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	# version of this release
 	pack_ver=1.6.8
 	
-	# path to changelog for this release
-	pack_chglog=../changelog
-	
 	# files that use gettext
 	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
 	
-	# files that need to be translated
-	trans_in=( ../faq ../readme )
+	# files that need to be translated; these are automatically packaged
+	trans_in=( ../faq ../readme ../changelog )
 	
-	# all files to be packaged
-	pack_in=( ../libs ../i18n ../docs ../scripts/ ../COPYING $chg_log ../faq ../readme ../ff ../fl ../install )
+	# other files to be packaged
+	pack_in=( ../libs ../i18n ../docs ../scripts/ ../COPYING ../ff ../fl ../install )
 	
 	pack_dir=../_pack/ff-$pack_ver
 	pack_tar=${pack_dir}.tar
@@ -47,21 +44,28 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
 ## regular translation
 
-	# prepare URLs
+	# prepare input files and their URLs
 		i=0
 		while [ $i -lt ${#trans_in[@]} ]
 		do
-			# base name
-			trans_nom[$i]=${trans_in[$i]##*/}
+			# vars
+				# base name of the input file
+				trans_nom[$i]=${trans_in[$i]##*/}
+				
+				# name of temp .html files
+				trans_tmp[$i]=${trans_nom[$i]}.html
+				
+				# web url to temp .html files
+				trans_url[$i]=${upload_web_url}${trans_tmp[$i]}
 			
-			# temp .html files
-			trans_tmp[$i]=${trans_nom[$i]}.html
+				# name of formatted copy of input file
+				trans_fmt[$i]=$pack_dir/${trans_nom[$i]}
 			
-			# web url to temp .html files
-			trans_url[$i]=${upload_web_url}${trans_tmp[$i]}
-			
-			# make temp file
-			cp -v ${trans_in[$i]} ${trans_tmp[$i]}
+			# format input file
+				( sed 's/\t/    /g' | fmt -csw 80 ) < ${trans_in[$i]} > ${trans_fmt[$i]}
+				
+			# make temp file for translation processing
+				cp -v ${trans_fmt[$i]} ${trans_tmp[$i]}
 			
 			let i=i+1
 		done
@@ -72,8 +76,6 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 		
 		echo "pack: translate readme files"
 		../ff -f ../scripts/ff.translate_url "${trans_url[@]}"
-		
-
 
 	# move translated files to pack dir
 		for x in "${trans_nom[@]}"
@@ -104,6 +106,6 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 ## distribution
 
 	# copy packs to server
-	scp $pack_chglog ${pack_tar}* $UCSC_ID:'public_html/pub/projects/ff/'
+	scp $pack_dir/changelog ${pack_tar}* $UCSC_ID:'public_html/pub/projects/ff/'
 
 
