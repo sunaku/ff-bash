@@ -57,6 +57,9 @@
 		
 		__ff_myOptions_shortFlag_recursive=r
 		__ff_myOptions_longFlag_recursive=recursive
+		
+		__ff_myOptions_shortFlag_fileMask=m
+		__ff_myOptions_longFlag_fileMask=mask
 
 ## functions
 
@@ -75,6 +78,11 @@
 			$__ff_myOptions_shortFlag_recursive | $__ff_myOptions_longFlag_recursive)
 				__ff_myOptions_isOn_recursive=1
 				return 1
+			;;
+			$__ff_myOptions_shortFlag_fileMask | $__ff_myOptions_longFlag_fileMask)
+				__ff_myOptions_isOn_fileMask=1
+				__ff_myOptions_value_fileMask=$2
+				return 2
 			;;
 			*) # handle base options
 				__lib_ff_handleOption "$1" "$2"
@@ -99,7 +107,13 @@
 			# handle options for recursive behavior
 				[ ${__ff_myOptions_isOn_followLinks:-0} -eq 1 ] && __ff_findOpts[${#__ff_findOpts[@]}]=-follow
 				
-				if [ ${__ff_myOptions_isOn_handleHidden:-0} -eq 0 ]
+				# filename masking
+				if [ ${__ff_myOptions_isOn_fileMask:-0} -eq 1 ]
+				then
+					__ff_findOpts[${#__ff_findOpts[@]}]=-name
+					__ff_findOpts[${#__ff_findOpts[@]}]=$__ff_myOptions_value_fileMask
+					
+				elif [ ${__ff_myOptions_isOn_handleHidden:-0} -eq 0 ]
 				then
 					__ff_findOpts[${#__ff_findOpts[@]}]=-name
 					__ff_findOpts[${#__ff_findOpts[@]}]='*'
