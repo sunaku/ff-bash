@@ -62,7 +62,6 @@
 		array_strings=( ${!g_cache_strings*} )
 
 		# print header
-		echo "#. $p"
 		echo "#. $( date )"
 		echo "#. ${#array_strings[@]} strings extracted."
 		echo
@@ -88,7 +87,7 @@
 		local hash=$( echo "$g_string" | sum | cut -f1 -d' ' )
 
 		# store reference line number
-		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$n:\$g_string_lineBegin\""
+		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$p:\$g_string_lineBegin\""
 
 		# store string
 		eval "g_cache_strings_$hash=\$g_string"
@@ -162,10 +161,6 @@
 			then
 
 				store_string
-#				echo "#: $n:$g_string_lineBegin"
-#				echo "msgid$g_string"
-#				echo 'msgstr ""'
-#				echo
 
 				# state changes
 				g_stream_state=idle
@@ -191,11 +186,9 @@
 		g_stream_state=idle
 		g_word_state=idle
 		g_string_lineBegin=
-
-		unset g_cache_refs g_cache_strings
 	}
 
-	end_file()
+	end()
 	{
 		print_output
 	}
