@@ -3,11 +3,6 @@
 # ID3v1 and ID3v1.1 tag handling library.
 #
 ##
-# Requires:
-#
-#	util.lib
-#
-###
 #
 # Copyright 2003, 2004 Suraj N. Kurapati.
 #
@@ -46,8 +41,9 @@
 	declare -a __lib_id3tag_tagData
 
 	__lib_id3tag_genreNames=( "Blues" "Classic Rock" "Country" "Dance" "Disco" "Funk" "Grunge" "Hip-Hop" "Jazz" "Metal" "New Age" "Oldies" "Other" "Pop" "R&B" "Rap" "Reggae" "Rock" "Techno" "Industrial" "Alternative" "Ska" "Death Metal" "Pranks" "Soundtrack" "Euro-Techno" "Ambient" "Trip-Hop" "Vocal" "Jazz+Funk" "Fusion" "Trance" "Classical" "Instrumental" "Acid" "House" "Game" "Sound Clip" "Gospel" "Noise" "Alt. Rock" "Bass" "Soul" "Punk" "Space" "Meditative" "Instrum. Pop" "Instrum. Rock" "Ethnic" "Gothic" "Darkwave" "Techno-Indust." "Electronic" "Pop-Folk" "Eurodance" "Dream" "Southern Rock" "Comedy" "Cult" "Gangsta" "Top 40" "Christian Rap" "Pop/Funk" "Jungle" "Native American" "Cabaret" "New Wave" "Psychadelic" "Rave" "Showtunes" "Trailer" "Lo-Fi" "Tribal" "Acid Punk" "Acid Jazz" "Polka" "Retro" "Musical" "Rock & Roll" "Hard Rock" "Folk" "Folk/Rock" "National Folk" "Swing" "Fusion" "Bebob" "Latin" "Revival" "Celtic" "Bluegrass" "Avantgarde" "Gothic Rock" "Progress. Rock" "Psychadel. Rock" "Symphonic Rock" "Slow Rock" "Big Band" "Chorus" "Easy Listening" "Acoustic" "Humour" "Speech" "Chanson" "Opera" "Chamber Music" "Sonata" "Symphony" "Booty Bass" "Primus" "Porn Groove" "Satire" "Slow Jam" "Club" "Tango" "Samba" "Folklore" "Ballad" "Power Ballad" "Rhythmic Soul" "Freestyle" "Duet" "Punk Rock" "Drum Solo" "A Capella" "Euro-House" "Dance Hall" "Goa" "Drum & Bass" "Club-House" "Hardcore" "Terror" "Indie" "BritPop" "Negerpunk" "Polsk Punk" "Beat" "Christian Gangsta Rap" "Heavy Metal" "Black Metal" "Crossover" "Contemporary Christian" "Christian Rock" "Merengue" "Salsa" "Thrash Metal" "Anime" "Jpop" "Synthpop" )
-	
-	__lib_id3tag_tempFile="${TMPDIR:-/tmp}/id3tag.lib.$$.$RANDOM"
+
+	# a substitute value for the NUL byte
+	__lib_id3tag_NUL=$'\777'
 
 ## functions
 
@@ -58,29 +54,43 @@
 	#
 	__lib_id3tag_readTag()
 	{
+		local data genre i
+
 		# read ID3 tag
-			tail -c 128 "$1" > "$__lib_id3tag_tempFile"	# extract tag from MP3 file
-			[ "$( cut -b 1-3 "$__lib_id3tag_tempFile" )" != 'TAG' ] && return 1	# validate tag
+			data=$( tail -c 128 "$1" | tr '\0' "$__lib_id3tag_NUL" )
+			[ "${data:0:3}" != 'TAG' ] && return 1	# validate tag
 
 		# parse ID3 tag
-			__lib_id3tag_tagData[1]=$( cut -b 4-33 "$__lib_id3tag_tempFile" )	# title
-			__lib_id3tag_tagData[2]=$( cut -b 34-63 "$__lib_id3tag_tempFile" )	# artist
-			__lib_id3tag_tagData[3]=$( cut -b 64-93 "$__lib_id3tag_tempFile" )	# album
-			__lib_id3tag_tagData[4]=$( cut -b 94-97 "$__lib_id3tag_tempFile" )	# year
-			__lib_id3tag_tagData[6]=$( __lib_util_ord "$( cut -b 128 "$__lib_id3tag_tempFile" )" )	# genre
+			__lib_id3tag_tagData[1]=${data:3:30}	# title
+			__lib_id3tag_tagData[2]=${data:33:30}	# artist
+			__lib_id3tag_tagData[3]=${data:63:30}	# album
+			__lib_id3tag_tagData[4]=${data:93:4}	# year
 
-			# If the second last byte of a field is zeroed and the last byte is not, then the tag is ID3v1.1
-			if [[ -z "$( cut -b 126 "$__lib_id3tag_tempFile" )" && -n "$( cut -b 127 "$__lib_id3tag_tempFile" )" ]]
+			genre=${data:127:1}	# genre id
+			if [ "$genre" == "$__lib_id3tag_NUL" ]
+			then
+				__lib_id3tag_tagData[6]=0
+			else
+				__lib_id3tag_tagData[6]=$( echo "$genre" | od -An -N1 -tu1 | tr -d '[:space:]' )
+			fi
+
+			# In the comment field, if the second last byte is NUL and the last byte is not NUL, then the entire tag is ID3v1.1
+			if [[ "${data:125:1}" == "$__lib_id3tag_NUL" && "${data:126:1}" != "$__lib_id3tag_NUL" ]]
 			then
 				__lib_id3tag_tagData[0]=1.1	# version
-				__lib_id3tag_tagData[5]=$( cut -b 98-126 "$__lib_id3tag_tempFile" )	# comment
-				__lib_id3tag_tagData[7]=$( __lib_util_ord "$( cut -b 127 "$__lib_id3tag_tempFile" )" )	# track
+				__lib_id3tag_tagData[5]=${data:97:28}	# comment
+				__lib_id3tag_tagData[7]=$( echo "${data:126:1}" | od -An -N1 -tu1 | tr -d '[:space:]' )	# track
 			else
 				__lib_id3tag_tagData[0]=1	# version
-				__lib_id3tag_tagData[5]=$( cut -b 98-127 "$__lib_id3tag_tempFile" )	# comment
+				__lib_id3tag_tagData[5]=${data:97:30}	# comment
 				__lib_id3tag_tagData[7]=	# track
 			fi
 
+		# remove trailing NUL bytes
+			for i in 1 2 3 5
+			do
+				__lib_id3tag_tagData[$i]=${__lib_id3tag_tagData[$i]%%${__lib_id3tag_NUL}*}
+			done
+
 		return 0
 	}
-	
