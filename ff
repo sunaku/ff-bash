@@ -27,10 +27,6 @@
 #	directories. It is ideal for performing a repetitive procedure such as
 #	mass file renaming. The script given by the user is interpreted directly
 #	by the Bash shell.
-#	
-#	If you wish to input your custom script using a text editor, set a 
-#	global shell variable ${EDITOR} to the path of your favorite text 
-#	editor. For example: `export EDITOR='path to editor'`.
 #
 #	If you wish to invoke an existing script, you can do so via piping or 
 #	redirection. For example, to run a script named 'my_script' upon a 
@@ -43,6 +39,15 @@
 #	Notice that the '-e' option is not present. Depending on how your text
 #	editor handles I/O redirection, omitting '-e' may allow you to pipe or
 #	redirect input to this tool.
+#
+#	When an existing script is not invoked, the user will be prompted to
+#	type in scripting commands in the terminal.
+#	
+#	If you wish enter scripting commands using your favorite text editor,
+#	set a global shell variable ${EDITOR} to its path. For example, if your
+#	text editor was located at '/foo/bar', you would run the following.
+#	
+#		declare -x EDITOR=/foo/bar
 #
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
@@ -88,8 +93,8 @@
 				g_optEn_editor=1
 			;;
 			*)
-				# display help message, which happens to be the documentation header for this file
-				cat $0 | sed -e '/^####/q' -e 's/^# *//' | more
+				# display help message which happens to be the documentation header
+				sed -e '/^####/q' -e 's/^# *//' $0 | more
 				exit 0
 			;;
 		esac
@@ -118,10 +123,9 @@
 
 # check method of operation: recursive or non-recursive
 
-	# iterative version of recursive subdir handling script
-	if [ $g_optEn_recurse -eq 1 ]
+	if [ $g_optEn_recurse -eq 1 ] # recursive operation
 	then
-
+	
 		# loop through positional params
 		for param
 		do
@@ -132,7 +136,7 @@
 				
 				# determine number of subdirectories
 				n=$( wc -l "$g_tmpfile_Subdirs" | awk '{ print $1 }' )
-				let "i = 1"
+				i=1
 				
 				# handle each subdir
 				while [ $i -le $n ]
@@ -165,8 +169,7 @@
 			fi
 		done
 	
-	else
-	# operate iteratively on given files, don't handle subdirs
+	else # non-recursive operation
 	
 		# loop through positional params
 		for f
