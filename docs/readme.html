@@ -6,7 +6,6 @@ CONTENTS
 
 	- copyright
 	- files
-	- documentation
 	- installation
 	- translation
 	- examples
@@ -25,48 +24,31 @@ COPYRIGHT
 
 FILES
 
-	COPYING
-	+ A copy of the GNU GPL version 2 license.
-
-	changelog
-	+ A list of important changes in this version.
+	The following diagram shows the base structure of this package. Only the core package files are are shown.
 	
-	faq
-	+ Answers to frequently asked questions.
-	
-	ff
-	+ The "For each File" tool.
-
-	fl
-	+ The "For each Line" tool.
-	
-	install
-	+ An installation script.
-	
-	readme
-	+ This document.
-	
-	docs/
-	+ Contains documentation and templates.
-	
-	i18n/
-	+ Contains Internationalization resources.
-	
-	libs/
-	+ Contains libraries for use by BASH scripts.
-
-	scripts/
-	+ Contains useful scripts that can be used with the "For each File" and "For each Line" tools.
-
-DOCUMENTATION
-
-	1. View help message, optionally translated into the language specified by an ISO-639 language code, for "For each File" by executing:
-
-		./ff --help [ISO-639 language code]
-
-	2. View help message, optionally translated into the language specified by an ISO-639 language code, for "For each Line" by executing:
-
-		./fl --help [ISO-639 language code]
+    .
+    |-- docs/           Contains documentation files.
+    |   |
+    |   |-- changes     List of changes between versions of this package.
+    |   |
+    |   |-- faq         Answers to frequently asked questions.
+    |   |
+    |   |-- gpl.txt     GNU General Public License: Version 2.
+    |   |
+    |   `-- readme      This document.
+    |
+    |-- ff              "For each File" tool.
+    |
+    |-- fl              "For each Line" tool.
+    |
+    |-- install         Installation tool.
+    |
+    |-- i18n/           Contains internationalization resources.
+    |
+    |-- libs/           Contains libraries for shell scripts.
+    |
+    `-- scripts/        Contains example scripts usable by the 
+                        "For each File" and "For each Line" tools.
 
 INSTALLATION
 
@@ -76,49 +58,42 @@ INSTALLATION
 
 	Or perform a manual installation as follows:
 	
-		Simply move or copy the directory that contains this document to a location of your choice.
+		Simply move or copy the directory containing this package to a location of your choice.
 		
 		For easy access, you can create symbolic links, to the tools in this package, in a directory that is listed in your $PATH variable (for example: "$HOME/bin/").
 
 TRANSLATION
 
-	Translation for documentation is performed dynamically through the use of gettext translation catalogs. These files are located in the "i18n/" directory.
+	Translation is performed dynamically through the use of gettext translation catalogs. These catalogs are located in the "i18n/" directory.
 	
-	Feel free to contribute localizations for new languages and revise the existing translation catalogs.
+	Feel free to contribute localizations for new languages and revise the existing translation catalogs. New and updated translation catalogs will be made available, as they are contributed, at this URL: <http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/>.
 	
-	New and updated translation catalogs will be made available, as they are contributed, at this URL: <http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/>.
+	To write translations for a new language, copy the appropriate "*.pot" file located in "i18n/" to "*.${ISO_639_CODE}.po". ${ISO_639_CODE} is language code defined in the ISO-639 standard. Also note that you can use Unicode characters (UTF-8 and UTF-16) in the translation catalogs.
 	
-	To write translations for a new language, copy the appropriate *.pot file located in i18n/ to *.${ISO_639_CODE}.po. ${ISO_639_CODE} is language code defined in the ISO-639 standard.
+		Example: We wish to create a translation for the language whose ISO-639 code is "XX".
 	
-		Example: We wish to create a translation for the language whose ISO-639 code is "XX". (1) we copy the template file, and (2) we fill in the translations in the copy.
-	
-		(1) $ cp catalog.pot catalog.XX.po
-
-		(2) Before editing:
+		(1) We make a copy of the template file.
 		
-				msgid "A message in English."
-				msgstr ""
-			
-			After editing:
-			
-				msgid "A message in English."
-				msgstr "Your translation is placed here."
-				
-	Also note that you can use UNICODE characters (UTF-8 and UTF-16) in the translation catalogs..
+			$ cp catalog.pot catalog.XX.po
+
+		(2) We fill in the translations in the copy.
+		
+			msgid "Hello"           msgid "Hello"
+			msgstr ""       -->     msgstr "Ciao"
 
 EXAMPLES
 
-	First try out the examples named 'ff.vars' and 'fl.vars', to see how the preset variables behave. Notice how the preset variables are consistent between recursive and non-recursive modes.
+	First try out (see example below) the scripts named 'ff.vars' and 'fl.vars', to see how the preset variables behave. Notice how the preset variables are consistent between recursive and non-recursive modes.
 
-		./ff * -f./scripts/ff.vars | less
-		./ff . -rf ./scripts/ff.vars | less
+		./ff * -f./scripts/ff.vars | more
+		./ff . -rf ./scripts/ff.vars | more
 
-		./ff /bin/* -f ./scripts/ff.vars | less
-		./ff /bin/ -rf ./scripts/ff.vars | less
+		./ff /bin/* -f ./scripts/ff.vars | more
+		./ff /bin/ -rf ./scripts/ff.vars | more
 
-		./fl ./COPYING -f ./scripts/fl.vars | less
+		./fl ./COPYING -f ./scripts/fl.vars | more
 
 	You can also try out the other example scripts in the scripts/ directory. Also, the first few lines of each script file describes its purpose, thus you can execute the following to see these descriptions:
 	
-		head ./scripts/* | less
+		head ./scripts/* | more
 
