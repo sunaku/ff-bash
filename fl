@@ -9,9 +9,9 @@
 #
 # OPTIONS
 #	-e	Use a custom ${EDITOR} for entering scripting commands.
-#		This option _may_ disable the ability to pipe or redirect data 
-#		to this tool; check with your text editor.
-#
+#		Depending on how your text editor handles I/O redirection, this
+#		option may disable the ability to pipe output to other programs.
+#		
 #	-h	Display this help message.
 #
 # ARGUMENTS
@@ -49,13 +49,21 @@
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
 #
-#	$f	basename of current file (non-directory)
-#	$d	path of current working directory
-#	$p	path of current file (non-directory)
-#	$b	path of directory from which this tool was launched
-#	$n	total number of lines in current file (non-directory)
-#	$i	number of current line
-#	$l	contents of current line
+#	$f	Path of current file (non-directory).
+#
+#	$fn	Basename of current file (non-directory).
+#
+#	$d	Path of current working directory.
+#
+#	$w	Path from which this tool was launched.
+#		The user's original working directory.
+#
+#	$n	Total number of lines in current file (non-directory).
+#
+#	$i	Index or line number of current line.
+#
+#	$l	Contents of current line.
+#
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -118,24 +126,23 @@
 # non-recursive operation
 	
 	# set scripting variable
-	b="$PWD"
+	w="$PWD"
 	
 	# loop through positional params
 	for f
 	do
 		# set scripting variables
 		d=$( dirname "$f" )
-		f=$( basename "$f" )
-		p="$d/$f"
+		fn=$( basename "$f" )
 		
 		# determine file size
-		n=$( wc -l "$p" | awk '{ print $1 }' )
+		n=$( wc -l "$f" | awk '{ print $1 }' )
 		let "i = 1"
 		
 		while [ $i -le $n ]
 		do
 			# read line from file
-			l=$( sed -n "${i}p" "$p" )
+			l=$( sed -n "${i}p" "$f" )
 			
 			# execute user specified commands
 			eval "$g_input"
