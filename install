@@ -1,7 +1,5 @@
 #!/bin/bash
 # simple installation script
-echo "(ff-install) $Revision$"
-echo
 
 # globals
 
@@ -26,6 +24,9 @@ echo
 		case $opt in
 			$cmdOpts_optFlg_remove)
 				cmdOpts_optEn_remove=1
+			;;
+			*)
+				exit 1
 			;;
 		esac
 	done
@@ -55,9 +56,9 @@ echo
 	
 	else # installation
 	
-		echo "To cancel the installation at any time, press Control-C."
-		echo
-		echo "To accept the value in square brackets, press Return."
+		echo "Instructions:"
+		echo "- To cancel the installation at any time, press Control-C."
+		echo "- To accept the value in square brackets, press Return."
 		echo
 	
 		# ask user for installation directory
