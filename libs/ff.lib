@@ -54,7 +54,6 @@
 		__lib_ff_options_flag_scriptArgs=--args
 		__lib_ff_options_flag_language=--lang
 
-
 ## libraries
 	source "$__ff_myResources_libs/gettext.lib"
 	source "$__ff_myResources_libs/util.lib"
@@ -65,11 +64,13 @@
 
 	__lib_ff_loadI18N()
 	{
-		__lib_gettext_clear
-
-		if [[ -e "${__ff_myResources_i18n}"/*."${__ff_myLang}.po" ]]
+		local -a arr
+		arr=( "${__ff_myResources_i18n}"/*."${__ff_myLang}.po" )
+		
+		if [ ${#arr[@]} -gt 0 ]
 		then
-			__lib_gettext_load "${__ff_myResources_i18n}"/*."${__ff_myLang}.po"
+			__lib_gettext_clear
+			__lib_gettext_load "${arr[@]}"
 			return $?
 		else
 			return 1
