@@ -33,12 +33,10 @@
 
 ## functions
 	
-	#/**
 	# Scans the array whose name is given by $1 for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from the array whose name is given by $1.
 	#
 	# @param	1	Name of the array which contains command-line arguments.
 	# @return	1	An illegal option was encountered. The name of this option is stored in the first index of the array whose name is given by $1.
-	#*/
 	__lib_CmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
@@ -110,11 +108,9 @@
 		return $isInvalid
 	}
 	
-	#/**
 	# Handles the return value from '__lib_CmdOpts_handleOption()'. This function is meant to be used internally by this library.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
-	#*/
 	__lib_CmdOpts_scanOptions_handleReturnValue_()
 	{
 		case $1 in
@@ -135,7 +131,6 @@
 		return 0
 	}
 	
-	#/**
 	# Handles the parsing of a command-line option.
 	#
 	# @param	1	option's name
@@ -145,6 +140,5 @@
 	# @return	0	The given option is illegal.
 	# @return	1	The given option has no argument.
 	# @return	2	The given option has an argument.
-	#*/
 	__lib_CmdOpts_handleOption() { return 0; }
 
