@@ -28,33 +28,33 @@
 
 main()
 {
-	echo -e "\nmain()"
+	echo "main() {"
 	echo "\$fn = '$fn'"
 	echo "\$f = '$f'"
 	echo "\$d = '$d'"
 	echo "\$w = '$w'"
 	echo "\$i = '$i'"
 	echo "\$l = '$l'"
-	echo
+	echo "}"
 }
 
 begin()
 {
-	echo "begin()"
+	echo "begin() {}"
 }
 
 end()
 {
-	echo "end()"
+	echo "end() {}"
 }
 
 begin_file()
 {
-	echo "begin_file()"
+	echo "begin_file() {}"
 }
 
 end_file()
 {
-	echo "end_file()"
+	echo "end_file() {}"
 }
 

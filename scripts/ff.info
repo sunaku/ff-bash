@@ -28,21 +28,21 @@
 
 main()
 {
-	echo -e "\nmain()"
+	echo "main() {"
 	echo "\$fn = '$fn'"
 	echo "\$f = '$f'"
 	echo "\$d = '$d'"
 	echo "\$w = '$w'"
-	echo
+	echo "}"
 }
 
 begin()
 {
-	echo "begin()"
+	echo "begin() {}"
 }
 
 end()
 {
-	echo "end()"
+	echo "end() {}"
 }
 
