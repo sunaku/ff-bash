@@ -64,123 +64,121 @@ then
 "
 else
 	echo \
-"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters by the delimiters defined in %s. To preserve leading and trailing white-space, the empty string is used as the default delimiter." "GNU BASH" "<s>\$IFS</s>" )
+"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters by the delimiters defined in the variable named %s. To preserve leading and trailing white-space, the empty string is used as the default delimiter." "GNU BASH" "<em>\$IFS</em>" )
 "
 fi
 
 echo \
 "<b>$( gettext "SYNOPSIS" )</b>
-	$__ff_myName [<u>$( gettext "option" )</u>]... [<u>$__lib_ff_options_flag_endOpts</u>] <u>$( gettext "target" )</u>...
+	$__ff_myName [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...
 
 		<u>$( gettext "option" )</u>
-			$( gettext "A mechanism by which the behavior of this tool can be altered (see <b>OPTIONS</b> below). Note that a series of short options can be grouped together into one word. For example, %s can be written as %s." "<b>-a 1 -b 2 -c 3</b>" "<b>-abc 1 2 3</b>" )
-
-		<u>$__lib_ff_options_flag_endOpts</u>
-			$( gettext "A special option which signals the command-line options parser to stop and forces the remaining command-line arguments to be unconditionally accepted as targets. This option allows the user to specify targets whose names begin with a %s character." "<s>-</s>" )
+			$( gettext "A mechanism by which the behavior of this tool can be altered. Note that a series of short options can be grouped together into one word. For example, the sequence %s can be written as %s." "<em>-a 1 -b 2 -c 3</em>" "<em>-abc 1 2 3</em>" )
 
 		<u>$( gettext "target" )</u>
-			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed." "UNIX" )
+			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed. Note that a target need not necessarily be the name of or the path to a file; it can be a %s, string, number, or any other form of abstraction the user requires." "UNIX" "URL" )
 
-	$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the terminal device of the current user (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<s>/dev/tty</s>" "<s>[$( gettext "Control" )][D]</s>" )
+	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues an end-of-transmission signal by pressing %s." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "<em>$( gettext "Control" )-$( gettext "D" )</em>" )
 
 <b>$( gettext "OPTIONS" )</b>"
 
+echo \
+"	<b>$__lib_ff_options_flag_endOpts</b>
+		$( gettext "Stop the command-line-options parser and accept the remaining command-line arguments as targets. This option allows the user to specify targets, whose names begin with a %s character, that may otherwise be misinterpreted as being command-line options. For example, we can specify two targets named %s and %s by writing them as %s or %s." "<em>-</em>" "<em>-foo</em>" "<em>-bar</em>" "<em>-- -foo -bar</em>" "<em>./-foo ./-bar</em>" )
+			
+	<b>$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
+		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
+
+	<b>$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>
+		$( gettext "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )
+
+	<b>$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]
+		$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "ISO-639 <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
+
+	<b>$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
+		$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )
+"
 if [ "$__ff_myName" == ff ]
 then
 	echo \
-"	<b>-$__ff_myOptions_shortFlag_recursive</b>, <b>$__ff_myOptions_longFlag_recursive</b>
+"	<b>$__ff_myOptions_shortFlag_recursive</b>, <b>$__ff_myOptions_longFlag_recursive</b>
 		$( gettext "Recursively traverse directories and symbolic links that reference directories in post-order fashion: files at the deepest level of the file-system hierarchy are handled before those above them." )
 
 		$( gettext "The following subordinate options have no effect if used without the %s option." "<b>$__ff_myOptions_longFlag_recursive</b>" )
 		
-			<b>-$__ff_myOptions_shortFlag_handleHidden</b>, <b>$__ff_myOptions_longFlag_handleHidden</b>
-				$( gettext "Do not ignore targets whose names begin with a %s character." "<s>.</s>"  )
+			<b>$__ff_myOptions_shortFlag_handleHidden</b>, <b>$__ff_myOptions_longFlag_handleHidden</b>
+				$( gettext "Do not ignore targets whose names begin with a %s character." "<em>.</em>"  )
 	
-			<b>-$__ff_myOptions_shortFlag_ignoreLinks</b>, <b>$__ff_myOptions_longFlag_ignoreLinks</b>
+			<b>$__ff_myOptions_shortFlag_ignoreLinks</b>, <b>$__ff_myOptions_longFlag_ignoreLinks</b>
 				$( gettext "Do not traverse symbolic links that reference directories." )
 	
-			<b>-$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>
-				$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target\'s name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<s>*</s>" "<s>?</s>" "<s>[]</s>" "<s>.</s>" )
+			<b>$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>
+				$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target's name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<em>*</em>" "<em>?</em>" "<em>[]</em>" "<em>.</em>" )
 "
 fi
-
 echo \
-"	<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
-		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
-
-	<b>-$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>
-		$( gettext "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )
-
-	<b>-$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
-		$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )
-
-	<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]
-		$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "<s>ISO-639</s> <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<s>LC_MESSAGES</s>" )
-
-	<b>-$__lib_ff_options_shortFlag_showVersion</b>, <b>$__lib_ff_options_longFlag_showVersion</b>
+"	<b>$__lib_ff_options_shortFlag_showVersion</b>, <b>$__lib_ff_options_longFlag_showVersion</b>
 		$( gettext "Display the version number and exit." )
 
-<b>$( gettext "RESERVED NAMESPACES" )</b>
-	$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. Thus it is requested that the user not modify such constructs, as doing so may yield unpredictable behavior." "<s>__lib</s>" "<s>__ff</s>" )
+<b>$( gettext "RESERVED NAME-SPACES" )</b>
+	$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. It is requested that the user's shell commands not modify the constructs in these name-spaces, because doing so may yield unpredictable behavior." "<em>__lib</em>" "<em>__ff</em>" )
 
 <b>$( gettext "CONTROL FUNCTIONS" )</b>
-	$( gettext "These functions allow for greater control over the execution of the user\'s shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "<s>main</s>" )
+	$( gettext "These functions allow for greater control over the execution of the user's shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "<em>main()</em>" )
 
-	<b>begin</b>
+	<b>begin()</b>
 		$( gettext "This function is invoked before any targets have been handled." )
 
-	<b>main</b>
+	<b>main()</b>
 		$( gettext "This function is invoked once per each target." )
 
-	<b>end</b>
+	<b>end()</b>
 		$( gettext "This function is invoked after all targets have been handled." )
 "
 if [ "$__ff_myName" != ff ]
 then
 	echo \
-"	<b>begin_file</b>
-		$( gettext "This function is invoked before any lines in the current target have been handled. Note that this function is a good place for setting up a custom delimiter before a file is parsed." )
+"	<b>begin_file()</b>
+		$( gettext "This function is invoked before any lines in the current target have been handled. Note that this is a good place to change any delimiters before the target is parsed." )
 
-	<b>end_file</b>
+	<b>end_file()</b>
 		$( gettext "This function is invoked after all lines in the current target have been handled." )
 "
 fi
 
 echo \
 "<b>$( gettext "PRESET VARIABLES" )</b>
-	$( gettext "These variables provide information about the current target being handled. Their values are updated upon each invocation of the %s control function." "<s>main</s>" )
+	$( gettext "These variables provide information about the current target being handled." )
 
-	<b>t</b>
-		$( gettext "The original value of the current target." )
+	<b>\$t</b>
+		$( gettext "The original name, path, or value of the current target. The value of this variable is unmodified and retains the exact value it was given by the user, whereas the values of the variables below will have, among other modifications, redundant directory separators removed. For example, if the value of this variable is %s, then the value of the variable named %s would be %s." "<em>////foo//bar///</em>" "<em>\$f</em>" "<em>/foo/bar</em>" )
 
-	<b>fn</b>
-		$( gettext "The name of the current target without its path." )
+	<b>\$fn</b>
+		$( gettext "The name of the current target without its path information. For example, if the path to the current target is %s, then the value of this variable would be %s." "<em>/foo/bar</em>" "<em>bar</em>" )
 
-	<b>f</b>
-		$( gettext "Either a relative or an absolute path to the current target." )
+	<b>\$f</b>
+		$( gettext "Either a relative or an absolute path to the current target. For example, if the directory which contains the current target is %s and the name of the current target without its path information is %s, then the value of this variable would be %s." "<em>/foo</em>" "<em>bar</em>" "<em>/foo/bar</em>" )
 
-	<b>d</b>
-		$( gettext "Either a relative or an absolute path to the directory which contains the current target." )
+	<b>\$d</b>
+		$( gettext "Either a relative or an absolute path to the directory which contains the current target. For example, if the path to the current target is %s, then the value of this variable would be %s." "<em>/foo/bar</em>" "<em>/foo</em>" )
 "
 
 if [ "$__ff_myName" != ff ]
 then
 	echo \
-"	<b>i</b>
-		$( gettext "The number or index of the current line. This number ranges from 1 to N, where N is the total number of lines in the current target." )
+"	<b>\$i</b>
+		$( gettext "The number or index of the current line. The value of this variable ranges from 1 to <em>N</em>, where <em>N</em> is the total number of lines in the current target." )
 		
-	<b>l</b>
+	<b>\$l</b>
 		$( gettext "The contents of the current line." )
 "
 fi
 
 echo \
 "<b>$( gettext "AUTHOR" )</b>
-	$( gettext "Written by %s." "Suraj N. Kurapati <skurapat@ucsc.edu>" )
+	$( gettext "Written by %s." "Suraj N. Kurapati &lt;skurapat@ucsc.edu&gt;" )
 
-	$( gettext "You can find announcements for new releases at %s and additional resources at %s." "<s>http://freshmeat.net/projects/ff/</s>" "<s>http://sourceforge.net/tracker/?group_id=106777</s>")
-
-	$( gettext "If you find this translation to be unsatisfactory, then feel free to modify the translation catalog (located at %s) for this manual. You may also contribute modified translations for others to use (see the package overview for instructions)." "<s>$__lib_ff_docI18n</s>" )
+	$( gettext "You can find announcements for new releases at %s and additional resources at %s." "<em>http://freshmeat.net/projects/ff/</em>" "<em>http://sourceforge.net/tracker/?group_id=106777</em>")
 
 <b>$( gettext "COPYRIGHT" )</b>
 	Copyright 2003, 2004 Suraj N. Kurapati.
