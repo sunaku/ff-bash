@@ -125,7 +125,7 @@
 				if [ -d "$__ff_baseDir" ] # handle directories only
 				then
 					find "$__ff_baseDir" "${__ff_findOpts[@]}" |
-					while read f
+					while read -r f
 					do
 						# set scripting variables
 						fn=${f##*/}

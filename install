@@ -73,7 +73,7 @@
 		
 		while [ $isLoop -eq 1 ]
 		do
-			read -rep "$1"
+			read -ep "$1"
 		
 			# set default value
 			[ -z "$REPLY" ] && REPLY=$3
