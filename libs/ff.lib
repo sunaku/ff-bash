@@ -76,12 +76,13 @@
 	# load user's script into RAM
 	__lib_ff_loadScript()
 	{
-		local expression
+		local expression=":;"
 			
 		# store input
 		
 			if [ ${__lib_ff_options_isOn_evalExpr:-0} -eq 1 ]
 			then
+				# read command-line argument
 				expression=$__lib_ff_options_value_evalExpr
 			elif [ ${__lib_ff_options_isOn_evalFile:-0} -eq 1 ]
 			then
@@ -93,15 +94,15 @@
 					gettext "Error: Unable to read file %s." "\"$__lib_ff_options_value_evalFile\""
 					__lib_ff_exit 2
 				fi
+			else
+				# read from user's terminal
+				while read -er < /dev/tty
+				do
+					expression="$expression
+$REPLY"
+				done
 			fi
 			
-		# check input 
-		
-			if [ -z "$expression" ]
-			then
-				gettext "Error: No shell commands given. Try %s." "\"$0 --$__lib_ff_options_longFlag_showHelp\""
-				__lib_ff_exit
-			fi
 		# check input for control functions
 		
 			if ! echo "$expression" | grep 'main *\( *\)' >& /dev/null
