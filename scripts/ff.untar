@@ -87,7 +87,7 @@
 	$( gettext "Extracts compressed %s, %s, and regular %s archives into their own directories." "<em>gzip</em>" "<em>bzip2</em>" "<em>tar</em>" )
 
 <b>$( gettext "USAGE" )</b>
-	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option")</u>]...
+	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option" )</u>]...
 
 <b>$( gettext "OPTIONS" )</b>
 	<b>$g_options_flag_help</b>
