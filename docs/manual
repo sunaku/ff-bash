@@ -79,7 +79,7 @@ __lib_DocFmt_blockStart
 
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>--$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "string." )</u>" )"
+		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "string" )</u>" )"
 	__lib_DocFmt_blockEnd
 
 	
@@ -109,13 +109,13 @@ __lib_DocFmt_blockEnd
 __lib_DocFmt_blockItem "<b>$( gettext "SHELL COMMANDS" )</b>"
 __lib_DocFmt_blockStart
 
-	__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not utilize constructs whose names are prefixed with %s and %s; this tool depends upon the integrity of these constructs in order to operate properly." "\"__lib\"" "\"__ff\"" )\n"
+	__lib_DocFmt_blockItem "$( gettext "The user's shell commands must not utilize constructs whose names are prefixed with %s and %s; this tool depends upon the integrity of these constructs in order to operate properly." "\"__lib\"" "\"__ff\"" )\n"
 
-	__lib_DocFmt_blockItem "$( gettext "In addition to those provided by the BASH language, the following constructs are available for use in the user\'s shell commands." )\n"
+	__lib_DocFmt_blockItem "$( gettext "In addition to those provided by the BASH language, the following constructs are available for use in the user's shell commands." )\n"
 
 	__lib_DocFmt_blockItem "<b>$( gettext "CONTROL FUNCTIONS" )</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "These functions allow greater control over the execution of user\'s shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the %s function will automatically be created to encapsulate the user\'s shell commands. However, if the user decides to implement any combination of these functions, the %s function must be manually implemented." "\"main()\"" "\"main()\"" )\n"
+		__lib_DocFmt_blockItem "$( gettext "These functions allow greater control over the execution of user's shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the %s function will automatically be created to encapsulate the user's shell commands. However, if the user decides to implement any combination of these functions, the %s function must be manually implemented." "\"main()\"" "\"main()\"" )\n"
 		
 		__lib_DocFmt_blockItem "<b>begin()</b>"
 		__lib_DocFmt_blockStart
@@ -135,7 +135,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<b>$( gettext "PRESET VARIABLES" )</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "The user\'s shell commands must not modify the values of these variables because they may not be restored each time %s is invoked." "\"main()\"" )\n"
+		__lib_DocFmt_blockItem "$( gettext "The user's shell commands must not modify the values of these variables because they may not be restored each time %s is invoked." "\"main()\"" )\n"
 		
 		__lib_DocFmt_blockItem "<b>\$fn</b>"
 		__lib_DocFmt_blockStart
@@ -154,7 +154,7 @@ __lib_DocFmt_blockStart
 		
 		__lib_DocFmt_blockItem "<b>\$w</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Absolute path to the user\'s working directory." )"
+			__lib_DocFmt_blockItem "$( gettext "Absolute path to the user's working directory." )"
 		__lib_DocFmt_blockEnd
 	__lib_DocFmt_blockEnd
 	
@@ -175,7 +175,7 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "TRANSLATION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "This document was translated from English using the %s online translation service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "\"Translation Experts\" <http://www.tranexp.com/InterTran/FreeTranslation.html>" "gettext" "\"$__lib_ff_docI18n\"" )"
+	__lib_DocFmt_blockItem "$( gettext "This document was translated from English using the %s online translation service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "\"AltaVista - Babel Fish Translation\" <http://babelfish.altavista.com/>" "gettext" "\"$__lib_ff_docI18n\"" )"
 __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
