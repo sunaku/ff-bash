@@ -37,18 +37,15 @@
 
 	# Displays a yes/no question to the user and returns the user's choice.
 	# @param	1	Question string
-	# @optional	2	Default answer, if user gives no input. The value of this param is either 0 or 1. The NO answer is assumed by default if this param is unspecified.
 	# @return	0 = No
 	# 			1 = Yes
 	__lib_util_queryYesNo()
 	{
-		local def=${2:-0}
+		echo "$1" | fmt -w ${COLUMNS:-80}
 
 		while true
 		do
-			read -e -p "$1 {$( gettext "yes" ): 1} {$( gettext "no" ): 0} [$def] " < /dev/tty
-			[ -z "$REPLY" ] && REPLY=$def	# default value
-
+			read -e -p "( 0 $( gettext "No" ) | 1 $( gettext "Yes" ) ) " < /dev/tty
 			[[ $REPLY == [01] ]] && return $REPLY
 		done
 
