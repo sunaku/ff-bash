@@ -50,10 +50,10 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 ## gettext translation
 
 	echo "pack: create *.pot files; say NO to raw output"
-#	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
+	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
 
 	echo "pack: translate *.pot files"
-#	../ff -f ff.auto_i18n ../i18n/*
+	../ff -f ff.auto_i18n ../i18n/*
 
 	# copy result files
 	cp -vr ../i18n $pack_dir
@@ -91,7 +91,7 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 		for x in "${doc_nom[@]}"
 		do
 			# make id-anchor URLs local
-			../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html" ${x}*
+			../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
 		done
 
 
