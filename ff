@@ -10,8 +10,8 @@
 #
 #
 # OPTIONS
-#	-a	Handle files prefixed with a period (hidden files). Note that
-#		this applies in recursive mode only.
+#	-a	Handle hidden files, whose names are prefixed with a period.
+#		Note that this applies in recursive mode only.
 #
 #	-e	Use the program specified in ${EDITOR} for entering scripting
 #		commands. Depending on how your text editor handles I/O
@@ -223,12 +223,12 @@
 					fn=${f##*/}
 					
 					# determine directory path
-					if [ "$fn" != "$f" ]
+					if [ "$fn" == "$f" ]
 					then
-						d=${f%/*}
-					else
 						d=.
 						f=./$f
+					else
+						d=${f%/*}
 					fi
 				
 				# handle user's script
