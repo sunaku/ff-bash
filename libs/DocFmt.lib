@@ -28,8 +28,6 @@
 
 ## globals
 
-	__lib_DocFmt_indent=	# holds a string of tab characters
-	
 	## formatting vars for use with 'tput sgr ...'
 	# source: http://nscp.upenn.edu/aix4.3html/files/aixfiles/terminfo.htm#TH5Bj2ddmary
 	__lib_DocFmt_sgrModes=( 0 0 0 0 0 0 0 0 0 )	# on-off status flags for hash-table items below
@@ -45,15 +43,51 @@
 
 ## functions
 
-	# Prints text to the current block. The text can have
-	# escape sequences (such as '\n' for newline).
-	# @param	$*	text to print.
+	# Converts text with formatting tags to the proper on-screen formatting commands using `tput`.
 	#
-	__lib_DocFmt_blockItem()
+	# Formatting Tags (must be properly enclosed, ie: <tag></tag> ):
+	#
+	#	<s>	Stand out
+	#	<u>	Underline
+	#	<r>	Reverse
+	#	<l>	Blink
+	#	<d>	Dim
+	#	<b>	Bold
+	#	<v>	Invisible
+	#	<o>	Protect
+	#	<c>	Alternate Character Set
+	#
+	# The following HTML escape sequences are also converted:
+	#	&lt;	<
+	#	&gt;	>
+	#
+	# @param	stdin	Text with formatting tags.
+	#
+	# @usage	pipe or redirect the @param to this function.
+	#
+	__lib_DocFmt_formatTags()
 	{
-		echo -e "${__lib_DocFmt_indent}${*}\n"
+		sed "
+			s:<s>:$( __lib_DocFmt_setFmt standout 1 ):gi
+			s:</s>:$( __lib_DocFmt_setFmt standout 0 ):gi
+			s:<u>:$( __lib_DocFmt_setFmt underline 1 ):gi
+			s:</u>:$( __lib_DocFmt_setFmt underline 0 ):gi
+			s:<l>:$( __lib_DocFmt_setFmt blink 1 ):gi
+			s:</l>:$( __lib_DocFmt_setFmt blink 0 ):gi
+			s:<d>:$( __lib_DocFmt_setFmt dim 1 ):gi
+			s:</d>:$( __lib_DocFmt_setFmt dim 0 ):gi
+			s:<b>:$( __lib_DocFmt_setFmt bold 1 ):gi
+			s:</b>:$( __lib_DocFmt_setFmt bold 0 ):gi
+			s:<v>:$( __lib_DocFmt_setFmt invisible 1 ):gi
+			s:</v>:$( __lib_DocFmt_setFmt invisible 0 ):gi
+			s:<o>:$( __lib_DocFmt_setFmt protect 1 ):gi
+			s:</o>:$( __lib_DocFmt_setFmt protect 0 ):gi
+			s:<c>:$( __lib_DocFmt_setFmt altcharset 1 ):gi
+			s:</c>:$( __lib_DocFmt_setFmt altcharset 0 ):gi
+			s:&lt;:<:gi
+			s:&gt;:>:gi
+		"
 	}
-	
 	
 	# Sets the formatting of output printed after the invocation of this function.
 	# @param	1	The value of an item in $__lib_DocFmt_sgrNames
@@ -68,17 +102,5 @@
 		done
 		
 		tput sgr "${__lib_DocFmt_sgrModes[@]}" # apply the mode
-	}
-
-	# begins a new indented block
-	__lib_DocFmt_blockStart()
-	{
-		__lib_DocFmt_indent="$__lib_DocFmt_indent\\t"	# increase indent
-	}
-	
-	# terminates an indented block
-	__lib_DocFmt_blockEnd()
-	{
-		__lib_DocFmt_indent=${__lib_DocFmt_indent%??}	# decrease indent
 	}
 
