@@ -91,7 +91,7 @@
 				while read -r l
 				do
 					main		# user function
-					let i=i+1	# increment line number
+					(( i += 1 ))	# increment line number
 					
 				done < "$f"
 				

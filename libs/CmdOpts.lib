@@ -53,7 +53,7 @@
 		
 		while [ $i -lt $arrLen ]
 		do
-			let j=i+1
+			(( j = i + 1 ))
 			
 			opt=${arr[$i]}
 			
@@ -91,14 +91,14 @@
 						break
 					fi
 					
-					let k=k+1
+					(( k += 1 ))
 				done
 			fi
 			
 			# exit out of the loop
 			[ $isInvalid -eq 1 ] && break
 			
-			let i=i+1
+			(( i += 1 ))
 		done
 	
 		# propogate changes in local array to caller's array
@@ -117,7 +117,7 @@
 			2)
 				unset -v arr[$j] arr[$i]	# remove the option's name & argument
 				
-				let j=j+1	# increment argument index
+				(( j += 1 ))	# increment argument index
 			;;
 			
 			1)
