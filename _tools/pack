@@ -1,15 +1,23 @@
 #!/bin/bash
 #
 # Creates a release package from the current sandbox.
+# @param	1	Version of this release
 #
+
+# check args
+	if [ -z "$1" ]
+	then
+		echo "usage: ./pack <release_version>"
+		exit
+	fi
+
+## vars
 
 upload_scp_url=$UCSC_ID:public_html/pub/tmp/
 upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 
-## vars
-
 	# version of this release
-	pack_ver=1.6.8
+	pack_ver=$1
 	
 	# files that use gettext
 	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
