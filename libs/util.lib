@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# Utility functions library.
+#
+# Requires:
+#	gettext.lib
+#
+###
+#
+# Copyright 2003, 2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+#
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+## globals
+
+	__LIB_UTIL__=1	# prevents include() loops
+
+## functions
+
+	# Displays a yes/no question to the user and returns the user's choice.
+	# @param	1	Question string
+	# @optional	2	Default answer, if user gives no input. The value of this param is either 0 or 1. The NO answer is assumed by default if this param is unspecified.
+	# @return	0 = No
+	# 			1 = Yes
+	__lib_util_queryYesNo()
+	{
+		local def=${2:-0}
+
+		while true
+		do
+			read -e -p "$1 {$( gettext "yes" ): 1} {$( gettext "no" ): 0} [$def] " < /dev/tty
+			[ -z "$REPLY" ] && REPLY=$def	# default value
+
+			[[ $REPLY == [01] ]] && return $REPLY
+		done
+
+	}
+
+	# Displays a question to the user and prints the user's reply to <sdout>
+	# @param	1	Question string
+	# @optional	2	Default answer, if user gives no input.
+	# @return	0	Default answer chosen
+	#			1	User did not choose default answer
+	__lib_util_query()
+	{
+		local def=$2 rv=1
+
+		read -e -p "$1 $( [ -n "$def" ] && echo "[$def] " )" < /dev/tty
+
+		if [ -z "$REPLY" ]
+		then
+			REPLY=$def	# default value
+			rv=0
+		fi
+
+		echo "$REPLY"
+		return $rv
+	}
