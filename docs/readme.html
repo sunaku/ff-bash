@@ -63,7 +63,7 @@
 						<li><a href="http://www.gnu.org/software/bash/bash.html"><samp>GNU BASH</samp></a> (Shell)
 							<ul>
 								<li>Version <samp>2.05b</samp> has been tested successfully with this package.</li>
-								<li>The shell must be accessible via: <samp>/bin/bash</samp>. If this is not possible, then the user can adjust the line <samp>#!/bin/bash</samp> to reflect the path on their system in each of the shell scripts provided by this package: <code>for f in ./f* ; do sed -e "1s;/bin/bash;${0};" "$f" > ./$$ &amp;&amp; mv -f ./$$ "$f" ; done ; rm -f ./$$</code></li>
+								<li>The shell must be accessible via: <samp>/bin/bash</samp>. If this is not possible, then the user can adjust the line <samp>#!/bin/bash</samp> to reflect the path on their system in each of the shell scripts provided by this package: <code>for p in ./f* ; do sed -e "1s;/bin/bash;${0};" "$p" > ./$$ &amp;&amp; mv -f ./$$ "$p" ; done ; rm -f ./$$</code></li>
 							</ul>
 						</li>
 						<li><a href="http://www.gnu.org/software/coreutils/"><samp>GNU coreutils</samp></a> (Core Utilities)
@@ -129,7 +129,7 @@
 			<li>
 				<h2 id="uda">Example Scripts</h2>
 				<blockquote>
-					<p>In the <samp>./scripts/</samp> directory there are several example scripts that can be invoked with the tools of this package. These scripts are named such that their names begin with the name of the tool for which they were designed to be invoked by. Note that scripts written to be invoked by one tool may not produce correct results if invoked with another.</p>
+					<p>In the <samp>./scripts/</samp> directory there are several example scripts that can be invoked with the tools of this package. These scripts are named such that their names begin with the name of the tool for which they were designed to be invoked by. For example, an example script named <samp>foo.bar</samp> is to be used invoked with the <samp>foo</samp> tool. Also note that scripts written to be invoked by one tool may not produce correct results if invoked with another.</p>
 					
 					<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>: 
 						<code>
@@ -157,11 +157,11 @@
 					
 					<h3>Instructions for writing new translations</h3>
 					<ol>
-						<li>Determine the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp></a> code of the language you wish to write translations for.</li>
+						<li>Determine the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp></a> language code of the language you wish to write translations for. In this example, we assume that <samp><em>bar</em></samp> is the language code.</li>
 						<li>Make a copy of the translation catalog template file:
 							<code>
 								cd ./i18n/<br/>
-								cp <em>foo</em>.pot <em>foo</em>.<em>ISO-639</em>.po
+								cp <em>foo</em>.pot <em>foo</em>.<em>bar</em>.po
 							</code>
 						</li>
 						<li>Write your translations in the copied file: 
