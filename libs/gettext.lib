@@ -29,105 +29,66 @@
 
 ## globals
 
-	__lib_gettext_tempfile="${TMPDIR:-/tmp}/__lib_gettext.$$"
-	#__lib_gettext_hashChars="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	declare -a __lib_gettext_catalogList
 	
 ## functions
 
-	# Computes a hash value for a given string and prints it to stdout.
-	# @param	1	string to hash
-	__lib_gettext_hash()
-	{
-		local c i=0 k=0 n=${#1}
-		
-		for (( ; i < n ; i++ ))
-		do
-			c=${1:$i:1}	# next character in string
-			
-			if [[ $c == [[:alnum:]] ]]	# check character
-			then
-				echo -n $c	# incrementally output the string portion of hash
-			else
-				(( k++ ))	# count number of non [:alnum:] chars
-			fi
-		done
-		
-		echo "$k$n"	# output the remainder of the hash
-		
-#		read -p "__lib_gettext_hash(str=$1, max=$m)=$k$n" </dev/tty
-	}
-	
-	# Loads a gettext Portable-Object translation catalog into cache.
-	# Cache is not cleared before loading new data.
+	# Loads a gettext translation catalog into the cache. Note that the cache is not cleared before loading new data.
 	#
 	# @usage	__lib_gettext_load FILE...
 	#
-	# @param	FILE	Path of Portable-Object file to load.
+	# @param	FILE	Path of translation catalog that you wish to load.
 	#
 	# @return	Standard UNIX exit status.
 	#
+	###
+	#
 	# Catalog file Requirements
-	# ----------------------------------
-	# +	Strings should be properly quoted, using double quotes. 
+	#
+	# +	Strings should be properly quoted using double quotes.
+	#
 	#	For example:
 	#
 	#		msgid "hello world"
 	#		msgstr ""
 	#
-	# +	Multi-line strings are also supported.
+	# +	Multi-line strings are NOT supported.
+	#
 	#	For example:
 	#
 	#		msgstr "This"
 	#		  "spans multiple lines"
 	#		  "..."
 	#
-	#	And this:
+	#	Another example:
+	#
 	#		msgstr "This
 	#		  spans multiple lines
 	#		  ..."
-	#
-	# -------------------------------------
-	#
+	###
 	__lib_gettext_load()
 	{
-		# variables
-		local file msgid msgstr exit_status=0
+		local file exit_status=0
 		
-		# parse catalog files
 		for file
 		do
-			# check file perms
-			if ! [[ -r "$file" && -f "$file" ]]
+			if [[ -r "$file" && -f "$file" ]]
 			then
+				__lib_gettext_catalogList[${#__lib_gettext_catalogList[@]}]=$file
+			else
 				exit_status=1
 				continue
 			fi
-			
-			# get all strings onto one line
-			sed -e '/^$/d ; /^[ \t]*\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g ; s/msg[si][td]r\?[ \t]*/\n/g' | sed -e '1d ; s/^ *"// ; s/" *$// ; $a\
-' > "$__lib_gettext_tempfile"
-			
-			# load file into cache
-			while IFS= read -r msgid && read -r msgstr
-			do
-				eval "__lib_gettext_ht_$( __lib_gettext_hash "$msgid" )=\$msgstr"	# insert entry into hash-table
-			done < "$__lib_gettext_tempfile"
-			
 		done
-		
-		# clean up
-		rm -f "$__lib_gettext_tempfile"
 		
 		return $exit_status
 	}
 	
-	# Prints a translated string using the loaded catalog data.
-	# If a translation is not available, the given query is printed.
-	# Escaped sequences such as '\n' are automatically expanded.
+	# Prints the translated value of the given query, by using data from previously loaded catalogs. If a translation is not available, the query is printed instead. Escaped sequences such as '\n' are automatically expanded.
 	#
 	# @see		printf
 	#
-	# @usage	gettext [OPTION] [QUERY] [ARGUMENT]...
+	# @usage	gettext [OPTION] QUERY [ARGUMENT]...
 	#
 	# @option	-n	Suppress trailing newline.
 	#
@@ -143,7 +104,7 @@
 	#
 	gettext()
 	{
-		local query response newline='\n'
+		local query response newline=$'\n'
 		
 		# handle options
 			if [ "$1" == "-n" ]
@@ -156,10 +117,18 @@
 			shift	# remove $1 from parameters
 		
 		# perform translation
-			eval "response=\$__lib_gettext_ht_$( __lib_gettext_hash "$query" )" # hash-table lookup
-			[ -z "$response" ] && response=$query	# if translation is blank. use untranslated query.
+		
+			response=$(
+				cat "${__lib_gettext_catalogList[@]}" |
+				grep -F -A 1 "\"$query\"" |	# assuming PO strings are quoted w/ double quotes
+				sed -n '2 s/^[^"]*"\(.*\)" *$/\1/ p'	# assuming response is all on one line
+			)
+			
+			[ -z "$response" ] && response=$query	# use untranslated query if translation failed
 		
 		printf "${response}${newline}" "${@}"	# print result
+		
+#		read < /dev/tty
 	}
 	
 	# function alias
