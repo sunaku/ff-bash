@@ -1,155 +1,211 @@
 #!/bin/bash
-# Common function library for "ff" package programs.
 #
-# $_ff_path* variables must be previously defined.
+# Common function library for 'ff' and 'fl' tools.
 #
-# This file is distributed under the same license as the "ff" package.
+# Dependencies:
+#
+# 	${__ff_myHome}*	- path to installation directory
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
 
 ## globals
 
-	_ff_version=1.6.7
-
-	# temporary files
-	_ff_tmpMask=${TMP:-/tmp}/_ff_tmp$$
-	_ff_tmp_userScript=${_ff_tmpMask}.script
-	_ff_tmp_swapFile=${_ff_tmpMask}.swap
+	__lib_ff_version=1.6.8
+	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}$$"
+	declare -a __lib_ff_cmdArgs		# array of command-line arguments
 	
 	# command line options
-	_ff_baseOpts=ehs:t:v
-	_ff_baseOpts_optFlg_useEditor=e
-	_ff_baseOpts_optFlg_showHelp=h
-	_ff_baseOpts_optFlg_saveInput=s
-	_ff_baseOpts_optFlg_targetList=t
-	_ff_baseOpts_optFlg_showVersion=v
 	
-	# targets
-	declare -a _ff_targetArray
+		__lib_ff_options_shortFlag_evalExpr=e
+		__lib_ff_options_longFlag_evalExpr=expression
+		
+		__lib_ff_options_shortFlag_evalFile=f
+		__lib_ff_options_longFlag_evalFile=file
+		
+		__lib_ff_options_shortFlag_readPipe=p
+		__lib_ff_options_longFlag_readPipe=pipe
+		
+		__lib_ff_options_shortFlag_showHelp=h
+		__lib_ff_options_longFlag_showHelp=help
+		
+		__lib_ff_options_shortFlag_showVersion=v
+		__lib_ff_options_longFlag_showVersion=version
+	
 	
 ## libraries
+	source ${__ff_myResources_libs}/gettext.lib
+	source ${__ff_myResources_libs}/CmdOpts.lib
+	
+## init
 
-	source ${_ff_base_lib}/gte
-	source ${_ff_base_lib}/doc
-
+	__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
+	
 ## functions
 	
-	# Reads user's scripting commands from I/O redirection
-	# or standard input. Also saves user's script to file.
-	# @return	1	no input was given
-	_ff_getScript()
-	{
-		if [ ${_ff_baseOpts_optEn_useEditor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] 
-		then
-			# launch user's editor
-			$EDITOR "$_ff_tmp_userScript"
-		else
-			# take user input from terminal or file
-			cat > "$_ff_tmp_userScript"
-		fi
-		
-		# check if no input was given
-		[ ! -s "$_ff_tmp_userScript" ] && return 1
-		
-		# save user's script to file
-		if [ ${_ff_baseOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$_ff_baseOpts_optArg_saveInput" ]
-		then
-			cp -i "$_ff_tmp_userScript" "$_ff_baseOpts_optArg_saveInput" <&2
-		fi
-		
-		return 0
-	}
-	
-	# load user's script into RAM
-	_ff_evalScript()
-	{
-		# check if user's script uses control functions
-			fgrep 'main()' "$_ff_tmp_userScript" >& /dev/null
-			
-			# wrap user's script around main()
-			if [ $? -gt 0 ]
-			then
-				awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$_ff_tmp_userScript" > "$_ff_tmp_swapFile"
-				mv "$_ff_tmp_swapFile" "$_ff_tmp_userScript"
-			fi
-		
-		# load script into RAM
-			g_input=$( < "$_ff_tmp_userScript" )
-			eval "$g_input"
-			g_input=
-	}
-	
 	# clean up and exit program
-	_ff_exit()
+	# @param	1	exit status
+	__lib_ff_exit()
 	{
 		# clean up temp files
-		rm -f ${_ff_tmpMask}*
+		rm -f ${__lib_ff_tmpMask}*
 		
 		# exit with given code
 		exit $1
 	}
-	
-	# setup the list of targets which will be performed upon
-	_ff_setupTargets()
+
+	# load user's script into RAM
+	__lib_ff_loadScript()
 	{
-		local arg
+		local expression
+			
+		# store input
 		
-		if [[ ${_ff_baseOpts_optEn_targetList:-0} -eq 1 && -s "$_ff_baseOpts_optArg_targetList" ]]
-		then
-			# use targets listed in a file
-			while read arg
-			do
-				_ff_targetArray[${#_ff_targetArray[@]}]=$arg
-			done < "$_ff_baseOpts_optArg_targetList"
-		else
-			# use targets given on command line
-			for arg
-			do
-				# exclude command line options and their arguments
-				if [[ ${arg:0:1} != "-" || ${_ff_baseOpts_optEn_saveInput:-0} -eq 1 && "$arg" != "$_ff_baseOpts_optArg_saveInput" ]]
-				then
-					_ff_targetArray[${#_ff_targetArray[@]}]=$arg
+			if [ ${__lib_ff_options_isOn_evalExpr:-0} -eq 1 ]
+			then
+				expression=$__lib_ff_options_value_evalExpr
+			elif [ ${__lib_ff_options_isOn_evalFile:-0} -eq 1 ]
+			then
+				# read script file
+				if [ -r "$__lib_ff_options_value_evalFile" ]
+				then 
+					expression=$( < "$__lib_ff_options_value_evalFile" )
+				else
+					gettext "Error: Unable to read file: '%s'." "$__lib_ff_options_value_evalFile"
+					__lib_ff_exit 2
 				fi
+				
+			fi
+			
+		# check input 
+		
+			if [ -z "$expression" ]
+			then
+				gettext "Error: No shell commands specified."
+				__lib_ff_exit 1
+			fi
+		
+		# check input for control functions
+		
+			if [ "${expression//main()/}" == "$expression" ]
+			then
+				expression="
+main(){
+$expression
+:;}"
+			fi
+		
+		# load script into RAM
+			eval "$expression"
+	}
+	
+	# Reads a list of targets that are piped in
+	__lib_ff_readPipe()
+	{
+		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
+		then
+			while read
+			do
+				__lib_ff_targetList[${#__lib_ff_targetList[@]}]=$REPLY
 			done
 		fi
 	}
 	
-	# scan base options and set flags
-	# @return	1	illegal option
-	# 		2 	help message
-	#		3	version
-	# @param	$1	command line option flag to handle
-	_ff_handleBaseOption()
+	# handles parsing of command-line options
+	# @see __lib_CmdOpts_handleOption()
+	__lib_ff_handleOption()
 	{
 		case $1 in
-			$_ff_baseOpts_optFlg_useEditor)
-				_ff_baseOpts_optEn_useEditor=1
-			;;
-			$_ff_baseOpts_optFlg_targetList)
-				_ff_baseOpts_optEn_targetList=1
-				_ff_baseOpts_optArg_targetList=$OPTARG
-			;;
-			$_ff_baseOpts_optFlg_saveInput)
-				_ff_baseOpts_optEn_saveInput=1
-				_ff_baseOpts_optArg_saveInput=$OPTARG
-			;;
-			$_ff_baseOpts_optFlg_showHelp)
+			$__lib_ff_options_shortFlag_evalExpr | $__lib_ff_options_longFlag_evalExpr)
+				
+				if [ ${__lib_ff_options_isOn_evalFile:-0} -eq 1 ] 
+				then
+					gettext "Error: Cannot use both -e and -f simultaneously."
+					__lib_ff_exit 1
+				fi
 			
-				# choose translated docs based upon locale
-				local doc_file="${_ff_base_doc}/${_ff_name}_doc"
-				local doc_i18n="${_ff_base_i18n}/${_ff_name}_doc.${LANG:0:2}.po"	# gettext translation catalog
-				
-				# display documentation
-				_gte_load "$doc_i18n"
-					source "$doc_file" | fmt | more
-				_gte_free
-				
+				__lib_ff_options_isOn_evalExpr=1
+				__lib_ff_options_value_evalExpr=$2
 				return 2
 			;;
-			$_ff_baseOpts_optFlg_showVersion)
-				echo $_ff_version
-				return 3
+			
+			$__lib_ff_options_shortFlag_evalFile | $__lib_ff_options_longFlag_evalFile)
+			
+				if [ ${__lib_ff_options_isOn_evalExpr:-0} -eq 1 ] 
+				then
+					gettext "Error: Cannot use both -e and -f simultaneously."
+					__lib_ff_exit 1
+				fi
+				
+				__lib_ff_options_isOn_evalFile=1
+				__lib_ff_options_value_evalFile=$2
+				return 2
 			;;
-			*)
+			
+			$__lib_ff_options_shortFlag_readPipe | $__lib_ff_options_longFlag_readPipe)
+				__lib_ff_options_isOn_readPipe=1
 				return 1
+			;;
+			
+			$__lib_ff_options_shortFlag_showHelp | $__lib_ff_options_longFlag_showHelp)
+				
+				## libraries
+					source ${__ff_myResources_libs}/DocFmt.lib
+				
+				local __lib_ff_docFile="${__ff_myResources_docs}/${__ff_myName}.man" __lib_ff_docLang=$__ff_myLang 				__lib_ff_docI18n
+					
+				# choose translation catalog
+				
+					# allow user choice of translation language
+					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}
+					
+					__lib_ff_docI18n="${__ff_myResources_i18n}/${__ff_myName}.man.${__lib_ff_docLang}.po"
+					
+				# load translation catalog
+					if [[ -f "$__lib_ff_docI18n" && -r "$__lib_ff_docI18n" ]]
+					then
+						__lib_gettext_load "$__lib_ff_docI18n"
+					
+					elif [ "$__lib_ff_docLang" != en ]
+					then
+						gettext "Error: Unable to read the translation catalog for language code '%s'." "$__lib_ff_docLang"
+						
+						# query user to display English docs
+						read -p "$( gettext "Shall I display the documentation in English instead? [yes]" ) " < /dev/tty
+						
+						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && __lib_ff_exit
+					fi
+				
+				# display documentation
+					source "$__lib_ff_docFile" | sed 's/\t/    /' | fmt -us | less -R
+				
+				__lib_ff_exit
+			;;
+			
+			$__lib_ff_options_shortFlag_showVersion | $__lib_ff_options_longFlag_showVersion)
+				echo $__lib_ff_version
+				__lib_ff_exit
 			;;
 		esac
 		
@@ -157,36 +213,32 @@
 	}
 	
 	# base application logic
-	_ff_baseLogic()
+	__lib_ff_main()
 	{
 		# ensures proper clean up
-			trap '_ff_exit' INT EXIT
+			trap '__lib_ff_exit 3' INT KILL TERM
 
 		# scan command line options
 
-			_ff_scanOptions "${@}"
-
-			# exit if help message was displayed or illegal options were given
-			[ $? -gt 0 ] && _ff_exit
-
-		# get user's script & save it
-
-			_ff_getScript
-
-			# exit if no script was given
-			[ $? -gt 0 ] && _ff_exit
-
+			# NOTE: assuming '$__lib_ff_targetList' is already initialized
+			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList"
+			then
+				gettext "Error: '%s' is not a valid option. Try '--$__lib_ff_options_longFlag_showHelp'." "$__lib_ff_targetList"
+				__lib_ff_exit 1
+			fi
+			
 		# handle user's script
 
 			# load script into RAM
-			_ff_evalScript
+			__lib_ff_loadScript
 
-			# generate list of targets to perform upon
-			_ff_setupTargets "${@}"
-
+			# handle piped targets
+			__lib_ff_readPipe
+				
 			# execute script
-			_ff_main
+			__ff_main
 
 		# finished
+			__lib_ff_exit 0
 	}
 
