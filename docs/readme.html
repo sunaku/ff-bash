@@ -1,87 +1,93 @@
-CONTENTS
-	license
-	description
-	files
-	documentation
-	installation
-	examples
+ff-readme
+
+Contents
+
+  * license
+  * description
+  * files
+  * documentation
+  * installation
+  * examples
+
+License
+
+  All items distributed with this package are released under the GNU GPL
+  version 2. A copy of this document is provided in the file 'COPYING'.
 
 
-LICENSE
-	All items distributed with this package are released under the GNU GPL
-	version 2. A copy of this document is provided in the file 'COPYING'.
+Description
+
+  ff - For each File
+  
+  	For each File allows users to execute a Bash script recursively upon
+  	many files and directories. It is ideal for performing a repetitive
+  	procedure such as mass file renaming.
+  
+  fl - For each Line
+  
+  	Allows users to execute a Bash script once for each line in a file. It
+  	is ideal for performing complex text processing procedures.
 
 
-DESCRIPTION
+Files
 
-	ff - For each File
-	
-		For each File allows users to execute a Bash script recursively
-		upon many files and directories. It is ideal for performing a
-		repetitive procedure such as mass file renaming.
-	
-	fl - For each Line
-	
-		Allows users to execute a Bash script once for each line in a
-		file. It is ideal for performing complex text processing
-		procedures.
-
-
-FILES
-	changelog	A list of important changes in this version.
-	
-	ff		For each File program.
-	
-	fl		For each Line program.
-	
-	install		A simple installation script.
-	
-	examples/	Contains sample scripts to get you started.
-	
-	COPYING		A copy of the GNU GPL version 2 license.
+  changelog	A list of important changes in this version.
+  
+  ff		For each File program.
+  
+  fl		For each Line program.
+  
+  install	A simple installation script.
+  
+  examples/	Contains sample scripts to get you started.
+  
+  COPYING	A copy of the GNU GPL version 2 license.
 
 
-DOCUMENTATION
-	1. View help message for "For each File" by executing
-	
-		ff -h
-	
-	2. View help message for "For each Line" by executing:
-	
-		fl -h
-	
-	3. Examine source code.
+Documentation
+
+  1. View help message for "For each File" by executing
+  
+  	./ff -h
+  
+  2. View help message for "For each Line" by executing:
+  
+  	./fl -h
+  
+  3. Examine source code.
 
 
-INSTALLATION
-	Run './install' or perform a manual installation as follows.
+Installation
 
-	1. Set the file permissions so that you can execute the programs.
-	
-		Example:	chmod u+x ff fl
-	
-	2. Copy the programs to a location recognized by your ${PATH} variable.
-	
-		Example:	cp ff fl ~/bin
+  Run './install' or perform a manual installation as follows.
+
+  1. Set the file permissions so that you can execute the programs.
+  
+  	Example:	chmod u+x ff fl
+  
+  2. Copy the programs to a location recognized by your ${PATH} variable.
+  
+  	Example:	cp ff fl ~/bin
 
 
-EXAMPLES
-	I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
-	to see how the scripting variables behave. Some examples have 'ready'
-	flags which need to be set in order to make changes to files.
-	
-	Try the following commands.
-	
-		./ff * < ./examples/ff.vars
-		./ff -r . < ./examples/ff.vars
-		
-		./ff /bin/* < ./examples/ff.vars
-		./ff -r /bin/ < ./examples/ff.vars
-		
-		./fl README < ./examples/fl.vars
-		
-	Notice that the scripting variables are consistent between recursive and
-	non-recursive modes. This behavior ensures consistent results from your
-	scripts, independent of the mode and target files.
+Examples
+
+  I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
+  to see how the scripting variables behave. Some examples have 'ready'
+  flags which need to be set in order to make changes to files.
+  
+  Try the following commands.
+  
+  	./ff * < ./examples/ff.vars
+  	./ff -r . < ./examples/ff.vars
+  	
+  	./ff /bin/* < ./examples/ff.vars
+  	./ff -r /bin/ < ./examples/ff.vars
+  	
+  	./fl README < ./examples/fl.vars
+  	
+  Notice that the scripting variables are consistent between recursive and
+  non-recursive modes. This behavior ensures consistent results from your
+  scripts, independent of the mode and target files.
 
 
