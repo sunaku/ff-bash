@@ -52,14 +52,14 @@
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
 #
-#	$f	Path of current file (directory or non-directory).
-#
 #	$fn	Basename of current file (directory or non-directory).
 #
-#	$d	Path of current working directory.
+#	$f	Path of current file (directory or non-directory).
 #
-#	$w	Path from which this tool was launched.
-#		The user's original working directory.
+#	$d	Path of directory which contains current file (directory or
+#		non-directory).
+#
+#	$w	Path of user's current working directory.
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
