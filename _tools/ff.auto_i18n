@@ -14,7 +14,7 @@ upload_scp_url="cyzsuraj@shell.sourceforge.net:htdocs/tmp/"
 upload_web_url="http://ff-bash.sourceforge.net/tmp/"
 	
 result_dir=../i18n
-scripts_dir=../scripts
+scripts_dir=../examples
 
 # delimiters
 salt="$$-$RANDOM"

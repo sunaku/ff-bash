@@ -21,13 +21,13 @@
 	pack_ver=$1
 	
 	# files that use gettext
-	pot_in=( ../libs/ff.lib ../docs/manual ../scripts/ff.[mu]* )
+	pot_in=( ../libs/ff.lib ../docs/manual ../examples/ff.[mu]* )
 	
 	# files that need to be translated; these are automatically packaged
 	doc_in=( ../docs/*.html )
 	
 	# other files to be packaged
-	pack_in=( ../libs ../docs ../scripts/ ../ff ../fl )
+	pack_in=( ../libs ../docs ../examples/ ../ff ../fl )
 	
 	pack_dir=../_pack/ff-$pack_ver
 	pack_dir_docs=$pack_dir/docs
@@ -35,22 +35,22 @@
 echo "<((pack))>  package-tree setup"
 
 	echo "<((pack))>  removing previously generated files"
-		rm -rvf $pack_dir ${pack_dir}.* ../i18n/*
+		rm -rf $pack_dir ${pack_dir}.* ../i18n/*
 
 	echo "<((pack))>  creating pack dir"
 		mkdir -p $pack_dir
 	
 	echo "<((pack))>  transferring unprocessable input files into pack dir"
-		cp -vr "${pack_in[@]}" $pack_dir
-		../ff -e '[ "$n" == "CVS" ] || [ "${n:0:1}" == . ] && rm -rfv "$p"' -ar $pack_dir # remove CVS dirs and hidden files
+		cp -r "${pack_in[@]}" $pack_dir
+		../ff -e '[ "$n" == "svn" ] || [ "${n:0:1}" == . ] && rm -rf "$p"' -ar $pack_dir # remove CVS dirs and hidden files
 
 echo "<((pack))>  gettext translation"
 
 	echo "<((pack))>  creating *.pot files"
-		../ff -e '( ../fl -f ../scripts/fl.xgettext $p ) > ../i18n/$n.pot' "${pot_in[@]}"
+		../fl -f ../examples/fl.xgettext "${pot_in[@]}" > ../i18n/catalog.pot
 
 	echo "<((pack))>  translating *.pot files"
-		../ff -f ff.auto_i18n ../i18n/*
+		../ff -f ff.auto_i18n ../i18n/*.pot
 
 	echo "<((pack))>  formatting translated *.po files"
 		../ff -e 'for x in ${p%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $p > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
@@ -86,7 +86,7 @@ echo "<((pack))>  regular HTML translation"
 		scp "${doc_nom[@]}" "$upload_scp_url"
 		
 		echo "<((pack))>  translate HTML files"
-		../ff -f ../scripts/ff.translate_url "${doc_url[@]}"
+		../ff -f ../examples/ff.translate_url "${doc_url[@]}"
 		
 	echo "<((pack))>  move translated files to pack dir"
 	
