@@ -4,7 +4,7 @@
 #
 # Dependencies:
 #
-# 	${__ff_myHome}*	- path to installation directory
+# 	${__ff_myHome}*		path to installation directory
 #
 ###
 #
@@ -32,7 +32,7 @@
 
 ## globals
 
-	__lib_ff_version=1.7.2
+	__lib_ff_version=1.7.3
 	
 	declare -a __lib_ff_targetList		# array of targets
 	
@@ -104,7 +104,6 @@ $expression
 :;}"
 			fi
 	
-#			read</dev/tty
 		# load script into RAM
 			eval "$expression"
 	}
@@ -166,10 +165,11 @@ $expression
 							cat "$__lib_ff_docCached"	# display cached file
 						else
 							# load dependencies
-								source "$__ff_myResources_libs/DocFmt.lib"
-								__lib_gettext_load "$__lib_ff_docI18n"
+							source "$__ff_myResources_libs/DocFmt.lib"
+							__lib_gettext_load "$__lib_ff_docI18n"
 							
-							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached" # generate & cache the documentation
+							# generate & cache the documentation
+							source "$__ff_myResources_docs/$__lib_ff_docFile" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
 						fi
 					} | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
 				
@@ -199,18 +199,26 @@ $expression
 
 		# handle special cases
 		case "$f" in
-			/|.|..)
-				# use system defined values
-				fn=$( basename "$f" )
-				d=$( dirname "$f" )
-				
-				return	# no more processing needed
+			/)
+				fn=/
+				d=/
+				return
+			;;
+			.)
+				fn=.
+				d=.
+				return
+			;;
+			..)
+				fn=..
+				d=.
+				return
 			;;
 
 			/*|./*|../*) ;;	# path is already explicit
 
 			*)
-				f="./$f" # implicit paths -> explicit paths
+				f="./$f" # make implicit relative paths explicit
 			;;
 		esac
 		
