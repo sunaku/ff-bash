@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Extracts gettext strings from shell scripts.
+# Extracts gettext strings from shell scripts and produces a gettext translation catalog template (POT file).
 #
 ##
 #
@@ -63,31 +63,22 @@
 	{
 		local cache_index=0
 		
-		if [ ${raw_output:-0} -eq 1 ]
-		then
-			while [ $cache_index -lt ${#g_cache_strings[@]} ]
-			do
-				echo -e "${g_cache_strings[$cache_index]}\n"
-				let cache_index=cache_index+1	# increment loop
-			done
-		else
-			# print header
-			echo "#. $f"
-			echo "#. $( date )"
-			echo "#. ${#g_cache_strings[@]} strings extracted."
+		# print header
+		echo "#. $f"
+		echo "#. $( date )"
+		echo "#. ${#g_cache_strings[@]} strings extracted."
+		echo
+		
+		# print all strings in cache
+		while [ $cache_index -lt ${#g_cache_strings[@]} ]
+		do
+			echo "#:${g_cache_refs[$cache_index]}"
+			echo "msgid${g_cache_strings[$cache_index]}"
+			echo 'msgstr ""'
 			echo
 			
-			# print all strings in cache
-			while [ $cache_index -lt ${#g_cache_strings[@]} ]
-			do
-				echo "#:${g_cache_refs[$cache_index]}"
-				echo "msgid${g_cache_strings[$cache_index]}"
-				echo 'msgstr ""'
-				echo
-				
-				let cache_index=cache_index+1	# increment loop
-			done
-		fi
+			(( cache_index += 1 )) # increment loop
+		done
 	}
 	
 	# stores string and reference into cache
@@ -99,7 +90,7 @@
 		while [ $cache_index -lt ${#g_cache_strings[@]} ]
 		do
 			[ "$g_string" == "${g_cache_strings[$cache_index]}" ] && break 
-			let cache_index=cache_index+1	# increment loop
+			(( cache_index += 1 )) # increment loop
 		done
 		
 		# store reference
@@ -188,11 +179,6 @@
 
 	begin()
 	{
-		raw_output=0
-		
-		read -p "print raw output (yes/no)? [no] " < /dev/tty
-		[ "${REPLY#[Yy]}" != "$REPLY" ] && raw_output=1
-		
 		# set IFS such that leading whitespace is removed
 		OLD_IFS=$IFS
 		IFS=' 	
