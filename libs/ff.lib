@@ -193,7 +193,7 @@ $expression
 						gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
 						
 						# query user to display English docs
-						read -p "$( gettext "Would you like to view the documentation in English? %s" "[$( gettext "Yes" )]" ): " < /dev/tty
+						read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
 						
 						[[ -n "$REPLY" && "$REPLY" != "$( gettext "Yes" )" ]] && __lib_ff_exit
 					fi
