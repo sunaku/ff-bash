@@ -1,14 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
-		<title>&quot;For each File&quot; &mdash; Package Overview</title>
+		<title>For each File &mdash; Package Overview</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 	</head>
 	<body>
-		<h1>&quot;For each File&quot; &mdash; Package Overview</h1>
+	
+		<!-- sf.net logo -->
+		<a href="http://sourceforge.net"><img style="float: right" src="http://sourceforge.net/sflogo.php?group_id=106777&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+	
+		<h1>For each File &mdash; Package Overview</h1>
 		<blockquote>
-			<p>This document provides a brief overview of the &quot;For each File&quot; package.</p>
+			<p>This document provides a brief overview of the <b>For each File</b> package.</p>
 			
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 			
@@ -25,20 +29,31 @@
 		<h2>Contents</h2>
 		<blockquote>
 			<ul>
+				<li><a href="#limits">Limitations</a></li>
 				<li><a href="#reqs">Requirements</a></li>
 				<li><a href="#tree">Package Tree</a></li>
-				<li><a href="#inst">Installation</a></li>
-				<li><a href="#trans">Translation</a></li>
-				<li><a href="#examp">Example Scripts</a></li>
+				<li><a href="#install">Installation</a></li>
+				<li><a href="#uda">Example Scripts</a></li>
+				<li><a href="#support">Support and Feedback</a></li>
+				<li><a href="#contrib">Contribute</a></li>
+				<li><a href="#contrib_newtrans">Translating</a></li>
 			</ul>
 		</blockquote>
 
+		<h2 id="limits">Limitations</h2>
+		<blockquote>
+			<ul>
+				<li>File names containing newline characters are not handled properly.</li>
+				<li>This software is not perfect and may have defects or design problems.</li>
+			</ul>
+		</blockquote>
+		
 		<h2 id="reqs">Requirements</h2>
 		<blockquote>
 			<p>It is recommended that the latest available versions of the following software be used.</p>
 			<ul>
-				<li><samp><a href="http://www.gnu.org/software/bash/bash.html">GNU BASH</a></samp> Shell &mdash; <i>The &quot;For each File&quot; package has been tested with versions <samp>2.03</samp> and <samp>2.05b</samp>.</i></li>
-				<li><samp><a href="http://www.gnu.org/software/coreutils/">GNU Core Utilities</a></samp> &mdash; <i>The &quot;For each File&quot; package has been tested with version <samp>5.2.1</samp>.</i></li>
+				<li><samp><a href="http://www.gnu.org/software/bash/bash.html">GNU BASH</a></samp> Shell &mdash; <i>This package has been tested with version <samp>2.05b</samp>.</i></li>
+				<li><samp><a href="http://www.gnu.org/software/coreutils/">GNU Core Utilities</a></samp> &mdash; <i>This package has been tested with version <samp>5.2.1</samp>.</i></li>
 			</ul>
 		</blockquote>
 		
@@ -46,9 +61,9 @@
 		<blockquote>
 			<p>The following diagram shows the hierarchical structure of this package. All paths shown in the diagram are relative to the directory that contains the package. Also, subordinate files have been omitted from the diagram for brevity.</p>
 			
-			<ul class="diagram">
-				<li><samp>./ff</samp> &mdash; <i>The &quot;For each File&quot; tool.</i></li>
-				<li><samp>./fl</samp> &mdash; <i>The &quot;For each Line&quot; tool.</i></li>
+			<ul>
+				<li><samp>./ff</samp> &mdash; <i>The <b>For each File</b> tool.</i></li>
+				<li><samp>./fl</samp> &mdash; <i>The <b>For each Line</b> tool.</i></li>
 				<li><samp>./install</samp> &mdash; <i>Installation tool for this package.</i></li>
 				<li><samp>./docs/</samp> &mdash; <i>Contains documentation for this package.</i>
 					<ul>
@@ -60,56 +75,64 @@
 				</li>
 				<li><samp>./i18n/</samp> &mdash; <i>Contains internationalization resources.</i></li>
 				<li><samp>./libs/</samp> &mdash; <i>Contains libraries for shell scripts.</i></li>
-				<li><samp>./scripts/</samp> &mdash; <i>Contains example scripts usable by the &quot;For each File&quot; and &quot;For each Line&quot; tools.</i></li>
+				<li><samp>./scripts/</samp> &mdash; <i>Contains example scripts usable by the tools of this package.</i></li>
 			</ul>
 		</blockquote>
 
-		<h2 id="inst">Installation</h2>
+		<h2 id="install">Installation</h2>
 		<blockquote>
-			<p>You can either run the installation script by executing <code>$ ./install</code> or perform a manual installation as follows:</p>
-			
 			<ol>
-				<li>Simply move or copy the directory containing this package to a location of your choice.</li>
-				<li>For easy access, you can create symbolic links, to the tools in this package, in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>.</li>
+				<li>Make the tools in the package directory executable: <code>$ chmod +x f[fl]</code></li>
+				<li>Move or copy the package directory to a location of your choice: <code>$ mv <var>package_dir</var> <var>my_location</var></code></li>
+				<li>(Optional) Create symbolic links to the tools in a directory that is listed in your <samp>$PATH</samp> variable, such as <samp>$HOME/bin/</samp>: <code>$ cp -l <var>my_location</var>/f[fl] $HOME/bin/</code></li>
 			</ol>
 		</blockquote>
-
-		<h2 id="trans">Translation</h2>
+		
+		<h3 id="uda">Example Scripts</h3>
 		<blockquote>
-			<p>Translation is performed dynamically through the use of <samp><a href="http://www.gnu.org/software/gettext/gettext.html">GNU gettext</a></samp> translation catalogs located in <samp>./i18n/</samp>.</p>
+			<p>In the <samp>./scripts/</samp> directory there are several example scripts that can be invoked with the tools of this package. Note that example scripts written for one tool may not produce correct results if invoked with another tool.</p>
 			
-			<p>Feel free to contribute localizations for new languages and revise the existing translation catalogs. New and updated translation catalogs will be made available at <a href="http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/">http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/</a> as they are contributed.</p>
-			
-			<h3>Writing new translations</h3>
-			<blockquote>
-				<p>First, we must identify the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp> language code</a> for the language we wish to write new translations in. Second, we must make a copy of the gettext translation catalog template file with the appropriate file name. Finally, we can begin translating by editing the copy.</p>
-				
-				<p>For example, consider this scenario: we wish to translate some documentation for the language whose <samp>ISO-639</samp> language code is <var>XX</var>. The translation catalog template for documentation is named <samp>foo.pot</samp>.</p>
-				<ol>
-					<li>We make a copy of the template file.<br/><code>$ cp foo.pot foo.<var>XX</var>.po</code></li>
-					<li>We edit the lines that begin with &quot;<samp>msgstr</samp>&quot; in the copy.</li>
-				</ol>
-			</blockquote>
+			<p>To see how the preset variables and control functions are used, invoke the example scripts named <samp>./scripts/ff.info</samp> and <samp>./scripts/fl.info</samp>: 
+				<code>
+					$ ./ff * -f ./scripts/ff.info | less<br/>
+					$ ./ff . -rf ./scripts/ff.info | less<br/>
+					$ ./ff /bin/* -f ./scripts/ff.info | less<br/>
+					$ ./ff /bin/ -rf ./scripts/ff.info | less<br/>
+					$ ./fl ./docs/gpl.txt -f ./scripts/fl.info | less<br/>
+				</code>
+			</p>
+
+			<p>Also, the first few lines of each example script contains a header that describes its purpose. To view these descriptions, you can execute: <code>$ head ./scripts/* | less</code></p>
 		</blockquote>
 
-		<h3 id="examp">Example Scripts</h3>
-		<blockquote>
-
-			<p>First try executing (see example below) the scripts named <samp>./scripts/ff.vars</samp> and <samp>./scripts/fl.vars</samp>, to see how the preset variables behave. You will notice that the preset variables are consistent between recursive and non-recursive modes.</p>
 		
-			<blockquote>
-			<p>
-			<code>
-				$ ./ff * -f ./scripts/ff.vars | less<br/>
-				$ ./ff . -rf ./scripts/ff.vars | less<br/>
-				$ ./ff /bin/* -f ./scripts/ff.vars | less<br/>
-				$ ./ff /bin/ -rf ./scripts/ff.vars | less<br/>
-				$ ./fl ./docs/gpl.txt -f ./scripts/fl.vars | less<br/>
-			</code>
-			</p>
-			</blockquote>
+		<h2 id="support">Support and Feedback</h2>
+		<blockquote>
+			You can report defects, request support and features, submit patches, ask questions and discuss related topics at <a href="https://sourceforge.net/tracker/?group_id=106777">https://sourceforge.net/tracker/?group_id=106777</a>.
+		</blockquote>
 
-			<p>You can also try executing the other example scripts in the <samp>./scripts/</samp> directory. Also, the first few lines of each script file describes its purpose, thus you can execute <code>$ head ./scripts/* | less</code> to see the descriptions.</p>
+		<h2 id="contrib">Contribute</h2>
+		<blockquote>
+			<p>Feel free to contribute translations for new languages and revise the existing <samp>GNU gettext</samp> compatible <a href="http://www.gnu.org/software/gettext/manual/html_chapter/gettext_2.html#SEC9">translation catalogs</a> located in <samp>./i18n/</samp>. New and updated translation catalogs will be made available at <a href="http://ff-bash.sourceforge.net/i18n/">http://ff-bash.sourceforge.net/i18n/</a> as they are contributed.</p>
+			
+			<h3 id="contrib_newtrans">Writing New Translations</h3>
+			<blockquote>
+				<ol>
+					<li>Determine the two character <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp> language code</a> of the language you wish to write translations for.</li>
+					<li>Make a copy of the translation catalog template file:
+						<code>
+							$ cd ./i18n/<br/>
+							$ cp <var>catalog_name</var>.pot <var>catalog_name</var>.<var>language_code</var>.po
+						</code>
+					</li>
+					<li>Write your translations in the copy: 
+						<blockquote>
+							<samp>msgid</samp> &quot;Untranslated text.&quot;<br/>
+							<samp>msgstr</samp> &quot;<var>Your translation.</var>&quot;
+						</blockquote>
+					</li>
+				</ol>
+			</blockquote>
 		</blockquote>
 	</body>
 </html>
