@@ -71,8 +71,11 @@
 	__lib_gettext_load()
 	{
 		# variables
-		local file line exit_status=0
+		local file line exit_status=0 oldIFS=$IFS
 		
+		# preserve whitespace
+		IFS='
+'
 		# parse catalog files
 		for file
 		do
@@ -101,6 +104,9 @@
 		
 		# clean up
 		rm -f "$__lib_gettext_tempfile"
+		
+		# restore IFS
+		IFS=$oldIFS
 		
 		return $exit_status
 	}
