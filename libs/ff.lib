@@ -101,8 +101,8 @@
 		
 			if [ -z "$expression" ]
 			then
-				gettext "Error: No shell commands specified."
-				__lib_ff_exit 1
+				gettext "Error: No shell commands given. Try %s." "\"$0 --$__lib_ff_options_longFlag_showHelp\""
+				__lib_ff_exit
 			fi
 		# check input for control functions
 		
