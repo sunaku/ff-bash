@@ -42,18 +42,21 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "DESCRIPTION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute a set of shell commands upon the contents of a set of files. File contents are logically divided into disjoint sets of characters (lines) by the delimiters defined in %s. By default, the newline character %s is used as the delimiter." "\"\$IFS\"" '"\\n"' )"
+	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute an arbitrary set of GNU BASH shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters (lines) by the delimiters defined in %s. By default, the newline character %s is used as the delimiter to preserve whitespace." "\"\$IFS\"" '"\\n"' )"
 __lib_DocFmt_blockEnd
 
 
 __lib_DocFmt_blockItem "<b>$( gettext "SYNOPSIS" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$__ff_myName -[ef] [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
+	__lib_DocFmt_blockItem "$__ff_myName [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
 	
 	__lib_DocFmt_blockItem "<u>$( gettext "target" )</u>"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "A file (refer to the %s definition of this term) upon which shell commands will be performed." "UNIX" )"
 	__lib_DocFmt_blockEnd
+	
+	__lib_DocFmt_blockItem "$( gettext "When both the %s and %s options are unspecified, shell commands will be interactively read from the user's terminal device %s until the %s signal is issued by pressing %s." "<b>--$__lib_ff_options_longFlag_evalExpr</b>" "<b>--$__lib_ff_options_longFlag_evalFile</b>" "/dev/tty" "EOT" "<CONTROL-D>" )"
+	
 __lib_DocFmt_blockEnd
 
 
@@ -63,7 +66,7 @@ __lib_DocFmt_blockStart
 
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>--$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "string" )</u>" )"
+		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s. The %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>--$__lib_ff_options_longFlag_evalFile</b>" )"
 	__lib_DocFmt_blockEnd
 
 	
