@@ -27,13 +27,13 @@ begin()
 
 main()
 {
-	raw_file=$fn.$$
+	raw_file=$n.$$
 	enc_file=$raw_file.encode.html
 	
-	echo "<$script_name> handling file \"$f\""
+	echo "<$script_name> handling file \"$p\""
 
 	echo "<$script_name> remove gettext formatting and blank lines" #; read < /dev/tty
-	( sed -re '/^#/d; s/^[:space:]*msg[a-z]* *"*//; s/["]$//' | grep -v '^$' ) < "$f" > "$raw_file"
+	( sed -re '/^#/d; s/^[:space:]*msg[a-z]* *"*//; s/["]$//' | grep -v '^$' ) < "$p" > "$raw_file"
 	
 	echo "<$script_name> encode formatting and line breaks" #; read < /dev/tty
 	{
@@ -55,7 +55,7 @@ main()
 	done
 	
 	echo "<$script_name> combine original & translated strings" #; read < /dev/tty
-	../ff -e "paste -d '\n' $raw_file \$fn > \$fn.paste" ${enc_file}.*.decode
+	../ff -e "paste -d '\n' $raw_file \$n > \$n.paste" ${enc_file}.*.decode
 	
 	echo "<$script_name> create gettext .po structure" #; read < /dev/tty
 	for x in ${enc_file}.*.paste
@@ -66,7 +66,7 @@ main()
 	echo "<$script_name> finished" #; read < /dev/tty
 
 	# move files to result dir
-	../ff -e "x=\${fn#*html.}; x=\${x:0:2}; cp -vf \$f $result_dir/\${fn%.pot*}.\$x.po" ${enc_file}.*.po
+	../ff -e "x=\${n#*html.}; x=\${x:0:2}; cp -vf \$p $result_dir/\${n%.pot*}.\$x.po" ${enc_file}.*.po
 	
 	# remove temp files
 	read -p "<$script_name> delete temp files (yes/no)? [no] " < /dev/tty

@@ -42,18 +42,18 @@ echo "<((pack))>  package-tree setup"
 	
 	echo "<((pack))>  transferring unprocessable input files into pack dir"
 		cp -vr "${pack_in[@]}" $pack_dir
-		../ff -e '[ "$fn" == "CVS" ] || [ "${fn:0:1}" == . ] && rm -rfv "$f"' -ar $pack_dir # remove CVS dirs and hidden files
+		../ff -e '[ "$n" == "CVS" ] || [ "${n:0:1}" == . ] && rm -rfv "$p"' -ar $pack_dir # remove CVS dirs and hidden files
 
 echo "<((pack))>  gettext translation"
 
 	echo "<((pack))>  creating *.pot files"
-		../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > ../i18n/$fn.pot' "${pot_in[@]}"
+		../ff -e '( ../fl -f ../scripts/fl.xgettext $p ) > ../i18n/$n.pot' "${pot_in[@]}"
 
 	echo "<((pack))>  translating *.pot files"
 		../ff -f ff.auto_i18n ../i18n/*
 
 	echo "<((pack))>  formatting translated *.po files"
-		../ff -e 'for x in ${f%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $f > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
+		../ff -e 'for x in ${p%.pot}* ; do export PO_FMT_DATA=$x ; ../fl -f ./fl.po_fmt $p > $$ ; mv -v $$ $x ; done ; rm -f $$' ../i18n/*.pot
 	
 	echo "<((pack))>  copying *.po files into pack dir"
 		cp -vr ../i18n $pack_dir
@@ -93,13 +93,13 @@ echo "<((pack))>  regular HTML translation"
 		echo "<((pack))>  make id-anchor URLs local & remove service added HTML header"
 			for x in "${doc_nom[@]}"
 			do
-				../ff -e "sed '1s/^.*$/<html>/ ; s/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
+				../ff -e "sed '1s/^.*$/<html>/ ; s/\(href=\"\)[^>]*#/\1#/g' \$p > $pack_dir_docs/\${n//.html/}.html ; rm -f \$p" ${x}*
 			done
 
 		echo "<((pack))>  remove altavista prefix from relative URLs"
 			for f in $pack_dir_docs/*html
 			do 
-				sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$f" > /tmp/$$ && mv -vf /tmp/$$ "$f"
+				sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$p" > /tmp/$$ && mv -vf /tmp/$$ "$p"
 			done
 		
 	echo "<((pack))>  removing old release info from changes*.html files"
@@ -108,7 +108,7 @@ echo "<((pack))>  regular HTML translation"
 		
 		for f in changes*html
 		do
-			sed '/<!-- old-version/,/<!-- old-version/ d' "$f" > "$pack_dir_docs/$f"
+			sed '/<!-- old-version/,/<!-- old-version/ d' "$p" > "$pack_dir_docs/$p"
 		done
 		
 echo "<((pack))>  package creation"
