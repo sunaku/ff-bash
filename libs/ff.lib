@@ -33,7 +33,6 @@
 ## globals
 
 	__lib_ff_version=1.7.0
-#	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}.$$"
 	
 	declare -a __lib_ff_targetList		# array of targets
 	
@@ -63,17 +62,6 @@
 	
 ## functions
 
-	# clean up and exit program
-	# @param	1	exit status
-	__lib_ff_exit()
-	{
-		# clean up temp files
-#		rm -f ${__lib_ff_tmpMask}*
-		
-		# exit with given code
-		exit $1
-	}
-
 	# load user's script into RAM
 	__lib_ff_loadScript()
 	{
@@ -93,7 +81,7 @@
 					expression=$( < "$__lib_ff_options_value_evalFile" )
 				else
 					gettext "Error: Unable to read script-file %s." "\"$__lib_ff_options_value_evalFile\""
-					__lib_ff_exit 2
+					exit 2
 				fi
 			else
 				# read from user's terminal
@@ -175,18 +163,18 @@ $expression
 						# query user to display English docs
 						read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
 						
-						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && __lib_ff_exit
+						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && exit
 					fi
 				
 				# display documentation
 					source "$__lib_ff_docFile" | sed 's/\t/    /' | fmt -w 80 | less -R
 				
-				__lib_ff_exit
+				exit
 			;;
 			
 			$__lib_ff_options_shortFlag_showVersion | $__lib_ff_options_longFlag_showVersion)
 				echo $__lib_ff_version
-				__lib_ff_exit
+				exit
 			;;
 		esac
 		
@@ -197,7 +185,7 @@ $expression
 	__lib_ff_main()
 	{
 		# ensures proper clean up
-			trap '__lib_ff_exit 9' INT KILL TERM HUP
+			trap 'exit 9' INT KILL TERM HUP
 
 		# scan command line options
 
@@ -205,7 +193,7 @@ $expression
 			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList"
 			then
 				gettext "Error: %s is not a valid option. Try %s." "\"$__lib_ff_targetList\"" "\"--$__lib_ff_options_longFlag_showHelp\""
-				__lib_ff_exit 1
+				exit 1
 			fi
 			
 		# handle user's script
@@ -217,7 +205,7 @@ $expression
 				if [ ${#__lib_ff_targetList[@]} -eq 0 ]
 				then
 					gettext "Error: No targets specified. Try %s." "\"$0 --$__lib_ff_options_longFlag_showHelp\""
-					__lib_ff_exit 1
+					exit 1
 				fi
 			
 			# load and execute script
@@ -225,6 +213,6 @@ $expression
 				__ff_main
 
 		# finished
-			__lib_ff_exit 0
+			exit 0
 	}
 
