@@ -1,0 +1,142 @@
+#!/bin/bash
+# gettext emulation library (gte)
+#
+# This library provides BASH functions which emulate the GNU "gettext" program.
+# This file is distributed under the same license as the "ff" package.
+#
+# Note: all library variables begin with an underscore: _.
+
+
+## globals
+
+	_gte_tempfile=${TMP:-/tmp}/$$
+	
+	# arrays to cache the catalog data
+	declare -a _gte_cache
+	
+
+## functions
+	
+	# Loads a gettext Portable-Object translation catalog into cache.
+	# Assumes all strings are quoted with double quotes: ".
+	#
+	# Note: Multi-line strings are not yet supported.
+	#
+	# @param	$1	Path of Portable-Object file to load.
+	#
+	# @param	$2	If 0, the new catalog data is appended to 
+	#			previously loaded catalog data.
+	#
+	#			If 1, previously loaded catalog data is 
+	#			replaced by the new catalog data.
+	#
+	# @return	Standard UNIX exit status.
+	#
+	_gte_load()
+	{
+		# check arguments
+		[[ ! -r "$1" || ! -f "$1" ]] && return 1
+		
+		# remove previous catalog data
+		[ ${2:-0} -eq 1 ] && _gte_free
+		
+		# parse Portable-Object file
+		
+			# write entries to file; problems when piping output to 'while read'
+			sed -n 's/^msg\([is][dt]r\?\) *\"\(.*\)\"$/\1 \2/p' "$1" > "$_gte_tempfile"
+			
+			# load entries into cache
+			while read str
+			do
+				echo "key='${str%% *}'"
+				echo "value='${str#* }'"
+				echo "index=${#_gte_cache_msgid[@]}"
+				
+				case ${str%% *} in
+					id)
+						_gte_cache_msgid[${#_gte_cache_msgid[@]}]=${str#* }
+					;;
+					str)
+						_gte_cache_msgstr[${#_gte_cache_msgstr[@]}]=${str#* }
+					;;
+				esac
+			done < "$_gte_tempfile"
+			
+			# clean up
+			rm -f "$_gte_tempfile"
+			
+		# finished
+		return 0
+	}
+	
+	# Frees cached translation catalog data from memory.
+	_gte_free()
+	{
+		unset _gte_cache_msgid
+		unset _gte_cache_msgstr
+	}
+	
+	
+	# Returns a translation for a string, using the loaded catalog data.
+	# Escaped sequences such as '\n' are automatically expanded.
+	#
+	# @see		printf
+	#
+	# @usage	gettext [STRING] [ARGUMENT]...
+	#
+	# @param	$1	String to translate. This string can have
+	#			placeholders which are prefixed with '%' the
+	#			percent symbol.
+	#
+	# @param	...	A variable number of arguments which denote
+	#			values for placeholders in both the translated
+	#			string and the string to be translated.
+	#
+	# @return	Standard UNIX exit status.
+	#
+	gettext()
+	{
+		local cache_index=0
+		local translation=
+		
+		# locate argument string in catalog cache
+		
+			# slow linear search
+			while [ $cache_index -lt ${#_gte_cache_msgid[@]} ]
+			do
+				# exit if argument string exists in catalog cache
+				[ "$1" == "${_gte_cache_msgid[$cache_index]}" ] && break
+				
+				# increment
+				let cache_index=cache_index+1
+			done
+			
+#			echo "cache_index=$cache_index"
+#			echo "cache size=${#_gte_cache_msgid[@]}"
+			
+			# invalid argument string
+			[ $cache_index -ge ${#_gte_cache_msgid[@]} ] && return 1
+		
+		
+		# determine translation
+		
+			if [ -z "${_gte_cache_msgstr[$cache_index]}" ]
+			then
+				# translation is blank
+				translation=${_gte_cache_msgid[$cache_index]}
+			else
+				translation=${_gte_cache_msgstr[$cache_index]}
+			fi
+			
+			
+		# print result
+		
+			# remove argument string
+			shift
+		
+			printf "$translation" "${@}"
+			
+		# finished
+		return 0
+	}
+	
