@@ -4,12 +4,8 @@
 #
 ###
 #
-# Requires:
-#	tput	- part of "GNU termutils" package
-#
-###
-#
 # Copyright 2003, 2004 Suraj N. Kurapati.
+# Copyright 2003 Chris F.A. Johnson.
 #
 ###
 #
@@ -48,27 +44,23 @@
 
 ## functions
 
-	# Converts text with formatting tags to the proper on-screen formatting commands using the `tput` program.
+	# Converts text with formatting tags to the proper on-screen formatting commands using the 'tput' program. However if the 'tput' program is not available on the user's system, then the equivalent ANSI escape sequence is used.
 	#
 	# The following formatting tags are supported:
-	#	+ must be properly enclosed, ie: <tag></tag>
-	#	+ can be upper or lower case, ie: <t> or <T>
+	#	+ tags must be properly enclosed, ie: <tag>...</tag>
+	#	+ tag names can be upper or lower case, ie: <t> or <T>
 	#
-	#	<s>	Stand out
-	#	<u>	Underline
-	#	<r>	Reverse
-	#	<l>	Blink
-	#	<d>	Dim
 	#	<b>	Bold
-	#	<v>	Invisible
-	#	<o>	Protect
-	#	<c>	Alternate Character Set
+	#	<u>	Underline
+	#	<em>	Emphasize
+	#
+	#	<r>	Reverse (invert colors)
 	#
 	# The following HTML escape sequences are also converted:
 	#	&lt;	<
 	#	&gt;	>
 	#
-	# NOTE: The nesting of formatting tags is not yet supported; for example: "<b><u>...</u></b>" will not work as expected.
+	# NOTE: The nesting of formatting tags is not yet supported; for example: "<b><u>...</u></b>" may not work as expected.
 	#
 	# @param	stdin	Text with formatting tags.
 	#
@@ -76,20 +68,22 @@
 	#
 	__lib_DocFmt_formatTags()
 	{
-		sed "
-			s:<s>:$( tput smso ):gi
-			s:</s>:$( tput rmso ):gi
-			s:<u>:$( tput smul ):gi
-			s:</u>:$( tput rmul ):gi
-			s:<l>:$( tput blink ):gi
-			s:<r>:$( tput rev ):gi
-			s:<d>:$( tput dim ):gi
-			s:<b>:$( tput bold ):gi
-			s:<v>:$( tput invis):gi
-			s:<o>:$( tput prot ):gi
-			s:<c>:$( tput smacs ):gi
-			s:</c>:$( tput rmacs ):gi
-			s:</[lbrdvo]>:$( tput sgr0 ):gi
+		local reset=$'\E[0m'
+		
+		# support for various terminals: $( Linux || FreeBSD || ANSI )
+		sed -e "
+			s:<em>:<b><u>:gi
+			s:</em>:</u></b>:gi
+			
+			s:<b>:$( tput bold 2>/dev/null || tput md 2>/dev/null || echo $'\E[0;1m' ):gi
+			s:</b>:$( tput sgr0 2>/dev/null || tput me 2>/dev/null || echo $reset ):gi
+			
+			s:<u>:$( tput smul 2>/dev/null || tput us 2>/dev/null || echo $'\E[0;4m' ):gi
+			s:</u>:$( tput rmul 2>/dev/null || echo $reset ):gi
+			
+			s:<r>:$( tput rev 2>/dev/null || tput mr 2>/dev/null || $'\E[0;7m' ):gi
+			s:</r>:$( tput sgr0 2>/dev/null || echo $reset ):gi
+			
 			s:&lt;:<:gi
 			s:&gt;:>:gi
 		"
