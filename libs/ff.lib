@@ -181,14 +181,33 @@ $expression
 	# updates the values of preset variables during non-recursive mode
 	__lib_ff_updateVars_linear()
 	{
-		# make implicit relative paths explicit; ex: "foo" becomes "./foo"
-		[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" && "${f:0:3}" != "../" ]] && f="./$f"
-			
+#		echo "target=$f"
+#		echo "name=$( basename "$f" )"
+#		echo "parent=$( dirname "$f" )"
+		
+		# handle special cases
+		case "$f" in
+			/|.|..)
+				# use system defined values
+				fn=$( basename "$f" )
+				d=$( dirname "$f" )
+				
+				return	# no more processing needed
+			;;
+
+			/*|./*|../*) ;;	# do nothing for already explicit paths
+
+			*)
+				f="./$f" # implicit paths -> explicit paths
+			;;
+		esac
+		
 		# update preset variables
-		f=${f%%*(/)}	# remove all trailing slashes; ex: "foo////" becomes "foo"
+		f=${f//+(\/)/\/}	# remove redundant slashes
+		f=${f%/}	# remove trailing slash
 		fn=${f##*/}	# keep everything after the last slash
 		d=${f%/*}	# keep everything before the last slash
-		d=${d:-/}	# special case: $d is empty when it should be /
+		[ -z "$d" ] && d=/	# special case: $d is empty when it should be /
 	}
 	
 	# base application logic
