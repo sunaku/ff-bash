@@ -195,19 +195,8 @@ $expression
 				return 255
 			;;
 			$__lib_ff_options_flag_scriptArgs)
-
-				# XXX: the following undeclared vars are inherited from CmdOpts.lib
-
-				local x
-
-				# copy remaining args into scriptArgs array
-					for (( x = i + 1 ; x < arrLen ; x++))
-					do
-						__lib_ff_scriptArgs[${#__lib_ff_scriptArgs[@]}]=${arr[$x]}
-						unset -v "arr[$x]"	# remove arg from target array
-					done
-
-				return 1
+				flag=__lib_ff_scriptArgs
+				return 254
 			;;
 		esac
 

@@ -43,9 +43,10 @@
 		#
 		# One of the following values must be returned:
 		# @return	0	The given option is illegal.
-		# @return	1	The given option has no argument.
+		# @return	1	The given option has no arguments.
 		# @return	2	The given option has one argument.
-		# @return	255	Stop scanning for command-line options and the given option has no argument.
+		# @return	254	The given option has no arguments. Take whatever command-line arguments that follow $1 and put them into the array whose name is given by '$flag'. Then remove those arguments from the array whose name is given by $1 of '__lib_CmdOpts_scanOptions()'.
+		# @return	255	The given option has no arguments. Stop scanning for command-line options.
 		#
 	# @return	0	Success.
 	# @return	1	An illegal option was encountered. In the array whose name is given by $1, the name of the illegal option is stored in the first index and its possible argument is stored in the second index. The rest of the array's contents are unaccounted for.
@@ -130,17 +131,30 @@
 	# @return	1	an illegal option was encountered
 	__lib_CmdOpts_scanOptions_handleReturnValue_()
 	{
+		# XXX: $i, $j, $arr
+		#	are inherited from '__lib_CmdOpts_scanOptions()'
+
 		case "$1" in
 			2)
 				unset -v "arr[$j]" "arr[$i]"	# remove the option's name & argument
 
 				(( j += 1 ))	# increment argument index
 			;;
-
 			1)
 				unset -v "arr[$i]"	# remove the option's name
 			;;
+			254)
+				local x
 
+				# copy remaining args into user's array
+				for (( x = i + 1 ; x < arrLen ; x++ ))
+				do
+					eval "$flag[\${#$flag[@]}]=${arr[$x]}"
+					unset -v "arr[$x]"	# remove argument
+				done
+
+				unset -v "arr[$i]"	# remove the option's name
+			;;
 			255)
 				amActive=0	# stop scanning for more options
 				unset -v "arr[$i]"	# remove the option's name
