@@ -30,30 +30,27 @@
 
 ## functions
 
-	# scan options and set flags
-	# @return	1	illegeal options
-	_ff_scanOptions()
+	# handles parsing of command-line options
+	_cmdOpts_handleOption()
 	{
-		while getopts ${_ff_baseOpts}${_ff_cmdOpts} opt
-		do
-			case $opt in
-				$_ff_cmdOpts_optFlg_handleHidden)
-					_ff_cmdOpts_optEn_handleHidden=1
-				;;
-				$_ff_cmdOpts_optFlg_followLinks)
-					_ff_cmdOpts_optEn_followLinks=1
-				;;
-				$_ff_cmdOpts_optFlg_recursive)
-					_ff_cmdOpts_optEn_recursive=1
-				;;
-				*) # handle base options
-					_ff_handleBaseOption $opt
-					[ $? -gt 0 ] && return 1
-				;;
-			esac
-		done
-		
-		return 0
+		case "$1" in
+			$_ff_cmdOpts_optFlg_handleHidden)
+				_ff_cmdOpts_optEn_handleHidden=1
+				return 1
+			;;
+			$_ff_cmdOpts_optFlg_followLinks)
+				_ff_cmdOpts_optEn_followLinks=1
+				return 1
+			;;
+			$_ff_cmdOpts_optFlg_recursive)
+				_ff_cmdOpts_optEn_recursive=1
+				return 1
+			;;
+			*) # handle base options
+				_ff_handleBaseOption "$1" "$2"
+				return $?
+			;;
+		esac
 	}
 
 	_ff_main()
@@ -72,7 +69,7 @@
 				local basedir filelist
 	
 				# handle each target
-				for basedir in "${_ff_targetArray[@]}"
+				for basedir in "${_cmdOpts_argList[@]}"
 				do
 					if [ -d "$basedir" ] # handle directories only
 					then
@@ -101,7 +98,7 @@
 		else # non-recursive operation
 
 			# handle each target
-			for f in "${_ff_targetArray[@]}"
+			for f in "${_cmdOpts_argList[@]}"
 			do
 				# set scripting variables
 				
