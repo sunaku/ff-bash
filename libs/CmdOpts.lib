@@ -43,7 +43,7 @@
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt flag arr arrName arrLen
+		local i=0 j=0 k opt flag arr arrName arrLen isInvalid=0
 		declare -a arr
 		
 		arrName=$1
@@ -70,7 +70,8 @@
 				then
 					# illegal option encountered
 					arr=$flag
-					return 1
+					isInvalid=1
+					break
 				fi
 				
 			elif [ "${opt:0:1}" == "-" ]	# handle short opts
@@ -88,12 +89,16 @@
 					then
 						# illegal option encountered
 						arr=$flag
-						return 1
+						isInvalid=1
+						break
 					fi
 					
 					let k=k+1
 				done
 			fi
+			
+			# exit out of the loop
+			[ $isInvalid -eq 1 ] && break
 			
 			let i=i+1
 		done
@@ -102,7 +107,7 @@
 		eval "$arrName=( "${arr[@]}" )"
 		
 #		declare -a ; read < /dev/tty
-		return 0
+		return $isInvalid
 	}
 	
 	#/**
