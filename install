@@ -41,17 +41,10 @@
 ## libraries
 
 	source ./libs/gettext.lib
+	__lib_gettext_load ./i18n/install.${LANG:0:2}.po
 
 ## functions
 
-	# clean up and exit program
-	# @param	1	exit status
-	install_exit()
-	{
-		__lib_gettext_fin
-		exit $1
-	}
-	
 	# creates a new directory if it doesn't exist
 	install_mkdir()
 	{
@@ -70,14 +63,6 @@
 		return $rv
 	}
 
-## initialization
-
-	trap 'install_exit 9' INT KILL TERM HUP
-	
-	# init gettext emulation library
-	__lib_gettext_init
-	__lib_gettext_load ./i18n/install.${LANG:0:2}.po
-	
 ## installation
 
 	install_status=0
@@ -136,5 +121,5 @@
 		fi
 		
 	# finished
-		install_exit $install_status
+		exit $install_status
 
