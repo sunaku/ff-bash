@@ -9,17 +9,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -28,9 +28,8 @@
 
 ## globals
 
-
 ## functions
-	
+
 	# Scans the array whose name is given by $1 for command-line options. When an option is found, the function whose name is given by $2 is invoked. If $2 does not report that the option given to it is illegal, then the option and its possible argument are then removed from the array whose name is given by $1.
 	#
 	# @param	1	Name of the array which contains raw command-line arguments. Once this scanOptions() function has properly terminated, the array whose name is given by $1 will contain only items that are unrelated to the command-line options.
@@ -54,78 +53,78 @@
 	__lib_CmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
-		
+
 		local i=0 j=0 k opt flag arrLen isInvalid=0 amActive=1
 		local -a arr
-		
+
 		# make local copy of caller's array
 		eval "arr=( \"\${$1[@]}\" )"
 		arrLen=${#arr[@]}
-		
+
 		while (( i < arrLen && amActive == 1 ))
 		do
 			(( j = i + 1 ))
-			
+
 			opt=${arr[$i]}	# make a copy of the next option flag, because it may be deleted from the array before subsequent short options that it may contain are processed
-			
+
 			if [ "${opt:0:1}" == "-" ] # look for option prefix
 			then
-			
+
 				if [ "${opt:1:1}" == "-" ]	# handle long option names
 				then
 					flag=$opt
-					
+
 					"$2" "$flag" "${arr[$j]}"	# invoke user func to handle option
-					
+
 					if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 					then
 						# illegal option encountered
 						isInvalid=1
 					fi
-					
+
 				else	# handle short option names
-				
+
 					# handle multiple flags that are jumbled into one option; ex: "-efm" is equivalent to "-e -f -m"
-					
+
 					k=1	# flag index; +1 to skip '-' prefix
-					
+
 					# TODO: special case: $#opt == 1
-					
+
 					while (( k < ${#opt} ))
 					do
 						flag="-${opt:$k:1}"	# prepend '-' prefix to option name
-						
+
 						"$2" "$flag" "${arr[$j]}"	# invoke user func to handle option
-						
+
 						if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
 						then
 							# illegal option encountered
 							isInvalid=1
 							break
 						fi
-						
+
 						(( k += 1 ))
 					done
 				fi
 			fi
-			
+
 			# illegal option encountered
 			if (( isInvalid == 1 ))
 			then
 				eval "$1[0]=\$flag ; $1[1]=\${arr[$j]}"
 				return 1
 			fi
-			
+
 			(( i += 1 ))
 		done
-	
+
 		# propogate changes in local array to caller's array
 		eval "$1=( \"\${arr[@]}\" )"
-		
+
 #		declare -a ; read < /dev/tty
 		return 0
 	}
-	
+
 	# Handles the return value from the function whose name is given in $2 of scanOptions(). This function is meant to be used internally by this library.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
@@ -134,14 +133,14 @@
 		case "$1" in
 			2)
 				unset -v "arr[$j]" "arr[$i]"	# remove the option's name & argument
-				
+
 				(( j += 1 ))	# increment argument index
 			;;
-			
+
 			1)
 				unset -v "arr[$i]"	# remove the option's name
 			;;
-			
+
 			255)
 				amActive=0	# stop scanning for more options
 				unset -v "arr[$i]"	# remove the option's name
@@ -150,6 +149,6 @@
 			*)
 				return 1	# illegal option
 		esac
-		
+
 		return 0
 	}
