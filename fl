@@ -63,7 +63,11 @@
 	__ff_main()
 	{
 		# scripting variables
-		local w=$PWD d f fn n i l
+		local w=$PWD d f fn n i l __ff_oldIFS=$IFS
+		
+		# change IFS to only line breaks
+		IFS='
+'
 		
 		begin	# user function
 		
@@ -97,6 +101,9 @@
 		done
 		
 		end	# user function
+		
+		# restore IFS
+		IFS=$__ff_oldIFS
 	}
 	
 ## main script logic
