@@ -53,20 +53,20 @@ echo "<((pack))>  gettext translation"
 	echo "<((pack))>  translating *.pot files"
 		../ff -f ff.auto_i18n $pot_out
 
-	echo "<((pack))>  formatting translated *.po files"
-		../ff -e '
-
-			for x in ./"${p%.*}"*.po
-			do
-				export PO_FMT_DATA="$x"
-				../fl -f ./fl.po_fmt "$p" > $$
-
-				mv -v $$ "$x"
-			done
-
-			rm -f $$
-		' $pot_out
-
+#	echo "<((pack))>  formatting translated *.po files"
+#		../ff -e '
+#
+#			for x in ./"${p%.*}"*.po
+#			do
+#				export PO_FMT_DATA="$x"
+#				../fl -f ./fl.po_fmt "$p" > $$
+#
+#				mv -v $$ "$x"
+#			done
+#
+#			rm -f $$
+#		' $pot_out
+#
 	echo "<((pack))>  copying *.po files into pack dir"
 		cp -vr ../i18n $pack_dir
 

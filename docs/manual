@@ -64,7 +64,7 @@ echo \
 		<u>$( gettext "target" )</u>
 			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed. This parameter is not restricted to being the name of or the path to a file; it can be a %s, string, number, or any other form of abstraction the user requires." "UNIX" "URL" )
 
-	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues the %s signal by pressing %s." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "EOT" "<em>$( gettext "Control" )-$( gettext "D" )</em>" )
+	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues the end-of-transmission signal by pressing the %s and %s keys simultaneously." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "<em>$( gettext "Control" )</em>" "<em>$( gettext "D" )</em>" )
 
 <b>$( gettext "OPTIONS" )</b>
 

@@ -194,6 +194,13 @@
 			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag_scriptArgs $g_options_flag_help\""
 			exit 1
 		fi
+
+		# print warning about --ready not being specified
+		if [ ${g_options_isOn_ready:-0} -eq 0 ]
+		then
+			gettext "Warning: Performing an experimental run.\n Specify %s to disable this behavior." "<b>$__lib_ff_options_flag_scriptArgs $g_options_flag_ready</b>" | __lib_DocFmt_formatTags >&2
+			sleep 1
+		fi
 	}
 
 	finalize()

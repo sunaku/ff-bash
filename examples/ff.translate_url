@@ -68,7 +68,7 @@
 
 		# display menu
 
-			__lib_DocFmt_formatTags <<< "<b>$( gettext "CODE" )	$( gettext "LANGUAGE" )</b>"
+			echo "$( gettext "CODE" )	$( gettext "LANGUAGE" )"
 
 			for (( i=0 ; i < ${#g_langCodes[@]} ; i++ ))
 			do
@@ -81,7 +81,7 @@
 			do
 				# read choice
 					echo
-					lang=$( __lib_util_query "$( __lib_DocFmt_formatTags <<< "$( gettext "Please specify the code of the language in which %s is written." "<em>$docURL</em>" )" )" "$g_langSrc" )
+					lang=$( __lib_util_query "$( gettext "Please specify the code of the language in which %s is written." "<$docURL>" )" "$g_langSrc" )
 
 				# validate choice
 					for i in "${g_langCodes[@]}"
@@ -123,7 +123,7 @@
 
 				# fetch translation
 					queryURL="${g_service_URL}${g_service_URL_flags_docURL}${docURL}${g_service_URL_flags_langCombo}${langCombo}"
-	
+
 					wget -q --header="Accept-Charset: $g_service_encoding" -O "$docDst" "$queryURL"
 
 				# check for errors
