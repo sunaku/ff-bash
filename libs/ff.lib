@@ -55,9 +55,9 @@
 
 ## libraries
 
-	source ${__ff_myResources_libs}/CmdOpts.lib
+	source "$__ff_myResources_libs/CmdOpts.lib"
 		
-	source ${__ff_myResources_libs}/gettext.lib
+	source "$__ff_myResources_libs/gettext.lib"
 	__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
 	
 ## functions
@@ -85,7 +85,7 @@
 				fi
 			else
 				# read from user's terminal
-				while read -er < /dev/tty
+				while IFS= read -er < /dev/tty
 				do
 					expression="$expression
 $REPLY"
@@ -94,7 +94,7 @@ $REPLY"
 			
 		# check input for control functions
 		
-			if ! echo "$expression" | tr -d '\n' | grep 'main[:space:]*\([:space:]*\)' >& /dev/null
+			if [[ -n "${expression/*main*( |	)\(*( |	)\)*/}" && -n "${expression/*function+( |	)main*/}" ]]
 			then
 				expression="
 main(){
@@ -102,36 +102,37 @@ $expression
 :;}"
 			fi
 	
+#			read</dev/tty
 		# load script into RAM
 			eval "$expression"
 	}
 	
-	# handles parsing of command-line options
+	# handles parsing of common command-line options
 	# @see __lib_CmdOpts_handleOption()
-	__lib_ff_handleOption()
+	__lib_ff_handleBaseOption()
 	{
 		case $1 in
-			$__lib_ff_options_shortFlag_evalExpr | $__lib_ff_options_longFlag_evalExpr)
+			"$__lib_ff_options_shortFlag_evalExpr" | "$__lib_ff_options_longFlag_evalExpr")
 				__lib_ff_options_isOn_evalExpr=1
 				__lib_ff_options_value_evalExpr=$2
 				return 2
 			;;
 			
-			$__lib_ff_options_shortFlag_evalFile | $__lib_ff_options_longFlag_evalFile)
+			"$__lib_ff_options_shortFlag_evalFile" | "$__lib_ff_options_longFlag_evalFile")
 				__lib_ff_options_isOn_evalFile=1
 				__lib_ff_options_value_evalFile=$2
 				return 2
 			;;
 			
-			$__lib_ff_options_shortFlag_readPipe | $__lib_ff_options_longFlag_readPipe)
+			"$__lib_ff_options_shortFlag_readPipe" | "$__lib_ff_options_longFlag_readPipe")
 				__lib_ff_options_isOn_readPipe=1
 				return 1
 			;;
 			
-			$__lib_ff_options_shortFlag_showHelp | $__lib_ff_options_longFlag_showHelp)
+			"$__lib_ff_options_shortFlag_showHelp" | "$__lib_ff_options_longFlag_showHelp")
 				
 				# load help document formatting library
-				source ${__ff_myResources_libs}/DocFmt.lib
+				source "$__ff_myResources_libs/DocFmt.lib"
 				
 				local __lib_ff_docFile="$__ff_myResources_docs/$__ff_myName.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
 					
@@ -147,7 +148,7 @@ $expression
 					then
 						__lib_gettext_load "$__lib_ff_docI18n"
 					
-					elif [ "$__lib_ff_docLang" != en ]
+					elif [ -n "${__lib_ff_docLang/*+(en|C|POSIX)*/}" ]	# no need to translate from English
 					then
 						gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
 						
@@ -158,12 +159,12 @@ $expression
 					fi
 				
 				# display documentation
-					source "$__lib_ff_docFile" | sed 's/\t/    /' | fmt -w 80 | less -R
+				source "$__lib_ff_docFile" | expand -t 4 | fmt -w $( tput cols ) | ${PAGER:-less -r}
 				
 				exit
 			;;
 			
-			$__lib_ff_options_shortFlag_showVersion | $__lib_ff_options_longFlag_showVersion)
+			"$__lib_ff_options_shortFlag_showVersion" | "$__lib_ff_options_longFlag_showVersion")
 				echo $__lib_ff_version
 				exit
 			;;
@@ -178,20 +179,20 @@ $expression
 		# ensures proper clean up
 			trap 'exit 9' INT KILL TERM HUP
 
-		# set current sub-shell options
-			shopt -s nullglob
+		# set behavior of current sub-shell
+			shopt -s nullglob extglob interactive_comments
 			
 		# scan command line options
 
-			# NOTE: assuming '$__lib_ff_targetList' is already initialized
-			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList"
+			# NOTE: assuming '$__lib_ff_targetList' is already initialized by the client script of this library
+			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList" "__lib_ff_handleOption"
 			then
-				gettext "Error: %s is not a valid option. Try %s." "\"$__lib_ff_targetList\"" "\"--$__lib_ff_options_longFlag_showHelp\""
+				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"--$__lib_ff_options_longFlag_showHelp\""
 				exit 1
 			fi
 		
 		# load and execute script
 			__lib_ff_loadScript
-			__ff_main	# invoke the client using this library
+			__ff_main	# invoke the client script that is currently using this library
 	}
 
