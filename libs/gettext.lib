@@ -29,6 +29,8 @@
 
 ## globals
 
+	__LIB_GETTEXT__=1	# prevents include() loops
+	
 	declare -a __lib_gettext_catalogList
 	
 ## functions

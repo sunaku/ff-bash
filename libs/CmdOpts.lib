@@ -28,6 +28,8 @@
 
 ## globals
 
+	__LIB_CMDOPTS__=1	# prevents include() loops
+
 ## functions
 
 	# Scans the array whose name is given by $1 for command-line options. When an option is found, the function whose name is given by $2 is invoked. If $2 does not report that the option given to it is illegal, then the option and its possible argument are then removed from the array whose name is given by $1.

@@ -29,6 +29,8 @@
 
 ## globals
 
+	__LIB_DOCFMT__=1	# prevents include() loops
+	
 	## formatting vars for use with 'tput sgr ...'
 	# source: http://nscp.upenn.edu/aix4.3html/files/aixfiles/terminfo.htm#TH5Bj2ddmary
 	__lib_DocFmt_sgrModes=( 0 0 0 0 0 0 0 0 0 )	# on-off status flags for hash-table items below
