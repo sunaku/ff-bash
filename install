@@ -32,7 +32,7 @@
 	package_dir=${0%/*}
 
 	# default installation directory
-	install_dir_default=$HOME
+	install_dir_default=$HOME/ff-$( ./ff -v )
 	symlink_dir_default=$HOME/bin
 	
 	# executable files
@@ -105,21 +105,23 @@
 		# echo symlink_dir=$symlink_dir
 	
 		# copy files
+		gettext "Copying package files from %s to %s." "\"$package_dir\"" "\"$install_dir\""
+		
 		if cp -r "$package_dir" "$install_dir"
 		then
 			# create links
 			for exec_file in "${files_exec[@]}"
 			do
-				chmod +x "$install_dir/$exec_file"
-				ln -s "$install_dir/$exec_file" "$symlink_dir/$exec_file"
+				symlink_src="$install_dir/$exec_file"
+				symlink_dst="$symlink_dir/$exec_file"
+				
+				# make file executable
+				chmod +x "$symlink_src"
+				
+				gettext "Creating symbolic link from %s to %s." "\"$symlink_src\"" "\"$symlink_dst\""
+				ln -s "$symlink_src" "$symlink_dst"
 			done
-			
-			gettext "Installation has succeeded."
-		else
-			gettext "Installation has failed."
-			install_status=1
 		fi
 		
 	# finished
-		exit $install_status
 
