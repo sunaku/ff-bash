@@ -28,17 +28,19 @@
 
 ## globals
 
+	__LIB_ID3TAG__=1	# prevents include() loops
+
 	__lib_id3tag_genreNames=( "Blues" "Classic Rock" "Country" "Dance" "Disco" "Funk" "Grunge" "Hip-Hop" "Jazz" "Metal" "New Age" "Oldies" "Other" "Pop" "R&B" "Rap" "Reggae" "Rock" "Techno" "Industrial" "Alternative" "Ska" "Death Metal" "Pranks" "Soundtrack" "Euro-Techno" "Ambient" "Trip-Hop" "Vocal" "Jazz+Funk" "Fusion" "Trance" "Classical" "Instrumental" "Acid" "House" "Game" "Sound Clip" "Gospel" "Noise" "Alt. Rock" "Bass" "Soul" "Punk" "Space" "Meditative" "Instrum. Pop" "Instrum. Rock" "Ethnic" "Gothic" "Darkwave" "Techno-Indust." "Electronic" "Pop-Folk" "Eurodance" "Dream" "Southern Rock" "Comedy" "Cult" "Gangsta" "Top 40" "Christian Rap" "Pop/Funk" "Jungle" "Native American" "Cabaret" "New Wave" "Psychadelic" "Rave" "Showtunes" "Trailer" "Lo-Fi" "Tribal" "Acid Punk" "Acid Jazz" "Polka" "Retro" "Musical" "Rock & Roll" "Hard Rock" "Folk" "Folk/Rock" "National Folk" "Swing" "Fusion" "Bebob" "Latin" "Revival" "Celtic" "Bluegrass" "Avantgarde" "Gothic Rock" "Progress. Rock" "Psychadel. Rock" "Symphonic Rock" "Slow Rock" "Big Band" "Chorus" "Easy Listening" "Acoustic" "Humour" "Speech" "Chanson" "Opera" "Chamber Music" "Sonata" "Symphony" "Booty Bass" "Primus" "Porn Groove" "Satire" "Slow Jam" "Club" "Tango" "Samba" "Folklore" "Ballad" "Power Ballad" "Rhythmic Soul" "Freestyle" "Duet" "Punk Rock" "Drum Solo" "A Capella" "Euro-House" "Dance Hall" "Goa" "Drum & Bass" "Club-House" "Hardcore" "Terror" "Indie" "BritPop" "Negerpunk" "Polsk Punk" "Beat" "Christian Gangsta Rap" "Heavy Metal" "Black Metal" "Crossover" "Contemporary Christian" "Christian Rock" "Merengue" "Salsa" "Thrash Metal" "Anime" "Jpop" "Synthpop" )
 
-	# a substitute value for the NUL byte
-	__lib_id3tag_NUL=$'\777'
+	__lib_id3tag_NUL=$'\777'	# a substitute value for the NUL byte, because BASH removes NUL bytes from the result of command substitutions
+
+	__lib_id3tag_NulPadding="$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL$__lib_id3tag_NUL"
 
 ## functions
 
 	# Reads an ID3v1 or ID3v1.1 tag from the given file and places the result into the array variable whose name is given.
 	#
-	# @param	1	Name of the array variable in which to store parsed data.
-	#				The contents of this array are as follows:
+	# @param	1	Name of the array variable in which to store parsed data. The contents of this array are as follows:
 	#
 	# 	index	value
 	# 	-----	-----
@@ -51,7 +53,7 @@
 	# 	6	genre number
 	# 	7	track number
 	#
-	# @param	2	Path to an MP3 file.
+	# @param	2	Path to an MP3 file from which a tag is to be read.
 	# @return	Standard UNIX exit status.
 	#
 	__lib_id3tag_readTag()
@@ -93,9 +95,61 @@
 			do
 				tag[$i]=${tag[$i]%%${__lib_id3tag_NUL}*}
 			done
-			
+
 		# propogate changes in local array to caller's array
 			eval "$1=( \"\${tag[@]}\" )"
 
 		return 0
 	}
+
+	# Writes an ID3v1 or ID3v1.1 tag to the given file using the tag data  places the result into the array variable whose name is given.
+	#
+	# @param	1	Name of the array variable which contains the tag data that is to be written to the file. The contents of this array are the same as that of parameter 1 of '__lib_id3tag_readTag()'.
+	#
+	# @param	2	Path to the MP3 file that is to be tagged with the given data.
+	# @return	Standard UNIX exit status.
+	#
+	__lib_id3tag_writeTag()
+	{
+		local i tag tempFile="${TMPDIR:-/tmp}/$$.$RANDOM"
+
+		# copy caller's array to local array
+			eval "tag=( \"\${$1[@]}\" )"
+
+		# copy non-tag data to temp file
+
+			if [ -e "$2" ]
+			then
+				if __lib_id3tag_readTag raw "$2"	# check if file already has a tag
+				then
+					head -c -128 "$2" > "$tempFile"
+				else
+					cp -f "$2" "$tempFile"
+				fi
+			fi
+
+		# pad tag-fields with NUL bytes
+			for i in 1 2 3 4 5
+			do
+				tag[$i]="${tag[$i]}$__lib_id3tag_NulPadding"
+			done
+
+		# write new tag-data
+			{
+				echo -n "TAG${tag[1]:0:30}${tag[2]:0:30}${tag[3]:0:30}${tag[4]:0:4}"
+
+				# handle 'track number' field of ID3v1.1
+					if [ "${tag[0]}" == 1 ]
+					then
+						echo -n "${tag[5]:0:30}"
+					else
+						echo -n "${tag[5]:0:28}$__lib_id3tag_NUL$( printf "%b" "\\x$( printf "%x" "${tag[7]}" )" )"
+					fi
+
+				echo -n "$( printf "%b" "\\x$( printf "%x" "${tag[6]}" )" )"	# genre
+
+			} | tr "$__lib_id3tag_NUL" '\0' | head -c 128 >> "$tempFile"
+
+			mv -f "$tempFile" "$2"	# move temp file to original file
+	}
+
