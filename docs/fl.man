@@ -55,34 +55,36 @@ __lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed." "UNIX" )"
 	__lib_DocFmt_blockEnd	
 	
-	__lib_DocFmt_blockItem "$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the user's terminal device (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "$( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )/dev/tty$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )[$( gettext "Control" )][$( gettext "D" )]$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
+	__lib_DocFmt_blockItem "$( gettext "The %s serves as a mechanism by which the command-line options parser can be stopped and the remaining command-line arguments can be treated as targets. This allows for targets whose name begins with a %s character to avoid being misinterpreted by the command-line options parser." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )-$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
+	
+	__lib_DocFmt_blockItem "$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the user's terminal device (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )/dev/tty$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )[$( gettext "Control" )][$( gettext "D" )]$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
 __lib_DocFmt_blockEnd
 
 
 __lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "OPTIONS" )$( __lib_DocFmt_setFmt bold 0 )"
 __lib_DocFmt_blockStart
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )"
+	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" )"
+		__lib_DocFmt_blockItem "$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 )"
+	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 )"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Execute the shell commands contained in %s." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 )" )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_readPipe$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_readPipe$( __lib_DocFmt_setFmt bold 0 )"
+	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_readPipe$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_readPipe$( __lib_DocFmt_setFmt bold 0 )"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )], $( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )]"
+	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )], $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )]"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Display this manual, in the language denoted by the %s (see %s), and exit. Note that if %s is unspecified, then the %s locale attribute is used in its place." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "ISO-639" "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "LC_MESSAGES" )"
 	__lib_DocFmt_blockEnd
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showVersion$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )--$__lib_ff_options_longFlag_showVersion$( __lib_DocFmt_setFmt bold 0 )"
+	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showVersion$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showVersion$( __lib_DocFmt_setFmt bold 0 )"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Display the version number and exit." )"
 	__lib_DocFmt_blockEnd
