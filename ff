@@ -1,14 +1,39 @@
 #!/bin/bash
-# For each File (ff)
-# This file is distributed under the same license as the "ff" package.
+#
+# Source code for the "For each File" tool.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
 
 ## global paths
 
 	_ff_path=$0			# path to this program
 	[ -L "$_ff_path" ] && _ff_path=$( find "$_ff_path" -printf "%l" )	# dereference if path is symlink
 	
-	_ff_name=${_ff_path#*/}		# basename of this program
-	_ff_base=${_ff_path%/*}		# dirname of this program
+	_ff_name=${_ff_path##*/}		# basename of this program
+	_ff_base=${_ff_path%/*}			# dirname of this program
 	_ff_base_lib=${_ff_base}/lib	# libraries
 	_ff_base_doc=${_ff_base}/doc	# documentation
 	_ff_base_i18n=${_ff_base}/i18n	# i18n resources
@@ -39,15 +64,15 @@
 	_cmdOpts_handleOption()
 	{
 		case "$1" in
-			$_ff_cmdOpts_optFlgShort_handleHidden|$_ff_cmdOpts_optFlgLong_handleHidden)
+			$_ff_cmdOpts_optFlgShort_handleHidden | $_ff_cmdOpts_optFlgLong_handleHidden)
 				_ff_cmdOpts_optEn_handleHidden=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlgShort_followLinks|$_ff_cmdOpts_optFlgLong_followLinks)
+			$_ff_cmdOpts_optFlgShort_followLinks | $_ff_cmdOpts_optFlgLong_followLinks)
 				_ff_cmdOpts_optEn_followLinks=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlgShort_recursive|$_ff_cmdOpts_optFlgLong_recursive)
+			$_ff_cmdOpts_optFlgShort_recursive | $_ff_cmdOpts_optFlgLong_recursive)
 				_ff_cmdOpts_optEn_recursive=1
 				return 1
 			;;
@@ -69,18 +94,17 @@
 		if [ ${_ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
 		then
 		
-			local _ff_basedir
+			local _ff_vars_basedir
 
 			# handle each target
-			for _ff_basedir in "${_cmdOpts_argList[@]}"
+			for _ff_vars_basedir in "${_cmdOpts_argList[@]}"
 			do
-				if [ -d "$_ff_basedir" ] # handle directories only
+				if [ -d "$_ff_vars_basedir" ] # handle directories only
 				then
+					# make implicit relative paths explicit
+					[ "${_ff_vars_basedir:0:1}" != '/' ] && _ff_vars_basedir="./$_ff_vars_basedir"
 				
-					# make relative paths explicit
-					[ "${_ff_basedir:0:1}" != '/' ] && _ff_basedir="./$_ff_basedir"
-				
-					find "$_ff_basedir" ${_ff_cmdOpts_optEn_followLinks:+-follow} ${_ff_cmdOpts_optEn_handleHidden:--name '[^.]*'} |
+					find "$_ff_vars_basedir" | #${_ff_cmdOpts_optEn_followLinks:--follow} ${_ff_cmdOpts_optEn_handleHidden:--name '[^.]*'} |
 					while read f
 					do
 						# set scripting variables
@@ -97,21 +121,14 @@
 			# handle each target
 			for f in "${_cmdOpts_argList[@]}"
 			do
+				# make implicit relative paths explicit
+				[ "${f:0:1}" != '/' ] && f="./$f"
+				
 				# set scripting variables
+				f=${f%/}
+				fn=${f##*/}
+				d=${f%/*}
 				
-					f=${f%/}
-					fn=${f##*/}
-					
-					# determine directory path
-					if [ "$fn" == "$f" ]
-					then
-						d=.
-						f=./$f
-					else
-						d=${f%/*}
-					fi
-				
-				# handle user's script
 				main	# user function
 			
 			done
