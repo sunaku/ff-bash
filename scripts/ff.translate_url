@@ -40,7 +40,8 @@
 		service_URL_langFlag='&lp='
 		service_URL_documentFlag='&url='
 		
-		service_busyMessage='<title>[^<>]*Error[^<>]*</title>'
+		service_busyMessage1='<title>[^<>]*Error[^<>]*</title>'
+		service_busyMessage2='n/a'
 	
 	# supported languages
 		
@@ -103,10 +104,14 @@
 				wget --header='Accept-Charset: *' -O $$ "$queryURL"
 				
 				# check for errors
-				if grep -i "$service_busyMessage" < $$
+				if grep -i "$service_busyMessage1" < $$ || [ "$( tr -d '[:space:]' < $$ )" == "$service_busyMessage2" ]
 				then
 					# try again after some time
-					sleep ${RANDOM:0:1}
+					timeout=${RANDOM:0:1}
+					
+					echo "The translation service is busy; trying again in $timeout seconds..."
+					
+					sleep $timeout
 					continue
 				fi
 				
