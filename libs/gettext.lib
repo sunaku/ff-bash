@@ -6,7 +6,7 @@
 #
 # Requires:
 #
-#	All gettext strings must begin with a non-whitespace character.
+#	All "msgid" strings must begin with either an alphabet or a digit.
 #
 ###
 #
