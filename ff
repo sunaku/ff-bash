@@ -125,7 +125,7 @@
 			if [ -d "$param" ] 
 			then
 				# assemble list of all subdirectories to be traversed, with the deepest sub-directories appearing first
-				ls -R "$param" | sed -n 's/:$//p' | sort -r > "$g_tmpfile_Subdirs"
+				ls -R "$param" | grep -v '^$' | sed -n 's/:$//p' | sort -r > "$g_tmpfile_Subdirs"
 				
 				# determine file size
 				n=$( wc -l "$g_tmpfile_Subdirs" | awk '{ print $1 }' )
