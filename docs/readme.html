@@ -1,118 +1,117 @@
-$Id$
-
 CONTENTS
 
-	- license
-	- description
+	- copyright
 	- files
 	- limitations
 	- documentation
-	- installation & removal
+	- installation
+	- translation
 	- examples
 
+COPYRIGHT
 
-LICENSE
+	Copyright 2003-2004 Suraj N. Kurapati.
 
-	These programs are free software; you can redistribute them and/or
-	modify them under the terms of the GNU General Public License as
-	published by the Free Software Foundation; either version 2 of the
-	License, or (at your option) any later version.
+	This file is part of "For each File".
 
-	All items distributed with this package are also released under the GNU
-	GPL version 2. A copy of this document is provided in the file
-	'COPYING'.
-
-
-DESCRIPTION
-
-	For each File (ff)
+	"For each File" is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 	
-		Allows users to execute a Bash script recursively
-		upon many files and directories. It is ideal for performing a
-		repetitive procedure such as mass file renaming.
-
-
-	For each Line (fl)
+	"For each File" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 	
-		Allows users to execute a Bash script once for each line in a
-		file. It is ideal for performing complex text processing
-		procedures.
-
+	You should have received a copy of the GNU General Public License along with "For each File"; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 FILES
 
 	COPYING
-	- A copy of the GNU GPL version 2 license.
+	+ A copy of the GNU GPL version 2 license.
 
 	CHANGELOG
-	- A list of important changes in this version.
+	+ A list of important changes in this version.
 	
 	FAQ
-	- Answers to frequently asked questions.
-
-	install
-	- Installation and uninstallation script.
+	+ Answers to frequently asked questions.
 
 	ff
-	- For each File program.
+	+ The "For each File" tool.
 
 	fl
-	- For each Line program.
+	+ The "For each Line" tool.
+	
+	install
+	+ An installation script.
+	
+	docs/
+	+ contains documentation.
+	
+	i18n/
+	+ contains Internationalization resources.
+	
+	libs/
+	+ contains script libraries.
 
-	ff-lib
-	- Function library for programs in this package.
-
-	examples/
-	- Contains sample scripts to get you started.
+	scripts/
+	+ Contains useful scripts that can be used with the 'ff' and 'fl' tools.
 
 
 LIMITATIONS
 
-	- Leading and trailing whitespace is automatically removed from lines
-	when using 'fl'. This is an unwanted side-effect of using the Bash
-	builtin 'read' to fetch a line of text from a file.
+	* Leading and trailing whitespace is automatically removed from lines when using 'fl'. This is because 'fl' uses the 'read' builtin to fetch lines of text from files.
 
+	* Multi-byte characters are, as of this version, not displayed properly in documentation because the 'read' builtin strips them out.
 
 DOCUMENTATION
 
-	1. View help message for "For each File" by executing:
+	1. View help message, optionally translated into the language specified by an ISO-639 language code, for "For each File" by executing:
 
-		./ff -h
+		./ff --help [ISO-639 language code]
 
-	2. View help message for "For each Line" by executing:
+	2. View help message, optionally translated into the language specified by an ISO-639 language code, for "For each Line" by executing:
 
-		./fl -h
+		./fl --help [ISO-639 language code]
 
-	3. Examine the source code of these programs (they are Bash scripts!).
+INSTALLATION
 
-
-INSTALLATION & REMOVAL
-
-	To install, manually copy files in this directory or run:
-
+	Run the installation script by executing:
 		./install
 
-	To remove, manually remove copied files or run:
+	Or perform a manual installation as follows:
+	
+		Move this directory to a location of your choice. Then create symbolic links to the files named 'ff' and 'fl' in a directory that is listed in your $PATH variable (for example: "$HOME/bin/").
 
-		./install -u
+TRANSLATION
 
+	Translation for documentation is performed dynamically through the use of gettext translation catalogs. These files are located in the "i18n/" directory.
+	
+	Feel free to contribute localizations for new languages and revise the existing translation catalogs.
+	
+	New and updated translation catalogs will be made available, as they are contributed, at this URL: <http://people.ucsc.edu/~skurapat/pub/projects/ff/i18n/>.
+	
+	To write translations for a new language, copy the appropriate *.pot file located in i18n/ to *.${ISO_639_CODE}.po and write your translations like so:
+	
+		msgid "A message in English."
+		msgstr "Un mensaje en Ingl�s."	<-- your translation
+		
+	${ISO_639_CODE} is language code defined in the ISO-639 standard. For example, the language code for Italian is 'it'.
+	
+	Also note that you can use UNICODE characters (UTF-8) in the translation catalogs. However, as of this version, some of these characters may not be displayed properly (see the LIMITATIONS section).
 
 EXAMPLES
 
-	I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
-	to see how the scripting variables behave.
+	First try out the examples named 'ff.vars' and 'fl.vars', to see how the preset variables behave.
 
 	Try the following commands:
 
-		./ff * < ./examples/ff.vars | more
-		./ff -r . < ./examples/ff.vars | more
+		./ff * -f./scripts/ff.vars | more
+		./ff . -rf ./scripts/ff.vars | more
 
-		./ff /bin/* < ./examples/ff.vars | more
-		./ff -r /bin/ < ./examples/ff.vars | more
+		./ff /bin/* -f ./scripts/ff.vars | more
+		./ff /bin/ -rf ./scripts/ff.vars | more
 
-		./fl README < ./examples/fl.vars | more
+		./fl COPYING -f ./scripts/fl.vars | more
 
-	Notice that the scripting variables are consistent between recursive and
-	non-recursive modes.
+	Notice that the scripting variables are consistent between recursive and non-recursive modes.
 
+	You can also try out the other example scripts in the scripts/ directory. Also, the first few lines of each script file describes its purpose, thus you can execute the following to see these descriptions:
+	
+		head ./scripts/* | more
 
