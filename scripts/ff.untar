@@ -50,7 +50,7 @@
 				# handle gzipped tar-balls
 				tar_type=z
 				
-			elif [ "${fn%%.*bz}" != "$fn" ]
+			elif [ "${fn%%.*bz*}" != "$fn" ]
 			then
 			
 				# handle bzipped tar-balls
