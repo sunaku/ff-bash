@@ -16,3 +16,7 @@ code {
 samp {
 	text-decoration: underline;
 }
+
+em {
+	border: thin dotted black;
+}
