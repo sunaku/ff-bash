@@ -143,13 +143,13 @@
 					# step into subdir
 					pushd "$subdir" >& /dev/null
 					
-						# set scripting var
+						# set scripting variable
 						d="$PWD"
 					
 						# for all files in subdir
 						for f in *
 						do
-							# set scripting var
+							# set scripting variable
 							p="$d/$f"
 							
 							# execute user specified commands
@@ -168,13 +168,12 @@
 	else
 	# operate iteratively on given files, don't handle subdirs
 	
-		# set path of current directory
-		d="$PWD"
-		
 		# loop through positional params
 		for f
 		do
-			# set scripting var
+			# set scripting variables
+			d=$( dirname "$f" )
+			f=$( basename "$f" )
 			p="$d/$f"
 			
 			# execute user specified commands
