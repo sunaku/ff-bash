@@ -1,21 +1,37 @@
-DESCRIPTION
+LICENSE
 
-	See documentation header in file 'ff'.
-
+	This program/script is released under the GNU GPL version 2. A copy of 
+	this document is provided in the file 'COPYING'.
+	
 FILES
-
 	ff		An executable BASH script.
 	COPYING		A copy of the GNU GPL version 2.
+	README		General information.
 	examples/	Contains sample scripts that can be used with 'ff'.
 
-INSTALLATION
+DOCUMENTATION
+	See documentation in file 'ff'.
 
-	Set the file permissions so that you can execute 'ff'.
+INSTALLATION
+	1. Set the file permissions so that you can execute 'ff'.
 	
 		Example:	chmod +x ff
 	
-	Copy the file 'ff' to a location recognized by your ${PATH} variable.
+	2. Copy the file 'ff' to a location recognized by your ${PATH} variable.
 	
 		Example:	cp ff ~/bin
+
+EXAMPLE SCRIPTS
+	If you wish to execute one of the provided example scripts on all
+	files in the current working directory, run the following.
 	
+		Example:	ff * < [path to example file]
+		Example:	cat [path to example file] | ff *
+		
+	To execute the example script recursively on the current working
+	directory, run the following.
+	
+		Example:	ff -r . < [path to example file]
+		Example:	cat [path to example file] | ff -r .
+
 
