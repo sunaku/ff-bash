@@ -85,13 +85,13 @@ EXAMPLES
 
 	First try out (see example below) the scripts named 'ff.vars' and 'fl.vars', to see how the preset variables behave. Notice how the preset variables are consistent between recursive and non-recursive modes.
 
-		./ff * -f./scripts/ff.vars | more
+		./ff * -f ./scripts/ff.vars | more
 		./ff . -rf ./scripts/ff.vars | more
 
 		./ff /bin/* -f ./scripts/ff.vars | more
 		./ff /bin/ -rf ./scripts/ff.vars | more
 
-		./fl ./COPYING -f ./scripts/fl.vars | more
+		./fl ./docs/gpl.txt -f ./scripts/fl.vars | more
 
 	You can also try out the other example scripts in the scripts/ directory. Also, the first few lines of each script file describes its purpose, thus you can execute the following to see these descriptions:
 	
