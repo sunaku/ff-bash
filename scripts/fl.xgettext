@@ -195,6 +195,17 @@
 		
 		read -p "print raw output (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && raw_output=1
+		
+		# set IFS such that leading whitespace is removed
+		OLD_IFS=$IFS
+		IFS=' 	
+'
+	}
+	
+	end()
+	{
+		# restore IFS
+		IFS=$OLD_IFS
 	}
 
 	main()
