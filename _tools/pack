@@ -25,10 +25,10 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
 	
 	# files that need to be translated; these are automatically packaged
-	doc_in=( ../docs/faq ../docs/readme ../docs/changes )
+	doc_in=( ../docs/*.html )
 	
 	# other files to be packaged
-	pack_in=( ../libs ../docs ../scripts/ ../COPYING ../ff ../fl ../install )
+	pack_in=( ../libs ../docs ../scripts/ ../ff ../fl ../install )
 	
 	pack_dir=../_pack/ff-$pack_ver
 	pack_dir_docs=$pack_dir/docs
@@ -50,10 +50,10 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 ## gettext translation
 
 	echo "pack: create *.pot files; say NO to raw output"
-	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
+#	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
 
 	echo "pack: translate *.pot files"
-	../ff -f ff.auto_i18n ../i18n/*
+#	../ff -f ff.auto_i18n ../i18n/*
 
 	# copy result files
 	cp -vr ../i18n $pack_dir
@@ -68,27 +68,21 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 				# base name of the input file
 				doc_nom[$i]=${doc_in[$i]##*/}
 				
-				# name of temp .html files
-				doc_tmp[$i]=${doc_nom[$i]}.html
-				
 				# web url to temp .html files
-				doc_url[$i]=${upload_web_url}${doc_tmp[$i]}
+				doc_url[$i]=${upload_web_url}${doc_nom[$i]}
 			
-				# name of formatted copy of input file
-				doc_fmt[$i]=$pack_dir_docs/${doc_nom[$i]}
-			
-			# format input file
-				( sed 's/\t/    /g' | fmt -csw 80 ) < ${doc_in[$i]} > ${doc_fmt[$i]}
+			# put English copy into packd_dir
+				cp ${doc_in[$i]} $pack_dir_docs/${doc_nom[$i]}
 				
 			# make temp file for translation processing
-				cp -v ${doc_fmt[$i]} ${doc_tmp[$i]}
+				cp -v ${doc_in[$i]} ${doc_nom[$i]}
 			
 			let i=i+1
 		done
 		
 	# translate temp files
 		echo "pack: upload readme files"
-		scp "${doc_tmp[@]}" $upload_scp_url
+		scp "${doc_nom[@]}" $upload_scp_url
 		
 		echo "pack: translate readme files"
 		../ff -f ../scripts/ff.translate_url "${doc_url[@]}"
@@ -96,7 +90,8 @@ upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
 	# move translated files to pack dir
 		for x in "${doc_nom[@]}"
 		do
-			../ff -e "mv -vf \$f $pack_dir_docs/\${fn//.html/}" ${x}*
+			# make id-anchor URLs local
+			../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html" ${x}*
 		done
 
 
