@@ -15,10 +15,16 @@
 #		redirection, this option may disable the ability to pipe output
 #		to other programs.
 #
-#	-s FILE
-#		Save given scripting commands to the specified file.
-#		
 #	-h	Display this help message.
+#
+#	-s FILE
+#		Save scripting commands to the specified file.
+#
+#	-t FILE
+#		Perform upon targets (non-directories or directories) listed in
+#		the specified file. One target should be listed per line, and
+#		either a relative or absolute path can be used to specify a
+#		target.
 #
 #
 # DESCRIPTION
@@ -76,9 +82,13 @@
 # 	implemented. However, if any of these are implemented, the primary
 # 	scripting commands must be located inside a function named 'main()'.
 #
-#	begin()		Invoked before any lines are processed.
+#	begin()		Invoked before any files are processed.
 #
-#	end()		Invoked after all lines are processed.
+#	end()		Invoked after all files are processed.
+#
+#	begin_file()	Invoked before each file is processed.
+#
+#	end_file()	Invoked after each file is processed.
 #
 #	main()		Invoked once per line to process it.
 #
@@ -96,9 +106,10 @@
 #
 #	$n	Total number of lines in current file (non-directory).
 #
-#	$i	Index or line number of current line.
+#	$i	Line number of current line.
 #
-#	$l	Contents of current line with leading whitespace stripped off.
+#	$l	Contents of current line with leading and trailing whitespace 
+#		removed.
 #
 #
 # AUTHORS
@@ -112,50 +123,32 @@
 #
 
 ## includes
-	ff_libPath="${0%/*}/ff-lib"
+	ff_libPath=${0%/*}/ff-lib
 	
 	if [ ! -r "$ff_libPath" ]
 	then
-		echo "(ff) Unable to source '$ff_libPath'."
+		echo "Unable to source '$ff_libPath'."
 		exit 1
 	else
 		source "$ff_libPath"
 	fi
 
 ## globals
-	
-	# option flags
-	ff_cmdOpts="ehs:"
-	ff_cmdOpts_opt_help=h
-	ff_cmdOpts_opt_useEditor=e
-	ff_cmdOpts_opt_saveInput=s
-	
+
 ## functions
 
 	# scan options and set flags
 	# returns 2 if user asked to see help message
 	ff_scanOptions()
 	{
-		while getopts $ff_cmdOpts opt
+		# handle base options
+		while getopts ${ff_baseOpts}${ff_cmdOpts} opt
 		do
-			case $opt in
-				$ff_cmdOpts_opt_useEditor)
-					ff_cmdOpts_optEn_editor=1
-				;;
-				$ff_cmdOpts_opt_saveInput)
-					ff_cmdOpts_optEn_saveInput=1
-					ff_cmdOpts_optArg_saveInput=$OPTARG
-				;;
-				$ff_cmdOpts_opt_help)
-					# display help message which happens to be the documentation header of this file
-					sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
-					return 2
-				;;
-				*)
-					return 1
-				;;
-			esac
+			ff_handleBaseOption $opt
+			[ $? -gt 0 ] && return 1
 		done
+		
+		return 0
 	}
 	
 	ff_main()
@@ -163,8 +156,11 @@
 		# set scripting variable
 		w=$PWD
 		
-		# loop through positional params
-		for f
+		# user function
+		begin
+		
+		# handle each target
+		while read f
 		do
 			# set scripting variables
 			
@@ -180,57 +176,59 @@
 					f=./$f
 				fi
 					
-				n=$( wc -l "$f" | awk '{print $1}' )
+				n=$( awk 'END {print NR}' "$f" )
 				i=1
 			
-			# call user func
-			begin
+			# handle user's script
 			
-			while read l
-			do
-				# call user func
-				main
+				# user function
+				begin_file
 				
-				# increment line number
-				let i=i+1
+				while read l
+				do
+					# user function
+					main
+					
+					# increment line number
+					let i=i+1
+					
+				done < "$f"
 				
-			done < "$f"
+				# user function
+				end_file
 			
-			# call user func
-			end
-		done
+		done < "$ff_tmp_targetList"
+		
+		# user function
+		end
 	}
 	
 ## main script logic
 
-	# scan user options
-
+	# scan command line options
+		
 		ff_scanOptions "${@}"
-
-		# exit if help message was displayed
-		# or if illegal options were given
+		
+		# exit if help message was displayed or illegal options were given
 		[ $? -gt 0 ] && ff_exit
 
-	# get user script
+	# get user's script & save it
 
 		ff_getScript
 
 		# exit if no script was given
 		[ $? -gt 0 ] && ff_exit
 
-	# handle options
-	ff_saveScript
-
 	# handle user's script
-	
-		# validate script
-		ff_checkScriptMain
 
 		# load script into RAM
 		ff_evalScript
+
+		# generate list of targets to perform upon
+		ff_setupTargets "${@}"
 		
 		# execute script
-		ff_main "${@}"
+		ff_main
 
 	# clean up and exit
 	ff_exit

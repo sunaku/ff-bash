@@ -10,24 +10,31 @@
 #
 #
 # OPTIONS
+#	-a	Handle files prefixed with a period (hidden files). Note that
+#		this applies in recursive mode only.
+#
 #	-e	Use the program specified in ${EDITOR} for entering scripting
 #		commands. Depending on how your text editor handles I/O
 #		redirection, this option may disable the ability to pipe output
 #		to other programs.
 #
-#	-r	Handle subdirectories recursively; directories are processed
-#		before non-directories.
+#	-h	Display this help message.
 #
-#	-a	Handle files prefixed with a period (hidden files).
-#		This applies in recursive mode only.
-#
-#	-l	Follow symbolic links to directories.
-#		This applies in recursive mode only.
+#	-l	Follow symbolic links to directories. Note that this applies in
+#		recursive mode only.
+#		
+#	-r	Handle subdirectories recursively. Note that directories are
+#		handled before non-directories.
 #
 #	-s FILE
-#		Save given scripting commands to the specified file.
+#		Save scripting commands to the specified file.
 #
-#	-h	Display this help message.
+#	-t FILE
+#		Perform upon targets (non-directories or directories) listed in
+#		the specified file, and ignore targets given on the command
+#		line. Only one target should be listed per line in the specified
+#		file. Note that either a relative or absolute path can be used
+#		to specify a target.
 #
 #
 # DESCRIPTION
@@ -118,11 +125,11 @@
 #
 
 ## includes
-	ff_libPath="${0%/*}/ff-lib"
+	ff_libPath=${0%/*}/ff-lib
 	
 	if [ ! -r "$ff_libPath" ]
 	then
-		echo "(ff) Unable to source '$ff_libPath'."
+		echo "Unable to source '$ff_libPath'."
 		exit 1
 	else
 		source "$ff_libPath"
@@ -130,53 +137,41 @@
 
 ## globals
 
-	# files
+	# temporary files
 	ff_tmp_dirList=${ff_tmpMask}.dirList
 
-	# option flags
-	ff_cmdOpts="aehlrs:"
-	ff_cmdOpts_opt_help=h
-	ff_cmdOpts_opt_useEditor=e
-	ff_cmdOpts_opt_recurse=r
-	ff_cmdOpts_opt_saveInput=s
-	ff_cmdOpts_opt_followLinks=l
-	ff_cmdOpts_opt_handleHidden=a
+	# command line options
+	ff_cmdOpts=alr
+	ff_cmdOpts_optFlg_handleHidden=a
+	ff_cmdOpts_optFlg_followLinks=l
+	ff_cmdOpts_optFlg_recursive=r
 
 ## functions
 
 	# scan options and set flags
-	# returns 2 if user asked to see help message
+	# @return	1	illegeal options
 	ff_scanOptions()
 	{
-		while getopts $ff_cmdOpts opt
+		while getopts ${ff_baseOpts}${ff_cmdOpts} opt
 		do
 			case $opt in
-				$ff_cmdOpts_opt_handleHidden)
+				$ff_cmdOpts_optFlg_handleHidden)
 					ff_cmdOpts_optEn_handleHidden=1
 				;;
-				$ff_cmdOpts_opt_useEditor)
-					ff_cmdOpts_optEn_editor=1
-				;;
-				$ff_cmdOpts_opt_followLinks)
+				$ff_cmdOpts_optFlg_followLinks)
 					ff_cmdOpts_optEn_followLinks=1
 				;;
-				$ff_cmdOpts_opt_recurse)
-					ff_cmdOpts_optEn_recurse=1
+				$ff_cmdOpts_optFlg_recursive)
+					ff_cmdOpts_optEn_recursive=1
 				;;
-				$ff_cmdOpts_opt_saveInput)
-					ff_cmdOpts_optEn_saveInput=1
-					ff_cmdOpts_optArg_saveInput=$OPTARG
-				;;
-				$ff_cmdOpts_opt_help)
-					# display help message which happens to be the documentation header of this file
-					sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
-					return 2
-				;;
-				*)
-					return 1
+				*) # handle base options
+					ff_handleBaseOption $opt
+					[ $? -gt 0 ] && return 1
 				;;
 			esac
 		done
+		
+		return 0
 	}
 
 	ff_main()
@@ -184,18 +179,16 @@
 		# set scripting variables
 		w=$PWD
 
-		# call user func
+		# user function
 		begin
 
 		# check method of operation: recursive or non-recursive
-		if [ ${ff_cmdOpts_optEn_recurse:-0} -eq 1 ] # recursive operation
+		if [ ${ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
 		then
-
-			# declare local vars
 			local basedir
 
-			# loop through positional params
-			for basedir
+			# handle each target
+			while read basedir
 			do
 				if [ -d "$basedir" ]
 				then
@@ -212,19 +205,20 @@
 							# set scripting variables
 							fn=${f##*/}
 
-							# call user func
+							# user function
 							main
 						done
 					done
 				fi
-			done
+			done < "$ff_tmp_targetList"
 
 		else # non-recursive operation
 
-			# loop through positional params
-			for f
+			# handle each target
+			while read f
 			do
 				# set scripting variables
+				
 					f=${f%/}
 					fn=${f##*/}
 					
@@ -236,46 +230,45 @@
 						d=.
 						f=./$f
 					fi
+				
+				# handle user's script
 
-				# call user func
-				main
-			done
+					# user function
+					main
+				
+			done < "$ff_tmp_targetList"
 		fi
 
-		# call user func
+		# user function
 		end
 	}
 
 ## main script logic
 
-	# scan user options
-
+	# scan command line options
+		
 		ff_scanOptions "${@}"
-
-		# exit if help message was displayed
-		# or if illegal options were given
+		
+		# exit if help message was displayed or illegal options were given
 		[ $? -gt 0 ] && ff_exit
 
-	# get user script
+	# get user's script & save it
 
 		ff_getScript
 
 		# exit if no script was given
 		[ $? -gt 0 ] && ff_exit
 
-	# handle options
-	ff_saveScript
-
 	# handle user's script
-
-		# validate script
-		ff_checkScriptMain
 
 		# load script into RAM
 		ff_evalScript
 
+		# generate list of targets to perform upon
+		ff_setupTargets "${@}"
+		
 		# execute script
-		ff_main "${@}"
+		ff_main
 
 	# clean up and exit
 	ff_exit
