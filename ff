@@ -42,7 +42,6 @@
 ## libraries
 
 	source ${__ff_myResources_libs}/ff.lib
-	__lib_ff_init	# initialize library
 
 ## global variables
 
