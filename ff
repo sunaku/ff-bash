@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# usage: ff <files>
+#
+# scripting vars:
+# $f = current file
+# $d = current directory
+
+g_tmpfileMask="/tmp/$$"
+g_script="${g_tmpfileMask}.script"
+g_args=$*
+
+# check for args
+	if [[ "$g_args" == "" ]]
+	then
+		g_args=`ls | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '`
+	fi
+
+# get input
+	g_input=`cat`
+	
+# write custom script file
+cat > "$g_script" << __CUSTOM_SCRIPT__
+#!/bin/bash
+	
+	# set path of current directory
+	d="\$PWD"
+
+	# loop though all files in specified dir
+	for f in $g_args
+	do
+		# execute user specified commands
+		$g_input
+	done
+
+__CUSTOM_SCRIPT__
+
+# run custom script
+	chmod u+x "$g_script"
+	"$g_script" $g_args
+	
+# cleanup
+	rm -f ${g_tmpfileMask}*
+	
