@@ -8,8 +8,9 @@
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed
-#	for the specified files. This tool is ideal for performing a procedure
-#	upon a group of files or directories, such as mass re-naming.
+#	once for each of the specified files. This tool is ideal for performing 
+#	a procedure upon a group of files or directories, such as mass re-naming
+#	of files.
 #
 #	The procedure given by the user is interpreted directly by the BASH
 #	shell. So you can think of this tool as a way to iteratively execute a 
@@ -71,6 +72,8 @@
 	g_optEn_editor=0
 	
 # scan options
+
+	echo "#args = " $#
 
 	while getopts "$g_options" opt
 	do
@@ -135,7 +138,7 @@
 						
 #DEBUG						echo "## pushed subdir = '$PWD'"
 						
-						# set path of current directory
+						# update preset variable: 'current working directory' 
 						d="$subdir"
 						
 						for f in *
