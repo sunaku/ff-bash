@@ -27,6 +27,8 @@
 #		specified file and either a relative or absolute path can be
 #		used to specify a target.
 #
+#	-v	Display program version.
+#
 #
 # DESCRIPTION
 #	Allows the user to execute a Bash script for each line in the specified
@@ -211,5 +213,13 @@
 	
 ## main script logic
 
+	# dummy user functions
+	begin() { :; }
+	end() { :; }
+	main() { :; }
+	begin_file() { :; }
+	end_file() { :; }
+
+	# begin script
 	ff_baseLogic "${@}"
 
