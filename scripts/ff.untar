@@ -90,7 +90,6 @@
 	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option")</u>]...
 
 <b>$( gettext "OPTIONS" )</b>
-
 	<b>$g_options_flag_help</b>
 		$( gettext "Display this help message and exit." )
 
@@ -98,7 +97,7 @@
 		$( gettext "Extract all targets, into their own directories, within %s. The %s option is ignored when this option is used." "<u>$( gettext "directory" )</u>" "<b>$g_options_flag_relative</b>" )
 
 	<b>$g_options_flag_ready</b>
-		$( gettext "Do not perform an experimental run; modify the file-system as necessary." )
+		$( gettext "Do not perform an experimental run; proceed in modifying the file-system as necessary." )
 
 		$( gettext "The following subordinate options have no effect if used without this option." )
 
@@ -112,7 +111,7 @@
 			$( gettext "Pass all command-line arguments that are specified after this option to the %s utility. For example, one can specify %s in order to see verbose output from the %s utility." "<em>tar</em>" "<em>$g_options_flag_tarOpts -v</em>" "<em>tar</em>" )
 
 	<b>$g_options_flag_relative</b>
-		$( gettext "Extract targets relative to their parent directory instead of the default output directory, which is either the current working directory or a user specified directory. For example, a target named %s will be extracted into %s instead of %s." "<em>/foo/bar/baz.tar</em>" "<em>/foo/bar/baz/</em>" "<em>./baz/</em>" )
+		$( gettext "Extract targets relative to their parent directory instead of the current working directory. For example, a target named %s will be extracted into %s instead of %s." "<em>/foo/bar/baz.tar</em>" "<em>/foo/bar/baz/</em>" "<em>./baz/</em>" )
 "
 				} | __lib_DocFmt_formatTags | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
 
