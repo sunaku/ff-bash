@@ -60,7 +60,7 @@
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
-		if [[ -f "$f" && -r "$f" ]] # check permissions
+		if [[ -f "$t" && -r "$t" ]] # check permissions
 		then
 		
 			# update preset variables
@@ -82,13 +82,13 @@
 	__ff_main()
 	{
 		# scripting variables
-		local d f fn i l
+		local t d f fn i l
 		IFS=	# nullify to preserve whitespace
 		
 		begin	# user's control function
 		
 		# handle command-line targets
-		for f in "${__lib_ff_targetList[@]}"
+		for t in "${__lib_ff_targetList[@]}"
 		do
 			__ff_main_linear_
 		done
@@ -96,7 +96,7 @@
 		# handle piped targets
 		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 		then
-			while IFS= read -r f
+			while IFS= read -r t
 			do
 				__ff_main_linear_
 			done

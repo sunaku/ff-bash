@@ -181,10 +181,12 @@ $expression
 	# updates the values of preset variables during non-recursive mode
 	__lib_ff_updateVars_linear()
 	{
+		f=$t
+		
 #		echo "target=$f"
 #		echo "name=$( basename "$f" )"
 #		echo "parent=$( dirname "$f" )"
-		
+
 		# handle special cases
 		case "$f" in
 			/|.|..)
@@ -195,7 +197,7 @@ $expression
 				return	# no more processing needed
 			;;
 
-			/*|./*|../*) ;;	# do nothing for already explicit paths
+			/*|./*|../*) ;;	# path is already explicit
 
 			*)
 				f="./$f" # implicit paths -> explicit paths

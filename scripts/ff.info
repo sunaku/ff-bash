@@ -31,6 +31,7 @@
 print_info()
 {
 	echo "$1 {"
+	echo "\$t  = \"$t\""
 	echo "\$fn = \"$fn\""
 	echo "\$f  = \"$f\""
 	echo "\$d  = \"$d\""

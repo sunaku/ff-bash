@@ -147,6 +147,11 @@ __lib_DocFmt_blockStart
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "These variables provide information about the current target being handled." )"
 		
+		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$t$( __lib_DocFmt_setFmt bold 0 )"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem "$( gettext "The original name or value, as specified by the user, of the current target." )"
+		__lib_DocFmt_blockEnd
+		
 		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$fn$( __lib_DocFmt_setFmt bold 0 )"
 		__lib_DocFmt_blockStart
 			__lib_DocFmt_blockItem "$( gettext "The name of the current target." )"
