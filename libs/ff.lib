@@ -1,21 +1,32 @@
 #!/bin/bash
-# ff function library
+# ff-package function library
 
 ## globals
 
-	# set shell options for this session
+	# shell options
 	shopt -s nullglob
 
+	# temporary files
 	ff_tmpMask=${TMP:-/tmp}/ff_tmp$$
 	ff_tmp_userScript=${ff_tmpMask}.script
 	ff_tmp_swapFile=${ff_tmpMask}.swap
+	ff_tmp_targetList=${ff_tmpMask}.list
+	
+	# command line options
+	ff_baseOpts=ehs:t:
+	ff_baseOpts_optFlg_useEditor=e
+	ff_baseOpts_optFlg_showHelp=h
+	ff_baseOpts_optFlg_saveInput=s
+	ff_baseOpts_optFlg_targetList=t
 
 ## functions
-
-	# allows user to input scripting commands
+	
+	# Reads user's scripting commands from I/O redirection
+	# or standard input. Also saves user's script to file.
+	# @return	1	no input was given
 	ff_getScript()
 	{
-		if [ ${ff_cmdOpts_optEn_editor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] 
+		if [ ${ff_baseOpts_optEn_useEditor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] 
 		then
 			# launch user's editor
 			$EDITOR "$ff_tmp_userScript"
@@ -27,37 +38,32 @@
 		# check if no input was given
 		[ ! -s "$ff_tmp_userScript" ] && return 1
 		
-		return 0
-	}
-	
-	# save user script
-	ff_saveScript()
-	{
-		if [ ${ff_cmdOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$ff_cmdOpts_optArg_saveInput" ]
+		# save user's script to file
+		if [ ${ff_baseOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$ff_baseOpts_optArg_saveInput" ]
 		then
-			cp -i "$ff_tmp_userScript" "$ff_cmdOpts_optArg_saveInput"
+			cp -i "$ff_tmp_userScript" "$ff_baseOpts_optArg_saveInput" <&1
 		fi
-	}
-	
-	# if user's script doesn't include main() function,
-	# add it for them before evaluating their script
-	ff_checkScriptMain()
-	{
-		grep 'main()' "$ff_tmp_userScript" >& /dev/null
 		
-		if [ $? -ne 0 ]
-		then
-			awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$ff_tmp_userScript" > "$ff_tmp_swapFile"
-			mv "$ff_tmp_swapFile" "$ff_tmp_userScript"
-		fi
+		return 0
 	}
 	
 	# load user's script into RAM
 	ff_evalScript()
 	{
-		g_input=$( cat "$ff_tmp_userScript" )
-		eval "$g_input"
-		g_input=
+		# check if user's script uses control functions
+			fgrep 'main()' "$ff_tmp_userScript" >& /dev/null
+			
+			# wrap user's script around main()
+			if [ $? -gt 0 ]
+			then
+				awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$ff_tmp_userScript" > "$ff_tmp_swapFile"
+				mv "$ff_tmp_swapFile" "$ff_tmp_userScript"
+			fi
+		
+		# load script into RAM
+			g_input=$( cat "$ff_tmp_userScript" )
+			eval "$g_input"
+			g_input=
 	}
 	
 	# clean up and exit program
@@ -70,14 +76,43 @@
 		exit $1
 	}
 	
-	# display variables
-	ff_debug()
+	# setup the list of targets which will be performed upon
+	ff_setupTargets()
 	{
-		echo
-		echo "ff_debug(): \$fn = '$fn'"
-		echo "ff_debug(): \$f = '$f'"
-		echo "ff_debug(): \$d = '$d'"
-		echo "ff_debug(): \$w = '$w'"
-		echo
+		# use user's target list if specified
+		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ ! -z "$ff_baseOpts_optArg_targetList" ]
+		then
+			cp "$ff_baseOpts_optArg_targetList" "$ff_tmp_targetList"
+		else
+			# write command line arguments to target list
+			ls -d "${@}" > "$ff_tmp_targetList"
+		fi
+	}
+	
+	# scan base options and set flags
+	# @return 	5 	if user asked to see help message
+	# @param	$1	command line option flag to handle
+	ff_handleBaseOption()
+	{
+		case $1 in
+			$ff_baseOpts_optFlg_useEditor)
+				ff_baseOpts_optEn_useEditor=1
+			;;
+			$ff_baseOpts_optFlg_targetList)
+				ff_baseOpts_optEn_targetList=1
+				ff_baseOpts_optArg_targetList=$OPTARG
+			;;
+			$ff_baseOpts_optFlg_saveInput)
+				ff_baseOpts_optEn_saveInput=1
+				ff_baseOpts_optArg_saveInput=$OPTARG
+			;;
+			$ff_baseOpts_optFlg_showHelp)
+				# display help message which happens to be the documentation header of this file
+				sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
+				return 5
+			;;
+		esac
+		
+		return 0
 	}
 
