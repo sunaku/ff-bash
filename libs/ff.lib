@@ -38,20 +38,22 @@
 	
 	# command line options
 	
-		__lib_ff_options_shortFlag_evalExpr=e
-		__lib_ff_options_longFlag_evalExpr=expression
+		__lib_ff_options_shortFlag_evalExpr=-e
+		__lib_ff_options_longFlag_evalExpr=--expression
 		
-		__lib_ff_options_shortFlag_evalFile=f
-		__lib_ff_options_longFlag_evalFile=file
+		__lib_ff_options_shortFlag_evalFile=-f
+		__lib_ff_options_longFlag_evalFile=--file
 		
-		__lib_ff_options_shortFlag_readPipe=p
-		__lib_ff_options_longFlag_readPipe=pipe
+		__lib_ff_options_shortFlag_readPipe=-p
+		__lib_ff_options_longFlag_readPipe=--pipe
 		
-		__lib_ff_options_shortFlag_showHelp=h
-		__lib_ff_options_longFlag_showHelp=help
+		__lib_ff_options_shortFlag_showHelp=-h
+		__lib_ff_options_longFlag_showHelp=--help
 		
-		__lib_ff_options_shortFlag_showVersion=v
-		__lib_ff_options_longFlag_showVersion=version
+		__lib_ff_options_shortFlag_showVersion=-v
+		__lib_ff_options_longFlag_showVersion=--version
+		
+		__lib_ff_options_flag_endOpts=--
 
 ## libraries
 
@@ -168,6 +170,9 @@ $expression
 				echo $__lib_ff_version
 				exit
 			;;
+			"$__lib_ff_options_flag_endOpts")
+				return 255
+			;;
 		esac
 		
 		return 0
@@ -200,7 +205,7 @@ $expression
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized by the client script of this library
 			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList" "__lib_ff_handleOption"
 			then
-				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"--$__lib_ff_options_longFlag_showHelp\""
+				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"$__lib_ff_options_longFlag_showHelp\""
 				exit 1
 			fi
 		

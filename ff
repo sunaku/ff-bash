@@ -51,17 +51,17 @@
 ## global variables
 
 	# command line options
-	__ff_myOptions_shortFlag_handleHidden=a
-	__ff_myOptions_longFlag_handleHidden=all
+	__ff_myOptions_shortFlag_handleHidden=-a
+	__ff_myOptions_longFlag_handleHidden=--all
 	
-	__ff_myOptions_shortFlag_ignoreLinks=l
-	__ff_myOptions_longFlag_ignoreLinks=ignore-links
+	__ff_myOptions_shortFlag_ignoreLinks=-l
+	__ff_myOptions_longFlag_ignoreLinks=--ignore-links
 	
-	__ff_myOptions_shortFlag_recursive=r
-	__ff_myOptions_longFlag_recursive=recursive
+	__ff_myOptions_shortFlag_recursive=-r
+	__ff_myOptions_longFlag_recursive=--recursive
 	
-	__ff_myOptions_shortFlag_fileMask=m
-	__ff_myOptions_longFlag_fileMask=mask
+	__ff_myOptions_shortFlag_fileMask=-m
+	__ff_myOptions_longFlag_fileMask=--mask
 
 ## functions
 
