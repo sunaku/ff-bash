@@ -56,6 +56,8 @@
 
 		__lib_ff_options_flag_scriptArgs=--args
 
+		__lib_ff_options_flag_language=--lang
+
 ## libraries
 
 	source "$__ff_myResources_libs/CmdOpts.lib"
@@ -114,24 +116,24 @@ $expression
 	__lib_ff_handleBaseOption()
 	{
 		case $1 in
-			"$__lib_ff_options_shortFlag_evalExpr" | "$__lib_ff_options_longFlag_evalExpr")
+			$__lib_ff_options_shortFlag_evalExpr | $__lib_ff_options_longFlag_evalExpr)
 				__lib_ff_options_isOn_evalExpr=1
 				__lib_ff_options_value_evalExpr=$2
 				return 2
 			;;
 
-			"$__lib_ff_options_shortFlag_evalFile" | "$__lib_ff_options_longFlag_evalFile")
+			$__lib_ff_options_shortFlag_evalFile | $__lib_ff_options_longFlag_evalFile)
 				__lib_ff_options_isOn_evalFile=1
 				__lib_ff_options_value_evalFile=$2
 				return 2
 			;;
 
-			"$__lib_ff_options_shortFlag_readPipe" | "$__lib_ff_options_longFlag_readPipe")
+			$__lib_ff_options_shortFlag_readPipe | $__lib_ff_options_longFlag_readPipe)
 				__lib_ff_options_isOn_readPipe=1
 				return 1
 			;;
 
-			"$__lib_ff_options_shortFlag_showHelp" | "$__lib_ff_options_longFlag_showHelp")
+			$__lib_ff_options_shortFlag_showHelp | $__lib_ff_options_longFlag_showHelp)
 
 				local __lib_ff_docFile=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
 
@@ -177,14 +179,23 @@ $expression
 				exit
 			;;
 
-			"$__lib_ff_options_shortFlag_showVersion" | "$__lib_ff_options_longFlag_showVersion")
+			$__lib_ff_options_shortFlag_showVersion | $__lib_ff_options_longFlag_showVersion)
 				echo $__lib_ff_version
 				exit
 			;;
-			"$__lib_ff_options_flag_endOpts")
+			$__lib_ff_options_flag_language)
+				__ff_myLang=$2
+
+				# reload i18n resources
+					__lib_gettext_clear
+					__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
+
+				return 2
+			;;
+			$__lib_ff_options_flag_endOpts)
 				return 255
 			;;
-			"$__lib_ff_options_flag_scriptArgs")
+			$__lib_ff_options_flag_scriptArgs)
 
 				# XXX: the following undeclared vars are inherited from CmdOpts.lib
 
