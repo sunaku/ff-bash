@@ -4,7 +4,7 @@
 #	fl - for each line
 #
 # SYNOPSIS
-#	fl [-eh] file1 file2 ... [ < script_file ]
+#	fl [-eh] file1 file2 ... [ < script ]
 #
 # OPTIONS
 #	-e	Use a custom ${EDITOR} for entering scripting commands.
@@ -15,6 +15,8 @@
 #
 # ARGUMENTS
 #	file	Path to a file (non-directory).
+#
+#	script	Path to an existing script file.
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed

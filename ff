@@ -4,7 +4,7 @@
 #	ff - for each file
 #
 # SYNOPSIS
-#	ff [-reh] file1 file2 ... [ < script_file ]
+#	ff [-reh] file1 file2 ... [ < script ]
 #
 # OPTIONS
 #	-r	Recursively handle subdirectories. Directories are handled
@@ -18,6 +18,8 @@
 #
 # ARGUMENTS
 #	file	Path to a file (non-directory) or directory.
+#
+#	script	Path to an existing script file.
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed
