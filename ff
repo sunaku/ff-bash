@@ -37,6 +37,7 @@
 	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
 	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
 	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n resources
+	__ff_myLang=${LC_MESSAGES:0:2}		# language code
 	
 ## libraries
 
@@ -101,9 +102,9 @@
 				if [ -d "$__ff_baseDir" ] # handle directories only
 				then
 					# make implicit relative paths explicit
-					[ "${__ff_baseDir:0:1}" != '/' ] && __ff_baseDir="./$__ff_baseDir"
+					[[ "${__ff_baseDir:0:1}" != '/' && "${__ff_baseDir:0:1}" != '.' ]] && __ff_baseDir="./$__ff_baseDir"
 				
-					find "$__ff_baseDir" | #${__ff_myOptions_isOn_followLinks:--follow} ${__ff_myOptions_isOn_handleHidden:--name '[^.]*'} |
+					find "$__ff_baseDir" -depth | #${__ff_myOptions_isOn_followLinks:--follow} ${__ff_myOptions_isOn_handleHidden:--name '[^.]*'} |
 					while read f
 					do
 						# set scripting variables
@@ -121,7 +122,7 @@
 			for f in "${__lib_CmdOpts_argList[@]}"
 			do
 				# make implicit relative paths explicit
-				[ "${f:0:1}" != '/' ] && f="./$f"
+				[[ "${f:0:1}" != '/' && "${f:0:1}" != '.' ]] && f="./$f"
 				
 				# set scripting variables
 				f=${f%/}
@@ -144,5 +145,6 @@
 	main() { :; }
 	
 	# begin script
-	__lib_ff_main "${@}"
+	__lib_CmdOpts_argList=( "${@}" )	# init arguments array
+	__lib_ff_main
 
