@@ -1,0 +1,85 @@
+#!/bin/bash
+# Library for parsing command line options.
+#
+# The function '_cmdOpts_handleOption()' must be overridden by the client script.
+
+## globals
+
+	declare -a _cmdOpts_argList
+
+## functions
+	
+	# Scans '_cmdOpts_argList' for command-line options.
+	# When an option is found, '_cmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '_cmdOpts_argList'.
+	#
+	# @return	1	Illegal option encountered
+	_cmdOpts_scanOptions()
+	{
+#		declare -a ; read < /dev/tty
+		
+		local i=0 j=0 k opt
+		
+		while [ $i -lt ${#_cmdOpts_argList[@]} ]
+		do
+			let j=i+1
+			
+			opt=${_cmdOpts_argList[$i]}
+			
+			if [ "${opt:0:1}" == "-" ]	# handle short opts
+			then
+			
+				# handle multiple opts that are jumbled into one word
+				k=1	# +1 to skip '-' prefix
+				while [ $k -lt ${#opt} ]
+				do
+					_cmdOpts_handleOption "${opt:$k:1}" "${_cmdOpts_argList[$j]}"
+					! _cmdOpts_scanOptions_handleReturnValue $? && return 1	# illegal option encountered
+					
+					let k=k+1
+				done
+					
+			elif [ "${opt:0:2}" == "--" ]		# handle long opts
+			then
+			
+				_cmdOpts_handleOption "${opt#--}" "${_cmdOpts_argList[$j]}"
+				! _cmdOpts_scanOptions_handleReturnValue $? && return 1	# illegal option encountered
+			fi
+			
+			let i=i+1
+		done
+	
+#		declare -a ; read < /dev/tty
+		return 0
+	}
+	
+	# handles the return value from '_cmdOpts_handleOption()'
+	# @param	1	the return value to handle
+	_cmdOpts_scanOptions_handleReturnValue()
+	{
+		case $1 in
+			2)
+				unset -v _cmdOpts_argList[$j]	# remove the option's argument
+				unset -v _cmdOpts_argList[$i]	# remove the option's name
+				
+				let j=j+1	# increment argument index
+			;;
+			1)
+				unset -v _cmdOpts_argList[$i]	# remove the option's name
+			;;
+			*)
+				return 1	# illegal option
+		esac
+		
+		return 0
+	}
+	
+	# Handles the parsing of a command-line option and its possible argument.
+	# @param	1	option's name
+	# @param	2	option's argument
+	#
+	# One of the following values must be returned:
+	# @return	0	The given option is illegal.
+	# @return	1	The given option has no argument.
+	# @return	2	The given option has an argument.
+	_cmdOpts_handleOption() { return 0; }
+
