@@ -1,106 +1,112 @@
 #!/bin/bash
-# ff-package function library
+# Common function library for "ff" package programs.
+#
+# $_ff_path* variables must be previously defined.
+#
+# This file is distributed under the same license as the "ff" package.
 
 ## globals
 
-	ff_version=1.6.6
-
-	# shell options
-	shopt -s nullglob
+	_ff_version=1.6.7
 
 	# temporary files
-	ff_tmpMask=${TMP:-/tmp}/ff_tmp$$
-	ff_tmp_userScript=${ff_tmpMask}.script
-	ff_tmp_swapFile=${ff_tmpMask}.swap
+	_ff_tmpMask=${TMP:-/tmp}/_ff_tmp$$
+	_ff_tmp_userScript=${_ff_tmpMask}.script
+	_ff_tmp_swapFile=${_ff_tmpMask}.swap
 	
 	# command line options
-	ff_baseOpts=ehs:t:v
-	ff_baseOpts_optFlg_useEditor=e
-	ff_baseOpts_optFlg_showHelp=h
-	ff_baseOpts_optFlg_saveInput=s
-	ff_baseOpts_optFlg_targetList=t
-	ff_baseOpts_optFlg_showVersion=v
+	_ff_baseOpts=ehs:t:v
+	_ff_baseOpts_optFlg_useEditor=e
+	_ff_baseOpts_optFlg_showHelp=h
+	_ff_baseOpts_optFlg_saveInput=s
+	_ff_baseOpts_optFlg_targetList=t
+	_ff_baseOpts_optFlg_showVersion=v
 	
 	# targets
-	declare -a ff_targetArray
+	declare -a _ff_targetArray
+	
+## libraries
+
+	source ${_ff_base_lib}/gte
+	source ${_ff_base_lib}/doc
 
 ## functions
 	
 	# Reads user's scripting commands from I/O redirection
 	# or standard input. Also saves user's script to file.
 	# @return	1	no input was given
-	ff_getScript()
+	_ff_getScript()
 	{
-		if [ ${ff_baseOpts_optEn_useEditor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] 
+		if [ ${_ff_baseOpts_optEn_useEditor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] 
 		then
 			# launch user's editor
-			$EDITOR "$ff_tmp_userScript"
+			$EDITOR "$_ff_tmp_userScript"
 		else
 			# take user input from terminal or file
-			cat > "$ff_tmp_userScript"
+			cat > "$_ff_tmp_userScript"
 		fi
 		
 		# check if no input was given
-		[ ! -s "$ff_tmp_userScript" ] && return 1
+		[ ! -s "$_ff_tmp_userScript" ] && return 1
 		
 		# save user's script to file
-		if [ ${ff_baseOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$ff_baseOpts_optArg_saveInput" ]
+		if [ ${_ff_baseOpts_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$_ff_baseOpts_optArg_saveInput" ]
 		then
-			cp -i "$ff_tmp_userScript" "$ff_baseOpts_optArg_saveInput" <&2
+			cp -i "$_ff_tmp_userScript" "$_ff_baseOpts_optArg_saveInput" <&2
 		fi
 		
 		return 0
 	}
 	
 	# load user's script into RAM
-	ff_evalScript()
+	_ff_evalScript()
 	{
 		# check if user's script uses control functions
-			fgrep 'main()' "$ff_tmp_userScript" >& /dev/null
+			fgrep 'main()' "$_ff_tmp_userScript" >& /dev/null
 			
 			# wrap user's script around main()
 			if [ $? -gt 0 ]
 			then
-				awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$ff_tmp_userScript" > "$ff_tmp_swapFile"
-				mv "$ff_tmp_swapFile" "$ff_tmp_userScript"
+				awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$_ff_tmp_userScript" > "$_ff_tmp_swapFile"
+				mv "$_ff_tmp_swapFile" "$_ff_tmp_userScript"
 			fi
 		
 		# load script into RAM
-			g_input=$( < "$ff_tmp_userScript" )
+			g_input=$( < "$_ff_tmp_userScript" )
 			eval "$g_input"
 			g_input=
 	}
 	
 	# clean up and exit program
-	ff_exit()
+	_ff_exit()
 	{
 		# clean up temp files
-		rm -f ${ff_tmpMask}*
+		rm -f ${_ff_tmpMask}*
 		
 		# exit with given code
 		exit $1
 	}
 	
 	# setup the list of targets which will be performed upon
-	ff_setupTargets()
+	_ff_setupTargets()
 	{
 		local arg
 		
-		if [[ ${ff_baseOpts_optEn_targetList:-0} -eq 1 && -s "$ff_baseOpts_optArg_targetList" ]]
+		if [[ ${_ff_baseOpts_optEn_targetList:-0} -eq 1 && -s "$_ff_baseOpts_optArg_targetList" ]]
 		then
 			# use targets listed in a file
 			while read arg
 			do
-				ff_targetArray[${#ff_targetArray[@]}]=$arg
-			done < "$ff_baseOpts_optArg_targetList"
+				_ff_targetArray[${#_ff_targetArray[@]}]=$arg
+			done < "$_ff_baseOpts_optArg_targetList"
 		else
 			# use targets given on command line
 			for arg
 			do
 				# exclude command line options and their arguments
-				if [[ ${arg:0:1} != "-" || ${ff_baseOpts_optEn_saveInput:-0} -eq 1 && "$arg" != "$ff_baseOpts_optArg_saveInput" ]]
+				if [[ ${arg:0:1} != "-" || ${_ff_baseOpts_optEn_saveInput:-0} -eq 1 && "$arg" != "$_ff_baseOpts_optArg_saveInput" ]]
 				then
-					ff_targetArray[${#ff_targetArray[@]}]=$arg
+					_ff_targetArray[${#_ff_targetArray[@]}]=$arg
 				fi
 			done
 		fi
@@ -111,27 +117,35 @@
 	# 		2 	help message
 	#		3	version
 	# @param	$1	command line option flag to handle
-	ff_handleBaseOption()
+	_ff_handleBaseOption()
 	{
 		case $1 in
-			$ff_baseOpts_optFlg_useEditor)
-				ff_baseOpts_optEn_useEditor=1
+			$_ff_baseOpts_optFlg_useEditor)
+				_ff_baseOpts_optEn_useEditor=1
 			;;
-			$ff_baseOpts_optFlg_targetList)
-				ff_baseOpts_optEn_targetList=1
-				ff_baseOpts_optArg_targetList=$OPTARG
+			$_ff_baseOpts_optFlg_targetList)
+				_ff_baseOpts_optEn_targetList=1
+				_ff_baseOpts_optArg_targetList=$OPTARG
 			;;
-			$ff_baseOpts_optFlg_saveInput)
-				ff_baseOpts_optEn_saveInput=1
-				ff_baseOpts_optArg_saveInput=$OPTARG
+			$_ff_baseOpts_optFlg_saveInput)
+				_ff_baseOpts_optEn_saveInput=1
+				_ff_baseOpts_optArg_saveInput=$OPTARG
 			;;
-			$ff_baseOpts_optFlg_showHelp)
-				# display help message which happens to be the documentation header of this file
-				sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
+			$_ff_baseOpts_optFlg_showHelp)
+			
+				# choose translated docs based upon locale
+				local doc_file="${_ff_base_doc}/${_ff_name}_doc"
+				local doc_i18n="${_ff_base_i18n}/${_ff_name}_doc.${LANG:0:2}.po"	# gettext translation catalog
+				
+				# display documentation
+				_gte_load "$doc_i18n"
+					source "$doc_file" | fmt | more
+				_gte_free
+				
 				return 2
 			;;
-			$ff_baseOpts_optFlg_showVersion)
-				echo $ff_version
+			$_ff_baseOpts_optFlg_showVersion)
+				echo $_ff_version
 				return 3
 			;;
 			*)
@@ -143,35 +157,35 @@
 	}
 	
 	# base application logic
-	ff_baseLogic()
+	_ff_baseLogic()
 	{
 		# ensures proper clean up
-			trap 'ff_exit' INT EXIT
+			trap '_ff_exit' INT EXIT
 
 		# scan command line options
 
-			ff_scanOptions "${@}"
+			_ff_scanOptions "${@}"
 
 			# exit if help message was displayed or illegal options were given
-			[ $? -gt 0 ] && ff_exit
+			[ $? -gt 0 ] && _ff_exit
 
 		# get user's script & save it
 
-			ff_getScript
+			_ff_getScript
 
 			# exit if no script was given
-			[ $? -gt 0 ] && ff_exit
+			[ $? -gt 0 ] && _ff_exit
 
 		# handle user's script
 
 			# load script into RAM
-			ff_evalScript
+			_ff_evalScript
 
 			# generate list of targets to perform upon
-			ff_setupTargets "${@}"
+			_ff_setupTargets "${@}"
 
 			# execute script
-			ff_main
+			_ff_main
 
 		# finished
 	}
