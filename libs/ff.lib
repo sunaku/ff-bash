@@ -133,7 +133,7 @@ $expression
 			
 			"$__lib_ff_options_shortFlag_showHelp" | "$__lib_ff_options_longFlag_showHelp")
 			
-				local __lib_ff_docFile="$__ff_myName.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
+				local __lib_ff_docFile=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
 				
 				# NOTE: there are no translation catalogs for English because the documentation is written in English
 			
