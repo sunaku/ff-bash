@@ -16,11 +16,12 @@
 # globals
 	g_tmpfileMask="/tmp/$$"
 	g_script="${g_tmpfileMask}.script"
-	g_args=$*
+	g_args=$@
 
 # check for args
-	if [ "$g_args" == "" ] ; then
-		g_args=`ls | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '`
+	if [ $# -eq 0 ] ; then
+		#g_args=`ls | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '`
+		g_args=*
 	fi
 
 # get user commands
