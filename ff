@@ -29,144 +29,141 @@
 
 ## global paths
 
-	# path to this program
-	if [ -L "$0" ]
-	then # dereference if path is symlink
-		__ff_myPath=$( find "$0" -printf "%l" )
-	else
-		__ff_myPath=$0
-	fi
+	__ff_myPath=$0	# path to this program
 	
-	__ff_myName=${__ff_myPath##*/}		# basename of this program
-	__ff_myHome=${__ff_myPath%/*}		# dirname of this program
-	__ff_myResources_libs="${__ff_myHome}/libs"	# libraries
-	__ff_myResources_docs="${__ff_myHome}/docs"	# documentation
-	__ff_myResources_i18n="${__ff_myHome}/i18n"	# i18n resources
-	__ff_myLang=${LANG:0:2}		# language code
+		# dereference symbolic-links until full path is obtained
+		while [ -L "$__ff_myPath" ]
+		do
+			__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
+		done
+	
+	__ff_myName=${__ff_myPath##*/}	# basename of this program
+	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
+	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
+	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
+	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
+	__ff_myLang=$( locale | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 	
 ## libraries
 
-	source ${__ff_myResources_libs}/ff.lib
+	source "$__ff_myResources_libs/ff.lib"
 
 ## global variables
 
-	# temporary files
-
 	# command line options
+	__ff_myOptions_shortFlag_handleHidden=a
+	__ff_myOptions_longFlag_handleHidden=all
 	
-		__ff_myOptions_shortFlag_handleHidden=a
-		__ff_myOptions_longFlag_handleHidden=all
-		
-		__ff_myOptions_shortFlag_followLinks=d
-		__ff_myOptions_longFlag_followLinks=dereference
-		
-		__ff_myOptions_shortFlag_recursive=r
-		__ff_myOptions_longFlag_recursive=recursive
-		
-		__ff_myOptions_shortFlag_fileMask=m
-		__ff_myOptions_longFlag_fileMask=mask
+	__ff_myOptions_shortFlag_ignoreLinks=l
+	__ff_myOptions_longFlag_ignoreLinks=ignore-links
+	
+	__ff_myOptions_shortFlag_recursive=r
+	__ff_myOptions_longFlag_recursive=recursive
+	
+	__ff_myOptions_shortFlag_fileMask=m
+	__ff_myOptions_longFlag_fileMask=mask
 
 ## functions
 
 	# handles parsing of command-line options
-	__lib_CmdOpts_handleOption()
+	__lib_ff_handleOption()
 	{
 		case "$1" in
-			$__ff_myOptions_shortFlag_handleHidden | $__ff_myOptions_longFlag_handleHidden)
+			"$__ff_myOptions_shortFlag_handleHidden" | "$__ff_myOptions_longFlag_handleHidden")
 				__ff_myOptions_isOn_handleHidden=1
 				return 1
 			;;
-			$__ff_myOptions_shortFlag_followLinks | $__ff_myOptions_longFlag_followLinks)
-				__ff_myOptions_isOn_followLinks=1
+			"$__ff_myOptions_shortFlag_ignoreLinks" | "$__ff_myOptions_longFlag_ignoreLinks")
+				__ff_myOptions_isOn_ignoreLinks=1
 				return 1
 			;;
-			$__ff_myOptions_shortFlag_recursive | $__ff_myOptions_longFlag_recursive)
+			"$__ff_myOptions_shortFlag_recursive" | "$__ff_myOptions_longFlag_recursive")
 				__ff_myOptions_isOn_recursive=1
 				return 1
 			;;
-			$__ff_myOptions_shortFlag_fileMask | $__ff_myOptions_longFlag_fileMask)
+			"$__ff_myOptions_shortFlag_fileMask" | "$__ff_myOptions_longFlag_fileMask")
 				__ff_myOptions_isOn_fileMask=1
 				__ff_myOptions_value_fileMask=$2
 				return 2
 			;;
 			*) # handle base options
-				__lib_ff_handleOption "$1" "$2"
+				__lib_ff_handleBaseOption "$1" "$2"
 				return $?
 			;;
 		esac
 	}
 
 	# code for recursive mode
+	# @param	1	path of directory to perform upon
 	__ff_main_recursive_()
 	{
-		if [ -d "$__ff_baseDir" ] # handle directories only
-		then
-			find "$__ff_baseDir" "${__ff_findOpts[@]}" -print |
-			while read -r f
-			do
-				# set scripting variables
-				fn=${f##*/}
-				d=${f%/*}
+		local d=$1
+		
+		# handle all directories
+		for f in "$d"/*
+		do
+			if [ -d "$f" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$f" ]]
+			then
 				
-				main	# user function
-			done
-		fi
+				echo "(recursive) entering '$f'"
+				__ff_main_recursive_ "$f"
+			fi
+		done
+		
+		# handle all files
+		for f in "$d"/${__ff_myOptions_value_fileMask:-*}
+		do
+			# set scripting variables
+			fn=${f##*/}	# keep everything after the last slash
+			
+			main	# user function
+		done
+		
+		echo "(recursive) leaving '$d'"
 	}
 	
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
-		# make implicit relative paths explicit
-		[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
+		# make implicit relative paths explicit; ex: "foo" becomes "./foo"
+		[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" && "${f:0:3}" != "../" ]] && f="./$f"
+			
+		# update preset variables
+		f=${f%%*(/)}	# remove all trailing slashes; ex: "foo////" becomes "foo"
+		fn=${f##*/}	# keep everything after the last slash
+		d=${f%/*}	# keep everything before the last slash
+		d=${d:-/}	# special case: $d is empty when it should be /
 		
-		# set scripting variables
-		f=${f%/}
-		fn=${f##*/}
-		d=${f%/*}
-		
-		main	# user function
+		# invoke control functions
+		main
 	}
 	
 	__ff_main()
 	{
-		# scripting variables
-		local w=$PWD d f fn
+		# preset variables
+		local d f fn
 		
-		begin	# user function
+		begin	# user's control function
 
 		# check method of operation: recursive or non-recursive
 		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation
 		then
 		
-			local __ff_baseDir __ff_findOpts=-depth
-
-			# handle options for recursive behavior
-				[ ${__ff_myOptions_isOn_followLinks:-0} -eq 1 ] && __ff_findOpts[${#__ff_findOpts[@]}]=-follow
-				
-				# filename masking
-				if [ ${__ff_myOptions_isOn_fileMask:-0} -eq 1 ]
-				then
-					__ff_findOpts[${#__ff_findOpts[@]}]=-name
-					__ff_findOpts[${#__ff_findOpts[@]}]=$__ff_myOptions_value_fileMask
-					
-				elif [ ${__ff_myOptions_isOn_handleHidden:-0} -eq 0 ]
-				then
-					__ff_findOpts[${#__ff_findOpts[@]}]=-name
-					__ff_findOpts[${#__ff_findOpts[@]}]='*'
-				fi
-			
+			# handle hidden file-names
+			[ ${__ff_myOptions_isOn_handleHidden:-0} -eq 1 ] && shopt -s dotglob
+		
 			# handle command-line targets
-			for __ff_baseDir in "${__lib_ff_targetList[@]}"
+			for d in "${__lib_ff_targetList[@]}"
 			do
-				__ff_main_recursive_
+				[ -d "$d" ] && __ff_main_recursive_ "$d"
 			done
 			
 			# handle piped targets
 			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 			then
-				while read -r __ff_baseDir
+				while read -r d
 				do
-					__ff_main_recursive_
+					[ -d "$d" ] && __ff_main_recursive_ "$d"
 				done
 			fi
 
@@ -188,17 +185,16 @@
 			fi
 		fi
 
-		end	# user function
+		end	# user's control function
 	}
 
 ## main script logic
 
-	# dummy user functions
+	# dummy control functions
 	begin() { :; }
 	end() { :; }
 	main() { :; }
 	
-	# begin script
 	__lib_ff_targetList=( "${@}" )	# init arguments array
 	__lib_ff_main
 
