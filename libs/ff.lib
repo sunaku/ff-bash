@@ -1,0 +1,63 @@
+#!/bin/bash
+# ff function library
+# Contains helper functions used in the ff package.
+#
+
+# allows user to input scripting commands
+ff_getScript()
+{
+	if [ ${g_optEn_editor:-0} -eq 1 ] && [ ! -z "$EDITOR" ] ; then
+		# launch user's editor
+		$EDITOR "$g_tmpfile_UsrInput"
+	else
+		# take user input from terminal or file
+		cat > "$g_tmpfile_UsrInput"
+	fi
+	
+	# check if any input was given
+	if [ ! -s "$g_tmpfile_UsrInput" ] ; then
+		return 1
+	fi
+	
+	return 0
+}
+
+# save user script
+ff_saveScript()
+{
+	if [ ${g_optEn_saveInput:-0} -eq 1 ] && [ ! -z "$g_optArg_saveInput" ]
+	then
+		cp -i "$g_tmpfile_UsrInput" "$g_optArg_saveInput"
+	fi
+}
+
+# if user's script doesn't include main() function,
+# add it for them before evaluating their script
+ff_checkScriptMain()
+{
+	grep 'main()' "$g_tmpfile_UsrInput" >& /dev/null
+	
+	if [ $? -ne 0 ]
+	then
+		awk "BEGIN { print \"main(){ \" } { print } END { print \"}\" }" "$g_tmpfile_UsrInput" > "$g_tmpfile_swap"
+		mv "$g_tmpfile_swap" "$g_tmpfile_UsrInput"
+	fi
+}
+
+# clean up and exit program
+ff_exit()
+{
+	# clean up temp files
+	rm -f ${g_tmpfileMask}*
+	
+	exit $1
+}
+
+# load user's script into RAM
+ff_evalScript()
+{
+	g_input=$( cat "$g_tmpfile_UsrInput" )
+	eval "$g_input"
+	g_input="" # free storage
+}
+
