@@ -42,10 +42,8 @@ main()
 		### adjust this
 		zip_outdir="$w/${fn}__"
 	
-		# create output directory
-		[ ! -e "$out_dir" ] && mkdir -p "$out_dir"
-		
 		# extract the archive
-		unzip -o "$f" -d "$out_dir"
+		unzip -o "$f" -d "$zip_outdir"
 	fi
 }
+
