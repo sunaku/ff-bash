@@ -73,8 +73,6 @@
 	
 # scan options
 
-	echo "#args = " $#
-
 	while getopts "$g_options" opt
 	do
 		case "$opt" in
