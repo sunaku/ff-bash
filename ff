@@ -84,7 +84,7 @@
 			;;
 			*)
 				# display help message, which happens to be the documentation header for this file
-				cat "$0" | sed -e '/^####/q' -e 's/^# *//' | more
+				cat $0 | sed -e '/^####/q' -e 's/^# *//' | more
 				exit 0
 			;;
 		esac
