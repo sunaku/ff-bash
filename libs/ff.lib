@@ -91,6 +91,7 @@
 	
 	# scan base options and set flags
 	# @return 	5 	if user asked to see help message
+	#		1	illegal option
 	# @param	$1	command line option flag to handle
 	ff_handleBaseOption()
 	{
@@ -110,6 +111,9 @@
 				# display help message which happens to be the documentation header of this file
 				sed -e '1d' -e '/^$/q' -e 's/^# *//' $0 | more
 				return 5
+			;;
+			*)
+				return 1
 			;;
 		esac
 		
