@@ -81,7 +81,7 @@
 	# setup the list of targets which will be performed upon
 	ff_setupTargets()
 	{
-		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ -n "$ff_baseOpts_optArg_targetList" ]
+		if [ ${ff_baseOpts_optEn_targetList:-0} -eq 1 ] && [ -s "$ff_baseOpts_optArg_targetList" ]
 		then
 			# use targets listed in a file
 			local line
