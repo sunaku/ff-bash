@@ -21,7 +21,7 @@
 	pack_ver=$1
 
 	# files that use gettext
-	pot_in=( ../libs/ff.lib ../docs/manual ../examples/* )
+	pot_in=( ../libs/[^g]* ../docs/manual ../examples/* )
 	pot_out=../i18n/catalog.pot
 
 	# files that need to be translated; these are automatically packaged
