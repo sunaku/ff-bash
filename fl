@@ -1,0 +1,130 @@
+#!/bin/bash
+#
+# NAME
+#	fl - for each line
+#
+# SYNOPSIS
+#	fl [-reh] target ...
+#
+# DESCRIPTION
+#	Allows the user to write an embedded BASH script which will be executed
+#	once for each line in the specified files.
+#
+#	The procedure given by the user is interpreted directly by the BASH
+#	shell. So you can think of this tool as a way to iteratively execute a 
+#	BASH script upon a large block of text.
+#
+#	If you wish to input your custom script using a text editor, set a 
+#	global shell variable ${EDITOR} to the path of your favorite text 
+#	editor. For example: `export EDITOR='path to editor'`.
+#
+#	If you wish to invoke an existing script, you can do so via piping or 
+#	redirection. For example, to run a script named 'ff.script' upon a 
+#	file 'my_file', you would run the following.
+#
+#		Method 1: 	fl my_file < ff.script
+#		Method 2:	cat ff.script | fl my_file
+#
+#	Notice that the '-e' option is not present. Omitting '-e' allows you to
+#	pipe or redirect input to 'fl'.
+#
+# PRESET VARIABLES
+#	The following preset variables are available for use in users' scripts.
+#	Note that the UNIX term 'file' refers to both files and directories.
+#
+#	$f	basename of current file (or directory)
+#	$d	relative path to current working directory
+#	$n	number of lines in current file
+#	$i	line number of current line
+#	$l	contents of current line
+#
+# OPTIONS
+#	-e	Use a custom ${EDITOR} for entering scripting commands. 
+#		This option disables the ability to pipe or redirect data 
+#		to this tool.
+#
+#	-h	Display this help message.
+#
+# AUTHORS
+# 	Suraj Kurapati <skurapat@ucsc.edu>
+#
+# LICENSE
+#	This program is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; either version 2 of the License, or   
+#	(at your option) any later version.
+#
+####
+
+# globals
+	g_tmpfileMask="/tmp/$$"
+	g_tmpfile_UsrInput="${g_tmpfileMask}.usrInput"
+	
+	# option flags
+	g_options="eh"
+	g_opt_editor=e
+	
+	# option enabled flags. enabled = 1, disabled = 0
+	g_optEn_editor=0
+	
+# scan options
+
+	while getopts "$g_options" opt
+	do
+		case "$opt" in
+			$g_opt_editor)
+				g_optEn_editor=1
+			;;
+			*)
+				# display help message, which happens to be the documentation header for this file
+				cat $0 | sed -e '/^####/q' -e 's/^# *//' | more
+				exit 0
+			;;
+		esac
+	done
+	
+	
+# allow user to input scripting commands
+	
+	if [ $g_optEn_editor -eq 1 ] && [ "$EDITOR" != "" ] ; then
+		$EDITOR $g_tmpfile_UsrInput
+	else
+		cat > $g_tmpfile_UsrInput
+	fi
+	
+# check user script
+	if [ -z $g_tmpfile_UsrInput ] ; then
+		g_input=break
+	else
+		g_input=$( cat $g_tmpfile_UsrInput )
+	fi
+
+# operate on given files, don't handle subdirs
+# NOTE: filename fragment handling is *NOT* needed here
+	
+	# set path of current directory
+	d="$PWD"
+	
+	# loop through positional params
+	for f
+	do
+		# determine file size
+		n=$( wc -l "$f" | awk '{ print $1 }' )
+		let "i = 1"
+		
+		while [ $i -le $n ]
+		do
+			# read line from file
+			l=$( sed -n "$i p" "$f" )
+			
+			# execute user specified commands
+			eval "$g_input"
+			
+			# increment line number
+			let "i = i + 1"
+		done
+	done
+	
+# cleanup
+	rm -f ${g_tmpfileMask}*
+
