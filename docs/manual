@@ -59,10 +59,10 @@ echo \
 	<b>$__ff_myName</b> [ <u>$( gettext "option" )</u> | <u>$( gettext "target" )</u> ]...
 
 		<u>$( gettext "option" )</u>
-			$( gettext "A mechanism by which the behavior of this tool can be altered. Note that a series of short options can be grouped together into one word. For example, the sequence %s can also be written as %s." "<em>-a 1 -b 2 -c 3</em>" "<em>-abc 1 2 3</em>" )
+			$( gettext "A mechanism by which the behavior of this tool can be altered. Note that a series of short %s can be written as one. For example, the sequence %s can also be written as %s." "<u>$( gettext "options" )</u>" "<em>-a 1 -b 2 -c 3</em>" "<em>-abc 1 2 3</em>" )
 
 		<u>$( gettext "target" )</u>
-			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed. Note that a target need not necessarily be the name of or the path to a file; it can be a %s, string, number, or any other form of abstraction the user requires." "UNIX" "URL" )
+			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed. This parameter is not restricted to being the name of or the path to a file; it can be a %s, string, number, or any other form of abstraction the user requires." "UNIX" "URL" )
 
 	$( gettext "If neither the %s nor the %s option is used, then shell commands will be read interactively from the user's terminal device (located at %s) until the user issues the %s signal by pressing %s." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<em>/dev/tty</em>" "EOT" "<em>$( gettext "Control" )-$( gettext "D" )</em>" )
 
@@ -75,24 +75,24 @@ echo \
 		$( gettext "Pass all command-line arguments that are specified after this option to %s. This option allows one to specify command-line arguments for the user's shell commands." "<em>begin()</em>" )
 
 	<b>$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
-		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
+		$( gettext "Execute the shell commands contained in %s. The %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
 
 	<b>$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>
 		$( gettext "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )
 
 	<b>$__lib_ff_options_flag_showHelp</b> [<u>$( gettext "language-code" )</u>]
-		$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "ISO-639 <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
+		$( gettext "Display this manual in the language denoted by the %s and exit. If %s is unspecified, then the value of the %s locale attribute is used in its place." "<em>ISO-639</em> <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
 
 	<b>$__lib_ff_options_flag_language</b> <u>$( gettext "language-code" )</u>
 		$( gettext "Assume that the language code of the current locale is %s and ignore the value defined by the %s locale attribute." "<u>$( gettext "language-code" )</u>" "<em>LC_MESSAGES</em>" )
 
 	<b>$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
-		$( gettext "Read the standard input stream for a list of targets, which by default are delimited by the new-line character, in addition to those specified on the command-line. Note that targets specified on the command-line are handled before those specified using this option." )
+		$( gettext "Read the standard input stream for a list of targets, which by default are delimited by the new-line character, in addition to those specified on the command-line. Targets specified on the command-line are handled before those specified using this option." )
 
 		$( gettext "The following subordinate options have no effect if used without this option:" )
 
 		<b>$__lib_ff_options_flag_pipeDelim</b> <u>$( gettext "delimiter" )</u>
-			$( gettext "Assume that targets listed on the standard input stream are seperated by %s instead of the new-line character. Note that at least one new-line character must be present at the very end of the list of targets that are specified on the standard input stream." "<u>$( gettext "delimiter" )</u>" )
+			$( gettext "Assume that targets listed on the standard input stream are separated by %s instead of the new-line character. At least one new-line character must be present at the very end of the list of targets that are specified on the standard input stream." "<u>$( gettext "delimiter" )</u>" )
 
 $(
 	if [ "$__ff_myName" == ff ]
@@ -110,7 +110,7 @@ $(
 				$( gettext "Do not traverse symbolic links that reference directories." )
 
 			<b>$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>
-				$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target's name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<em>*</em>" "<em>?</em>" "<em>[]</em>" "<em>.</em>" )
+				$( gettext "Only handle targets whose names match the pattern defined by %s. Unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target's name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<em>*</em>" "<em>?</em>" "<em>[]</em>" "<em>.</em>" )
 
 "
 	fi
@@ -127,7 +127,7 @@ $(
 		$( gettext "These functions allow for greater control over the execution of the user's shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "<em>main()</em>" )
 
 		<b>begin()</b>
-			$( gettext "This function is invoked before any targets have been handled. Note that if any command-line arguments are specified for the user's shell commands, then they are passed directly to this function." )
+			$( gettext "This function is invoked before any targets have been handled. If any command-line arguments are specified for the user's shell commands, then they are passed directly to this function." )
 
 		<b>main()</b>
 			$( gettext "This function is invoked once per each target." )
@@ -143,7 +143,7 @@ $(
 		echo \
 "
 		<b>begin_file()</b>
-			$( gettext "This function is invoked before any lines in the current target have been handled. Note that this is a good place to change any delimiters before the target is parsed." )
+			$( gettext "This function is invoked before any lines in the current target have been handled. This is a good place to change any delimiters before the target is parsed." )
 
 		<b>end_file()</b>
 			$( gettext "This function is invoked after all lines in the current target have been handled." )
@@ -176,6 +176,37 @@ $(
 "
 	fi
 )
+		<b>\$__ff_myPath</b>
+			$( gettext "Either a relative or absolute path to this tool." )
+
+		<b>\$__ff_myName</b>
+			$( gettext "The name of this tool without its path information." )
+
+		<b>\$__ff_myHome</b>
+			$( gettext "Either a relative or absolute path to the directory in which this tool resides." )
+
+		<b>\$__ff_myConf</b>
+			$( gettext "Either a relative or absolute path to directory in which user settings and resource files reside." )
+
+		<b>\$__ff_myLang</b>
+			$( gettext "The user's %s language code." "<em>ISO-639</em>" )
+
+		<b>\$__ff_myResources_docs</b>
+			$( gettext "Either a relative or absolute path to the directory which contains documentation for this tool." )
+
+		<b>\$__ff_myResources_i18n</b>
+			$( gettext "Either a relative or absolute path to the directory which contains internationalization resources, such as translation catalogs." )
+
+		<b>\$__ff_myResources_libs</b>
+			$( gettext "Either a relative or absolute path to the directory which contains libraries used by this tool." )
+
+	<b>$( gettext "LIBRARIES" )</b>
+
+		<b>$__ff_myResources_libs/CmdOpts.lib</b>
+			$( gettext "A library for parsing complex command-line options." )
+
+		<b>$__ff_myResources_libs/gettext.lib</b>
+			$( gettext "A library that emulates the behavior of %s and allows one to localize an application into the user's native language through the use of translation catalogs." "<em>GNU gettext</em>" )
 
 <b>$( gettext "ENVIRONMENT" )</b>
 
@@ -186,7 +217,10 @@ $(
 		$( gettext "The width of the terminal, measured as the number of characters that fit on one line before the line wraps around. If this variable is not set, then its value is assumed to be %s." "80" )
 
 	<b>LC_MESSAGES</b>
-		$( gettext "The first two characters of this locale attribute represent the user's %s language code." "ISO-639" )
+		$( gettext "The first two characters of this locale attribute represent the user's %s language code." "<em>ISO-639</em>" )
+
+	<b>$__ff_myConf</b>
+		$( gettext "An automatically created directory in which user settings and resource files are stored. For example, the manual that you are currently viewing is cached within this directory." )
 
 <b>$( gettext "EXIT STATUS" )</b>
 	<b>0</b>
@@ -204,4 +238,3 @@ $(
 	Copyright 2003, 2004 Suraj N. Kurapati.
 	$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
 "
-
