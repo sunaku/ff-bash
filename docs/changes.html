@@ -30,25 +30,18 @@
 			<p>This document serves as a record of important changes between successive versions of the <b>For each File</b> package.</p>
 			
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
-			
-			<h3>Copyright and License Information</h3>
-			<blockquote>
-				<p>Copyright &copy; 2003, 2004 Suraj N. Kurapati.</p>
-				<p>This file is part of "For each File".</p>
-				<p>"For each File" is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
-				<p>"For each File" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
-				<p>You should have received a copy of the GNU General Public License along with "For each File"; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
-			</blockquote>
 		</blockquote>
 		
-		<div id="newest"/>
-		
-		<h2>Version 1.7.1 (2004-XX-XX)</h2>
+		<h2>Version 1.7.1 (2004-07-16)</h2>
 		<ul>
-			<li>The German translation catalogs have been revised by Michael Wiedmann.</li>
+			<li>The German translation catalogs have been updated by <em>Michael Wiedmann</em>.</li>
 			<li>A defect causing illegal options to be treated as targets has been fixed.</li>
 			<li>In <samp>fl.xgettext</samp>, the option for producing raw output has been removed.</li>
-			<li>The documentation has been updated.</li>
+			<li>The <samp>--pipe</samp> option has been greatly optimized by eliminating a temporary buffer in which piped data was stored.</li>
+			<li>The validation of control functions in user commands has been hardened.</li>
+			<li>The code, documentation, FAQ, and example scripts have been revised according to suggestions by <em>Stephane Chazelas</em>.</li>
+			<li>Trivial and obsolete example scripts have been removed from the package.</li>
+			<li>The installation script has been removed from the package due to  portability concerns.</li>
 		</ul>
 		
 		<h2>Version 1.7.0 (2004-07-09)</h2>
@@ -92,7 +85,7 @@
 		<h2>Version 1.6.6 (2004-04-05)</h2>
 		<ul>
 			<li>Fixed bug where the argument of the <samp>-s</samp> option was evaluated as a target.</li>
-			<li>Fixed errors about undefined user functions (thanks to Andrew Kirkpatrick).</li>
+			<li>Errors about undefined user functions have been fixed by <em>Andy Kirkpatrick</em>.</li>
 			<li>Added an uninstallation feature to the install script.</li>
 			<li>Added command line option to display program version.</li>
 		</ul>
