@@ -12,10 +12,10 @@
 #
 # Features:
 #
-# 	* gettext strings can span multiple lines as the following example illustrates.
-#		gettext "there 
-#			was
-#		a farmer   ..."
+# 	* gettext strings can span multiple lines as the following example illustrates:
+#		gettext "Once
+#			upon
+#		a time   ..."
 #
 # 	* Tabs within gettext strings are ignored.
 #
@@ -26,17 +26,17 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -46,77 +46,54 @@
 ## globals
 
 	declare g_stream_state g_word_state g_string g_string_quote g_string_lineBegin
-	
+
 	#XXX: assuming words separated by spaces
 	g_word_delimiter=" "
-	
+
 ## helper functions
-	
-	# Computes a hash value for a given string and prints it to stdout.
-	# @param	1	string to hash
-	hash_string()
-	{
-		local c i=0 k=0 n=${#1}
-		
-		for (( ; i < n ; i++ ))
-		do
-			c=${1:$i:1}	# next character in string
-			
-			if [[ $c == [[:alnum:]] ]]	# check character
-			then
-				echo -n $c	# incrementally output the string portion of hash
-			else
-				(( k++ ))	# count number of non [:alnum:] chars
-			fi
-		done
-		
-		echo "$k$n"	# output the remainder of the hash
-		
-#		read -p "hash(str=$1, max=$m)=$k$n" </dev/tty
-	}
-	
+
 	# prints output to stdout
 	print_output()
 	{
 		local -a array_refs array_strings i=0
-		
+
 		# assemble names of cache hash-table variables
 		array_refs=( ${!g_cache_refs*} )
 		array_strings=( ${!g_cache_strings*} )
-		
+
 		# print header
 		echo "#. $f"
 		echo "#. $( date )"
 		echo "#. ${#array_strings[@]} strings extracted."
 		echo
-		
+
 		# print all strings in cache
-		i=0 
+		i=0
 		while (( i < ${#array_refs[@]} ))
 		do
 			echo "#:${!array_refs[$i]}"
 			echo "msgid${!array_strings[$i]}"
 			echo 'msgstr ""'
 			echo
-			
+
 			(( i++ ))
 		done
-		
+
 #		declare | grep 'g_cache'
 	}
-	
+
 	# stores string and reference into cache
 	store_string()
 	{
-		local hash=$( hash_string "$g_string" )
-		
+		local hash=$( echo "$g_string" | sum | cut -f1 -d' ' )
+
 		# store reference line number
 		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$fn:\$g_string_lineBegin\""
-		
+
 		# store string
 		eval "g_cache_strings_$hash=\$g_string"
 	}
-	
+
 	# prints debug info
 	# @param	$1	function that called this
 	print_debug()
@@ -128,12 +105,12 @@
 	handle_stream()
 	{
 		local word
-		
+
 		for word in $l
 		do
 #			echo "line=$l" ; echo "word=$word"
 #			print_debug "handle_stream()"
-			
+
 			case "$g_stream_state" in
 				idle)
 					# look for gettext command
@@ -142,7 +119,7 @@
 							break	# skip comments
 						;;
 						gettext|gettext_eval|ngettext|ngettext_eval)	# possible invocations of gettext
-							
+
 							# state changes
 							g_stream_state=parse
 							g_word_state=idle
@@ -155,12 +132,12 @@
 			esac
 		done
 	}
-	
+
 	# parses string from a stream of words
 	handle_word()
 	{
 #		print_debug "handle_word()"
-		
+
 		# look for start of quoted string
 		if [ "$g_word_state" == idle ]
 		then
@@ -169,18 +146,18 @@
 				g_string_quote=${word:0:1}	# store which type of quote used
 				g_string=			# reset string
 				g_string_lineBegin=$i		# store line number
-				
+
 				# state changes
 				g_word_state=read
 			fi
 		fi
-		
+
 		# read until end of quoted string
 		if [ "$g_word_state" == read ]	# another IF to handle state changes w/o re-looping
 		then
 			# accumulate words into string
 			g_string="${g_string}${g_word_delimiter}${word}"
-			
+
 			if [[ -z "${word##*!(\\)$g_string_quote}" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
 			then
 
@@ -189,13 +166,13 @@
 #				echo "msgid$g_string"
 #				echo 'msgstr ""'
 #				echo
-				
+
 				# state changes
 				g_stream_state=idle
 			fi
 		fi
 	}
-	
+
 ## main script logic
 
 	begin()
@@ -203,21 +180,21 @@
 		IFS=$' \t\n'	# do not preserve white-space
 		shopt -u nullglob	# file contents may contain pattern-like text that should not be nullified
 	}
-	
+
 	main()
 	{
 		handle_stream
 	}
-	
+
 	begin_file()
 	{
 		g_stream_state=idle
 		g_word_state=idle
 		g_string_lineBegin=
-		
+
 		unset g_cache_refs g_cache_strings
 	}
-	
+
 	end_file()
 	{
 		print_output
