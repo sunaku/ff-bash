@@ -53,21 +53,27 @@
 		__lib_ff_options_shortFlag_showVersion=v
 		__lib_ff_options_longFlag_showVersion=version
 	
-	
-## libraries
-	source ${__ff_myResources_libs}/gettext.lib
-	source ${__ff_myResources_libs}/CmdOpts.lib
-	
-## init
-
-	__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
-	
 ## functions
 	
+	# Initializes internal library structures
+	__lib_ff_init()
+	{
+		source ${__ff_myResources_libs}/CmdOpts.lib
+		
+		source ${__ff_myResources_libs}/gettext.lib
+		__lib_gettext_init
+		__lib_gettext_load "$__ff_myResources_i18n/ff.lib.$__ff_myLang.po"
+		
+		source ${__ff_myResources_libs}/DocFmt.lib
+	}
+
 	# clean up and exit program
 	# @param	1	exit status
 	__lib_ff_exit()
 	{
+		# unload libraries
+		__lib_gettext_fin
+		
 		# clean up temp files
 		rm -f ${__lib_ff_tmpMask}*
 		
@@ -167,9 +173,6 @@ $expression
 			;;
 			
 			$__lib_ff_options_shortFlag_showHelp | $__lib_ff_options_longFlag_showHelp)
-				
-				## libraries
-					source ${__ff_myResources_libs}/DocFmt.lib
 				
 				local __lib_ff_docFile="${__ff_myResources_docs}/${__ff_myName}.man" __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n
 					
