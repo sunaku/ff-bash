@@ -1,3 +1,8 @@
+TRANSLATION
+
+	This document was translated from English using the "AltaVista - Babel Fish Translation" <http://babelfish.altavista.com/> service. For this reason, the examples and shell commands in this document may have become garbled. If this is the case, please refer to the English version of this document for the correct examples and shell commands.
+
+
 HAVE A QUESTION?
 
 	Post your question on the project web-site or send me an e-mail.
@@ -7,15 +12,17 @@ HAVE A QUESTION?
 
 
 
-QUESTIONS
+CONTENTS
 
-	1. What are the advantages of using this tool instead of 'find -exec'?
+	1. What's the advantage of using this instead of 'find -exec'?
+	
 	2. How can I use the results of 'find' with this tool?
-	4. Why is the 'read' builtin in my script being ignored?
+	
+	3. Why is the 'read' command in my script being ignored?
 
 
 
-ANSWERS
+QUESTIONS AND ANSWERS
 
 1. What's the advantage of using this instead of 'find -exec'?
 
@@ -66,9 +73,10 @@ ANSWERS
 
 				$ find some_tgz/tgz_dir/ -name '*tgz' -exec sh -c 'mv "{}" `dirname "{}"`/`basename "{}" | sed "s/tgz/tar.gz/"`; `basename "{}"`' \;
 
-	Notice that we invoked a shell with 'find -exec' for this task. It is possible to perform the task without the aid of an intermediate shell, but one can imagine how time consuming that would be.
+		Notice that we invoked a shell with 'find -exec' for this task. It is possible to perform the task without the aid of an intermediate shell, but one can imagine how time consuming that would be.
 	
-	In conclusion, this simply allows for a different kind of approach to perform filesystem tasks. It is not meant to replace any UNIX tools such as 'find'.
+
+	In conclusion, this tool simply allows for a different kind of approach to perform filesystem tasks. It is not meant to replace any UNIX tools such as 'find'.
 
 
 
@@ -81,7 +89,7 @@ ANSWERS
 
 
 
-4. Why is the 'read' in my script being ignored?
+3. Why is the 'read' command in my script being ignored?
 
 	The BASH 'read' builtin expects to read user input from the standard input stream. However, the standard input stream may sometimes be in use by the '--pipe' option. To get around this, you can have the 'read' builtin read from the user's terminal:
 	
