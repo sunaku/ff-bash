@@ -30,15 +30,33 @@
 ## globals
 
 	__lib_gettext_tempfile="${TMP:-/tmp}/__lib_gettext.$$"
+	__lib_gettext_tempfile_cacheIndex="$__lib_gettext_tempfile.index"
 	
 	# even index: msgid
 	# odd index: msgstr
 	declare -a __lib_gettext_cache
 	
-	__lib_gettext_cacheIndex=0
-	
 ## functions
 	
+	# Initializes internal library structures
+	# This function must be invoked before using any other the library functions
+	__lib_gettext_init()
+	{
+		# setup shared cacheIndex
+		echo 0 > "$__lib_gettext_tempfile_cacheIndex"
+	}
+	
+	# Performs clean up of internal library structures
+	# This function must be invoked before exiting the program
+	__lib_gettext_fin()
+	{
+		# free memory
+		__lib_gettext_free
+		
+		# clean up temp files
+		rm -f ${__lib_gettext_tempfile}*
+	}
+
 	# Loads a gettext Portable-Object translation catalog into cache.
 	# Cache is not cleared before loading new data.
 	#
@@ -78,7 +96,6 @@
 		# parse catalog files
 		for file
 		do
-		
 			# check file perms
 			if [[ ! -r "$file" || ! -f "$file" ]]
 			then
@@ -95,6 +112,9 @@
 			do
 				__lib_gettext_cache[${#__lib_gettext_cache[@]}]=$line
 			done < "$__lib_gettext_tempfile"
+			
+			# ensure there are even number of items in cache
+			(( ${#__lib_gettext_cache[@]} % 2 != 0 )) && unset -v __lib_gettext_cache[$(( ${#__lib_gettext_cache[@]} - 1 ))]
 			
 #			declare -a ; read -u 2
 		done
@@ -199,7 +219,10 @@
 	#
 	gettext()
 	{
-		local query translation
+		local query translation cacheIndex=$( < "$__lib_gettext_tempfile_cacheIndex" )
+		
+#		echo "__lib_gettext_tempfile_cacheIndex=$__lib_gettext_tempfile_cacheIndex"
+#		cat $__lib_gettext_tempfile_cacheIndex
 		
 		# handle options
 		
@@ -215,19 +238,19 @@
 			shift	# remove $1 from parameters
 		
 			# check index bounds
-			[ $__lib_gettext_cacheIndex -ge ${#__lib_gettext_cache[@]} ] && __lib_gettext_cacheIndex=0
+			[ $cacheIndex -ge ${#__lib_gettext_cache[@]} ] && cacheIndex=0
 			
-			while [ $__lib_gettext_cacheIndex -lt ${#__lib_gettext_cache[@]} ]
+			while [ $cacheIndex -lt ${#__lib_gettext_cache[@]} ]
 			do
-				[ "$query" == "${__lib_gettext_cache[$__lib_gettext_cacheIndex]}" ] && break
-				let __lib_gettext_cacheIndex=__lib_gettext_cacheIndex+2	# increment loop
+				[ "$query" == "${__lib_gettext_cache[$cacheIndex]}" ] && break
+				let cacheIndex=cacheIndex+2	# increment loop
 			done
 			
-			let string_index=__lib_gettext_cacheIndex+1
+			let string_index=cacheIndex+1
 			
-#			echo "__lib_gettext_cacheIndex=$__lib_gettext_cacheIndex"
+#			echo "cacheIndex=$cacheIndex"
 #			echo "cache size=${#__lib_gettext_cache_msgid[@]}"
-#			echo "msgstr='${__lib_gettext_cache_msgstr[$__lib_gettext_cacheIndex]}'"
+#			echo "msgstr='${__lib_gettext_cache_msgstr[$cacheIndex]}'"
 			
 		# determine translation
 		
@@ -247,6 +270,8 @@
 			printf "${translation}" "${@}"
 			
 		# finished
+		echo $cacheIndex > "$__lib_gettext_tempfile_cacheIndex"
+#		cat "$__lib_gettext_tempfile_cacheIndex"
 		return 0
 	}
 	
