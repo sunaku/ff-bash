@@ -56,7 +56,7 @@
 #		If your script reads from the standard input, then the above
 #		commands will produce unwanted results. A solution is to
 #		redirect a named file descriptor (other than 0) for input:
-#		
+#
 #			read <&1 ; echo $REPLY
 #
 #	(2) Entering a script via standard input.
@@ -121,10 +121,10 @@
 	source "${0%/*}/ff-lib"
 
 ## globals
-	
+
 	# files
 	ff_tmp_dirList=${ff_tmpMask}.dirList
-	
+
 	# option flags
 	ff_cmdOpts="aehlrs:"
 	ff_cmdOpts_opt_help=h
@@ -182,7 +182,7 @@
 		# check method of operation: recursive or non-recursive
 		if [ ${ff_cmdOpts_optEn_recurse:-0} -eq 1 ] # recursive operation
 		then
-		
+
 			# declare local vars
 			local basedir
 
@@ -195,30 +195,41 @@
 					ls -R${ff_cmdOpts_optEn_followLinks:+L}${ff_cmdOpts_optEn_handleHidden:+A} "$basedir" | sed -n 's/:$//p' | sort -r | \
 					while read d
 					do
+						# set scripting variables
+						d=${d%/}
+						
 						# for all files in subdir
 						for f in "$d"/* $( [ ! -z "$ff_cmdOpts_optEn_handleHidden" ] && echo "$d/.*" )
 						do
 							# set scripting variables
 							fn=${f##*/}
 
-							# execute user specified commands
+							# call user func
 							main
 						done
 					done
 				fi
 			done
-			
+
 		else # non-recursive operation
 
 			# loop through positional params
 			for f
 			do
 				# set scripting variables
-				f=${f%/}
-				fn=${f##*/}
-				if [ "$fn" == "$f" ] ; then d=$PWD ; else d=${f%/*} ; fi
+					f=${f%/}
+					fn=${f##*/}
+					
+					# determine directory path
+					if [ "$fn" != "$f" ]
+					then
+						d=${f%/*}
+					else
+						d=.
+						f=./$f
+					fi
 
-				# execute user specified commands
+				# call user func
 				main
 			done
 		fi
@@ -248,13 +259,13 @@
 	ff_saveScript
 
 	# handle user's script
-	
+
 		# validate script
 		ff_checkScriptMain
 
 		# load script into RAM
 		ff_evalScript
-		
+
 		# execute script
 		ff_main "${@}"
 

@@ -159,18 +159,28 @@
 		for f
 		do
 			# set scripting variables
-			f=${f%/}
-			fn=${f##*/}
-			if [ "$fn" == "$f" ] ; then d=$PWD ; else d=${f%/*} ; fi
-			n=$( wc -l "$f" | awk '{print $1}' )
-			i=1
+			
+				f=${f%/}
+				fn=${f##*/}
+				
+				# determine directory path
+				if [ "$fn" != "$f" ]
+				then
+					d=${f%/*}
+				else
+					d=.
+					f=./$f
+				fi
+					
+				n=$( wc -l "$f" | awk '{print $1}' )
+				i=1
 			
 			# call user func
 			begin
 			
 			while read l
 			do
-				# execute user specified commands
+				# call user func
 				main
 				
 				# increment line number
