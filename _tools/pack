@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+# Creates a release package from the current sandbox.
+#
+
+upload_scp_url=$UCSC_ID:public_html/pub/tmp/
+upload_web_url=http://people.ucsc.edu/~skurapat/pub/tmp/
+
+## vars
+
+	# version of this release
+	pack_ver=1.6.8
+	
+	# path to changelog for this release
+	pack_chglog=../changelog
+	
+	# files that use gettext
+	pot_in=( ../libs/ff.lib ../docs/*.man ../install )
+	
+	# files that need to be translated
+	trans_in=( ../faq ../readme )
+	
+	# all files to be packaged
+	pack_in=( ../libs ../i18n ../docs ../scripts/ ../COPYING $chg_log ../faq ../readme ../ff ../fl ../install )
+	
+	pack_dir=../_pack/ff-$pack_ver
+	pack_tar=${pack_dir}.tar
+
+
+## setup
+
+	# remove previously generated files
+	rm -rvf $pack_dir ${pack_tar}* ../i18n/*
+
+	# create pack dir
+	mkdir -p $pack_dir
+
+
+## gettext translation
+
+	echo "pack: create *.pot files; NOT raw output"
+	../ff -e '( ../fl -f ../scripts/fl.xgettext $f ) > $w/../i18n/$fn.pot' "${pot_in[@]}"
+
+	echo "pack: translate *.pot files"
+	../ff -f ff.auto_i18n ../i18n/*
+
+
+## regular translation
+
+	# prepare URLs
+		i=0
+		while [ $i -lt ${#trans_in[@]} ]
+		do
+			# base name
+			trans_nom[$i]=${trans_in[$i]##*/}
+			
+			# temp .html files
+			trans_tmp[$i]=${trans_nom[$i]}.html
+			
+			# web url to temp .html files
+			trans_url[$i]=${upload_web_url}${trans_tmp[$i]}
+			
+			# make temp file
+			cp -v ${trans_in[$i]} ${trans_tmp[$i]}
+			
+			let i=i+1
+		done
+		
+	# translate temp files
+		echo "pack: upload readme files"
+		scp "${trans_tmp[@]}" $upload_scp_url
+		
+		echo "pack: translate readme files"
+		../ff -f ../scripts/ff.translate_url "${trans_url[@]}"
+		
+
+
+	# move translated files to pack dir
+		for x in "${trans_nom[@]}"
+		do
+			# for y in `seq 0 9`
+			# do
+				# touch $x.$y
+			# done
+			
+			../ff -e "mv -vf \$f $pack_dir/\${fn//.html/}" ${x}*
+		done
+
+
+## package creation
+
+	# transfer input files into dir
+	cp -vr "${pack_in[@]}" $pack_dir
+	
+	# create packs
+	pushd $pack_dir/..
+		
+		tar -hjcf ${pack_tar}.bz2 ${pack_dir##*/}
+#		tar -hzcf ${pack_tar}.gz ${pack_dir##*/}
+		
+	popd
+	
+
+## distribution
+
+	# copy packs to server
+	scp $pack_chglog ${pack_tar}* $UCSC_ID:'public_html/pub/projects/ff/'
+
+
