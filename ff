@@ -102,7 +102,7 @@
 				if [ ${__ff_myOptions_isOn_handleHidden:-0} -eq 0 ]
 				then
 					__ff_findOpts[${#__ff_findOpts[@]}]=-name
-					__ff_findOpts[${#__ff_findOpts[@]}]='[^.]*'
+					__ff_findOpts[${#__ff_findOpts[@]}]='*'
 				fi
 			
 			# handle each target
