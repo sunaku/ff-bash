@@ -111,10 +111,18 @@
 #	(at your option) any later version.
 #
 
-# includes
-	source "${0%/*}/ff-lib"
+## includes
+	ff_libPath="${0%/*}/ff-lib"
+	
+	if [ ! -r "$ff_libPath" ]
+	then
+		echo "(ff) Unable to source '$ff_libPath'."
+		exit 1
+	else
+		source "$ff_libPath"
+	fi
 
-# globals
+## globals
 	
 	# option flags
 	ff_cmdOpts="ehs:"
