@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Extracts compressed (gzip and bzip2) and uncompressed tar files into respectively named directories created for them.
+# Extracts compressed (gzip and bzip2) and uncompressed tar files into respectively named directories created for them. Note that if the tar file extracts into a directory whose name contains new-line characters, then this script will not work properly.
 #
 ###
 #
@@ -34,9 +34,9 @@
 
 	begin()
 	{
-		read -p "Specify any additional options for 'tar': [none] " tar_opts < /dev/tty
+		read -p "%% Specify any additional options for 'tar': [none] " tar_opts < /dev/tty
 		
-		read -p "Extract to current working directory (yes/no)? [no] " < /dev/tty
+		read -p "%% Extract to current working directory (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && opts_exToWd=1
 	}
 	
@@ -95,8 +95,8 @@
 					# if output directory exists, ask for a unique name
 					until mkdir -p "$tar_outdir" && [ -w "$tar_outdir" ]
 					do
-						echo "Error: output directory '$tar_outdir' cannot be written to."
-						read -e -p "Specify a different output directory: [$new_outdir] " < /dev/tty
+						echo "%% Error: output directory '$tar_outdir' cannot be written to."
+						read -e -p "%% Specify a different output directory: [$new_outdir] " < /dev/tty
 						
 						if [ -z "$REPLY" ]
 						then
@@ -108,7 +108,7 @@
 				fi
 			
 		# extract tar-ball
-			echo "Extracting '$f' into '$tar_outdir'"
+			echo "%% Extracting '$f' into '$tar_outdir'"
 			tar $tar_opts -C "$tar_outdir" $tar_type -xf "$f" 
 	}
 
