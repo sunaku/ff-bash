@@ -21,7 +21,7 @@
 	pack_ver=$1
 	
 	# files that use gettext
-	pot_in=( ../libs/ff.lib ../docs/manual )
+	pot_in=( ../libs/ff.lib ../docs/manual ../scripts/ff.[mu]* )
 	
 	# files that need to be translated; these are automatically packaged
 	doc_in=( ../docs/*.html )
@@ -97,7 +97,7 @@ echo "<((pack))>  regular HTML translation"
 			done
 
 		echo "<((pack))>  remove altavista prefix from relative URLs"
-			for f in $pack_dir_docs/*html
+			for p in $pack_dir_docs/*html
 			do 
 				sed 's!http://babelfish.altavista.com/babelfish/trurl_pagecontent?lp=.._..&url=http%3a%2f%2fff-bash.sourceforge.net%2ftmp%2f!!g' < "$p" > /tmp/$$ && mv -vf /tmp/$$ "$p"
 			done
@@ -106,7 +106,7 @@ echo "<((pack))>  regular HTML translation"
 	
 		mv $pack_dir_docs/changes*html .
 		
-		for f in changes*html
+		for p in changes*html
 		do
 			sed '/<!-- old-version/,/<!-- old-version/ d' "$p" > "$pack_dir_docs/$p"
 		done
