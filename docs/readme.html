@@ -1,5 +1,3 @@
-$Id$
-
 CONTENTS
 	programs
 	description
@@ -9,9 +7,11 @@ CONTENTS
 	installation
 	examples
 
+
 PROGRAMS
 	ff - "For each File"
 	fl - "For each Line"
+
 
 DESCRIPTION
 	For each File allows users to execute a Bash script recursively upon
@@ -21,29 +21,37 @@ DESCRIPTION
 	For each Line allows users to execute a Bash script, once for each line
 	in many files.
 
+
 LICENSE
-	These programs are released under the GNU GPL version 2. A copy of 
-	this document is provided in the file 'COPYING'.
-	
+	All items distributed with this package are released under the GNU GPL
+	version 2. A copy of this document is provided in the file 'COPYING'.
+
+
 FILES
-	changelog	List of important changes in this version.
+	changelog	A list of important changes in this version.
 	
 	ff		For each File program.
 	
 	fl		For each Line program.
 	
-	install		Installation script.
+	install		A simple installation script.
 	
-	examples/	Sample scripts to get you started.
+	examples/	Contains sample scripts to get you started.
 	
 	COPYING		A copy of the GNU GPL version 2 license.
-	
+
+
 DOCUMENTATION
-	1. To view help message for "For each File", run './ff -h'
+	1. View help message for "For each File" by executing
 	
-	2. To view help message for "For each Line", run './fl -h'
+		ff -h
 	
-	3. Examine source code; they are Bash scripts!
+	2. View help message for "For each Line" by executing:
+	
+		fl -h
+	
+	3. Examine source code.
+
 
 INSTALLATION
 	Run './install' or perform a manual installation as follows.
@@ -56,20 +64,24 @@ INSTALLATION
 	
 		Example:	cp ff fl ~/bin
 
+
 EXAMPLES
 	I recommend that you first execute the 'ff.vars' and 'fl.vars' examples
-	to see how the scripting variables behave.
-
-	If you wish to execute one of the provided example scripts, say, on all
-	files in the current working directory, you would run the following.
+	to see how the scripting variables behave. Some examples have 'ready'
+	flags which need to be set in order to make changes to files.
 	
-		Example:	ff * < [path to example file]
-		Example:	cat [path to example file] | ff *
+	Try the following commands.
 	
-	To execute an example script recursively on the current working
-	directory, run the following.
-	
-		Example:	ff -r . < [path to example file]
-		Example:	cat [path to example file] | ff -r .
+		./ff * < ./examples/ff.vars
+		./ff -r . < ./examples/ff.vars
+		
+		./ff /bin/* < ./examples/ff.vars
+		./ff -r /bin/ < ./examples/ff.vars
+		
+		./fl README < ./examples/fl.vars
+		
+	Notice that the scripting variables are consistent between recursive and
+	non-recursive modes. This behavior ensures consistent results from your
+	scripts, independent of the mode and target files.
 
 
