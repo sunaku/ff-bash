@@ -30,11 +30,12 @@
 #
 #	If you wish to invoke an existing script, you can do so via piping or 
 #	redirection. For example, to run a script named 'my_script' upon a 
-#	directory 'dir', you would run the following.
+#	directory 'dir', and save the output to the file 'my_output', you
+#	would run the following.
 #
-#		Method 1: 	ff -r dir < my_script
+#		Method 1: 	ff -r dir < my_script | tee my_output
 #
-#		Method 2:	cat my_script | ff -r dir
+#		Method 2:	cat my_script | ff -r dir | tee my_output
 #
 #	Notice that the '-e' option is not present. Depending on how your text
 #	editor handles I/O redirection, omitting '-e' may allow you to pipe or
