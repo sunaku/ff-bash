@@ -120,7 +120,7 @@ echo \
 "	<b>$__lib_ff_options_shortFlag_showVersion</b>, <b>$__lib_ff_options_longFlag_showVersion</b>
 		$( gettext "Display the version number and exit." )
 
-<b>$( gettext "RESERVED NAME-SPACES" )</b>
+<b>$( gettext "RESERVED NAMES" )</b>
 	$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. It is requested that the user's shell commands not modify the constructs in these name-spaces, because doing so may yield unpredictable behavior." "<em>__lib</em>" "<em>__ff</em>" )
 
 <b>$( gettext "CONTROL FUNCTIONS" )</b>
