@@ -17,9 +17,9 @@
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt
+		local i=0 j=0 k opt max=${#_cmdOpts_argList[@]}
 		
-		while [ $i -lt ${#_cmdOpts_argList[@]} ]
+		while [ $i -lt $max ]
 		do
 			let j=i+1
 			
