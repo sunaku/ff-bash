@@ -1,56 +1,153 @@
 #!/bin/bash
 #
-# usage: ff <files>
+# Usage:
+#	ff [-reh] <files>
 #
-# performs the given commands for every file in the current dir,
-# or only the files specified as arguments
+# Options:
+#	-r	Recurse subdirectories.
 #
-# user scripting vars:
-# $f = current file
-# $d = current directory
+#	-e	Use ${EDITOR} for entering scripting commands 
+#		instead of using 'cat'.
+#
+#	-h	Display this help message.
+#
+# User scripting variables:
+#	$f = current file
+#	$d = current directory
+#
+# Description:
+#
+# Performs the given commands for every file in the current dir,
+# or only the files specified as arguments. Filenames containing special
+# characters, such as spaces, should be quoted.
+#
+# if you wish to input your custom script using a text editor, set a global 
+# shell variable "$EDITOR" to the path of your favorite text editor.
+#
 #
 # @author	Suraj Kurapati
 # @version	$Revision$, $Date$
 #
+####
 
 # globals
 	g_tmpfileMask="/tmp/$$"
-	g_script="${g_tmpfileMask}.script"
-	g_args=$@
-
-# check for args
-	if [ $# -eq 0 ] ; then
-		#g_args=`ls | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '`
-		g_args=*
-	fi
-
-# get user commands
-	g_input=`cat`
+	g_tmpfile_UsrInput="${g_tmpfileMask}.usrInput"
 	
-	if [ "$g_input" == "" ] ; then
-		g_input='break'
-	fi
+	# options
+	g_options="reh"
+	g_opt_recurse=r
+	g_opt_editor=e
 	
-# write custom script file
-cat > "$g_script" << __CUSTOM_SCRIPT__
-#!/bin/bash
+	# option enabled flags
+	g_optEn_recurse=0
+	g_optEn_editor=0
 	
-	# set path of current directory
-	d="\$PWD"
+# scan options
 
-	# loop though all files in specified dir
-	for f in $g_args
+	while getopts "$g_options" opt
 	do
-		# execute user specified commands
-		$g_input
+		case "$opt" in
+			$g_opt_recurse)
+				g_optEn_recurse=1
+			;;
+			$g_opt_editor)
+				g_optEn_editor=1
+			;;
+			*)
+				# display help message, which happens to be the documentation header for this file
+				sed '/^####/q' "$0" | more
+				exit 0
+			;;
+		esac
 	done
+	
+	
+# get user script
+	
+	if [ $g_optEn_editor -eq 1 ] && [ "$EDITOR" != "" ] ; then
+		$EDITOR $g_tmpfile_UsrInput
+	else
+		cat > $g_tmpfile_UsrInput
+	fi
+	
+# check user script
+	if [ -z $g_tmpfile_UsrInput ] ; then
+		g_input=break
+	else
+		g_input=$( cat $g_tmpfile_UsrInput )
+	fi
 
-__CUSTOM_SCRIPT__
+# check recursive option
 
-# run custom script
-	chmod u+x "$g_script"
-	"$g_script" $g_args
+	if [ $g_optEn_recurse -eq 1 ]
+	then
+	# iterative version of recursive subdir handling script
+
+		# loop through positional params
+		for param
+		do
+			if [ -d "$param" ] 
+			then
+				
+				# assemble list of all subdirectories to be traversed, with the deepest sub-directories appearing first
+				subdir_list=$( ls -R "$param" | grep ':$' | sed -e 's/:$//' | sort -r )
+				subdir=""
+				
+				for d in $subdir_list
+				do
+					# accumulate subdir name
+					# we are assuming that $d is not a filename fragment, so there is no space put between $subdir and $d
+					subdir="$subdir$d"
+					
+#DEBUG					echo "## subdir = '$subdir'	d = '$d'"
+					
+					if [ -e "$subdir" ] ; then
+					
+						pushd "$subdir" &> /dev/null
+						
+#DEBUG						echo "## pushed subdir = '$PWD'"
+						
+						# set path of current directory
+						d="$subdir"
+						
+						for f in *
+						do
+							# execute user specified commands
+							eval "$g_input"
+						done
+						
+						popd &> /dev/null
+						
+						# reset subdir name
+#DEBUG						echo "## resetting subdir = $subdir"
+						subdir=""
+					else
+						# we have encountered a filename fragment, so allow a space before next accumulation
+						subdir="$subdir "
+					fi
+				done
+			fi
+		done
+	
+	else
+	# just operate on given files, don't handle subdirs
+	# NOTE: filename fragment handling is *NOT* needed here
+	
+		# set path of current directory
+		d="$PWD"
+		
+		# loop through positional params
+		for f
+		do
+			# execute user specified commands
+			eval "$g_input"
+		done
+	fi
 	
 # cleanup
 	rm -f ${g_tmpfileMask}*
+	
+# functions
+
 	
