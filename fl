@@ -4,7 +4,17 @@
 #	fl - for each line
 #
 # SYNOPSIS
-#	fl [-reh] target ...
+#	fl [-eh] file1 file2 ... [ < script_file ]
+#
+# OPTIONS
+#	-e	Use a custom ${EDITOR} for entering scripting commands.
+#		This option _may_ disable the ability to pipe or redirect data 
+#		to this tool; check with your text editor.
+#
+#	-h	Display this help message.
+#
+# ARGUMENTS
+#	file	Path to a file (non-directory).
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed
@@ -19,31 +29,25 @@
 #	editor. For example: `export EDITOR='path to editor'`.
 #
 #	If you wish to invoke an existing script, you can do so via piping or 
-#	redirection. For example, to run a script named 'ff.script' upon a 
+#	redirection. For example, to run a script named 'my_script' upon a 
 #	file 'my_file', you would run the following.
 #
-#		Method 1: 	fl my_file < ff.script
-#		Method 2:	cat ff.script | fl my_file
+#		Method 1: 	fl my_file < my_script
+#		Method 2:	cat my_script | fl my_file
 #
-#	Notice that the '-e' option is not present. Omitting '-e' allows you to
-#	pipe or redirect input to 'fl'.
+#	Notice that the '-e' option is not present. Omitting '-e' may allow you
+#	to pipe or redirect input to this tool; however this behavior is
+#	dependent on your text editor.
 #
-# PRESET VARIABLES
-#	The following preset variables are available for use in users' scripts.
+# SCRIPT VARIABLES
+#	The following variables are available for use in users' scripts.
 #	Note that the UNIX term 'file' refers to both files and directories.
 #
-#	$f	basename of current file (or directory)
-#	$d	relative path to current working directory
+#	$f	basename of current file (non-directory)
+#	$d	absolute path of current working directory
 #	$n	number of lines in current file
 #	$i	line number of current line
 #	$l	contents of current line
-#
-# OPTIONS
-#	-e	Use a custom ${EDITOR} for entering scripting commands. 
-#		This option disables the ability to pipe or redirect data 
-#		to this tool.
-#
-#	-h	Display this help message.
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -100,7 +104,6 @@
 	fi
 
 # operate on given files, don't handle subdirs
-# NOTE: filename fragment handling is *NOT* needed here
 	
 	# set path of current directory
 	d="$PWD"

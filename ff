@@ -4,7 +4,20 @@
 #	ff - for each file
 #
 # SYNOPSIS
-#	ff [-reh] target ...
+#	ff [-reh] file1 file2 ... [ < script_file ]
+#
+# OPTIONS
+#	-r	Recursively handle subdirectories. Directories are handled
+#		first before other non-directories.
+#
+#	-e	Use a custom ${EDITOR} for entering scripting commands.
+#		This option _may_ disable the ability to pipe or redirect data 
+#		to this tool; check with your text editor.
+#
+#	-h	Display this help message.
+#
+# ARGUMENTS
+#	file	Path to a file (non-directory) or directory.
 #
 # DESCRIPTION
 #	Allows the user to write an embedded BASH script which will be executed
@@ -21,31 +34,22 @@
 #	editor. For example: `export EDITOR='path to editor'`.
 #
 #	If you wish to invoke an existing script, you can do so via piping or 
-#	redirection. For example, to run a script named 'ff.script' upon a 
+#	redirection. For example, to run a script named 'my_script' upon a 
 #	directory 'dir', you would run the following.
 #
-#		Method 1: 	ff -r dir < ff.script
-#		Method 2:	cat ff.script | ff -r dir
+#		Method 1: 	ff -r dir < my_script
+#		Method 2:	cat my_script | ff -r dir
 #
-#	Notice that the '-e' option is not present. Omitting '-e' allows you to
-#	pipe or redirect input to 'ff'.
+#	Notice that the '-e' option is not present. Omitting '-e' may allow you
+#	to pipe or redirect input to this tool; however this behavior is
+#	dependent on your text editor.
 #
-# PRESET VARIABLES
-#	The following preset variables are available for use in users' scripts.
+# SCRIPT VARIABLES
+#	The following variables are available for use in users' scripts.
 #	Note that the UNIX term 'file' refers to both files and directories.
 #
 #	$f	basename of current file (or directory)
 #	$d	relative path to current working directory
-#
-# OPTIONS
-#	-r	Apply to files and subdirectories recursively. Order of 
-#		traversal is: sub-directories, and then files.
-#
-#	-e	Use a custom ${EDITOR} for entering scripting commands. 
-#		This option disables the ability to pipe or redirect data 
-#		to this tool.
-#
-#	-h	Display this help message.
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -60,7 +64,8 @@
 
 # globals
 	g_tmpfileMask="/tmp/$$"
-	g_tmpfile_UsrInput="${g_tmpfileMask}.usrInput"
+	g_tmpfile_UsrInput="${g_tmpfileMask}.UsrInput"
+	g_tmpfile_Subdirs="${g_tmpfileMask}.Subdirs"
 	
 	# option flags
 	g_options="reh"
@@ -117,50 +122,40 @@
 		do
 			if [ -d "$param" ] 
 			then
-				
 				# assemble list of all subdirectories to be traversed, with the deepest sub-directories appearing first
-				subdir_list=$( ls -R "$param" | sed -n 's/:$//p' | sort -r )
-				subdir=""
+				ls -R "$param" | sed -n 's/:$//p' | sort -r > "$g_tmpfile_Subdirs"
 				
-				for d in $subdir_list
+				# determine file size
+				n=$( wc -l "$g_tmpfile_Subdirs" | awk '{ print $1 }' )
+				let "i = 1"
+				
+				# handle each subdir
+				while [ $i -le $n ]
 				do
-					# accumulate subdir name
-					# we are assuming that $d is not a filename fragment, so there is no space put between $subdir and $d
-					subdir="$subdir$d"
+					# read subdir from file
+					d=$( sed -n "$i p" "$g_tmpfile_Subdirs" )
 					
-#DEBUG					echo "## subdir = '$subdir'	d = '$d'"
+					# step into subdir
+					pushd "$d" >& /dev/null
 					
-					if [ -e "$subdir" ] ; then
-					
-						pushd "$subdir" &> /dev/null
-						
-#DEBUG						echo "## pushed subdir = '$PWD'"
-						
-						# update preset variable: 'current working directory' 
-						d="$subdir"
-						
+						# for all files in subdir
 						for f in *
 						do
 							# execute user specified commands
 							eval "$g_input"
 						done
-						
-						popd &> /dev/null
-						
-						# reset subdir name
-#DEBUG						echo "## resetting subdir = $subdir"
-						subdir=""
-					else
-						# we have encountered a filename fragment, so allow a space before next accumulation
-						subdir="$subdir "
-					fi
+					
+					# step out of subdir
+					popd >& /dev/null
+					
+					# increment line number
+					let "i = i + 1"
 				done
 			fi
 		done
 	
 	else
 	# just operate on given files, don't handle subdirs
-	# NOTE: filename fragment handling is *NOT* needed here
 	
 		# set path of current directory
 		d="$PWD"
