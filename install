@@ -1,17 +1,21 @@
-#!/bin/bash -x
+#!/bin/bash
+# simple installation script
 
-# target installation directory
-install_dir="$HOME/bin"
+# default installation directory
+default_dir=$HOME/bin
 
-# create install_dir if doesn't exist
-if [ ! -e "$install_dir" ]
+# ask user for installation directory
+read -p "(ff-install) Please specify installation directory [$default_dir]: " install_dir
+[ -z "$install_dir" ] && install_dir=$default_dir
+
+# create installation directory if doesn't exist
+[ ! -e "$install_dir" ] && mkdir -p "$install_dir"
+
+# perform installation
+if chmod +x ff fl && cp ff-lib ff fl "$install_dir"
 then
-	mkdir "$install_dir"
+	echo "(ff-install) Installation was successful."
+else
+	echo "(ff-install) Installation was not successful."
 fi
-
-# make programs executable
-chmod u+x ff fl
-
-# copy programs
-cp ff fl "$install_dir"
 
