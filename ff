@@ -19,13 +19,16 @@
 	g_args=$*
 
 # check for args
-	if [[ "$g_args" == "" ]]
-	then
+	if [ "$g_args" == "" ] ; then
 		g_args=`ls | sed -e 's/^/"/g' -e 's/$/"/g' | tr '\n' ' '`
 	fi
 
-# get input
+# get user commands
 	g_input=`cat`
+	
+	if [ "$g_input" == "" ] ; then
+		g_input='break'
+	fi
 	
 # write custom script file
 cat > "$g_script" << __CUSTOM_SCRIPT__
