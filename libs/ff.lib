@@ -59,6 +59,7 @@
 	source "$__ff_myResources_libs/gettext.lib"
 	source "$__ff_myResources_libs/util.lib"
 	source "$__ff_myResources_libs/CmdOpts.lib"
+	source "$__ff_myResources_libs/DocFmt.lib"
 
 ## functions
 
@@ -138,41 +139,28 @@ $expression
 			;;
 			$__lib_ff_options_flag_showHelp)
 
-				local __lib_ff_docFileName=manual __lib_ff_docLang=$__ff_myLang __lib_ff_docI18n __lib_ff_docCached
+				local __lib_ff_docFileName=manual __lib_ff_docI18n __lib_ff_docCached
 				local __lib_ff_docFilePath="$__ff_myResources_docs/$__lib_ff_docFileName"
 
 				# NOTE: there are no translation catalogs for English because the documentation is written in English
-
-				# determine which translation catalog to use
-					[ -n "$2" ] && __lib_ff_docLang=${2:0:2}	# parse user's choice
-					__lib_ff_docI18n="$__ff_myResources_i18n/$__lib_ff_docFileName.$__lib_ff_docLang.po"
-
-				# check if the chosen translation catalog is available
-					if ! [ -r "$__lib_ff_docI18n" -a -f "$__lib_ff_docI18n" ]
+				
+				# handle user specified language for documentation
+				
+					if [ -n "$2" ]
 					then
-						if [ -n "${__lib_ff_docLang/*+(en|C|POSIX)*/}" ]	# check for English's language code equivalencies
-						then
-							gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
-
-							__lib_util_queryYesNo "$( gettext "Would you like to view the documentation in English?" )" 1 && exit
-						fi
-
-						__lib_ff_docLang=en
+						__ff_myLang=$2
+						__lib_ff_loadI18N	# reload I18N catalogs
 					fi
 
 				# display the documentation
 
-					__lib_ff_docCached="$__ff_myConf/$__ff_myName.$__lib_ff_docFileName.$__lib_ff_docLang"	# cached copies are stored in user settings directory
+					__lib_ff_docCached="$__ff_myConf/$__ff_myName-$__lib_ff_docFileName.$__ff_myLang"	# cached copies are stored in user settings directory
 
 					{
 						if [[ -e "$__lib_ff_docCached" && "$__lib_ff_docFilePath" -ot "$__lib_ff_docCached" && "$__lib_ff_docI18n" -ot "$__lib_ff_docCached" ]]	# check for previously cached documentation
 						then
 							cat "$__lib_ff_docCached"	# display cached file
 						else
-							# load dependencies
-							source "$__ff_myResources_libs/DocFmt.lib"
-							__lib_gettext_load "$__lib_ff_docI18n"
-
 							# generate & cache the documentation
 							source "$__lib_ff_docFilePath" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
 						fi
