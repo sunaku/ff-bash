@@ -84,7 +84,7 @@ echo \
 
 echo \
 "	<b>$__lib_ff_options_flag_endOpts</b>
-		$( gettext "Stop the command-line-options parser and accept the remaining command-line arguments as targets. This option allows the user to specify targets, whose names begin with a %s character, that may otherwise be misinterpreted as being command-line options. For example, we can specify two targets named %s and %s by writing them as %s or %s." "<em>-</em>" "<em>-foo</em>" "<em>-bar</em>" "<em>-- -foo -bar</em>" "<em>./-foo ./-bar</em>" )
+		$( gettext "Stop the command-line-options parser and accept the remaining command-line arguments as targets. This option allows the user to specify targets, whose names begin with a %s character, that may otherwise be misinterpreted as being command-line options. For example, we can specify two targets named %s and %s by writing them as %s or %s." "<em>-</em>" "<em>-foo</em>" "<em>-bar</em>" "<em>$__lib_ff_options_flag_endOpts -foo -bar</em>" "<em>./-foo ./-bar</em>" )
 			
 	<b>$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
 		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
