@@ -220,10 +220,6 @@
 		
 		# print result
 		
-			# strip bounding quotes before printing
-			translation=${translation#\"}
-			translation=${translation%\"}
-			
 			# add trailing newline
 			[ ${_gte_gettext_optEn_noNewline:-0} -eq 0 ] && translation=${translation}\\n
 			
