@@ -50,7 +50,7 @@
 	begin()
 	{
 		# check if user is ready
-		read -p "build catalog (yes/no)? [no]  " < /dev/tty
+		read -p "build catalog (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 		
 		### symbolic links will be placed here

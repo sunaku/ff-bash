@@ -10,8 +10,8 @@ script_name=ff.capitalize
 begin()
 {
 	# check if user is ready
-	read -p "($script_name) move files? (y/n): " <&1
-	( [ "${REPLY:0:1}" == "y" ] || [ "${REPLY:0:1}" == "Y" ] ) && ready=1
+	read -p "($script_name) move files (yes/no)? [no] : " < /dev/tty
+	[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 }
 
 main()

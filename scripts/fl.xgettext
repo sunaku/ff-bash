@@ -193,7 +193,7 @@
 	{
 		raw_output=0
 		
-		read -p "print raw output (yes/no)? [no]  " < /dev/tty
+		read -p "print raw output (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && raw_output=1
 	}
 

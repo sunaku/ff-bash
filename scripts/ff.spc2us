@@ -31,7 +31,7 @@
 begin()
 {
 	# check if user is ready
-	read -p "ready to move files (yes/no)? [no]  " < /dev/tty
+	read -p "ready to move files (yes/no)? [no] " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 }
 
