@@ -31,7 +31,7 @@
 #
 # PRESET VARIABLES
 #	The following preset variables are available for use in users' scripts.
-#	Note that the UNIX term 'file' can refer to either a file or directory.
+#	Note that the UNIX term 'file' refers to both files and directories.
 #
 #	$f	basename of current file (or directory)
 #	$d	relative path to current working directory
