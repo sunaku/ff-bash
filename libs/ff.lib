@@ -33,7 +33,7 @@
 ## globals
 
 	__lib_ff_version=1.6.8
-	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}$$"
+	__lib_ff_tmpMask="${TMP:-/tmp}/${__ff_myName}.$$"
 	declare -a __lib_ff_cmdArgs		# array of command-line arguments
 	
 	# command line options
@@ -92,7 +92,7 @@
 				then
 					expression=$( < "$__lib_ff_options_value_evalFile" )
 				else
-					gettext "Error: Unable to read file '%s'." "$__lib_ff_options_value_evalFile"
+					gettext "Error: Unable to read file %s." "\"$__lib_ff_options_value_evalFile\""
 					__lib_ff_exit 2
 				fi
 			fi
@@ -139,7 +139,7 @@ $expression
 				
 				if [ ${__lib_ff_options_isOn_evalFile:-0} -eq 1 ] 
 				then
-					gettext "Error: Cannot use both -e and -f simultaneously."
+					gettext "Error: Cannot use both %s and %s options simultaneously." "\"--$__lib_ff_options_longFlag_evalExpr\"" "\"--$__lib_ff_options_longFlag_evalFile\""
 					__lib_ff_exit 1
 				fi
 			
@@ -152,7 +152,7 @@ $expression
 			
 				if [ ${__lib_ff_options_isOn_evalExpr:-0} -eq 1 ] 
 				then
-					gettext "Error: Cannot use both -e and -f simultaneously."
+					gettext "Error: Cannot use both %s and %s options simultaneously." "\"--$__lib_ff_options_longFlag_evalExpr\"" "\"--$__lib_ff_options_longFlag_evalFile\""
 					__lib_ff_exit 1
 				fi
 				
@@ -187,12 +187,12 @@ $expression
 					
 					elif [ "$__lib_ff_docLang" != en ]
 					then
-						gettext "Error: Unable to read the translation catalog for language code '%s'." "$__lib_ff_docLang"
+						gettext "Error: Unable to read the translation catalog for language code %s." "\"$__lib_ff_docLang\""
 						
 						# query user to display English docs
-						read -p "$( gettext "Shall I display the documentation in English instead? [yes]" ): " < /dev/tty
+						read -p "$( gettext "Would you like to view the documentation in English? %s" "[$( gettext "Yes" )]" ): " < /dev/tty
 						
-						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && __lib_ff_exit
+						[[ -n "$REPLY" && "$REPLY" != "$( gettext "Yes" )" ]] && __lib_ff_exit
 					fi
 				
 				# display documentation
@@ -221,7 +221,7 @@ $expression
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized
 			if ! __lib_CmdOpts_scanOptions "__lib_ff_targetList"
 			then
-				gettext "Error: '%s' is not a valid option. Try '--$__lib_ff_options_longFlag_showHelp'." "$__lib_ff_targetList"
+				gettext "Error: %s is not a valid option. Try %s." "\"$__lib_ff_targetList\"" "\"--$__lib_ff_options_longFlag_showHelp\""
 				__lib_ff_exit 1
 			fi
 			
@@ -237,6 +237,6 @@ $expression
 			__ff_main
 
 		# finished
-			__lib_ff_exit 0
+			__lib_ff_exit
 	}
 
