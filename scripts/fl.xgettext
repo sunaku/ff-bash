@@ -52,6 +52,29 @@
 	
 ## helper functions
 	
+	# Computes a hash value for a given string and prints it to stdout.
+	# @param	1	string to hash
+	hash_string()
+	{
+		local c i=0 k=0 n=${#1}
+		
+		for (( ; i < n ; i++ ))
+		do
+			c=${1:$i:1}	# next character in string
+			
+			if [[ $c == [[:alnum:]] ]]	# check character
+			then
+				echo -n $c	# incrementally output the string portion of hash
+			else
+				(( k++ ))	# count number of non [:alnum:] chars
+			fi
+		done
+		
+		echo "$k$n"	# output the remainder of the hash
+		
+#		read -p "hash(str=$1, max=$m)=$k$n" </dev/tty
+	}
+	
 	# prints output to stdout
 	print_output()
 	{
@@ -85,7 +108,7 @@
 	# stores string and reference into cache
 	store_string()
 	{
-		local hash=$( __lib_gettext_hash "$g_string" )
+		local hash=$( hash_string "$g_string" )
 		
 		# store reference line number
 		eval "g_cache_refs_$hash=\"\$g_cache_refs_$hash \$fn:\$g_string_lineBegin\""
