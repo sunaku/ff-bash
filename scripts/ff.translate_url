@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# Fetches translations in all supported languages for documents on a web-server. The URLs of these documents are to be passed as targets to "For each File". The resulting translations are stored in the current working directory.
+#
+##
+#
+# Requirements:
+#
+#	wget	- downloads a document given its URL
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+## globals
+
+	# translation service
+
+		service_URL='http://babelfish.altavista.com/babelfish/trurl_pagecontent?'
+		service_URL_langFlag='&lp='
+		service_URL_documentFlag='&url='
+		
+		service_busyMessage='<title>[^<>]*Error[^<>]*</title>'
+	
+	# supported languages
+		
+		langNames=( "Chinese simplified" "Chinese traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
+		
+		langCodes=( zh zt nl en fr de el it ja ko pt ru es )
+		
+		# default language of source document
+		langSrc=en
+		
+	# possible values for the URL flag
+		service_URL_langFlag_codes=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
+		
+		
+## helper functions
+
+	# query user for language of source documents
+	querySourceLang()
+	{
+		# display menu
+			
+			echo "Code	Language"
+			echo "----	--------"
+			
+			i=0
+			while [ $i -lt ${#langCodes[@]} ]
+			do
+				echo "${langCodes[$i]}	${langNames[$i]}"
+				let i=i+1
+			done
+			
+			echo
+		
+		# read choice
+			read -p "Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
+			
+			[ -n "$REPLY" ] && langSrc=$REPLY
+	}
+
+## control functions
+
+	main()
+	{
+		docURL=${f#./}
+		querySourceLang
+		
+		i=0
+		while [ $i -lt ${#service_URL_langFlag_codes[@]} ]
+		do
+			langFlag=${service_URL_langFlag_codes[$i]}
+			docDst=$w/$fn.${langFlag#*_}
+			
+			# check source language in flag
+			if [ "$langSrc" == "${langFlag%_*}" ]
+			then
+		
+				queryURL=${service_URL}${service_URL_documentFlag}${docURL}${service_URL_langFlag}${langFlag}
+				
+				# fetch translation
+				wget --header='Accept-Charset: *' -O $$ "$queryURL"
+				
+				# check for errors
+				if grep -i "$service_busyMessage" < $$
+				then
+					# try again after some time
+					sleep ${RANDOM:0:1}
+					continue
+				fi
+				
+				# remove added HTML header from and store output
+				sed '1d' < $$ > "$docDst"
+			fi
+			
+			let i=i+1
+		done
+		
+		rm -f $$
+	}
+

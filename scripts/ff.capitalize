@@ -1,0 +1,41 @@
+#!/bin/bash
+# capitalizes words in file names
+# ex: 'hello world' -> 'Hello World'
+#
+# Note: works only for file names in ASCII character code
+#
+
+script_name=ff.capitalize
+
+begin()
+{
+	# check if user is ready
+	read -p "($script_name) move files? (y/n): " <&1
+	( [ "${REPLY:0:1}" == "y" ] || [ "${REPLY:0:1}" == "Y" ] ) && ready=1
+}
+
+main()
+{
+	new_name=
+	
+	# determine new filename
+	for word in $fn
+	do
+		char=${word:0:1}
+		word=$(echo $char | tr '[:lower:]' '[:upper:]')${word:1:${#word}}
+		
+		new_name=${new_name}${word}
+	done
+	
+	# move the file
+	if [ "$fn" != "$new_name" ]
+	then
+		if [ ${ready:-0} -gt 0 ]
+		then
+			echo "($script_name) moving '$f' -> '$d/$new_name'"
+			mv "$f" "$d/$new_name"
+		else
+			echo "($script_name) testing '$f' -> '$d/$new_name'"
+		fi
+	fi
+}

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Displays the number of files and subdirectories in each directory.
+
+if [ -d "$f" ]; then 
+	echo $(ls "$f" | wc -l)	$f
+fi
+

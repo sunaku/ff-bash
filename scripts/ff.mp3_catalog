@@ -1,0 +1,181 @@
+#!/bin/bash
+#
+# Catalogs MP3 files using ID3 tag information.
+# Symbolic links are created to the original MP3 files.
+#
+# Caution:
+#	Adjust the lines preceded by '###' to suit your needs.
+#
+# Requirements:
+#	mp3info	- Program used to read ID3 tag informationn.
+#
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+## helper functions
+
+	# report this file
+	# $1 	message
+	# $2	log file
+	report_file()
+	{
+		echo "$1"
+		echo "$f" >> "$2"
+	}
+
+## control functions
+
+	begin()
+	{
+		# check if user is ready
+		read -p "build catalog? (y/n) " < /dev/tty
+		[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
+		
+		### symbolic links will be placed here
+		output_dir="$w/mp3_catalog_$$/"
+		
+		### Files that do not have ID3 tags are reported here
+		output_unprocessed="$w/$script_name-unprocessed.log"
+		
+		### Links that were created successfully are reported here
+		output_processed="$w/$script_name-processed.log"
+	}
+	
+	main()
+	{
+		# check if this is an MP3 file
+		if [ "${fn##*.}" == "mp3" ]
+		then
+		
+			echo
+			echo "processing file '$f'"
+		
+			# check if mp3 has an ID3 tag
+			
+				mp3info "$f" 2>&1 | grep ' does not have an ID3 1.x tag.' >& /dev/null
+				
+				if [ $? -eq 0 ]
+				then
+					report_file "missing ID3 tag" "$output_unprocessed"
+					return
+				fi
+			
+			# get ID3 tag information
+			
+				# refer to man page of 'mp3info' for the formatting options
+				album=$( mp3info -p "%l" "$f" )
+				artist=$( mp3info -p "%a" "$f" )
+				title=$( mp3info -p "%t" "$f" )
+				track=$( mp3info -p "%n" "$f" )
+				genre=$( mp3info -p "%g" "$f" )
+				
+				### uncomment these if you need to use them
+				#genre_id=$( mp3info -p "%G" "$f" )
+				#year=$( mp3info -p "%y" "$f" )
+				#copyright=$( mp3info -p "%C" "$f" )
+				#comment=$( mp3info -p "%c" "$f" )
+	
+			### assemble new file name
+				
+				# reset new file name
+				new_name=
+			
+				if [ ! -z "$track" ]
+				then
+					# prefix single digit track numbers with zero
+					# ex: '2' -> '02'
+					if [ ${track:-0} -lt 10 ]; then
+						track="0$track"
+					fi
+					
+					# accumulate info into filename
+					new_name="${new_name}${track}-"
+				fi
+				
+				if [ ! -z "$artist" ]
+				then
+					# accumulate info into filename
+					new_name="${new_name}${artist}-"
+				fi
+				
+				if [ ! -z "$title" ]
+				then
+					# accumulate info into filename
+					new_name="${new_name}${title}"
+				fi
+				
+				# convert directory separator characters in filename
+				new_name=${new_name//\//+}
+				
+			
+			# check if the new filename is meaningless (no ID3 tag in MP3 file)
+			if [ -z "$new_name" ]
+			then
+				report_file "generated filename is meaningless"  "$output_unprocessed"
+				return
+			else
+			
+				# display parsed ID3 info
+				echo "album='$album'"
+				echo "track='$track'"
+				echo "artist='$artist'"
+				echo "title='$title'"
+				echo "genre='$genre'"
+				
+				### uncomment these if you need to use them
+				#echo "genre_id='$genre_id'"
+				#echo "year='$year'"
+				#echo "copyright='$copyright'"
+				#echo "comment='$comment'"
+	
+				# append file extension to new filename
+				new_name="${new_name}.mp3"
+				echo "new_name='$new_name'"
+			
+				## assemble new path
+				new_path="${output_dir}/${genre:-_default_}/${album}/${artist}/"
+				echo "new_path='$new_path'"
+				
+				# display link source & destination
+				echo "source:	'$f'"
+				echo "destination:	'$new_path/$new_name'"
+				
+				if [ ${ready:-0} -gt 0 ]
+				then
+					# create new path directory
+					if [ ! -e "$new_path" ] ; then
+						mkdir -p "$new_path"
+					fi
+					
+					# link the source mp3 file to its new destination
+					ln -s "$f" "$new_path/$new_name"
+					
+					# report the link
+					report_file "link created successfully" "$output_processed"
+				fi
+			fi
+		fi
+	}
+	

@@ -1,0 +1,218 @@
+#!/bin/bash
+#
+# Extracts gettext strings from shell scripts.
+#
+##
+#
+# Requires:
+#
+#	* All gettext strings must be enclosed in double or single quotes.
+#
+##
+#
+# Features:
+#
+# 	* gettext strings can span multiple lines as the following example illustrates.
+#		gettext "there 
+#			was
+#		a farmer   ..."
+#
+# 	* Tabs within gettext strings are ignored.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+## globals
+
+	# possible invocations of gettext
+	g_gettext_aliases=( gettext gettext_eval ngettext ngettext_eval )
+
+	declare g_stream_state g_word_state g_string g_string_quote g_string_lineBegin
+	
+	#XXX: assuming words separated by spaces
+	g_word_delimiter=" "
+	
+	# arrays to store strings before output
+	declare -a g_cache_strings g_cache_refs
+	
+## helper functions
+	
+	# prints output to stdout
+	print_output()
+	{
+		local cache_index=0
+		
+		if [ ${raw_output:-0} -eq 1 ]
+		then
+			while [ $cache_index -lt ${#g_cache_strings[@]} ]
+			do
+				echo -e "${g_cache_strings[$cache_index]}\n"
+				let cache_index=cache_index+1	# increment loop
+			done
+		else
+			# print header
+			echo "#. $f"
+			echo "#. $( date )"
+			echo "#. ${#g_cache_strings[@]} strings extracted."
+			echo
+			
+			# print all strings in cache
+			while [ $cache_index -lt ${#g_cache_strings[@]} ]
+			do
+				echo "#:${g_cache_refs[$cache_index]}"
+				echo "msgid ${g_string_quote}${g_cache_strings[$cache_index]}${g_string_quote}"
+				echo "msgstr ${g_string_quote}${g_string_quote}"
+				echo
+				
+				let cache_index=cache_index+1	# increment loop
+			done
+		fi
+	}
+	
+	# stores string and reference into cache
+	store_string()
+	{
+		local cache_index=0
+		
+		# try and find string in cache
+		while [ $cache_index -lt ${#g_cache_strings[@]} ]
+		do
+			[ "$g_string" == "${g_cache_strings[$cache_index]}" ] && break 
+			let cache_index=cache_index+1	# increment loop
+		done
+		
+		# store reference
+		g_cache_refs[$cache_index]="${g_cache_refs[$cache_index]} $fn:$g_string_lineBegin"
+		
+		# store string
+		[ $cache_index -ge ${#g_cache_strings[@]} ] && g_cache_strings[$cache_index]=$g_string
+	}
+	
+	# prints debug info
+	# @param	$1	function that called this
+	print_debug()
+	{
+		echo "$1:$i:$g_stream_state:$g_word_state:word=$word"
+	}
+
+	# parses a gettext string from a line
+	handle_stream()
+	{
+		local word
+		
+		for word in $l
+		do
+#			print_debug "handle_stream()"
+			
+			case "$g_stream_state" in
+				idle)
+					# skip comments
+					[ "${word:0:1}" == \# ] && break
+					
+					# look for gettext command
+					for a in "${g_gettext_aliases[@]}"
+					do
+						if [ "$word" == "$a" ]
+						then
+							# state changes
+							g_stream_state=parse
+							g_word_state=idle
+						fi
+					done
+				;;
+				parse)
+					handle_word
+				;;
+			esac
+		done
+	}
+	
+	# parses string from a stream of words
+	handle_word()
+	{
+#		print_debug "handle_word()"
+		
+		# look for start of quoted string
+		if [ "$g_word_state" == idle ]
+		then
+			if [[ ${word:0:1} == \" || ${word:0:1} == \' ]]
+			then
+				g_string_quote=${word:0:1}	# store which type of quote used
+				g_string=			# reset string
+				g_string_lineBegin=$i		# store line number
+				
+				# state changes
+				g_word_state=read
+			fi
+		fi
+		
+		# read until end of quoted string
+		if [ "$g_word_state" == read ]	# another IF to handle state changes w/o re-looping
+		then
+			# accumulate words into string
+			g_string="${g_string}${g_word_delimiter}${word}"
+			
+			if [[ ${word%[^\\]${g_string_quote}*} != "$word" || "$word" == "$g_string_quote" && ${#g_string} -gt 2 ]] ##XXX: 2 b/c space + quote + (stuff)?
+			then
+				# provide the string w/o bounding quotes
+				g_string=${g_string#${g_word_delimiter}${g_string_quote}}
+				g_string=${g_string%${g_string_quote}*}	# also remove stuff after quote
+				
+				store_string
+				
+				# state changes
+				g_stream_state=idle
+			fi
+		fi
+	}
+	
+## main script logic
+
+	begin()
+	{
+		raw_output=0
+		
+		read -p "print raw output? (y/n) " < /dev/tty
+		[ "${REPLY#[Yy]}" != "$REPLY" ] && raw_output=1
+	}
+
+	main()
+	{
+		handle_stream
+	}
+	
+	begin_file()
+	{
+		g_stream_state=idle
+		g_word_state=idle
+		g_string_lineBegin=
+		
+		unset g_cache_refs g_cache_strings
+	}
+	
+	end_file()
+	{
+		print_output
+	}
+

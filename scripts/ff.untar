@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+# Extracts compressed (gzip and bzip2) and uncompressed tar files into respectively named directories created for them.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
+# globals
+
+	### extra options passed to 'tar'
+	tar_opts=
+
+# functions
+
+	begin()
+	{
+		read tar_opts -p "please specify any additional options for 'tar': [none] " < /dev/tty
+		
+		read -p "extract to current working directory '$w'? (y/n) " < /dev/tty
+		[ "${REPLY#[Yy]}" != "$REPLY" ] && opts_exToWd=1
+	}
+	
+	main()
+	{
+		# determine tar-ball type
+		
+			if [ "${fn%%.*gz}" != "$fn" ]
+			then
+				# handle gzipped tar-balls
+				tar_type=z
+				
+			elif [ "${fn%%.*bz}" != "$fn" ]
+			then
+			
+				# handle bzipped tar-balls
+				tar_type=j
+				
+			elif [ "${fn%%.*tar}" != "$fn" ]
+			then
+			
+				# handle regular tar-balls
+				tar_type=
+				
+			else
+				# not a tar-ball
+				return
+			fi
+		
+		# determine extraction point
+		
+			if [ ${opts_exToWd:-0} -gt 0 ]
+			then
+				# extract to user's working directory
+				tar_outdir=$w
+			else
+				# extract to wherever this file is located
+				tar_outdir=$d
+			fi
+			
+			# if the tar-ball doesn't extract into its own directory, create one
+			if [ ! -z "$(tar -${tar_type}tf "$f" | grep -v '/')" ]
+			then
+				# strip off the file extension
+				tar_outdir=$tar_outdir/${fn%%.*}
+				
+				# if output directory exists, ask for a unique name
+				if [ -e "$tar_outdir" ]
+				then
+					new_outdir=${tar_outdir}__$$
+					
+					read -p "output directory '$tar_outdir' exists; please specify a different directory name: [$new_outdir] " < /dev/tty
+					
+					if [ -z "$REPLY" ]
+					then
+						tar_outdir=$new_outdir
+					else
+						tar_outdir=$REPLY
+					fi
+				fi
+				
+				mkdir -p "$tar_outdir"
+			fi
+		
+		# extract tar-ball
+		
+			# notify user
+			echo "extracting '$f' into '$tar_outdir'."
+			
+			# extract the file
+			tar $tar_opts $( [ ! -z "$tar_outdir" ] && echo "-C $tar_outdir" ) -${tar_type}xf "$f"
+	}
+
