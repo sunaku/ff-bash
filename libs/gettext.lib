@@ -29,7 +29,7 @@
 
 ## globals
 
-	declare -a __lib_gettext_catalogList=( /dev/null )
+	declare -a __lib_gettext_catalogList
 	
 ## functions
 
@@ -84,6 +84,12 @@
 		return $exit_status
 	}
 	
+	# Clears the internal cache of translation catalogs.
+	__lib_gettext_clear()
+	{
+		__lib_gettext_catalogList=( /dev/null )	# keeps gettext() from freezing when no catalogs are loaded
+	}
+	
 	# Prints the translated value of the given query, by using data from previously loaded catalogs. If a translation is not available, the query is printed instead. Escaped sequences such as '\n' are automatically expanded.
 	#
 	# @see		printf
@@ -104,31 +110,28 @@
 	#
 	gettext()
 	{
-		local query response newline=$'\n'
+		local query result newline=$'\n'
 		
 		# handle options
 			if [ "$1" == "-n" ]
 			then
 				newline=
-				shift	# remove $1 from parameters
+				shift
 			fi
 			
 			query=$1
-			shift	# remove $1 from parameters
+			shift
 		
 		# perform translation
-		
-			response=$(
+			result=$(
 				cat "${__lib_gettext_catalogList[@]}" |
-				grep -F -A 1 "\"$query\"" |	# assuming PO strings are quoted w/ double quotes
-				sed -n '2 s/^[^"]*"\(.*\)" *$/\1/ p'	# assuming response is all on one line
+				grep -F -A 1 "\"$query\"" |	# catalog entries are double quoted
+				sed -n '2 s/^[^"]*"\(.*\)"[ \t]*$/\1/ p'	# catalog entries are listed one per line
 			)
 			
-			[ -z "$response" ] && response=$query	# use untranslated query if translation failed
+			[ -z "$result" ] && result=$query	# use untranslated query if translation failed
 		
-		printf "${response}${newline}" "${@}"	# print result
-		
-#		read < /dev/tty
+		printf "${result}${newline}" "${@}"
 	}
 	
 	# function alias
@@ -149,3 +152,7 @@
 		gettext "${@}"
 	}
 	
+## init
+
+	__lib_gettext_clear
+
