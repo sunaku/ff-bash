@@ -53,8 +53,8 @@
 #	The following variables are available for use in users' scripts.
 #
 #	$f	basename of current file (directory or non-directory)
-#	$d	absolute path of current working directory
-#	$p	absolute path of current file (directory or non-directory)
+#	$d	path of current working directory
+#	$p	path of current file (directory or non-directory)
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>

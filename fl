@@ -50,8 +50,8 @@
 #	The following variables are available for use in users' scripts.
 #
 #	$f	basename of current file (non-directory)
-#	$d	absolute path of current working directory
-#	$p	absolute path of current file (non-directory)
+#	$d	path of current working directory
+#	$p	path of current file (non-directory)
 #	$n	total number of lines in current file (non-directory)
 #	$i	number of current line
 #	$l	contents of current line
