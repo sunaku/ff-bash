@@ -6,7 +6,6 @@ CONTENTS
 
 	- copyright
 	- files
-	- limitations
 	- documentation
 	- installation
 	- translation
@@ -59,13 +58,6 @@ FILES
 	scripts/
 	+ Contains useful scripts that can be used with the "For each File" and "For each Line" tools.
 
-
-LIMITATIONS
-
-	* Multi-byte characters may not displayed properly in documentation because the 'read' builtin may strip them out depending upon your locale. You can try setting LC_ALL to the value "C" (shown below), and try viewing the documentation again.
-	
-		$ declare -x LC_ALL=C
-
 DOCUMENTATION
 
 	1. View help message, optionally translated into the language specified by an ISO-639 language code, for "For each File" by executing:
@@ -112,7 +104,7 @@ TRANSLATION
 				msgid "A message in English."
 				msgstr "Your translation is placed here."
 				
-	Also note that you can use UNICODE characters (UTF-8) in the translation catalogs. However, as of this version, some of these characters may not be displayed properly (see the LIMITATIONS section).
+	Also note that you can use UNICODE characters (UTF-8 and UTF-16) in the translation catalogs..
 
 EXAMPLES
 
