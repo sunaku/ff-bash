@@ -1,16 +1,20 @@
 #!/bin/bash
 #
-# "For each File" documentation template in English.
+# Manual page template for "For each File" and "For each Line" tools.
+#
+###
 #
 # Dependencies:
-#
-# 	documentation formatting library
 #
 # 	gettext emulation library
 #
 #	${__lib_ff}*
 #
 #	${__ff}*
+#
+# Usage:
+#
+#	Pipe the output of this script through the formatTags() function of DocFmt.lib.
 #
 ###
 #
@@ -19,178 +23,166 @@
 ###
 #
 # This file is part of "For each File".
-# 
+#
 # "For each File" is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 ###
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "NAME" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$__ff_myName - $( gettext "For each File" )"
-__lib_DocFmt_blockEnd
+echo \
+"<b>$( gettext "NAME" )</b>"
 
+if [ "$__ff_myName" == ff ]
+then
+	echo \
+"	$__ff_myName - $( gettext "For each File" )
+"
+else
+	echo \
+"	$__ff_myName - $( gettext "For each Line" )
+"
+fi
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "DESCRIPTION" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon an arbitrary set of files." "GNU BASH" )"
-__lib_DocFmt_blockEnd
+echo \
+"<b>$( gettext "DESCRIPTION" )</b>"
 
+if [ "$__ff_myName" == ff ]
+then
+	echo \
+"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon an arbitrary set of files." "GNU BASH" )
+"
+else
+	echo \
+"	$( gettext "This tool allows the user to execute an arbitrary set of %s shell commands upon the contents of an arbitrary set of files. File contents are logically divided into disjoint sets of characters by the delimiters defined in %s. To preserve leading and trailing white-space, the empty string is used as the default delimiter." "GNU BASH" "<s>\$IFS</s>" )
+"
+fi
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "INVOCATION" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$__ff_myName [$( __lib_DocFmt_setFmt underline 1 )$( gettext "option" )$( __lib_DocFmt_setFmt underline 0 )]... [$( __lib_DocFmt_setFmt underline 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt underline 0 )] $( __lib_DocFmt_setFmt underline 1 )$( gettext "target" )$( __lib_DocFmt_setFmt underline 0 )..."
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt underline 1 )$( gettext "target" )$( __lib_DocFmt_setFmt underline 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed." "UNIX" )"
-	__lib_DocFmt_blockEnd	
-	
-	__lib_DocFmt_blockItem "$( gettext "The %s flag serves as a mechanism by which the command-line options parser can be stopped and the remaining command-line arguments can be unconditionally accepted as targets. This behavior allows targets whose name begins with a %s character to avoid being misinterpreted by the command-line options parser." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_flag_endOpts$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )-$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
-	
-	__lib_DocFmt_blockItem "$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the user's terminal device (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )/dev/tty$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )[$( gettext "Control" )][$( gettext "D" )]$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
-__lib_DocFmt_blockEnd
+echo \
+"<b>$( gettext "SYNOPSIS" )</b>
+	$__ff_myName [<u>$( gettext "option" )</u>]... [<u>$__lib_ff_options_flag_endOpts</u>] <u>$( gettext "target" )</u>...
 
+		<u>$( gettext "option" )</u>
+			$( gettext "A mechanism by which the behavior of this tool can be altered (see <b>OPTIONS</b> below). Note that a series of short options can be grouped together into one word. For example, %s can be written as %s." "<b>-a 1 -b 2 -c 3</b>" "<b>-abc 1 2 3</b>" )
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "OPTIONS" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
+		<u>$__lib_ff_options_flag_endOpts</u>
+			$( gettext "A special option which signals the command-line options parser to stop and forces the remaining command-line arguments to be unconditionally accepted as targets. This option allows the user to specify targets whose names begin with a %s character." "<s>-</s>" )
 
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__ff_myOptions_shortFlag_recursive$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_recursive$( __lib_DocFmt_setFmt bold 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Recursively traverse directories and symbolic links that reference directories in post-order fashion: files at the deepest level of the file-system hierarchy are handled before those above them." )"
+		<u>$( gettext "target" )</u>
+			$( gettext "A file, as defined in %s terminology, upon which shell commands will be performed." "UNIX" )
+
+	$( gettext "If both %s and %s options are not used, then shell commands will be read interactively from the terminal device of the current user (located at %s) until the end-of-transmission signal is issued (by pressing %s)." "<b>$__lib_ff_options_longFlag_evalExpr</b>" "<b>$__lib_ff_options_longFlag_evalFile</b>" "<s>/dev/tty</s>" "<s>[$( gettext "Control" )][D]</s>" )
+
+<b>$( gettext "OPTIONS" )</b>"
+
+if [ "$__ff_myName" == ff ]
+then
+	echo \
+"	<b>-$__ff_myOptions_shortFlag_recursive</b>, <b>$__ff_myOptions_longFlag_recursive</b>
+		$( gettext "Recursively traverse directories and symbolic links that reference directories in post-order fashion: files at the deepest level of the file-system hierarchy are handled before those above them." )
+
+		$( gettext "The following subordinate options have no effect if used without the %s option." "<b>$__ff_myOptions_longFlag_recursive</b>" )
 		
-		__lib_DocFmt_blockItem "$( gettext "The following subordinate options have no effect if used without the %s option." "$( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_recursive$( __lib_DocFmt_setFmt bold 0 )" )"
+			<b>-$__ff_myOptions_shortFlag_handleHidden</b>, <b>$__ff_myOptions_longFlag_handleHidden</b>
+				$( gettext "Do not ignore targets whose names begin with a %s character." "<s>.</s>"  )
 	
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__ff_myOptions_shortFlag_handleHidden$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_handleHidden$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Do not ignore targets whose names begin with a %s character." "$( __lib_DocFmt_setFmt bold 1 underline 1 ).$( __lib_DocFmt_setFmt bold 0 underline 0 )"  )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__ff_myOptions_shortFlag_ignoreLinks$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_ignoreLinks$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Do not traverse symbolic links that reference directories." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__ff_myOptions_shortFlag_fileMask$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "pattern" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_fileMask$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "pattern" )$( __lib_DocFmt_setFmt underline 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target's name." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "pattern" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__ff_myOptions_longFlag_handleHidden$( __lib_DocFmt_setFmt bold 0 )" "$( __lib_DocFmt_setFmt underline 1 )$( gettext "pattern" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )*$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )?$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )[]$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 ).$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
-		__lib_DocFmt_blockEnd
-	__lib_DocFmt_blockEnd
+			<b>-$__ff_myOptions_shortFlag_ignoreLinks</b>, <b>$__ff_myOptions_longFlag_ignoreLinks</b>
+				$( gettext "Do not traverse symbolic links that reference directories." )
 	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalExpr$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "string" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 )" )"
-	__lib_DocFmt_blockEnd
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_evalFile$( __lib_DocFmt_setFmt bold 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Execute the shell commands contained in %s." "$( __lib_DocFmt_setFmt underline 1 )$( gettext "script-file" )$( __lib_DocFmt_setFmt underline 0 )" )"
-	__lib_DocFmt_blockEnd
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_readPipe$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_readPipe$( __lib_DocFmt_setFmt bold 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )"
-	__lib_DocFmt_blockEnd
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )], $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showHelp$( __lib_DocFmt_setFmt bold 0 ) [$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )]"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "$( __lib_DocFmt_setFmt bold 1 underline 1 )ISO-639$( __lib_DocFmt_setFmt bold 0 underline 0 ) $( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt underline 1 )$( gettext "language-code" )$( __lib_DocFmt_setFmt underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )LC_MESSAGES$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
-	__lib_DocFmt_blockEnd
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )-$__lib_ff_options_shortFlag_showVersion$( __lib_DocFmt_setFmt bold 0 ), $( __lib_DocFmt_setFmt bold 1 )$__lib_ff_options_longFlag_showVersion$( __lib_DocFmt_setFmt bold 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Display the version number and exit." )"
-	__lib_DocFmt_blockEnd
-	
-__lib_DocFmt_blockEnd
+			<b>-$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>
+				$( gettext "Only handle targets whose names match the pattern defined by %s. Note that unless the %s option is also used, pattern-matching constructs in %s, such as %s, %s, and %s, will not match a %s character at the beginning of a target\'s name." "<u>$( gettext "pattern" )</u>" "<b>$__ff_myOptions_longFlag_handleHidden</b>" "<u>$( gettext "pattern" )</u>" "<s>*</s>" "<s>?</s>" "<s>[]</s>" "<s>.</s>" )
+"
+fi
 
+echo \
+"	<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>
+		$( gettext "Execute the shell commands contained in %s. Note that the %s option is ignored when this option is used." "<u>$( gettext "string" )</u>" "<b>$__lib_ff_options_longFlag_evalFile</b>" )
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "SHELL COMMANDS" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
+	<b>-$__lib_ff_options_shortFlag_evalFile</b> <u>$( gettext "script-file" )</u>, <b>$__lib_ff_options_longFlag_evalFile</b> <u>$( gettext "script-file" )</u>
+		$( gettext "Execute the shell commands contained in %s." "<u>$( gettext "script-file" )</u>" )
 
-	__lib_DocFmt_blockItem "$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. Thus it is requested that the user not modify such constructs, as doing so may yield unpredictable behavior." "$( __lib_DocFmt_setFmt bold 1 underline 1 )__lib$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )__ff$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
+	<b>-$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
+		$( gettext "Read the standard input stream for a list of targets, delimited by the new-line character, in addition to those specified on the command-line. Note that targets whose names contain new-line characters will not be handled properly if specified using this option; they must be specified on the command-line instead. Also, targets specified on the command-line are handled before those specified using this option." )
 
-	__lib_DocFmt_blockItem "$( gettext "The following constructs are provided by this tool for use in the user's shell commands." )"
+	<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>$( gettext "language-code" )</u>], <b>$__lib_ff_options_longFlag_showHelp</b> [<u>$( gettext "language-code" )</u>]
+		$( gettext "Display this manual in the language denoted by the %s and exit. Note that if %s is unspecified, then the value of the %s locale attribute is used in its place." "<s>ISO-639</s> <u>$( gettext "language-code" )</u>" "<u>$( gettext "language-code" )</u>" "<s>LC_MESSAGES</s>" )
 
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "CONTROL FUNCTIONS" )$( __lib_DocFmt_setFmt bold 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "These functions allow for greater control over the execution of the user's shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "$( __lib_DocFmt_setFmt bold 1 underline 1 )main$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
+	<b>-$__lib_ff_options_shortFlag_showVersion</b>, <b>$__lib_ff_options_longFlag_showVersion</b>
+		$( gettext "Display the version number and exit." )
+
+<b>$( gettext "RESERVED NAMESPACES" )</b>
+	$( gettext "This tool depends upon the integrity of variables and other constructs whose names begin with %s and %s. Thus it is requested that the user not modify such constructs, as doing so may yield unpredictable behavior." "<s>__lib</s>" "<s>__ff</s>" )
+
+<b>$( gettext "CONTROL FUNCTIONS" )</b>
+	$( gettext "These functions allow for greater control over the execution of the user\'s shell commands. The user is not required to implement these functions in order to operate this tool. However, if any combination of these functions are implemented, then it is required that the %s function be implemented as well." "<s>main</s>" )
+
+	<b>begin</b>
+		$( gettext "This function is invoked before any targets have been handled." )
+
+	<b>main</b>
+		$( gettext "This function is invoked once per each target." )
+
+	<b>end</b>
+		$( gettext "This function is invoked after all targets have been handled." )
+"
+if [ "$__ff_myName" != ff ]
+then
+	echo \
+"	<b>begin_file</b>
+		$( gettext "This function is invoked before any lines in the current target have been handled. Note that this function is a good place for setting up a custom delimiter before a file is parsed." )
+
+	<b>end_file</b>
+		$( gettext "This function is invoked after all lines in the current target have been handled." )
+"
+fi
+
+echo \
+"<b>$( gettext "PRESET VARIABLES" )</b>
+	$( gettext "These variables provide information about the current target being handled. Their values are updated upon each invocation of the %s control function." "<s>main</s>" )
+
+	<b>t</b>
+		$( gettext "The original value of the current target." )
+
+	<b>fn</b>
+		$( gettext "The name of the current target without its path." )
+
+	<b>f</b>
+		$( gettext "Either a relative or an absolute path to the current target." )
+
+	<b>d</b>
+		$( gettext "Either a relative or an absolute path to the directory which contains the current target." )
+"
+
+if [ "$__ff_myName" != ff ]
+then
+	echo \
+"	<b>i</b>
+		$( gettext "The number or index of the current line. This number ranges from 1 to N, where N is the total number of lines in the current target." )
 		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )begin$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "This function is invoked before any targets have been handled." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )main$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "This function is invoked once per each target." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )end$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "This function is invoked after all targets have been handled." )"
-		__lib_DocFmt_blockEnd
-	__lib_DocFmt_blockEnd
-	
-	__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "PRESET VARIABLES" )$( __lib_DocFmt_setFmt bold 0 )"
-	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "These variables provide information about the current target being handled." )"
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$t$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "The original value, as specified by the user, of the current target." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$fn$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "The name of the current target." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$f$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Either a relative or an absolute path to the current target." )"
-		__lib_DocFmt_blockEnd
-		
-		__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )\$d$( __lib_DocFmt_setFmt bold 0 )"
-		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Either a relative or an absolute path to the directory which contains the current target." )"
-		__lib_DocFmt_blockEnd
-	__lib_DocFmt_blockEnd
-__lib_DocFmt_blockEnd
+	<b>l</b>
+		$( gettext "The contents of the current line." )
+"
+fi
 
+echo \
+"<b>$( gettext "AUTHOR" )</b>
+	$( gettext "Written by %s." "Suraj N. Kurapati <skurapat@ucsc.edu>" )
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "AUTHOR" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "Written by %s." "Suraj N. Kurapati <skurapat@ucsc.edu>" )"
-__lib_DocFmt_blockEnd
+	$( gettext "You can find announcements for new releases at %s and additional resources at %s." "<s>http://freshmeat.net/projects/ff/</s>" "<s>http://sourceforge.net/tracker/?group_id=106777</s>")
 
+	$( gettext "If you find this translation to be unsatisfactory, then feel free to modify the translation catalog (located at %s) for this manual. You may also contribute modified translations for others to use (see the package overview for instructions)." "<s>$__lib_ff_docI18n</s>" )
 
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "TRANSLATION" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "If you find this translation to be unsatisfactory, then feel free to modify the translation catalog (located at %s) for this manual. You may also contribute modified translations for others to use (see the package overview for instructions)." "$( __lib_DocFmt_setFmt bold 1 underline 1 )$__lib_ff_docI18n$( __lib_DocFmt_setFmt bold 0 underline 0 )" )"
-__lib_DocFmt_blockEnd
-
-
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "RESOURCES" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "You can find announcements for new releases at %s and additional resources at %s." "$( __lib_DocFmt_setFmt bold 1 underline 1 )http://freshmeat.net/projects/ff/$( __lib_DocFmt_setFmt bold 0 underline 0 )" "$( __lib_DocFmt_setFmt bold 1 underline 1 )http://sourceforge.net/tracker/?group_id=106777$( __lib_DocFmt_setFmt bold 0 underline 0 )")"
-__lib_DocFmt_blockEnd
-
-
-__lib_DocFmt_blockItem "$( __lib_DocFmt_setFmt bold 1 )$( gettext "COPYRIGHT" )$( __lib_DocFmt_setFmt bold 0 )"
-__lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "Copyright 2003, 2004 Suraj N. Kurapati."
-	__lib_DocFmt_blockItem "$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )"
-__lib_DocFmt_blockEnd
-
+<b>$( gettext "COPYRIGHT" )</b>
+	Copyright 2003, 2004 Suraj N. Kurapati.
+	$( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
+"
