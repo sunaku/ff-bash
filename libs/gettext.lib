@@ -4,6 +4,12 @@
 #
 ###
 #
+# Requires:
+#
+#	All gettext strings must begin with a non-whitespace character.
+#
+###
+#
 # Copyright 2003, 2004 Suraj N. Kurapati.
 #
 ###
@@ -138,8 +144,7 @@
 			shift	# remove $1 from parameters
 		
 		# determine translation
-			response=${__lib_gettext_cachePrefix}${query:0:1}${#query} # perform hash
-			response=${!response}
+			eval "response=\$${__lib_gettext_cachePrefix}${query:0:1}${#query}" # perform hash
 			
 			# if translation is blank. use untranslated query.
 			[ -z "$response" ] && response=$query
