@@ -87,13 +87,13 @@ echo "<((pack))>  regular HTML translation"
 		
 		echo "<((pack))>  translate HTML files"
 		../ff -f ../scripts/ff.translate_url "${doc_url[@]}"
-
+		
 	echo "<((pack))>  move translated files to pack dir"
 	
-		echo "<((pack))>  make id-anchor URLs local"
+		echo "<((pack))>  make id-anchor URLs local & remove service added HTML header"
 			for x in "${doc_nom[@]}"
 			do
-				../ff -e "sed 's/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
+				../ff -e "sed '1s/^.*$/<html>/ ; s/\(href=\"\)[^>]*#/\1#/g' \$f > $pack_dir_docs/\${fn//.html/}.html ; rm -f \$f" ${x}*
 			done
 
 		echo "<((pack))>  remove altavista prefix from relative URLs"
