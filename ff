@@ -140,7 +140,7 @@
 		# preset variables
 		local t d f fn
 		
-		begin	# user's control function
+		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
 
 		# check method of operation: recursive or non-recursive
 		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation

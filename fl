@@ -90,7 +90,7 @@
 		local t d f fn i l
 		IFS=	# nullify to preserve whitespace
 		
-		begin	# user's control function
+		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
 		
 		# handle command-line targets
 		for t in "${__lib_ff_targetList[@]}"
