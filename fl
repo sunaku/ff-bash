@@ -52,6 +52,7 @@
 #	$f	basename of current file (non-directory)
 #	$d	path of current working directory
 #	$p	path of current file (non-directory)
+#	$b	path of directory from which this tool was launched
 #	$n	total number of lines in current file (non-directory)
 #	$i	number of current line
 #	$l	contents of current line
@@ -65,7 +66,6 @@
 #	the Free Software Foundation; either version 2 of the License, or   
 #	(at your option) any later version.
 #
-#####
 
 # globals
 	g_tmpfileMask="/tmp/$$"
@@ -88,7 +88,7 @@
 			;;
 			*)
 				# display help message which happens to be the documentation header
-				cat $0 | sed -e '/^####/q' -e 's/^# *//' | more
+				sed -e '/^$/q' -e 's/^# *//' $0 | more
 				exit 0
 			;;
 		esac
@@ -116,6 +116,9 @@
 	fi
 
 # non-recursive operation
+	
+	# set scripting variable
+	b="$PWD"
 	
 	# loop through positional params
 	for f

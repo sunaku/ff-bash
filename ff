@@ -55,6 +55,7 @@
 #	$f	basename of current file (directory or non-directory)
 #	$d	path of current working directory
 #	$p	path of current file (directory or non-directory)
+#	$b	path of directory from which this tool was launched
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -65,7 +66,6 @@
 #	the Free Software Foundation; either version 2 of the License, or   
 #	(at your option) any later version.
 #
-####
 
 # globals
 	g_tmpfileMask="/tmp/$$"
@@ -94,7 +94,7 @@
 			;;
 			*)
 				# display help message which happens to be the documentation header
-				sed -e '/^####/q' -e 's/^# *//' $0 | more
+				sed -e '/^$/q' -e 's/^# *//' $0 | more
 				exit 0
 			;;
 		esac
@@ -122,6 +122,9 @@
 	fi
 
 # check method of operation: recursive or non-recursive
+
+	# set scripting variable
+	b="$PWD"
 
 	if [ $g_optEn_recurse -eq 1 ] # recursive operation
 	then
