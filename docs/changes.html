@@ -1,12 +1,14 @@
 ff-changelog
 
 v1.6.2:
-	* Fixed bug which set incorrect values of scripting variables.
-	* Fixed minor bugs in MP3 cataloging example.
-	* Updated documentation.
+	* Fixed inconsistency in scripting variables between recursive and non-recursive modes.
+	* Fixed several bugs in example scripts.
+	* Removed obsolete scripting variable: ${p}.
+	* Added new scripting variables ${w} and ${fn}.
+	* Updated help and source documentation.
 	
 v1.6.1:
-	* Added new scripting variable ${p}.
+	* Added new scripting variable: ${p}.
 	* Added MP3 cataloging and ID3 tagging examples.
 	* Added installation script.
 	* Updated documentation.
@@ -17,7 +19,7 @@ v1.6:
 	* Updated documentation.
 	
 v1.5:
-	* 'ffr' is obsolete. Use 'ff -r' instead.
+	* Removed obsolete 'ffr' script. Use 'ff -r' instead.
 	* Implemented subdirectory recursing in an iterative fashion.
 	* User scripts are now evaluated directly by BASH shell, via 'eval'.
 	* Added command line options, documentation, and help message.
