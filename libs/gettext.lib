@@ -38,7 +38,7 @@
 	# @param	1	string to hash
 	__lib_gettext_hash()
 	{
-		local c h i=0 k=0 n=${#1}
+		local c i=0 k=0 n=${#1}
 		
 		for (( ; i < n ; i++ ))
 		do
@@ -48,13 +48,13 @@
 			then
 				echo -n $c	# incrementally output the string portion of hash
 			else
-				(( k++ ))	# count number of non-alnum chars
+				(( k++ ))	# count number of non [:alnum:] chars
 			fi
 		done
 		
 		echo "$k$n"	# output the remainder of the hash
 		
-#		read -p "__lib_gettext_hash(str=$1, max=$m)=$h$k$n" </dev/tty
+#		read -p "__lib_gettext_hash(str=$1, max=$m)=$k$n" </dev/tty
 	}
 	
 	# Loads a gettext Portable-Object translation catalog into cache.
