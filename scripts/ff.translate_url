@@ -42,19 +42,23 @@
 		
 		service_busyMessage1='<title>[^<>]*Error[^<>]*</title>'
 		service_busyMessage2='n/a'
+		
+		# encoding of service's output
+		service_encoding="UTF-8"
+		
+		# possible values for the URL flag
+		service_URL_langFlag_codes=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
 	
 	# supported languages
 		
-		langNames=( "Chinese simplified" "Chinese traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
+		langNames=( "Chinese - Simplified" "Chinese - Traditional" Dutch English French German Greek Italian Japanese Korean Portuguese Russian Spanish )
 		
 		langCodes=( zh zt nl en fr de el it ja ko pt ru es )
 		
-		# default language of source document
+	# source document
+	
+		# default language
 		langSrc=en
-		
-	# possible values for the URL flag
-		service_URL_langFlag_codes=( de_en de_fr el_en el_fr en_de en_el en_es en_fr en_it en_ja en_ko en_nl en_pt en_ru en_zh en_zt es_en es_fr fr_de fr_el fr_en fr_es fr_it fr_nl fr_pt it_en it_fr ja_en ko_en nl_en nl_fr pt_en pt_fr ru_en zh_en zt_en )
-		
 		
 ## helper functions
 
@@ -77,7 +81,6 @@
 		
 		# read choice
 			read -p "Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
-			
 			[ -n "$REPLY" ] && langSrc=$REPLY
 	}
 
@@ -101,7 +104,7 @@
 				queryURL=${service_URL}${service_URL_documentFlag}${docURL}${service_URL_langFlag}${langFlag}
 				
 				# fetch translation
-				wget --header='Accept-Charset: *' -O $$ "$queryURL"
+				wget --header="Accept-Charset: $service_encoding" -O $$ "$queryURL"
 				
 				# check for errors
 				if grep -i "$service_busyMessage1" < $$ || [ "$( tr -d '[:space:]' < $$ )" == "$service_busyMessage2" ]
