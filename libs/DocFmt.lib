@@ -29,43 +29,50 @@
 ## globals
 
 	__lib_DocFmt_indent=	# holds a string of tab characters
+	
+	## formatting vars for use with 'tput sgr ...'
+	# source: http://nscp.upenn.edu/aix4.3html/files/aixfiles/terminfo.htm#TH5Bj2ddmary
+	__lib_DocFmt_sgrModes=( 0 0 0 0 0 0 0 0 0 )	# on-off status flags for hash-table items below
+	__lib_DocFmt_sgrNames_standout=0
+	__lib_DocFmt_sgrNames_underline=1
+	__lib_DocFmt_sgrNames_reverse=2
+	__lib_DocFmt_sgrNames_blink=3
+	__lib_DocFmt_sgrNames_dim=4
+	__lib_DocFmt_sgrNames_bold=5
+	__lib_DocFmt_sgrNames_invis=6
+	__lib_DocFmt_sgrNames_protect=7
+	__lib_DocFmt_sgrNames_altcharset=8
 
 ## functions
 
 	# Prints text to the current block. The text can have
-	# escape sequences (such as '\n' for newline), and the
-	# some formatting tags:
-	#	<b> or <B>	bold
-	#	<u> or <U>	underline
-	#
-	# All tags must be properly enclosed.
-	# For example: "<tag>text</tag>"
-	#
+	# escape sequences (such as '\n' for newline).
 	# @param	$*	text to print.
 	#
 	__lib_DocFmt_blockItem()
 	{
-		local buff
-		
-		# convert formatting tags to ANSI escape sequences
-		buff=${*//<[bB]>/\\033\[1m}
-		buff=${buff//<\/[bB]>/\\033\[22m}
-		buff=${buff//<[uU]>/\\033\[4m}
-		buff=${buff//<\/[uU]>/\\033\[24m}
-		
-		echo -e "${__lib_DocFmt_indent}${buff}\n"
+		echo -e "${__lib_DocFmt_indent}${*}\n"
+	}
+	
+	
+	# Sets the formatting of output printed after the invocation of this function.
+	# @param	1	The value of an item in $__lib_DocFmt_sgrNames
+	# @param	2	Either 0 (disable) or 1 (enable).
+	__lib_DocFmt_setFmt()
+	{
+		eval "__lib_DocFmt_sgrModes[\$__lib_DocFmt_sgrNames_$1]=$2"	# store new mode value in hash-table
+		tput sgr "${__lib_DocFmt_sgrModes[@]}" # apply the mode
 	}
 
 	# begins a new indented block
 	__lib_DocFmt_blockStart()
 	{
-		__lib_DocFmt_indent=$__lib_DocFmt_indent\\t	# increase indent
+		__lib_DocFmt_indent="$__lib_DocFmt_indent\\t"	# increase indent
 	}
 	
 	# terminates an indented block
 	__lib_DocFmt_blockEnd()
 	{
-		__lib_DocFmt_indent=${__lib_DocFmt_indent%\\t}	# decrease indent
-		echo
+		__lib_DocFmt_indent=${__lib_DocFmt_indent%??}	# decrease indent
 	}
 
