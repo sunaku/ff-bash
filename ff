@@ -29,61 +29,60 @@
 
 ## global paths
 
-	_ff_path=$0			# path to this program
-	[ -L "$_ff_path" ] && _ff_path=$( find "$_ff_path" -printf "%l" )	# dereference if path is symlink
+	__ff_myPath=$0			# path to this program
+	[ -L "$__ff_myPath" ] && __ff_myPath=$( find "$__ff_myPath" -printf "%l" )	# dereference if path is symlink
 	
-	_ff_name=${_ff_path##*/}		# basename of this program
-	_ff_base=${_ff_path%/*}			# dirname of this program
-	_ff_base_lib=${_ff_base}/lib	# libraries
-	_ff_base_doc=${_ff_base}/doc	# documentation
-	_ff_base_i18n=${_ff_base}/i18n	# i18n resources
+	__ff_myName=${__ff_myPath##*/}		# basename of this program
+	__ff_myHome=${__ff_myPath%/*}			# dirname of this program
+	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
+	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
+	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n resources
 	
 ## libraries
 
-	source ${_ff_base_lib}/ff_common
+	source ${__ff_myResources_libs}/ff.lib
 
 ## global variables
 
 	# temporary files
-	_ff_tmp_dirList=${_ff_tmpMask}.dirList
 
 	# command line options
 	
-		_ff_cmdOpts_optFlgShort_handleHidden=a
-		_ff_cmdOpts_optFlgLong_handleHidden=all
+		__ff_myOptions_shortFlag_handleHidden=a
+		__ff_myOptions_longFlag_handleHidden=all
 		
-		_ff_cmdOpts_optFlgShort_followLinks=l
-		_ff_cmdOpts_optFlgLong_followLinks=dereference
+		__ff_myOptions_shortFlag_followLinks=l
+		__ff_myOptions_longFlag_followLinks=dereference
 		
-		_ff_cmdOpts_optFlgShort_recursive=r
-		_ff_cmdOpts_optFlgLong_recursive=recursive
+		__ff_myOptions_shortFlag_recursive=r
+		__ff_myOptions_longFlag_recursive=recursive
 
 ## functions
 
 	# handles parsing of command-line options
-	_cmdOpts_handleOption()
+	__lib_CmdOpts_handleOption()
 	{
 		case "$1" in
-			$_ff_cmdOpts_optFlgShort_handleHidden | $_ff_cmdOpts_optFlgLong_handleHidden)
-				_ff_cmdOpts_optEn_handleHidden=1
+			$__ff_myOptions_shortFlag_handleHidden | $__ff_myOptions_longFlag_handleHidden)
+				__ff_myOptions_isOn_handleHidden=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlgShort_followLinks | $_ff_cmdOpts_optFlgLong_followLinks)
-				_ff_cmdOpts_optEn_followLinks=1
+			$__ff_myOptions_shortFlag_followLinks | $__ff_myOptions_longFlag_followLinks)
+				__ff_myOptions_isOn_followLinks=1
 				return 1
 			;;
-			$_ff_cmdOpts_optFlgShort_recursive | $_ff_cmdOpts_optFlgLong_recursive)
-				_ff_cmdOpts_optEn_recursive=1
+			$__ff_myOptions_shortFlag_recursive | $__ff_myOptions_longFlag_recursive)
+				__ff_myOptions_isOn_recursive=1
 				return 1
 			;;
 			*) # handle base options
-				_ff_handleBaseOption "$1" "$2"
+				__lib_ff_handleOption "$1" "$2"
 				return $?
 			;;
 		esac
 	}
 
-	_ff_main()
+	__ff_main()
 	{
 		# scripting variables
 		local w=$PWD d f fn
@@ -91,20 +90,20 @@
 		begin	# user function
 
 		# check method of operation: recursive or non-recursive
-		if [ ${_ff_cmdOpts_optEn_recursive:-0} -eq 1 ] # recursive operation
+		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation
 		then
 		
-			local _ff_vars_basedir
+			local __ff_baseDir
 
 			# handle each target
-			for _ff_vars_basedir in "${_cmdOpts_argList[@]}"
+			for __ff_baseDir in "${__lib_CmdOpts_argList[@]}"
 			do
-				if [ -d "$_ff_vars_basedir" ] # handle directories only
+				if [ -d "$__ff_baseDir" ] # handle directories only
 				then
 					# make implicit relative paths explicit
-					[ "${_ff_vars_basedir:0:1}" != '/' ] && _ff_vars_basedir="./$_ff_vars_basedir"
+					[ "${__ff_baseDir:0:1}" != '/' ] && __ff_baseDir="./$__ff_baseDir"
 				
-					find "$_ff_vars_basedir" | #${_ff_cmdOpts_optEn_followLinks:--follow} ${_ff_cmdOpts_optEn_handleHidden:--name '[^.]*'} |
+					find "$__ff_baseDir" | #${__ff_myOptions_isOn_followLinks:--follow} ${__ff_myOptions_isOn_handleHidden:--name '[^.]*'} |
 					while read f
 					do
 						# set scripting variables
@@ -119,7 +118,7 @@
 		else # non-recursive operation
 
 			# handle each target
-			for f in "${_cmdOpts_argList[@]}"
+			for f in "${__lib_CmdOpts_argList[@]}"
 			do
 				# make implicit relative paths explicit
 				[ "${f:0:1}" != '/' ] && f="./$f"
@@ -145,5 +144,5 @@
 	main() { :; }
 	
 	# begin script
-	_ff_baseLogic "${@}"
+	__lib_ff_main "${@}"
 

@@ -34,151 +34,151 @@
 #
 ###
 
-_doc_blockItem "<b>$( gettext "NAME" )</b>"
-_doc_blockStart
-	_doc_blockItem "ff - $( gettext "for each file" )"
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "NAME" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem "ff - $( gettext "for each file" )"
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "DESCRIPTION" )</b>"
-_doc_blockStart
-	_doc_blockItem $( gettext "This tool allows the user to execute shell commands upon any number of directories and regular files." )
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "DESCRIPTION" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem $( gettext "This tool allows the user to execute shell commands upon any number of directories and regular files." )
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "SYNOPSIS" )</b>"
-_doc_blockStart
-	_doc_blockItem "ff -[e|f] [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
+__lib_DocFmt_blockItem "<b>$( gettext "SYNOPSIS" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem "ff -[e|f] [<u>$( gettext "option" )</u>]... <u>$( gettext "target" )</u>...\n"
 	
-	_doc_blockItem "<u>$( gettext "target" )</u>"
-	_doc_blockStart
-		_doc_blockItem $( gettext "A directory or regular file; upon which shell commands will be performed." )
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<u>$( gettext "target" )</u>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext "A directory or regular file; upon which shell commands will be performed." )
+	__lib_DocFmt_blockEnd
 	
-_doc_blockEnd
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "OPTIONS" )</b>"
-_doc_blockStart
+__lib_DocFmt_blockItem "<b>$( gettext "OPTIONS" )</b>"
+__lib_DocFmt_blockStart
 
-	_doc_blockItem "<b>-r</b>, <b>--recursive</b>"
-	_doc_blockStart
-		_doc_blockItem $( gettext "Handle subdirectories recursively." )
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-r</b>, <b>--recursive</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext "Handle subdirectories recursively." )
+	__lib_DocFmt_blockEnd
 
-	_doc_blockItem "<b>-e</b> <u>$( gettext "script" )</u>, <b>--expression</b> <u>$( gettext "script" )</u>"
-	_doc_blockStart
-		_doc_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>script</u>.")
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-e</b> <u>$( gettext "script" )</u>, <b>--expression</b> <u>$( gettext "script" )</u>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>script</u>.")
+	__lib_DocFmt_blockEnd
 
 	
-	_doc_blockItem "<b>-f</b> <u>$( gettext "script-file" )</u>, <b>--file</b> <u>$( gettext "script-file" )</u>"
-	_doc_blockStart
-		_doc_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>script-file</u>.")
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-f</b> <u>$( gettext "script-file" )</u>, <b>--file</b> <u>$( gettext "script-file" )</u>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext -n "Execute the shell commands contained in " ) $( gettext "<u>script-file</u>.")
+	__lib_DocFmt_blockEnd
 	
-	_doc_blockItem "<b>-p</b>, <b>--pipe</b>"
-	_doc_blockStart
-		_doc_blockItem $( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-p</b>, <b>--pipe</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext "Read the standard input stream for targets, listed one per line, in addition to those specified on the command-line." )
+	__lib_DocFmt_blockEnd
 	
-	_doc_blockItem "<b>-h</b>, <b>--help</b>"
-	_doc_blockStart
-		_doc_blockItem $( gettext "Display this help message and exit." )
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-h</b>, <b>--help</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext "Display this help message and exit." )
+	__lib_DocFmt_blockEnd
 	
-	_doc_blockItem "<b>-v</b>, <b>--version</b>"
-	_doc_blockStart
-		_doc_blockItem $( gettext "Display the version information and exit." )
-	_doc_blockEnd
+	__lib_DocFmt_blockItem "<b>-v</b>, <b>--version</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem $( gettext "Display the version information and exit." )
+	__lib_DocFmt_blockEnd
 	
-_doc_blockEnd
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "SHELL COMMANDS" )</b>"
-_doc_blockStart
+__lib_DocFmt_blockItem "<b>$( gettext "SHELL COMMANDS" )</b>"
+__lib_DocFmt_blockStart
 
-	_doc_blockItem "$( gettext "The user should not use global variables that are prefixed with '%s', '%s', '%s', and '%s' in the user\'s shell commands; this tool depends upon the integrity of these variables in order to operate properly." "_ff" "_cmdOpts" "_doc" "_gte" )\n"
+	__lib_DocFmt_blockItem "$( gettext "The user should not use constructs whose names are prefixed with '%s' and '%s' in the user\'s shell commands; this tool depends upon the integrity of these constructs in order to operate properly." "__lib" "__ff" )\n"
 
-	_doc_blockItem "$( gettext "The following constructs are available, in addition to those provided by the BASH language, for use in the user\'s shell commands." )\n"
+	__lib_DocFmt_blockItem "$( gettext "The following constructs are available, in addition to those provided by the BASH language, for use in the user\'s shell commands." )\n"
 
-	_doc_blockItem "<b>$( gettext "CONTROL FUNCTIONS" )</b>"
-	_doc_blockStart
-		_doc_blockItem "$( gettext "These functions allow greater control over the execution of user\'s shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the 'main()' function will automatically be created to encapsulate the user\'s shell commands. However, if the user decides to implement any combination of these functions, the 'main()' function must be manually implemented." )\n"
+	__lib_DocFmt_blockItem "<b>$( gettext "CONTROL FUNCTIONS" )</b>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem "$( gettext "These functions allow greater control over the execution of user\'s shell commands by allowing commands to be grouped into separate procedures. It is optional to implement them because the 'main()' function will automatically be created to encapsulate the user\'s shell commands. However, if the user decides to implement any combination of these functions, the 'main()' function must be manually implemented." )\n"
 		
-		_doc_blockItem "<b>begin()</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Invoked before any <u>targets</u> have been processed." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>begin()</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Invoked before any <u>targets</u> have been processed." )
+		__lib_DocFmt_blockEnd
 		
-		_doc_blockItem "<b>end()</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Invoked after all <u>targets</u> have been processed." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>end()</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Invoked after all <u>targets</u> have been processed." )
+		__lib_DocFmt_blockEnd
 		
-		_doc_blockItem "<b>main()</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Invoked once per each <u>target</u>." )
-		_doc_blockEnd
-	_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>main()</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Invoked once per each <u>target</u>." )
+		__lib_DocFmt_blockEnd
+	__lib_DocFmt_blockEnd
 	
-	_doc_blockItem "<b>$( gettext "PRESET VARIABLES" )</b>"
-	_doc_blockStart
+	__lib_DocFmt_blockItem "<b>$( gettext "PRESET VARIABLES" )</b>"
+	__lib_DocFmt_blockStart
 		
-		_doc_blockItem "<b>\$fn</b>"
-		_doc_blockStart
-			_doc_blockItem	$( gettext "Basename of the current <u>target</u>." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>\$fn</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem	$( gettext "Basename of the current <u>target</u>." )
+		__lib_DocFmt_blockEnd
 		
-		_doc_blockItem "<b>\$f</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Path (either relative or absolute) to the current <u>target</u>." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>\$f</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Path (either relative or absolute) to the current <u>target</u>." )
+		__lib_DocFmt_blockEnd
 		
-		_doc_blockItem "<b>\$d</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Path (either relative or absolute) to the directory which contains the current <u>target</u>." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>\$d</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Path (either relative or absolute) to the directory which contains the current <u>target</u>." )
+		__lib_DocFmt_blockEnd
 		
-		_doc_blockItem "<b>\$w</b>"
-		_doc_blockStart
-			_doc_blockItem $( gettext "Absolute path to the user\'s working directory." )
-		_doc_blockEnd
+		__lib_DocFmt_blockItem "<b>\$w</b>"
+		__lib_DocFmt_blockStart
+			__lib_DocFmt_blockItem $( gettext "Absolute path to the user\'s working directory." )
+		__lib_DocFmt_blockEnd
 		
-	_doc_blockEnd
+	__lib_DocFmt_blockEnd
 	
-_doc_blockEnd
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "AUTHOR" )</b>"
-_doc_blockStart
-	_doc_blockItem "$( gettext "Written by" ) Suraj N. Kurapati."
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "AUTHOR" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem "$( gettext "Written by" ) Suraj N. Kurapati."
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "RESOURCES" )</b>"
-_doc_blockStart
-	_doc_blockItem "$( gettext "You can find program updates and additional resources at" ) <http://freshmeat.net/projects/ff/>."
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "RESOURCES" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem "$( gettext "You can find program updates and additional resources at" ) <http://freshmeat.net/projects/ff/>."
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "TRANSLATION" )</b>"
-_doc_blockStart
-	_doc_blockItem $( gettext "Feel free to modify the translation catalog, which is located at '%s', for this documentation as necessary." "$doc_i18n" )
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "TRANSLATION" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem $( gettext "Feel free to modify the translation catalog, which is located at '%s', for this documentation as necessary." "$doc_i18n" )
+__lib_DocFmt_blockEnd
 
-_doc_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
-_doc_blockStart
-	_doc_blockItem $( gettext "Please report defects to <skurapat@ucsc.edu>." )
-_doc_blockEnd
+__lib_DocFmt_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
+__lib_DocFmt_blockStart
+	__lib_DocFmt_blockItem $( gettext "Please report defects to <skurapat@ucsc.edu>." )
+__lib_DocFmt_blockEnd
 
 
-_doc_blockItem "<b>$( gettext "COPYRIGHT" )</b>"
-_doc_blockStart
+__lib_DocFmt_blockItem "<b>$( gettext "COPYRIGHT" )</b>"
+__lib_DocFmt_blockStart
 
-	_doc_blockItem "Copyright 2003-2004 Suraj N. Kurapati."
+	__lib_DocFmt_blockItem "Copyright 2003-2004 Suraj N. Kurapati."
 	
-	_doc_blockItem $( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
+	__lib_DocFmt_blockItem $( gettext "This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." )
 
-_doc_blockEnd
+__lib_DocFmt_blockEnd
 
