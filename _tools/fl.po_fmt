@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Combines unformatted gettext PO catalogs with a POT template (target).
+#
+##
+#
+# Requires:
+#
+#	* ${PO_FMT_DATA} - path to PO catalog to combine template with.
+#
+
+## globals
+
+## helper functions
+
+## main script logic
+
+	begin_file()
+	{
+		msg_id=
+		msg_str=
+	}
+	
+	main()
+	{
+#		echo "line=$i:$l"
+		
+		if [ "${l#msgstr}" != "$l" ]
+		then
+			# display msgstr from data file instead of the POT file
+			grep -A 1 "$msg_id" $PO_FMT_DATA | head -2 | tail -1
+		else
+			
+			# store next msgid from POT
+			[ "${l#msgid}" != "$l" ] && msg_id=$l
+			
+			# display contents of POT file
+			echo "$l"
+		fi
+		
+#		echo "count=$id_count"
+	}
