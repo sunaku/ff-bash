@@ -71,7 +71,6 @@
 					then
 						# illegal option encountered
 						isInvalid=1
-						break
 					fi
 					
 				else	# handle short opts
