@@ -51,7 +51,7 @@
 	begin()
 	{
 		# check if user is ready
-		read -p "build catalog (yes/no)? [no] " < /dev/tty
+		read -p "%% Build catalog (yes/no)? [no] " < /dev/tty
 		[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 		
 		### symbolic links will be placed here
@@ -71,7 +71,7 @@
 		then
 		
 			echo
-			echo "processing file '$f'"
+			echo "%% Now processing file: $f"
 		
 			# check if mp3 has an ID3 tag
 			
@@ -79,7 +79,7 @@
 				
 				if [ $? -eq 0 ]
 				then
-					report_file "missing ID3 tag" "$output_unprocessed"
+					report_file "%% Error: ID3 tag is missing" "$output_unprocessed"
 					return
 				fi
 			
@@ -134,34 +134,34 @@
 			# check if the new filename is meaningless (no ID3 tag in MP3 file)
 			if [ -z "$new_name" ]
 			then
-				report_file "generated filename is meaningless"  "$output_unprocessed"
+				report_file "%% Warning: Generated file-name is meaningless: $new_name"  "$output_unprocessed"
 				return
 			else
 			
 				# display parsed ID3 info
-				echo "album='$album'"
-				echo "track='$track'"
-				echo "artist='$artist'"
-				echo "title='$title'"
-				echo "genre='$genre'"
+				echo "%% album='$album'"
+				echo "%% track='$track'"
+				echo "%% artist='$artist'"
+				echo "%% title='$title'"
+				echo "%% genre='$genre'"
 				
 				### uncomment these if you need to use them
-				#echo "genre_id='$genre_id'"
-				#echo "year='$year'"
-				#echo "copyright='$copyright'"
-				#echo "comment='$comment'"
+				#echo "%% genre_id='$genre_id'"
+				#echo "%% year='$year'"
+				#echo "%% copyright='$copyright'"
+				#echo "%% comment='$comment'"
 	
 				# append file extension to new filename
 				new_name="${new_name}.mp3"
-				echo "new_name='$new_name'"
+				echo "%% new_name='$new_name'"
 			
 				## assemble new path
 				new_path="${output_dir}/${genre:-_default_}/${album}/${artist}/"
-				echo "new_path='$new_path'"
+				echo "%% new_path='$new_path'"
 				
 				# display link source & destination
-				echo "source:	'$f'"
-				echo "destination:	'$new_path/$new_name'"
+				echo "%% source:	'$f'"
+				echo "%% destination:	'$new_path/$new_name'"
 				
 				if [ ${ready:-0} -gt 0 ]
 				then
@@ -174,7 +174,7 @@
 					ln -s "$f" "$new_path/$new_name"
 					
 					# report the link
-					report_file "link created successfully" "$output_processed"
+					report_file "%% Info: Symbolic-link created successfully" "$output_processed"
 				fi
 			fi
 		fi
