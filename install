@@ -93,8 +93,8 @@
 ## installation
 
 	gettext "Instructions"
-	echo "- $( gettext "Press %s to cancel the installation at any time." "<CONTROL-C>" )"
-	echo "- $( gettext "Press %s to accept the value in square brackets." "<ENTER>" )"
+	echo "- $( gettext "Press %s to cancel the installation at any time." "[Ctrl][c]" )"
+	echo "- $( gettext "Press %s to accept the value in square brackets." "[Enter]" )"
 	echo
 
 	# ask user for installation directory
@@ -111,7 +111,7 @@
 		# echo symlink_dir=$symlink_dir
 		
 		# copy files
-		gettext "Copying package files from %s to %s." "\"$package_dir\"" "\"$install_dir\""
+		gettext "Copying package files from source %s to destination %s." "\"$package_dir\"" "\"$install_dir\""
 		
 		if cp -r "$package_dir" "$install_dir"
 		then
@@ -128,7 +128,7 @@
 				rm -f "$symlink_dst"
 				
 				# create new symlink
-				gettext "Creating symbolic link from source %s to destination %s." "\"$symlink_src\"" "\"$symlink_dst\""
+				gettext "Creating symbolic link %s to executable %s."  "\"$symlink_dst\"" "\"$symlink_src\""
 				ln -s "$symlink_src" "$symlink_dst"
 			done
 		fi
