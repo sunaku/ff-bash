@@ -29,79 +29,63 @@
 
 ## global paths
 
-	# path to this program
-	if [ -L "$0" ] # dereference if path is symlink
-	then
-		__ff_myPath=$( find "$0" -printf "%l" )
-	else
-		__ff_myPath=$0
-	fi
+	__ff_myPath=$0	# path to this program
 	
-	__ff_myName=${__ff_myPath##*/}		# basename of this program
-	__ff_myHome=${__ff_myPath%/*}		# dirname of this program
-	__ff_myResources_libs="${__ff_myHome}/libs"	# libraries
-	__ff_myResources_docs="${__ff_myHome}/docs"	# documentation
-	__ff_myResources_i18n="${__ff_myHome}/i18n"	# i18n resources
-	__ff_myLang=${LANG:0:2}		# language code
+		# dereference symbolic-links until full path is obtained
+		while [ -L "$__ff_myPath" ]
+		do
+			__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
+		done
+	
+	__ff_myName=${__ff_myPath##*/}	# basename of this program
+	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
+	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
+	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
+	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
+	__ff_myLang=$( locale | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 	
 ## libraries
 
-	source ${__ff_myResources_libs}/ff.lib
-
-## global variables
-
-	# temporary files
-
-	# command line options
+	source "$__ff_myResources_libs/ff.lib"
 
 ## functions
 
 	# handles parsing of command-line options
-	__lib_CmdOpts_handleOption()
+	__lib_ff_handleOption()
 	{
-		# handle base options
-		__lib_ff_handleOption "$1" "$2"
+		__lib_ff_handleBaseOption "$1" "$2"
 		return $?
 	}
 	
 	# code for non-recursive mode
 	__ff_main_linear_()
 	{
-		if [[ -f "$f" && -r "$f" ]] # check perms
+		if [[ -f "$f" && -r "$f" ]] # check permissions
 		then
 		
-			# make implicit relative paths explicit
-			[[ "${f:0:1}" != '/' && "${f:0:2}" != "./" ]] && f="./$f"
+			# update preset variables
+			__lib_ff_updateVars_linear
 		
-			# set scripting variables
-			f=${f%/}
-			fn=${f##*/}
-			d=${f%/*}
-			i=1
-		
-			# handle user's script
-			begin_file	# user function
+			begin_file	# user's control function
 			
-			while read -r l
+			i=1
+			while read -r l	# don't nullify IFS here because user can specify their own custom IFS
 			do
-				main	# user function
+				main	# user's control function
 				(( i += 1 ))	# increment line number
 			done < "$f"
 			
-			end_file	# user function
+			end_file	# user's control function
 		fi
 	}
 	
 	__ff_main()
 	{
 		# scripting variables
-		local w=$PWD d f fn i l __ff_oldIFS=$IFS
+		local d f fn i l
+		IFS=	# nullify to preserve whitespace
 		
-		# change IFS to only line breaks
-		IFS='
-'
-		
-		begin	# user function
+		begin	# user's control function
 		
 		# handle command-line targets
 		for f in "${__lib_ff_targetList[@]}"
@@ -112,21 +96,18 @@
 		# handle piped targets
 		if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
 		then
-			while read -r f
+			while IFS= read -r f
 			do
 				__ff_main_linear_
 			done
 		fi
 		
-		end	# user function
-		
-		# restore IFS
-		IFS=$__ff_oldIFS
+		end	# user's control function
 	}
 	
 ## main script logic
 
-	# dummy user functions
+	# dummy control functions
 	begin() { :; }
 	end() { :; }
 	main() { :; }
