@@ -1,41 +1,65 @@
 #!/bin/bash
-# For each Line (fl)
-# This file is distributed under the same license as the "ff" package.
+#
+# Source code for the "For each Line" tool.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
+
 
 ## global paths
 
-	_ff_path=$0			# path to this program
-	[ -L "$_ff_path" ] && _ff_path=$( find "$_ff_path" -printf "%l" )	# dereference if path is symlink
+	__ff_myPath=$0			# path to this program
+	[ -L "$__ff_myPath" ] && __ff_myPath=$( find "$__ff_myPath" -printf "%l" )	# dereference if path is symlink
 	
-	_ff_name=${_ff_path#*/}		# basename of this program
-	_ff_base=${_ff_path%/*}		# dirname of this program
-	_ff_base_lib=${_ff_base}/lib	# libraries
-	_ff_base_doc=${_ff_base}/doc	# documentation
-	_ff_base_i18n=${_ff_base}/i18n	# i18n resources
+	__ff_myName=${__ff_myPath##*/}		# basename of this program
+	__ff_myHome=${__ff_myPath%/*}		# dirname of this program
+	__ff_myResources_libs=${__ff_myHome}/libs	# libraries
+	__ff_myResources_docs=${__ff_myHome}/docs	# documentation
+	__ff_myResources_i18n=${__ff_myHome}/i18n	# i18n
+	__ff_myLang=${LC_MESSAGES:0:2}		# language code
 	
 ## libraries
 
-	source ${_ff_base_lib}/ff_common
+	source ${__ff_myResources_libs}/ff.lib
 
 ## global variables
 
+	# temporary files
+
+	# command line options
+
 ## functions
 
-	# scan options and set flags
-	# returns 2 if user asked to see help message
-	_ff_scanOptions()
+	# handles parsing of command-line options
+	__lib_CmdOpts_handleOption()
 	{
 		# handle base options
-		while getopts ${_ff_baseOpts}${_ff_cmdOpts} opt
-		do
-			_ff_handleBaseOption $opt
-			[ $? -gt 0 ] && return 1
-		done
-		
-		return 0
+		__lib_ff_handleOption "$1" "$2"
+		return $?
 	}
 	
-	_ff_main()
+	__ff_main()
 	{
 		# scripting variables
 		local w=$PWD d f fn n i l
@@ -43,29 +67,21 @@
 		begin	# user function
 		
 		# handle each target
-		for f in "${_ff_targetArray[@]}"
+		for f in "${__lib_CmdOpts_argList[@]}"
 		do
-			if [ -f "$f" ] # handle non-directories only
+			if [[ -f "$f" && -r "$f" ]] # check perms
 			then
-			# set scripting variables
 			
-				f=${f%/}		# file's path
-				fn=${f##*/}		# file's basename
-				
-				# determine directory path
-				if [ "$fn" == "$f" ]
-				then
-					d=.
-					f=./$f
-				else
-					d=${f%/*}
-				fi
-				
-				n=$( wc -l "$f" )	# number of lines in file
-				i=1			# number of current line
+				# make implicit relative paths explicit
+				[[ "${f:0:1}" != '/' && "${f:0:1}" != '.' ]] && f="./$f"
 			
-			# handle user's script
+				# set scripting variables
+				f=${f%/}
+				fn=${f##*/}
+				d=${f%/*}
+				i=1
 			
+				# handle user's script
 				begin_file		# user function
 				
 				while read -r l
@@ -92,5 +108,6 @@
 	end_file() { :; }
 
 	# begin script
-	_ff_baseLogic "${@}"
+	__lib_CmdOpts_argList=( "${@}" )	# init arguments array
+	__lib_ff_main
 
