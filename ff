@@ -94,17 +94,23 @@
 		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation
 		then
 		
-			local __ff_baseDir
+			local __ff_baseDir __ff_findOpts=-depth
 
+			# handle options for recursive behavior
+				[ ${__ff_myOptions_isOn_followLinks:-0} -eq 1 ] && __ff_findOpts[${#__ff_findOpts[@]}]=-follow
+				
+				if [ ${__ff_myOptions_isOn_handleHidden:-0} -eq 0 ]
+				then
+					__ff_findOpts[${#__ff_findOpts[@]}]=-name
+					__ff_findOpts[${#__ff_findOpts[@]}]='[^.]*'
+				fi
+			
 			# handle each target
 			for __ff_baseDir in "${__lib_ff_targetList[@]}"
 			do
 				if [ -d "$__ff_baseDir" ] # handle directories only
 				then
-					# make implicit relative paths explicit
-					[[ "${__ff_baseDir:0:1}" != '/' && "${__ff_baseDir:0:2}" != "./" ]] && __ff_baseDir="./$__ff_baseDir"
-				
-					find "$__ff_baseDir" -depth | #${__ff_myOptions_isOn_followLinks:--follow} ${__ff_myOptions_isOn_handleHidden:--name '[^.]*'} |
+					find "$__ff_baseDir" "${__ff_findOpts[@]}" |
 					while read f
 					do
 						# set scripting variables
