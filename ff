@@ -101,7 +101,7 @@
 	{
 		if [ -d "$__ff_baseDir" ] # handle directories only
 		then
-			find "$__ff_baseDir" "${__ff_findOpts[@]}" |
+			find "$__ff_baseDir" "${__ff_findOpts[@]}" -print |
 			while read -r f
 			do
 				# set scripting variables
