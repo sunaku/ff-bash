@@ -29,7 +29,7 @@
 begin()
 {
 	# check if user is ready
-	read -p "ready to create symbolic links (yes/no)? [no] " < /dev/tty
+	read -p "Perform a test run (yes/no)? [no] " < /dev/tty
 	[ "${REPLY#[Yy]}" != "$REPLY" ] && ready=1
 }
 
@@ -37,8 +37,7 @@ main()
 {
 	if [ ${ready:-0} -gt 0 ]
 	then
-		echo "linking '$w/$fn' -> '$f'"
-		ln -s "$f" "$w/$fn"
+		ln -vs "$f" "$w/$fn"
 	else
 		echo "testing '$w/$fn' -> '$f'"
 	fi
