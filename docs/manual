@@ -89,7 +89,7 @@ echo \
 	<b>$__lib_ff_options_shortFlag_readPipe</b>, <b>$__lib_ff_options_longFlag_readPipe</b>
 		$( gettext "Read the standard input stream for a list of targets, which by default are delimited by the new-line character, in addition to those specified on the command-line. Note that targets specified on the command-line are handled before those specified using this option." )
 
-		$( gettext "The following subordinate options have no effect if used without this option." )
+		$( gettext "The following subordinate options have no effect if used without this option:" )
 
 		<b>$__lib_ff_options_flag_pipeDelim</b> <u>$( gettext "delimiter" )</u>
 			$( gettext "Assume that targets listed on the standard input stream are seperated by %s instead of the new-line character. Note that at least one new-line character must be present at the very end of the list of targets that are specified on the standard input stream." "<u>$( gettext "delimiter" )</u>" )
@@ -101,7 +101,7 @@ $(
 "	<b>$__ff_myOptions_shortFlag_recursive</b>, <b>$__ff_myOptions_longFlag_recursive</b>
 		$( gettext "Recursively traverse directories and symbolic links that reference directories such that files at the deepest level of the file-system hierarchy are handled before those above them." )
 
-		$( gettext "The following subordinate options have no effect if used without this option." )
+		$( gettext "The following subordinate options have no effect if used without this option:" )
 
 			<b>$__ff_myOptions_shortFlag_handleHidden</b>, <b>$__ff_myOptions_longFlag_handleHidden</b>
 				$( gettext "Do not ignore targets whose names begin with a %s character." "<em>.</em>"  )
@@ -153,13 +153,13 @@ $(
 
 	<b>$( gettext "VARIABLES" )</b>
 
-		<b>\$t</b>
-			$( gettext "The original name, path, or value of the current target. The value of this variable is unmodified and retains the exact value it was given by the user, whereas the values of the variables below will have, among other modifications, redundant directory separators removed. For example, if the value of this variable is %s, then the value of the variable named %s would be %s." "<em>////foo//bar///</em>" "<em>\$f</em>" "<em>/foo/bar</em>" )
+		<b>\$o</b>
+			$( gettext "The original name, path, or value of the current target. The value of this variable is unmodified and retains the exact value it was given by the user, whereas the values of the variables below will have, among other modifications, redundant directory separators removed. For example, if the value of this variable is %s, then the value of the variable named %s would be %s." "<em>////foo//bar///</em>" "<em>\$p</em>" "<em>/foo/bar</em>" )
 
-		<b>\$fn</b>
+		<b>\$n</b>
 			$( gettext "The name of the current target without its path information. For example, if the path to the current target is %s, then the value of this variable would be %s." "<em>/foo/bar</em>" "<em>bar</em>" )
 
-		<b>\$f</b>
+		<b>\$p</b>
 			$( gettext "Either a relative or an absolute path to the current target. For example, if the directory which contains the current target is %s and the name of the current target without its path information is %s, then the value of this variable would be %s." "<em>/foo</em>" "<em>bar</em>" "<em>/foo/bar</em>" )
 
 		<b>\$d</b>
@@ -180,13 +180,13 @@ $(
 <b>$( gettext "ENVIRONMENT" )</b>
 
 	<b>\$PAGER</b>
-		$( gettext "Path to the program which allows one to view a long document incrementally, one screen at a time. If this variable is not set, then the %s utility is invoked." "<em>less</em>" )
+		$( gettext "Path to the program which allows one to view a long document incrementally, one screen at a time. If this variable is not set, then its value is assumed to be %s." "<em>less</em>" )
 
 	<b>\$COLUMNS</b>
-		$( gettext "The width of the terminal, measured as the number of characters that fit on one line before the line wraps around. If this variable is not set, then the default value of 80 is used." )
+		$( gettext "The width of the terminal, measured as the number of characters that fit on one line before the line wraps around. If this variable is not set, then its value is assumed to be %s." "80" )
 
 	<b>LC_MESSAGES</b>
-		$( gettext "The locale attribute which dictates the formatting of output messages." )
+		$( gettext "The first two characters of this locale attribute represent the user's %s language code." "ISO-639" )
 
 <b>$( gettext "EXIT STATUS" )</b>
 	<b>0</b>
