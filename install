@@ -1,85 +1,140 @@
 #!/bin/bash
-# simple installation script
+#
+# "For each File" installation script
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
 
-# globals
+## globals
+
+	# package directory
+	package_dir=${0%/*}
 
 	# default installation directory
-	default_dir=$HOME/bin
+	install_dir_default=$HOME
+	symlink_dir_default=$HOME/bin
 	
-	# uninstall info file
-	install_log=$HOME/.ff-install.log
+	# executable files
+	files_exec=( ff fl )
+
+## libraries
+
+	source ./libs/gettext.lib
+
+## functions
+
+	# clean up and exit program
+	# @param	1	exit status
+	install_exit()
+	{
+		__lib_gettext_fin
+		exit $1
+	}
 	
-	# options
-	cmdOpts=u
-	cmdOpts_optFlg_remove=u
-	
-	# installation files
-	files_copy=( "ff-lib" "ff" "fl" )
-	files_exec=( "ff" "fl" )
-
-# handle options
-
-	while getopts $cmdOpts opt
-	do
-		case $opt in
-			$cmdOpts_optFlg_remove)
-				cmdOpts_optEn_remove=1
-			;;
-			*)
-				exit 1
-			;;
-		esac
-	done
-
-# determine operation
-
-	if [ ${cmdOpts_optEn_remove:-0} -eq 1 ]
-	then # uninstallation
+	# creates a new directory if it doesn't exist
+	install_mkdir()
+	{
+		local rv=1
 		
-		if [[ -f "$install_log" ]]
+		if [ ! -e "$1" ]
 		then
-			install_dir=$( < "$install_log" )
-			
-			if pushd "$install_dir" >& /dev/null \
-			&& rm -f "${files_copy[@]}" \
-			&& popd >& /dev/null
-			then
-				# remove log
-				rm -f "$install_log"
-				echo "Uninstallation successful."
-			else
-				echo "Cannot remove files."
-			fi
+			mkdir -p "$1" && rv=0
 		else
-			echo "Uninstall info file is missing: '$install_log'."
+			[[ -d "$1" && -w "$1" ]] && rv=0
 		fi
-	
-	else # installation
-	
-		echo "Instructions:"
-		echo "- To cancel the installation at any time, press Control-C."
-		echo "- To accept the value in square brackets, press Return."
-		echo
-	
-		# ask user for installation directory
 		
-			read -p "Please specify installation directory [$default_dir]: " install_dir
-			echo
-			[ -z "$install_dir" ] && install_dir=$default_dir
+		# print error message
+		[ $rv -gt 0 ] && gettext "Error: Unable to create %s." "\"$1\""
 		
-		# create installation directory if doesn't exist
-			[ ! -e "$install_dir" ] && mkdir -p "$install_dir"
+		return $rv
+	}
+
+## initialization
+
+	trap 'install_exit 9' INT KILL TERM HUP
+	
+	# init gettext emulation library
+	__lib_gettext_init
+	__lib_gettext_load ./i18n/install.${LC_MESSAGES:0:2}.po
+	
+## installation
+
+	install_status=0
+
+	gettext "Instructions"
+	echo "- $( gettext "Press %s to cancel the installation at any time." "<CONTROL-C>" )"
+	echo "- $( gettext "Press %s to accept the value in square brackets." "<ENTER>" )" 
+	echo
+
+	# ask user for installation directory
+		isLoop=1
+		while [ $isLoop -eq 1 ]
+		do
+			read -p "$( gettext "Where shall I install this package? %s " "[$install_dir_default]" )" install_dir
+		
+				# set default value
+				[ -z "$install_dir" ] && install_dir=$install_dir_default
+		
+				# create directory if doesn't exist
+				install_mkdir "$install_dir" && isLoop=0
+		done
+	
+	# ask user for symlink directory
+		isLoop=1
+		while [ $isLoop -eq 1 ]
+		do
+			read -p "$( gettext "Where shall I install symbolic links? %s " "[$symlink_dir_default]" )" symlink_dir
+		
+				# set default value
+				[ -z "$symlink_dir" ] && symlink_dir=$symlink_dir_default
+		
+				# create directory if doesn't exist
+				install_mkdir "$symlink_dir" && isLoop=0
+		done
+	
+	# perform installation
+	
+		# echo install_dir=$install_dir
+		# echo package_dir=$package_dir
+		# echo symlink_dir=$symlink_dir
+	
+		# copy files
+		if cp -r "$package_dir" "$install_dir"
+		then
+			# create links
+			for exec_file in "${files_exec[@]}"
+			do
+				chmod +x "$install_dir/$exec_file"
+				ln -s "$install_dir/$exec_file" "$symlink_dir/$exec_file"
+			done
 			
-		# perform installation
+			gettext "Installation has succeeded."
+		else
+			gettext "Installation has failed."
+			install_status=1
+		fi
 		
-			if chmod +x "${files_exec[@]}" && cp "${files_copy[@]}" "$install_dir"
-			then
-				# write log file to disk
-				echo $install_dir > "$install_log"
-				echo "Installation successful; uninstall info written to '$install_log'."
-			else
-				echo "Installation failed, check file permissions."
-			fi
-	fi
-	
-echo
+	# finished
+		install_exit $install_status
+
