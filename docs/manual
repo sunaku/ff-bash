@@ -69,7 +69,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_handleHidden</b>, <b>--$__ff_myOptions_longFlag_handleHidden</b>"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Handle files whose names begin with a %s. This option works only if used along with the %s option." "<u>.</u> (period)" "<b>--$__ff_myOptions_longFlag_recursive</b>" )"
+		__lib_DocFmt_blockItem "$( gettext "Handle files whose names begin with a %s character. This option works only if used along with the %s option." "<u>.</u>" "<b>--$__ff_myOptions_longFlag_recursive</b>" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_followLinks</b>, <b>--$__ff_myOptions_longFlag_followLinks</b>"
@@ -77,6 +77,14 @@ __lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext "Dereference symbolic links which point to directories. This option works only if used along with the %s option." "<b>--$__ff_myOptions_longFlag_recursive</b>" )"
 	__lib_DocFmt_blockEnd
 
+	__lib_DocFmt_blockItem "<b>-$__ff_myOptions_shortFlag_fileMask</b> <u>$( gettext "pattern" )</u>, <b>--$__ff_myOptions_longFlag_fileMask</b> <u>$( gettext "pattern" )</u>"
+	__lib_DocFmt_blockStart
+		__lib_DocFmt_blockItem "$( gettext "Only handle targets whose base name matches the pattern given by %s. The metacharacters %s, %s, and %s in the pattern will not match a %s character at the beginning of the base name." "<u>$( gettext "pattern" )</u>" "<u>*</u>" "<u>?</u>" "<u>[]</u>" "<u>.</u>" )"
+		
+		__lib_DocFmt_blockItem "$( gettext "This option works only if used along with the %s option. Also, the %s option is ignored when this option is used." "<b>--$__ff_myOptions_longFlag_recursive</b>" "<b>--$__ff_myOptions_longFlag_handleHidden</b>" )"
+		
+	__lib_DocFmt_blockEnd
+	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_evalExpr</b> <u>$( gettext "string" )</u>, <b>--$__lib_ff_options_longFlag_evalExpr</b> <u>$( gettext "string" )</u>"
 	__lib_DocFmt_blockStart
 		__lib_DocFmt_blockItem "$( gettext -n "Execute the shell commands contained in %s." "<u>$( gettext "string" )</u>" )"
@@ -139,7 +147,7 @@ __lib_DocFmt_blockStart
 		
 		__lib_DocFmt_blockItem "<b>\$fn</b>"
 		__lib_DocFmt_blockStart
-			__lib_DocFmt_blockItem "$( gettext "Basename of the current target." )"
+			__lib_DocFmt_blockItem "$( gettext "Base name of the current target." )"
 		__lib_DocFmt_blockEnd
 		
 		__lib_DocFmt_blockItem "<b>\$f</b>"
