@@ -58,14 +58,12 @@
 		fi
 		
 		# print error message
-		[ $rv -gt 0 ] && gettext "Error: Unable to create %s." "\"$1\""
+		[ $rv -gt 0 ] && gettext "Error: Unable to create directory %s." "\"$1\""
 		
 		return $rv
 	}
 
 ## installation
-
-	install_status=0
 
 	gettext "Instructions"
 	echo "- $( gettext "Press %s to cancel the installation at any time." "<CONTROL-C>" )"
@@ -118,10 +116,15 @@
 				# make file executable
 				chmod +x "$symlink_src"
 				
-				gettext "Creating symbolic link from %s to %s." "\"$symlink_src\"" "\"$symlink_dst\""
+				# remove existing symlink
+				rm -f "$symlink_dst"
+				
+				# create new symlink
+				gettext "Creating symbolic link from source %s to destination %s." "\"$symlink_src\"" "\"$symlink_dst\""
 				ln -s "$symlink_src" "$symlink_dst"
 			done
 		fi
 		
 	# finished
+	gettext "Installation complete."
 
