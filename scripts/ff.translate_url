@@ -65,8 +65,10 @@
 	# query user for language of source documents
 	querySourceLang()
 	{
+		local i
+		
 		# display menu
-			
+				
 			echo "Code	Language"
 			echo "----	--------"
 			
@@ -78,10 +80,27 @@
 			done
 			
 			echo
+				
+		# read & validate choice
 		
-		# read choice
-			read -p "Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
-			[ -n "$REPLY" ] && langSrc=$REPLY
+			while true
+			do
+				# read choice
+					read -p "Please specify the code for the language in which \"$docURL\" is written: [$langSrc] " < /dev/tty
+					[ -z "$REPLY" ] && return # user has accepted default value
+					
+				# validate choice
+					for i in "${langCodes[@]}"
+					do
+						if [ "$i" == "$REPLY" ]
+						then
+							langSrc=$REPLY
+							return
+						fi
+					done
+					
+				echo "Error: \"$REPLY\" is not a valid language code. Try again."
+			done
 	}
 
 ## control functions
