@@ -18,7 +18,7 @@
 
 		<h2>Have a Question?</h2>
 		<blockquote>
-			You can post your question on the project web site or send an e-mail to <samp>skurapat@ucsc.edu</samp>.
+			<p>You can post your question on the project web site or send an e-mail to <samp>skurapat@ucsc.edu</samp>.</p>
 		</blockquote>
 		
 		<h2>Questions and Answers</h2>
@@ -28,19 +28,17 @@
 				<blockquote>
 					<p>It should be noted that &quot;For each File&quot; behaves more like the <samp>xargs</samp> tool than <samp>find -exec</samp>, but is more robust in the commands it can execute. For example, <samp>xargs</samp> can execute a single command once for each piece of input it is given; whereas &quot;For each File&quot; can execute a series of <samp>BASH</samp> shell commands for each piece of the same input.</p>
 					
-					<p>Nevertheless, in comparison to using <samp>find -exec</samp>, key advantages of using &quot;For each File&quot; are:
-					
-						<ul>
-							<li>Performance &mdash; <i>system resources are better utilized</i>.</li>
-							<li>Flexibility &mdash; <i>the user can perform complex tasks without having to write a separate script</i>.</li>
-							<li>Simplicity &mdash; <i>saves the user time and effort while increasing their productivity</i>.</li>
-						</ul>
-					</p>
+					<p>Nevertheless, in comparison to using <samp>find -exec</samp>, key advantages of using &quot;For each File&quot; are as follows.</p>
+					<ul>
+						<li>Performance &mdash; <i>system resources are better utilized</i>.</li>
+						<li>Flexibility &mdash; <i>the user can perform complex tasks without having to write a separate script</i>.</li>
+						<li>Simplicity &mdash; <i>saves the user time and effort while increasing their productivity</i>.</li>
+					</ul>
 					<p>The following sections aim to justify these claims.</p>
 					
 					<h3>Performance of execution.</h3>
 					<blockquote>
-						For every file it encounters, <samp>find -exec</samp> forks a separate child-process to execute the user's commands. On a large input size, this behavior yields poor performance. In contrast, this tool employs only one process (analogous to <samp>xargs</samp>) to execute the user's commands. Thus it uses less system resources and yields better performance.
+						<p>For every file it encounters, <samp>find -exec</samp> forks a separate child-process to execute the user's commands. On a large input size, this behavior yields poor performance. In contrast, this tool employs only one process (analogous to <samp>xargs</samp>) to execute the user's commands. Thus it uses less system resources and yields better performance.</p>
 					</blockquote>
 					
 					<h3>Performing complex tasks.</h3>
@@ -50,20 +48,20 @@
 						<p>This tool also improves the user's productivity by providing preset variables for use in their shell commands. Although it is a trivial matter to assemble these variables within a script, it becomes tedious to assemble them every time one wants to perform a quick task.</p>
 						
 						<p>I hope the following examples justify my claims.</p>
-							<ul>
-								<li>We wish to extract all <samp>*.tgz</samp> compressed tar files in the current working directory.
-									<p>Here is the input for this example:<br/><code>$ ls -1<br/>bar.tgz<br/>foo.tgz</code></p>
-									<p>Using this tool we can execute:<br/><code>$ ff *tgz -e 'tar -zxf "$f"'</code></p>
-									<p>Using <samp>find -exec</samp> we can execute:<br/><code>$ find . -name '*tgz' -exec tar -zxf '{}' ';'</code></p>
-								</li>
-								<li>We wish to rename the file extension <samp>tgz</samp> to <samp>tar.gz</samp> and display the original file name upon success.
-									<p>Here is the input for this example:<br/><code>$ ls -1 some_tgz/tgz_dir/<br/>bar.tgz<br/>b a z.tgz<br/>foo.tgz</code></p>
-									<p>Using this tool we can execute:<br/><code>$ ff some_tgz/tgz_dir/*tgz -e 'mv "$f" "$d/${fn/%tgz/tar.gz}" &amp;&amp; echo $fn'</code></p>
-									<p>Using <samp>find -exec</samp> we can execute:<br/><code>$ find some_tgz/tgz_dir/ -name '*tgz' -exec sh -c 'mv "{}" `dirname "{}"`/`basename "{}" | sed "s/tgz/tar.gz/"` &amp;&amp; `basename "{}"`' \;</code></p>
-									<p>Notice that we invoked a shell with <samp>find -exec</samp> to perform this task. It may be possible to perform the task without the aid of an intermediate shell, however it would be difficult and is certainly not worth the effort in my opinion.</p>
-								</li>
-							</ul>
-						</p>
+						
+						<ul>
+							<li>We wish to extract all <samp>*.tgz</samp> compressed tar files in the current working directory.
+								<p>Here is the input for this example:<br/><code>$ ls -1<br/>bar.tgz<br/>foo.tgz</code></p>
+								<p>Using this tool we can execute:<br/><code>$ ff *tgz -e 'tar -zxf "$f"'</code></p>
+								<p>Using <samp>find -exec</samp> we can execute:<br/><code>$ find . -name '*tgz' -exec tar -zxf '{}' ';'</code></p>
+							</li>
+							<li>We wish to rename the file extension <samp>tgz</samp> to <samp>tar.gz</samp> and display the original file name upon success.
+								<p>Here is the input for this example:<br/><code>$ ls -1 some_tgz/tgz_dir/<br/>bar.tgz<br/>b a z.tgz<br/>foo.tgz</code></p>
+								<p>Using this tool we can execute:<br/><code>$ ff some_tgz/tgz_dir/*tgz -e 'mv "$f" "$d/${fn/%tgz/tar.gz}" &amp;&amp; echo $fn'</code></p>
+								<p>Using <samp>find -exec</samp> we can execute:<br/><code>$ find some_tgz/tgz_dir/ -name '*tgz' -exec sh -c 'mv "{}" `dirname "{}"`/`basename "{}" | sed "s/tgz/tar.gz/"` &amp;&amp; `basename "{}"`' \;</code></p>
+								<p>Notice that we invoked a shell with <samp>find -exec</samp> to perform this task. It may be possible to perform the task without the aid of an intermediate shell, however it would be difficult and is certainly not worth the effort in my opinion.</p>
+							</li>
+						</ul>
 					</blockquote>
 					
 					<p>In conclusion, this tool simply allows for a different kind of approach to perform filesystem manipulation tasks while maintaining low usage of system resources. It is not meant to replace <samp>find -exec</samp> nor <samp>xargs</samp>.</p>
@@ -72,7 +70,7 @@
 				
 				<li>Why is the <samp>read</samp> command in my script being ignored?
 				<blockquote>
-					The BASH shell's <samp>read</samp> builtin command attempts to read user input from the standard input stream by default. However, the standard input stream may sometimes be in use by the '--pipe' option. To get around this, you can have the <samp>read</samp> builtin command read directly from the user's terminal by executing: <code>read < /dev/tty</code>.
+					<p>The BASH shell's <samp>read</samp> builtin command attempts to read user input from the standard input stream by default. However, the standard input stream may sometimes be in use by the '--pipe' option. To get around this, you can have the <samp>read</samp> builtin command read directly from the user's terminal by executing: <code>read < /dev/tty</code>.</p>
 				</blockquote>
 				</li>
 				

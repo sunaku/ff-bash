@@ -77,14 +77,12 @@
 			<h3>Writing new translations</h3>
 			<blockquote>
 				<p>First, we must identify the <a href="http://xml.coverpages.org/iso639a.html"><samp>ISO-639</samp> language code</a> for the language we wish to write new translations in. Second, we must make a copy of the gettext translation catalog template file with the appropriate file name. Finally, we can begin translating by editing the copy.</p>
-				<p>
-					For example, consider this scenario: we wish to translate some documentation for the language whose <samp>ISO-639</samp> language code is <var>XX</var>. The translation catalog template for documentation is named &quot;<samp>foo.pot</samp>&quot;.
-	
-					<ol>
-						<li>We make a copy of the template file.<br/><code>$ cp foo.pot foo.<var>XX</var>.po</code></li>
-						<li>We edit the lines that begin with &quot;<samp>msgstr</samp>&quot; in the copy.</li>
-					</ol>
-				</p>
+				
+				<p>For example, consider this scenario: we wish to translate some documentation for the language whose <samp>ISO-639</samp> language code is <var>XX</var>. The translation catalog template for documentation is named <samp>foo.pot</samp>.</p>
+				<ol>
+					<li>We make a copy of the template file.<br/><code>$ cp foo.pot foo.<var>XX</var>.po</code></li>
+					<li>We edit the lines that begin with &quot;<samp>msgstr</samp>&quot; in the copy.</li>
+				</ol>
 			</blockquote>
 		</blockquote>
 
@@ -94,6 +92,7 @@
 			<p>First try executing (see example below) the scripts named <samp>./scripts/ff.vars</samp> and <samp>./scripts/fl.vars</samp>, to see how the preset variables behave. You will notice that the preset variables are consistent between recursive and non-recursive modes.</p>
 		
 			<blockquote>
+			<p>
 			<code>
 				$ ./ff * -f ./scripts/ff.vars | less<br/>
 				$ ./ff . -rf ./scripts/ff.vars | less<br/>
@@ -101,6 +100,7 @@
 				$ ./ff /bin/ -rf ./scripts/ff.vars | less<br/>
 				$ ./fl ./docs/gpl.txt -f ./scripts/fl.vars | less<br/>
 			</code>
+			</p>
 			</blockquote>
 
 			<p>You can also try executing the other example scripts in the <samp>./scripts/</samp> directory. Also, the first few lines of each script file describes its purpose, thus you can execute <code>$ head ./scripts/* | less</code> to see the descriptions.</p>
