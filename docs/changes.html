@@ -24,10 +24,9 @@
 			<a href="changes.es.html">Spanish</a>
 		</p>
 		
-		<!-- begin page content -->
 		<h1>For each File &mdash; Record of Changes</h1>
 		<blockquote>
-			<p>This document serves as a record of important changes between successive versions of the <b>For each File</b> package.</p>
+			<p>This document serves as a record of important changes in this release of the <b>For each File</b> package. A complete record of changes between successive releases of this package can be accessed at <a href="http://ff-bash.sourceforge.net/docs/changelog.html">http://ff-bash.sourceforge.net/docs/changes.html</a>.</p>
 			
 			<p>You can find announcements for new releases at <a href="http://freshmeat.net/projects/ff/">http://freshmeat.net/projects/ff/</a> and additional resources at <a href="http://sourceforge.net/tracker/?group_id=106777">http://sourceforge.net/tracker/?group_id=106777</a>.</p>
 		</blockquote>
@@ -43,22 +42,28 @@
 			</li>
 			<li>This package has been made more portable and robust, thanks to an extensive review by <em>Stephane Chazelas</em>.
 				<ul>
-					<li>The <samp>DocFmt.lib</samp> library uses <samp>tput</samp> to change on-screen formatting instead of <samp>ANSI</samp> escape sequences.</li>
+					<li>The <samp>DocFmt.lib</samp> library attempts to use <samp>tput</samp> to change on-screen formatting instead of solely relying on <samp>ANSI</samp> escape sequences.</li>
 					<li>Several mistakes and defects in the code, documentation, manuals, and example scripts have been fixed.</li>
 				</ul>
 			</li>
 			<li>The parsing of preset variables has been made more fault tolerant.
 				<ul>
 					<li><samp>${w}</samp> has been removed because <samp>${PWD}</samp> can be used in its place.</li>
-					<li>A defect causing the value of <samp>${d}</samp> to be empty when it should be <samp>/</samp> has been fixed.</li>
-					<li>A defect causing the values of <samp>${fn}</samp> and <samp>${f}</samp> to be empty when <samp>/</samp> is specified as the target has been fixed.</li>
+					<li>A defect, which causes the value of <samp>${d}</samp> to be empty when it should be <samp>/</samp>, has been fixed.</li>
+					<li>A defect, which causes the values of <samp>${fn}</samp> and <samp>${f}</samp> to be empty when <samp>/</samp> is specified as the target, has been fixed.</li>
 				</ul>
 			</li>
 			<li>Control functions written in the form <code>function main { ... }</code> are supported.</li>
-			<li>The shell options <samp>extglob</samp> and <samp>nullglob</samp> are enabled, by default, for scripts using this package.</li>
+			<li>The shell options <samp>extglob</samp> and <samp>nullglob</samp> are enabled by default.</li>
 			<li>A mechanism to stop the command line parser has been added.</li>
 			<li>The example script <samp>ff.untar</samp> now correctly determines the type of tar-ball and if the tar-ball extracts into its own directory.</li>
+			<li>A new <samp>${t}</samp> preset variable has been added which holds the original name of a target.</li>
+			<li>The performance of hash-table implementation of <samp>gettext.lib</samp> has been significantly improved.</li>
+			<li>The tool manuals are cached so that subsequent display queries are executed faster.</li>
+			<li>The incorrect order of some translations in the translation catalogs has been fixed.</li>
 		</ul>
+		
+		<!-- old-version-info begin -->
 		
 		<h2>Version 1.7.1 (2004-07-16)</h2>
 		<ul>
@@ -100,7 +105,7 @@
 			<li>Added <samp>GNU GPL</samp> notices in all source files of this package.</li>
 			<li>Updated and added to the example scripts.</li>
 			<li>Updated the installation script and localized it.</li>
-			<li>Added example script which fetches translations for online documents.</li>
+			<li>Added example script which fetches translations for on-line documents.</li>
 		</ul>
 		
 		<h2>Version 1.6.7 (2004-04-13)</h2>
@@ -114,7 +119,7 @@
 		<ul>
 			<li>Fixed bug where the argument of the <samp>-s</samp> option was evaluated as a target.</li>
 			<li>Errors about undefined user functions have been fixed by <em>Andy Kirkpatrick</em>.</li>
-			<li>Added an uninstallation feature to the install script.</li>
+			<li>Added an un-installation feature to the install script.</li>
 			<li>Added command line option to display program version.</li>
 		</ul>
 		
@@ -181,5 +186,7 @@
 			<li>Initial import into <samp>CVS</samp>.</li>
 			<li>Command-line arguments are handled iteratively.</li>
 		</ul>
+		
+		<!-- old-version-info end -->
 	</body>
 </html>
