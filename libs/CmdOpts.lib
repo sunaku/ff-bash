@@ -1,7 +1,32 @@
 #!/bin/bash
-# Library for parsing command line options.
 #
-# The function '_cmdOpts_handleOption()' must be overridden by the client script.
+# Command-line options parsing library.
+#
+# Note: the function '_cmdOpts_handleOption()' must be overridden by the client script.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
 
 ## globals
 
@@ -9,15 +34,16 @@
 
 ## functions
 	
-	# Scans '_cmdOpts_argList' for command-line options.
-	# When an option is found, '_cmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '_cmdOpts_argList'.
+	# /**
+	# Scans the array '_cmdOpts_argList' for command-line options. When an option is found, '_cmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '_cmdOpts_argList'.
 	#
-	# @return	1	Illegal option encountered
+	# @return	1	An illegal option was encountered. The name of this option is stored in '_cmdOpts_argList'.
+	# */
 	_cmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt max=${#_cmdOpts_argList[@]}
+		local i=0 j=0 k opt flag max=${#_cmdOpts_argList[@]}
 		
 		while [ $i -lt $max ]
 		do
@@ -25,24 +51,40 @@
 			
 			opt=${_cmdOpts_argList[$i]}
 			
-			if [ "${opt:0:1}" == "-" ]	# handle short opts
+			if [ "${opt:0:2}" == "--" ]		# handle long opts
 			then
 			
-				# handle multiple opts that are jumbled into one word
+				flag=${opt#--}
+				
+				_cmdOpts_handleOption "$flag" "${_cmdOpts_argList[$j]}"
+				
+				if ! _cmdOpts_scanOptions_handleReturnValue $?
+				then
+					# illegal option encountered
+					_cmdOpts_argList=$flag
+					return 1
+				fi
+				
+			elif [ "${opt:0:1}" == "-" ]	# handle short opts
+			then
+			
+				# handle multiple option flags that are jumbled into one word
 				k=1	# +1 to skip '-' prefix
 				while [ $k -lt ${#opt} ]
 				do
-					_cmdOpts_handleOption "${opt:$k:1}" "${_cmdOpts_argList[$j]}"
-					! _cmdOpts_scanOptions_handleReturnValue $? && return 1	# illegal option encountered
+					flag=${opt:$k:1}
+					
+					_cmdOpts_handleOption "$flag" "${_cmdOpts_argList[$j]}"
+					
+					if ! _cmdOpts_scanOptions_handleReturnValue $?
+					then
+						# illegal option encountered
+						_cmdOpts_argList=$flag
+						return 1
+					fi
 					
 					let k=k+1
 				done
-					
-			elif [ "${opt:0:2}" == "--" ]		# handle long opts
-			then
-			
-				_cmdOpts_handleOption "${opt#--}" "${_cmdOpts_argList[$j]}"
-				! _cmdOpts_scanOptions_handleReturnValue $? && return 1	# illegal option encountered
 			fi
 			
 			let i=i+1
@@ -52,8 +94,11 @@
 		return 0
 	}
 	
-	# handles the return value from '_cmdOpts_handleOption()'
+	# /**
+	# Handles the return value from '_cmdOpts_handleOption()'.
 	# @param	1	the return value to handle
+	# @return	1	an illegal option was encountered
+	# */
 	_cmdOpts_scanOptions_handleReturnValue()
 	{
 		case $1 in
@@ -73,7 +118,9 @@
 		return 0
 	}
 	
-	# Handles the parsing of a command-line option and its possible argument.
+	# /**
+	# Handles the parsing of a command-line option.
+	#
 	# @param	1	option's name
 	# @param	2	option's argument
 	#
@@ -81,5 +128,6 @@
 	# @return	0	The given option is illegal.
 	# @return	1	The given option has no argument.
 	# @return	2	The given option has an argument.
+	# */
 	_cmdOpts_handleOption() { return 0; }
 
