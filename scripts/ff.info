@@ -26,9 +26,11 @@
 #
 ###
 
-main()
+# displays values of preset variables
+# @param	1	name of caller function
+print_info()
 {
-	echo "main() {"
+	echo "$1 {"
 	echo "\$fn = '$fn'"
 	echo "\$f = '$f'"
 	echo "\$d = '$d'"
@@ -36,13 +38,18 @@ main()
 	echo "}"
 }
 
+main()
+{
+	print_info "main()"
+}
+
 begin()
 {
-	echo "begin() {}"
+	print_info "begin()"
 }
 
 end()
 {
-	echo "end() {}"
+	print_info "end()"
 }
 
