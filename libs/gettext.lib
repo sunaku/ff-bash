@@ -124,13 +124,13 @@
 	#
 	gettext()
 	{
-		local query response newline
+		local query response newline='\n'
 		
 		# handle options
 		
 			if [ "$1" == "-n" ]
 			then
-				newline='\n'
+				newline=
 				shift	# remove $1
 			fi
 			
