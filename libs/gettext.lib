@@ -4,12 +4,6 @@
 #
 ###
 #
-# Requires:
-#
-#	All "msgid" strings must begin with either an alphabet or a digit.
-#
-###
-#
 # Copyright 2003, 2004 Suraj N. Kurapati.
 #
 ###
@@ -73,7 +67,7 @@
 	__lib_gettext_load()
 	{
 		# variables
-		local file msgid msgstr exit_status=0 oldIFS=$IFS
+		local file msgid msgstr exit_status=0
 		
 		# parse catalog files
 		for file
@@ -92,7 +86,7 @@
 			# load file into cache
 			while IFS= read -r msgid && read -r msgstr
 			do
-				eval "__lib_gettext_cache_${msgid:0:1}${#msgid}=\$msgstr"
+				eval "__lib_gettext_cache_$( expr substr "${msgid##[^[:alnum:]]}" 0 1 )${#msgid}=\$msgstr"	# insert entry into hash-table
 			done < "$__lib_gettext_tempfile"
 			
 		done
@@ -139,7 +133,8 @@
 			shift	# remove $1 from parameters
 		
 		# determine translation
-			eval "response=\$__lib_gettext_cache_${query:0:1}${#query}" # perform hash
+		
+			eval "response=\$__lib_gettext_cache_$( expr substr "${query##[^[:alnum:]]}" 0 1 )${#query}" # hash-table lookup
 			
 			# if translation is blank. use untranslated query.
 			[ -z "$response" ] && response=$query
