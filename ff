@@ -47,7 +47,7 @@
 	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
 	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
 	
-	__ff_myLang=$( locale | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
+	__ff_myLang=$( locale 2> /dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 	
 ## libraries
 
