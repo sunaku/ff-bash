@@ -95,7 +95,7 @@ __lib_DocFmt_blockStart
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showHelp</b> [<u>lang-code</u>], <b>--$__lib_ff_options_longFlag_showHelp</b> [<u>lang-code</u>]"
 	__lib_DocFmt_blockStart
-		__lib_DocFmt_blockItem "$( gettext "Display this documentation in the language denoted by %s (refer to %s for a list of supported language codes) if possible and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>lang-code</u>" "ISO-639" "<u>lang-code</u>" "\"\$LC_MESSAGES\"" )"
+		__lib_DocFmt_blockItem "$( gettext "Display this documentation in the language denoted by %s (refer to %s for a list of supported language codes) if possible and exit. If %s is unspecified, the first two characters of %s are used in its place." "<u>lang-code</u>" "ISO-639" "<u>lang-code</u>" "\"\$LANG\"" )"
 	__lib_DocFmt_blockEnd
 	
 	__lib_DocFmt_blockItem "<b>-$__lib_ff_options_shortFlag_showVersion</b>, <b>--$__lib_ff_options_longFlag_showVersion</b>"
@@ -175,7 +175,7 @@ __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "TRANSLATION" )</b>"
 __lib_DocFmt_blockStart
-	__lib_DocFmt_blockItem "$( gettext "This document was translated from English using the %s online translation service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "\"AltaVista - Babel Fish Translation\" <http://babelfish.altavista.com/>" "gettext" "\"$__lib_ff_docI18n\"" )"
+	__lib_DocFmt_blockItem "$( gettext "This document was translated from English using the %s service. If you find this translation to be unsatisfactory, feel free to modify the %s translation catalog, located at %s, and send a copy of your changes to the author." "\"AltaVista - Babel Fish Translation\" <http://babelfish.altavista.com/>" "gettext" "\"$__lib_ff_docI18n\"" )"
 __lib_DocFmt_blockEnd
 
 __lib_DocFmt_blockItem "<b>$( gettext "REPORTING DEFECTS" )</b>"
