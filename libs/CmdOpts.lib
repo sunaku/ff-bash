@@ -2,7 +2,7 @@
 #
 # Command-line options parsing library.
 #
-# Note: the function '_cmdOpts_handleOption()' must be overridden by the client script.
+# Note: the function '__lib_CmdOpts_handleOption()' must be overridden by the client script.
 #
 ###
 #
@@ -30,38 +30,38 @@
 
 ## globals
 
-	declare -a _cmdOpts_argList
+	declare -a __lib_CmdOpts_argList
 
 ## functions
 	
 	# /**
-	# Scans the array '_cmdOpts_argList' for command-line options. When an option is found, '_cmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '_cmdOpts_argList'.
+	# Scans the array '__lib_CmdOpts_argList' for command-line options. When an option is found, '__lib_CmdOpts_handleOption()' is invoked. If an option and its possible argument are handled properly, they are removed from '__lib_CmdOpts_argList'.
 	#
-	# @return	1	An illegal option was encountered. The name of this option is stored in '_cmdOpts_argList'.
+	# @return	1	An illegal option was encountered. The name of this option is stored in '__lib_CmdOpts_argList'.
 	# */
-	_cmdOpts_scanOptions()
+	__lib_CmdOpts_scanOptions()
 	{
 #		declare -a ; read < /dev/tty
 		
-		local i=0 j=0 k opt flag max=${#_cmdOpts_argList[@]}
+		local i=0 j=0 k opt flag max=${#__lib_CmdOpts_argList[@]}
 		
 		while [ $i -lt $max ]
 		do
 			let j=i+1
 			
-			opt=${_cmdOpts_argList[$i]}
+			opt=${__lib_CmdOpts_argList[$i]}
 			
 			if [ "${opt:0:2}" == "--" ]		# handle long opts
 			then
 			
 				flag=${opt#--}
 				
-				_cmdOpts_handleOption "$flag" "${_cmdOpts_argList[$j]}"
+				__lib_CmdOpts_handleOption "$flag" "${__lib_CmdOpts_argList[$j]}"
 				
-				if ! _cmdOpts_scanOptions_handleReturnValue $?
+				if ! __lib_CmdOpts_scanOptions_handleReturnValue $?
 				then
 					# illegal option encountered
-					_cmdOpts_argList=$flag
+					__lib_CmdOpts_argList=$flag
 					return 1
 				fi
 				
@@ -74,12 +74,12 @@
 				do
 					flag=${opt:$k:1}
 					
-					_cmdOpts_handleOption "$flag" "${_cmdOpts_argList[$j]}"
+					__lib_CmdOpts_handleOption "$flag" "${__lib_CmdOpts_argList[$j]}"
 					
-					if ! _cmdOpts_scanOptions_handleReturnValue $?
+					if ! __lib_CmdOpts_scanOptions_handleReturnValue $?
 					then
 						# illegal option encountered
-						_cmdOpts_argList=$flag
+						__lib_CmdOpts_argList=$flag
 						return 1
 					fi
 					
@@ -95,21 +95,21 @@
 	}
 	
 	# /**
-	# Handles the return value from '_cmdOpts_handleOption()'.
+	# Handles the return value from '__lib_CmdOpts_handleOption()'.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
 	# */
-	_cmdOpts_scanOptions_handleReturnValue()
+	__lib_CmdOpts_scanOptions_handleReturnValue()
 	{
 		case $1 in
 			2)
-				unset -v _cmdOpts_argList[$j]	# remove the option's argument
-				unset -v _cmdOpts_argList[$i]	# remove the option's name
+				unset -v __lib_CmdOpts_argList[$j]	# remove the option's argument
+				unset -v __lib_CmdOpts_argList[$i]	# remove the option's name
 				
 				let j=j+1	# increment argument index
 			;;
 			1)
-				unset -v _cmdOpts_argList[$i]	# remove the option's name
+				unset -v __lib_CmdOpts_argList[$i]	# remove the option's name
 			;;
 			*)
 				return 1	# illegal option
@@ -129,5 +129,5 @@
 	# @return	1	The given option has no argument.
 	# @return	2	The given option has an argument.
 	# */
-	_cmdOpts_handleOption() { return 0; }
+	__lib_CmdOpts_handleOption() { return 0; }
 
