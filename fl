@@ -27,7 +27,7 @@
 #	If you wish to invoke an existing script, you can do so via piping or 
 #	redirection. For example, to run a script named 'my_script' upon a 
 #	file 'my_file', and save the output to the file 'my_output', you would
-#	run the following. 
+#	run the following.
 #
 #		Method 1: 	fl my_file < my_script | tee my_output
 #		
@@ -56,7 +56,7 @@
 #
 #	$d	Path of directory which contains current file (non-directory).
 #
-#	$w	Path of user's current working directory.
+#	$w	Absolute path of user's current working directory.
 #
 #	$n	Total number of lines in current file (non-directory).
 #
