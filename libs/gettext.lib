@@ -1,29 +1,48 @@
 #!/bin/bash
-# gettext emulation library (gte)
-# Provides BASH functions which emulate the GNU "gettext" program.
 #
-# This file is distributed under the same license as the "ff" package.
-
+# gettext emulation library.
+#
+###
+#
+# Copyright 2003-2004 Suraj N. Kurapati.
+#
+###
+#
+# This file is part of "For each File".
+# 
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+###
 
 
 ## globals
 
-	_gte_tempfile=${TMP:-/tmp}/$$
+	__lib_gettext_tempfile="${TMP:-/tmp}/__lib_gettext.$$"
 	
 	# even index: msgid
 	# odd index: msgstr
-	declare -a _gte_cache
+	declare -a __lib_gettext_cache
 	
-	# options for gettext()
-	_gte_gettext_opts=n
-	_gte_gettext_optFlg_noNewline=n
+	__lib_gettext_cacheIndex=0
 	
 ## functions
 	
 	# Loads a gettext Portable-Object translation catalog into cache.
 	# Cache is not cleared before loading new data.
 	#
-	# @usage	_gte_load FILE...
+	# @usage	__lib_gettext_load FILE...
 	#
 	# @param	FILE	Path of Portable-Object file to load.
 	#
@@ -51,7 +70,7 @@
 	#
 	# -------------------------------------
 	#
-	_gte_load()
+	__lib_gettext_load()
 	{
 		# variables
 		local file line exit_status=0
@@ -68,24 +87,27 @@
 			fi
 			
 			# get all strings onto one line
-			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$_gte_tempfile"
+			sed -e '/^$/d' -e '/^ *\#/d' "$file" | tr '\n' ' ' | sed -e 's/\([^\\]\)" *\([^\\]\)"/\1 \2/g' -e 's/msg[si][td]r\?  */\n/g' | sed -e '1d' -e 's/^ *"//' -e 's/" *$//' > "$__lib_gettext_tempfile"
+			echo -e '\n' >> "$__lib_gettext_tempfile"
 			
 			# load file
-			while read line
+			while read -r line
 			do
-				_gte_cache[${#_gte_cache[@]}]=$line
-			done < "$_gte_tempfile"
+				__lib_gettext_cache[${#__lib_gettext_cache[@]}]=$line
+			done < "$__lib_gettext_tempfile"
+			
+#			declare -a ; read -u 2
 		done
 		
 		# clean up
-		rm -f "$_gte_tempfile"
+		rm -f "$__lib_gettext_tempfile"
 		
 		return $exit_status
 	}
 	
 	
 	# parsing state machine:: VERY SLOW!
-#	_gte_load_stateMachine()
+#	__lib_gettext_load_stateMachine()
 #	{
 #		# read words for current string
 #		if [ "$state" == read ]
@@ -132,10 +154,10 @@
 #			# store data
 #			if [ "$string_type" == "msgid" ]
 #			then
-#				_gte_cache_msgid[${#_gte_cache_msgid[@]}]=$string
+#				__lib_gettext_cache_msgid[${#__lib_gettext_cache_msgid[@]}]=$string
 #			elif [ "$string_type" == "msgstr" ]
 #			then
-#				_gte_cache_msgstr[${#_gte_cache_msgstr[@]}]=$string
+#				__lib_gettext_cache_msgstr[${#__lib_gettext_cache_msgstr[@]}]=$string
 #			fi
 #			
 #			# reset vars
@@ -149,9 +171,9 @@
 #	}
 	
 	# Frees cached translation catalog data from memory.
-	_gte_free()
+	__lib_gettext_free()
 	{
-		unset _gte_cache
+		unset __lib_gettext_cache
 	}
 	
 	
@@ -177,42 +199,41 @@
 	#
 	gettext()
 	{
-		local cache_index=0 query translation
+		local query translation
 		
 		# handle options
 		
-			while getopts $_gte_gettext_opts opt
-			do
-				case $opt in
-					$_gte_gettext_optFlg_noNewline)
-						_gte_gettext_optEn_noNewline=1
-						shift	# remove from args
-					;;
-				esac
-			done
+			if [ "$1" == "-n" ]
+			then
+				__lib_gettext_options_isOn_noNewline=1
+				shift	# remove $1
+			fi
 			
 		# locate query in catalog cache
 		
 			query=$1
 			shift	# remove $1 from parameters
 		
-			while [ $cache_index -lt ${#_gte_cache[@]} ]
+			# check index bounds
+			[ $__lib_gettext_cacheIndex -ge ${#__lib_gettext_cache[@]} ] && __lib_gettext_cacheIndex=0
+			
+			while [ $__lib_gettext_cacheIndex -lt ${#__lib_gettext_cache[@]} ]
 			do
-				[ "$query" == "${_gte_cache[$cache_index]}" ] && break
-				let cache_index=cache_index+2	# increment loop
+				[ "$query" == "${__lib_gettext_cache[$__lib_gettext_cacheIndex]}" ] && break
+				let __lib_gettext_cacheIndex=__lib_gettext_cacheIndex+2	# increment loop
 			done
 			
-			let string_index=cache_index+1
+			let string_index=__lib_gettext_cacheIndex+1
 			
-#			echo "cache_index=$cache_index"
-#			echo "cache size=${#_gte_cache_msgid[@]}"
-#			echo "msgstr='${_gte_cache_msgstr[$cache_index]}'"
+#			echo "__lib_gettext_cacheIndex=$__lib_gettext_cacheIndex"
+#			echo "cache size=${#__lib_gettext_cache_msgid[@]}"
+#			echo "msgstr='${__lib_gettext_cache_msgstr[$__lib_gettext_cacheIndex]}'"
 			
 		# determine translation
 		
-			if [ ! -z "${_gte_cache[$string_index]}" ]
+			if [ ! -z "${__lib_gettext_cache[$string_index]}" ]
 			then
-				translation=${_gte_cache[$string_index]}
+				translation=${__lib_gettext_cache[$string_index]}
 			else
 				# translation is blank. use untranslated query.
 				translation=$query
@@ -221,7 +242,7 @@
 		# print result
 		
 			# add trailing newline
-			[ ${_gte_gettext_optEn_noNewline:-0} -eq 0 ] && translation=${translation}\\n
+			[ ${__lib_gettext_options_isOn_noNewline:-0} -eq 0 ] && translation=${translation}\\n
 			
 			printf "${translation}" "${@}"
 			
