@@ -195,7 +195,7 @@ $expression
 						# query user to display English docs
 						read -p "$( gettext "Would you like to view the documentation in English (%s/%s)? %s" "$( gettext "yes" )" "$( gettext "no" )" "[$( gettext "yes" )]" ) " < /dev/tty
 						
-						[[ -n "$REPLY" && "$REPLY" != "$( gettext "Yes" )" ]] && __lib_ff_exit
+						[[ -n "$REPLY" && "$REPLY" != "$( gettext "yes" )" ]] && __lib_ff_exit
 					fi
 				
 				# display documentation
