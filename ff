@@ -12,8 +12,8 @@
 #		Directories are processed before files (non-directories).
 #
 #	-e	Use a custom ${EDITOR} for entering scripting commands.
-#		This option _may_ disable the ability to pipe or redirect data 
-#		to this tool; check with your text editor.
+#		Depending on how your text editor handles I/O redirection, this
+#		option may disable the ability to pipe output to other programs.
 #
 #	-h	Display this help message.
 #
@@ -52,10 +52,14 @@
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
 #
-#	$f	basename of current file (directory or non-directory)
-#	$d	path of current working directory
-#	$p	path of current file (directory or non-directory)
-#	$b	path of directory from which this tool was launched
+#	$f	Path of current file (directory or non-directory).
+#
+#	$fn	Basename of current file (directory or non-directory).
+#
+#	$d	Path of current working directory.
+#
+#	$w	Path from which this tool was launched.
+#		The user's original working directory.
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -124,7 +128,7 @@
 # check method of operation: recursive or non-recursive
 
 	# set scripting variable
-	b="$PWD"
+	w="$PWD"
 
 	if [ $g_optEn_recurse -eq 1 ] # recursive operation
 	then
@@ -147,24 +151,30 @@
 					# read subdir from file
 					subdir=$( sed -n "$i p" "$g_tmpfile_Subdirs" )
 					
-					# step into subdir
-					pushd "$subdir" >& /dev/null
+					# check if subdir is empty
+					if [ $( ls "$subdir" | wc -l ) -gt 0 ]
+					then
 					
-						# set scripting variable
-						d="$PWD"
-					
-						# for all files in subdir
-						for f in *
-						do
+						# step into subdir
+						pushd "$subdir" >& /dev/null
+						
 							# set scripting variable
-							p="$d/$f"
-							
-							# execute user specified commands
-							eval "$g_input"
-						done
-					
-					# step out of subdir
-					popd >& /dev/null
+							d="$PWD"
+						
+							# for all files in subdir
+							for f in *
+							do
+								# set scripting variable
+								fn="$f"
+								f="$d/$f"
+								
+								# execute user specified commands
+								eval "$g_input"
+							done
+						
+						# step out of subdir
+						popd >& /dev/null
+					fi
 					
 					# increment subdir
 					let "i = i + 1"
@@ -179,8 +189,7 @@
 		do
 			# set scripting variables
 			d=$( dirname "$f" )
-			f=$( basename "$f" )
-			p="$d/$f"
+			fn=$( basename "$f" )
 			
 			# execute user specified commands
 			eval "$g_input"
