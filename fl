@@ -2,6 +2,7 @@
 #
 # NAME
 #	fl - for each line
+#	<http://freshmeat.net/projects/ff/>
 #
 # SYNOPSIS
 #	fl [-eh] file1 file2 ... [ < script ]
@@ -16,15 +17,12 @@
 # ARGUMENTS
 #	file	Path to a file (non-directory).
 #
-#	script	Path to an existing script file.
+#	script	Path to an existing script file (non-directory).
 #
 # DESCRIPTION
-#	Allows the user to write an embedded BASH script which will be executed
-#	once for each line in the specified files.
-#
-#	The procedure given by the user is interpreted directly by the BASH
-#	shell. So you can think of this tool as a way to iteratively execute a 
-#	BASH script upon a large block of text.
+#	Allows the user to execute a Bash script for each line in the specified
+#	files. The script given by the user is interpreted directly by the BASH
+#	shell.
 #
 #	If you wish to input your custom script using a text editor, set a 
 #	global shell variable ${EDITOR} to the path of your favorite text 
@@ -35,20 +33,21 @@
 #	file 'my_file', you would run the following.
 #
 #		Method 1: 	fl my_file < my_script
+#		
 #		Method 2:	cat my_script | fl my_file
 #
-#	Notice that the '-e' option is not present. Omitting '-e' may allow you
-#	to pipe or redirect input to this tool; however this behavior is
-#	dependent on your text editor.
+#	Notice that the '-e' option is not present. Depending on how your text
+#	editor handles I/O redirection, omitting '-e' may allow you to pipe or
+#	redirect input to this tool.
 #
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
-#	Note that the UNIX term 'file' refers to both files and directories.
 #
 #	$f	basename of current file (non-directory)
 #	$d	absolute path of current working directory
-#	$n	number of lines in current file
-#	$i	line number of current line
+#	$p	absolute path of current file (non-directory)
+#	$n	total number of lines in current file (non-directory)
+#	$i	number of current line
 #	$l	contents of current line
 #
 # AUTHORS
@@ -60,7 +59,7 @@
 #	the Free Software Foundation; either version 2 of the License, or   
 #	(at your option) any later version.
 #
-####
+#####
 
 # globals
 	g_tmpfileMask="/tmp/$$"
@@ -118,6 +117,9 @@
 	# loop through positional params
 	for f
 	do
+		# set scripting var
+		p="$d/$f"
+		
 		# determine file size
 		n=$( wc -l "$f" | awk '{ print $1 }' )
 		let "i = 1"

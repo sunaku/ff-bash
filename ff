@@ -2,13 +2,14 @@
 #
 # NAME
 #	ff - for each file
+#	<http://freshmeat.net/projects/ff/>
 #
 # SYNOPSIS
 #	ff [-reh] file1 file2 ... [ < script ]
 #
 # OPTIONS
-#	-r	Recursively handle subdirectories. Directories are handled
-#		first before other non-directories.
+#	-r	Handle subdirectories recursively.
+#		Directories are processed before files (non-directories).
 #
 #	-e	Use a custom ${EDITOR} for entering scripting commands.
 #		This option _may_ disable the ability to pipe or redirect data 
@@ -19,18 +20,14 @@
 # ARGUMENTS
 #	file	Path to a file (non-directory) or directory.
 #
-#	script	Path to an existing script file.
+#	script	Path to an existing script file (non-directory).
 #
 # DESCRIPTION
-#	Allows the user to write an embedded BASH script which will be executed
-#	once for each of the specified files. This tool is ideal for performing 
-#	a procedure upon a group of files or directories, such as mass re-naming
-#	of files.
-#
-#	The procedure given by the user is interpreted directly by the BASH
-#	shell. So you can think of this tool as a way to iteratively execute a 
-#	BASH script upon a large number of files or directories.
-#
+#	Allows the user to execute a Bash script recursively upon many files and
+#	directories. It is ideal for performing a repetitive procedure such as
+#	mass file renaming. The script given by the user is interpreted directly
+#	by the Bash shell.
+#	
 #	If you wish to input your custom script using a text editor, set a 
 #	global shell variable ${EDITOR} to the path of your favorite text 
 #	editor. For example: `export EDITOR='path to editor'`.
@@ -40,18 +37,19 @@
 #	directory 'dir', you would run the following.
 #
 #		Method 1: 	ff -r dir < my_script
+#
 #		Method 2:	cat my_script | ff -r dir
 #
-#	Notice that the '-e' option is not present. Omitting '-e' may allow you
-#	to pipe or redirect input to this tool; however this behavior is
-#	dependent on your text editor.
+#	Notice that the '-e' option is not present. Depending on how your text
+#	editor handles I/O redirection, omitting '-e' may allow you to pipe or
+#	redirect input to this tool.
 #
 # SCRIPT VARIABLES
 #	The following variables are available for use in users' scripts.
-#	Note that the UNIX term 'file' refers to both files and directories.
 #
-#	$f	basename of current file (or directory)
-#	$d	relative path to current working directory
+#	$f	basename of current file (directory or non-directory)
+#	$d	absolute path of current working directory
+#	$p	absolute path of current file (directory or non-directory)
 #
 # AUTHORS
 # 	Suraj Kurapati <skurapat@ucsc.edu>
@@ -140,14 +138,20 @@
 				while [ $i -le $n ]
 				do
 					# read subdir from file
-					d=$( sed -n "$i p" "$g_tmpfile_Subdirs" )
+					subdir=$( sed -n "$i p" "$g_tmpfile_Subdirs" )
 					
 					# step into subdir
-					pushd "$d" >& /dev/null
+					pushd "$subdir" >& /dev/null
+					
+						# set scripting var
+						d="$PWD"
 					
 						# for all files in subdir
 						for f in *
 						do
+							# set scripting var
+							p="$d/$f"
+							
 							# execute user specified commands
 							eval "$g_input"
 						done
@@ -155,7 +159,7 @@
 					# step out of subdir
 					popd >& /dev/null
 					
-					# increment line number
+					# increment subdir
 					let "i = i + 1"
 				done
 			fi
@@ -170,6 +174,9 @@
 		# loop through positional params
 		for f
 		do
+			# set scripting var
+			p="$d/$f"
+			
 			# execute user specified commands
 			eval "$g_input"
 		done

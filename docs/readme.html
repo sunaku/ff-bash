@@ -1,44 +1,72 @@
+$Id$
+
+CONTENTS
+	programs
+	description
+	license
+	files
+	documentation
+	installation
+	examples
+
+PROGRAMS
+	ff - "For each File"
+	fl - "For each Line"
+
 DESCRIPTION
-	Allows user to execute a BASH script upon many files and directories.
+	For each File allows users to execute a Bash script recursively upon
+	many files and directories. It is ideal for performing a repetitive
+	procedure such as mass file renaming.
+	
+	For each Line allows users to execute a Bash script, once for each line
+	in many files.
 
 LICENSE
-	This program/script is released under the GNU GPL version 2. A copy of 
+	These programs are released under the GNU GPL version 2. A copy of 
 	this document is provided in the file 'COPYING'.
 	
 FILES
-	changelog       List of important changes in this version.
+	changelog	List of important changes in this version.
 	
-	ff              Executes an embedded BASH script upon files and
-			directories. 
-			
-	fl		Executes an embedded BASH script upon lines in a file.
+	ff		For each File program.
 	
-	examples/       Contains sample scripts.
+	fl		For each Line program.
 	
-	COPYING         A copy of the GNU GPL version 2.
+	install		Installation script.
 	
-	README          General information.
+	examples/	Sample scripts to get you started.
+	
+	COPYING		A copy of the GNU GPL version 2 license.
 	
 DOCUMENTATION
-	See documentation in program code or run command './ff -h' or './fl -h'.
+	1. To view help message for "For each File", run './ff -h'
+	
+	2. To view help message for "For each Line", run './fl -h'
+	
+	3. View program source code; they are Bash scripts!
 
 INSTALLATION
+	Run './install' or perform a manual installation as follows.
+
 	1. Set the file permissions so that you can execute the programs.
 	
-		Example:	chmod +x ff fl
+		Example:	chmod u+x ff fl
 	
 	2. Copy the programs to a location recognized by your ${PATH} variable.
 	
 		Example:	cp ff fl ~/bin
 
-EXAMPLE SCRIPTS
-	If you wish to execute one of the provided example scripts on all
-	files in the current working directory, run the following.
+EXAMPLES
+	I recommend you first invoke the 'ff.vars' and 'fl.vars' examples to see
+	how the scripting variables behave.
+
+	If you wish to execute one of the provided example scripts, say, on all
+	files in the current working directory, you would run the following.
 	
 		Example:	ff * < [path to example file]
 		Example:	cat [path to example file] | ff *
-		
-	To execute the example script recursively on the current working
+	
+	To execute an example script recursively on the current working
 	directory, run the following.
 	
 		Example:	ff -r . < [path to example file]
