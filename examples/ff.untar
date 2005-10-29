@@ -34,13 +34,26 @@
 	g_targetList=	# array of command-line args
 
 	# command-line options
-	g_options_flag_ready=--ready
-	g_options_flag_confirm=--confirm
-	g_options_flag_relative=--relative
-	g_options_flag_help=--help
-	g_options_flag_outDir=--outdir
-	g_options_flag_tarOpts=--tar-opts
-	g_options_flag_autoDir=--auto-dir
+		g_options_flag0_help=-h
+		g_options_flag1_help=--help
+
+		g_options_flag0_ready=-r
+		g_options_flag1_ready=--ready
+
+		g_options_flag0_confirm=-c
+		g_options_flag1_confirm=--confirm
+
+		g_options_flag0_relative=-R
+		g_options_flag1_relative=--relative
+
+		g_options_flag0_outDir=-o
+		g_options_flag1_outDir=--outdir
+
+		g_options_flag0_tarOpts=-t
+		g_options_flag1_tarOpts=--tar-opts
+
+		g_options_flag0_autoDir=-a
+		g_options_flag1_autoDir=--auto-dir
 
 ## libraries
 
@@ -53,31 +66,31 @@
 	handleOption()
 	{
 		case $1 in
-			$g_options_flag_confirm)
+			$g_options_flag0_confirm|$g_options_flag1_confirm)
 				g_options_isOn_confirm=1
 				return 1
 			;;
-			$g_options_flag_ready)
+			$g_options_flag0_ready|$g_options_flag1_ready)
 				g_options_isOn_ready=1
 				return 1
 			;;
-			$g_options_flag_outDir)
+			$g_options_flag0_outDir|$g_options_flag1_outDir)
 				g_options_value_outDir=$2
 				return 2
 			;;
-			$g_options_flag_relative)
+			$g_options_flag0_relative|$g_options_flag1_relative)
 				g_options_isOn_relative=1
 				return 1
 			;;
-			$g_options_flag_tarOpts)
+			$g_options_flag0_tarOpts|$g_options_flag1_tarOpts)
 				flag=g_tarOpts
 				return 254
 			;;
-			$g_options_flag_autoDir)
+			$g_options_flag0_autoDir|$g_options_flag1_autoDir)
 				g_options_isOn_autoDir=1
 				return 1
 			;;
-			$g_options_flag_help) # display the documentation
+			$g_options_flag0_help|$g_options_flag1_help) # display the documentation
 
 				{
 					echo \
@@ -85,40 +98,47 @@
 	$( gettext "Extracts compressed %s, %s, and regular %s archives into their own directories." "<em>gzip</em>" "<em>bzip2</em>" "<em>tar</em>" )
 
 <b>$( gettext "USAGE" )</b>
-	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option" )</u>]...
+	$__ff_myName ... $__lib_ff_options_flag0_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag0_scriptArgs [<u>$( gettext "option" )</u>]...
 
 <b>$( gettext "OPTIONS" )</b>
-	<b>$g_options_flag_help</b>
+
+	<b>$g_options_flag0_help</b>
+	<b>$g_options_flag1_help</b>
 		$( gettext "Display this help message and exit." )
 
-	<b>$g_options_flag_outDir</b> <u>$( gettext "directory" )</u>
-		$( gettext "Extract all targets, into their own directories, within %s. The %s option is ignored when this option is used." "<u>$( gettext "directory" )</u>" "<b>$g_options_flag_relative</b>" )
+	<b>$g_options_flag0_outDir</b> <u>$( gettext "directory" )</u>
+	<b>$g_options_flag1_outDir</b> <u>$( gettext "directory" )</u>
+		$( gettext "Extract all targets, into their own directories, within %s. The %s option is ignored when this option is used." "<u>$( gettext "directory" )</u>" "<b>$g_options_flag0_relative</b>" )
 
-	<b>$g_options_flag_ready</b>
+	<b>$g_options_flag0_ready</b>
+	<b>$g_options_flag1_ready</b>
 		$( gettext "Do not perform an experimental run; proceed in modifying the file-system as necessary." )
 
 		$( gettext "The following subordinate options have no effect if used without this option." )
 
-		<b>$g_options_flag_autoDir</b>
+		<b>$g_options_flag0_autoDir</b>
+		<b>$g_options_flag1_autoDir</b>
 			$( gettext "If the default output directory exists, then automatically create a unique output directory instead of querying the user." )
 
-		<b>$g_options_flag_confirm</b>
+		<b>$g_options_flag0_confirm</b>
+		<b>$g_options_flag1_confirm</b>
 			$( gettext "Confirm each target before it is extracted." )
 
-		<b>$g_options_flag_tarOpts</b>
-			$( gettext "Pass all command-line arguments that are specified after this option to the %s utility. For example, one can specify %s in order to see verbose output from the %s utility." "<em>tar</em>" "<em>$g_options_flag_tarOpts -v</em>" "<em>tar</em>" )
+		<b>$g_options_flag0_tarOpts</b>
+		<b>$g_options_flag1_tarOpts</b>
+			$( gettext "Pass all command-line arguments that are specified after this option to the %s utility. For example, one can specify %s in order to see verbose output from the %s utility." "<em>tar</em>" "<em>$g_options_flag0_tarOpts -v</em>" "<em>tar</em>" )
 
-	<b>$g_options_flag_relative</b>
+	<b>$g_options_flag0_relative</b>
+	<b>$g_options_flag1_relative</b>
 		$( gettext "Extract targets relative to their parent directory instead of the current working directory. For example, a target named %s will be extracted into %s instead of %s." "<em>/foo/bar/baz.tar</em>" "<em>/foo/bar/baz/</em>" "<em>./baz/</em>" )
 "
-				} | __lib_DocFmt_formatTags | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
+				} | __lib_ff_formatDocumentation
 
 				exit
 			;;
-			*)
-				return 0
-			;;
 		esac
+
+		return 0
 	}
 
 
@@ -191,14 +211,14 @@
 		# parse command-line options
 		if ! __lib_CmdOpts_scanOptions g_targetList handleOption
 		then
-			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag_scriptArgs $g_options_flag_help\""
+			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag0_scriptArgs $g_options_flag0_help\""
 			exit 1
 		fi
 
 		# print warning about --ready not being specified
 		if [ ${g_options_isOn_ready:-0} -eq 0 ]
 		then
-			gettext "Warning: Performing an experimental run.\n Specify %s to disable this behavior." "<b>$__lib_ff_options_flag_scriptArgs $g_options_flag_ready</b>" | __lib_DocFmt_formatTags >&2
+			gettext "Warning: Performing an experimental run.\n Specify %s to disable this behavior." "<b>$__lib_ff_options_flag0_scriptArgs $g_options_flag0_ready</b>" | __lib_DocFmt_formatTags >&2
 			sleep 1
 		fi
 	}

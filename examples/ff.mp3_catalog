@@ -45,12 +45,23 @@
 		g_outError=error.log
 
 	# command-line options
-		g_options_flag_ready=--ready
-		g_options_flag_confirm=--confirm
-		g_options_flag_move=--move
-		g_options_flag_format=--format
-		g_options_flag_help=--help
-		g_options_flag_outDir=--outdir
+		g_options_flag0_help=-h
+		g_options_flag1_help=--help
+
+		g_options_flag0_ready=-r
+		g_options_flag1_ready=--ready
+
+		g_options_flag0_confirm=-c
+		g_options_flag1_confirm=--confirm
+
+		g_options_flag0_move=-m
+		g_options_flag1_move=--move
+
+		g_options_flag0_format=-f
+		g_options_flag1_format=--format
+
+		g_options_flag0_outDir=-o
+		g_options_flag1_outDir=--outdir
 
 	# XXX: speed hack: output messages
 		g_msgout_nowHandling=$( gettext "Handling target:" )
@@ -72,27 +83,27 @@
 	handleOption()
 	{
 		case $1 in
-			$g_options_flag_confirm)
+			$g_options_flag0_confirm|$g_options_flag1_confirm)
 				g_options_isOn_confirm=1
 				return 1
 			;;
-			$g_options_flag_format)
+			$g_options_flag0_format|$g_options_flag1_format)
 				g_catalogFmt=$2
 				return 2
 			;;
-			$g_options_flag_move)
+			$g_options_flag0_move|$g_options_flag1_move)
 				g_options_isOn_move=1
 				return 1
 			;;
-			$g_options_flag_ready)
+			$g_options_flag0_ready|$g_options_flag1_ready)
 				g_options_isOn_ready=1
 				return 1
 			;;
-			$g_options_flag_outDir)
+			$g_options_flag0_outDir|$g_options_flag1_outDir)
 				g_catalogDir=$2
 				return 2
 			;;
-			$g_options_flag_help) # display the documentation
+			$g_options_flag0_help|$g_options_flag1_help) # display the documentation
 
 				{
 					echo \
@@ -100,13 +111,16 @@
 	$( gettext "Organizes %s files into a catalog according their %s or %s tags." MP3 ID3v1 ID3v1.1 )
 
 <b>$( gettext "USAGE" )</b>
-	$__ff_myName ... $__lib_ff_options_longFlag_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag_scriptArgs [<u>$( gettext "option" )</u>]...
+	$__ff_myName ... $__lib_ff_options_flag0_evalFile \"$__lib_ff_options_value_evalFile\" $__lib_ff_options_flag0_scriptArgs [<u>$( gettext "option" )</u>]...
 
 <b>$( gettext "OPTIONS" )</b>
-	<b>$g_options_flag_confirm</b>
+
+	<b>$g_options_flag0_confirm</b>
+	<b>$g_options_flag1_confirm</b>
 		$( gettext "Confirm each target before it is put into the catalog." )
 
-	<b>$g_options_flag_format</b> [<u>$( gettext "string" )</u>]
+	<b>$g_options_flag0_format</b> [<u>$( gettext "string" )</u>]
+	<b>$g_options_flag1_format</b> [<u>$( gettext "string" )</u>]
 		$( gettext "The %s argument dictates how a target is placed into the catalog. It is a standard %s string expression and thus can utilize constructs such as command substitutions and variables.
 
 		If %s is unspecified, then the default value of %s will be used.
@@ -134,19 +148,23 @@
 		<b>\$track</b>
 			$( gettext "The track number of the song in its album." )
 
-	<b>$g_options_flag_help</b>
+	<b>$g_options_flag0_help</b>
+	<b>$g_options_flag1_help</b>
 		$( gettext "Display this help message and exit." )
 
-	<b>$g_options_flag_move</b>
+	<b>$g_options_flag0_move</b>
+	<b>$g_options_flag1_move</b>
 		$( gettext "Physically move targets into the catalog instead of creating symbolic links to them. If this option is not used, then be sure to specify absolute paths to targets so that the created symbolic links will be valid regardless of your current working directory. For example, if your current working directory is %s, then symbolic links created to files in %s may not be valid if your current working directory changes to %s." "<em>/foo/bar/baz</em>" "<em>../tea</em>" "<em>/chai</em>" )
 
-	<b>$g_options_flag_outDir</b> <u>$( gettext "directory" )</u>
+	<b>$g_options_flag0_outDir</b> <u>$( gettext "directory" )</u>
+	<b>$g_options_flag1_outDir</b> <u>$( gettext "directory" )</u>
 		$( gettext "Use %s as the output directory for the catalog." "<u>$( gettext "directory" )</u>" )
 
-	<b>$g_options_flag_ready</b>
+	<b>$g_options_flag0_ready</b>
+	<b>$g_options_flag1_ready</b>
 		$( gettext "Do not perform an experimental run." )
 "
-				} | __lib_DocFmt_formatTags | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
+				} | __lib_ff_formatDocumentation
 
 				exit
 			;;
@@ -164,14 +182,14 @@
 		# parse command-line options
 		if ! __lib_CmdOpts_scanOptions g_targetList handleOption
 		then
-			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag_scriptArgs $g_options_flag_help\""
+			gettext "Error: %s is not a valid option. Try %s." "\"${g_targetList[0]}\"" "\"$__lib_ff_options_flag0_scriptArgs $g_options_flag0_help\""
 			exit 1
 		fi
 
 		# print warning about --ready not being specified
 		if [ ${g_options_isOn_ready:-0} -eq 0 ]
 		then
-			gettext "Warning: Performing an experimental run.\n Specify %s to disable this behavior." "<b>$__lib_ff_options_flag_scriptArgs $g_options_flag_ready</b>" | __lib_DocFmt_formatTags >&2
+			gettext "Warning: Performing an experimental run.\n Specify %s to disable this behavior." "<b>$__lib_ff_options_flag0_scriptArgs $g_options_flag0_ready</b>" | __lib_DocFmt_formatTags >&2
 			sleep 1
 		fi
 	}

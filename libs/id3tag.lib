@@ -129,6 +129,7 @@
 			fi
 
 		# pad tag-fields with NUL bytes
+			#for(( i=1; i<6; i++))
 			for i in 1 2 3 4 5
 			do
 				tag[$i]="${tag[$i]}$__lib_id3tag_NulPadding"

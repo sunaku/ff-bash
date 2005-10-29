@@ -91,7 +91,7 @@
 
 					k=1	# flag index; +1 to skip '-' prefix
 
-					# TODO: special case: $#opt == 1
+					# TODO: special case: $#opt == 1, i.e. $opt == "-"
 
 					while (( k < ${#opt} ))
 					do
@@ -99,11 +99,22 @@
 
 						"$2" "$flag" "${arr[$j]}"	# invoke user func to handle option
 
-						if ! __lib_CmdOpts_scanOptions_handleReturnValue_ $?
+						__lib_CmdOpts_scanOptions_handleReturnValue_ $?
+						local retval=$?
+
+# 						read -p "retval=$retval" < /dev/tty
+
+						if (( retval == 1 ))
 						then
 							# illegal option encountered
 							isInvalid=1
 							break
+
+						elif (( retval == 2 ))
+						then
+							# no need to process remaining arugments
+							break
+
 						fi
 
 						(( k += 1 ))
@@ -124,13 +135,14 @@
 		# propogate changes in local array to caller's array
 		eval "$1=( \"\${arr[@]}\" )"
 
-#		declare -a ; read < /dev/tty
+# 		declare -a ; read < /dev/tty
 		return 0
 	}
 
 	# Handles the return value from the function whose name is given in $2 of scanOptions(). This function is meant to be used internally by this library.
 	# @param	1	the return value to handle
 	# @return	1	an illegal option was encountered
+	# @return 	2	the remainder of options need not be processed
 	__lib_CmdOpts_scanOptions_handleReturnValue_()
 	{
 		# XXX: $i, $j, $arr
@@ -146,16 +158,27 @@
 				unset -v "arr[$i]"	# remove the option's name
 			;;
 			254)
-				local x
+				local x wordBlock
+
+				# copy remaining args from current word-block, e.g. '-abcd'
+					for (( x = k + 1 ; x < ${#opt} ; x++ ))
+					do
+						wordBlock="$wordBlock${opt:$x:1}"
+					done
+
+					eval "$flag[\${#$flag[@]}]=-$wordBlock"
+# 					read </dev/tty
 
 				# copy remaining args into user's array
-				for (( x = i + 1 ; x < arrLen ; x++ ))
-				do
-					eval "$flag[\${#$flag[@]}]=${arr[$x]}"
-					unset -v "arr[$x]"	# remove argument
-				done
+					for (( x = i + 1 ; x < arrLen ; x++ ))
+					do
+						eval "$flag[\${#$flag[@]}]=${arr[$x]}"
+						unset -v "arr[$x]"	# remove argument
+					done
 
 				unset -v "arr[$i]"	# remove the option's name
+
+				return 2
 			;;
 			255)
 				amActive=0	# stop scanning for more options

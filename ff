@@ -17,28 +17,33 @@
 #
 # "For each File" is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with "For each File"; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 ###
-
 
 ## global paths
 
 	__ff_myPath=$0	# path to this program
-
-		# dereference symbolic-links until full path is obtained
-		while [ -L "$__ff_myPath" ]
-		do
-			__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
-		done
-
 	__ff_myName=${__ff_myPath##*/}	# basename of this program
-	__ff_myHome=${__ff_myPath%/*}	# dirname of this program
+
+	# determine dirname of this program
+		if [ -n "${FF_HOME}" ]
+		then
+			__ff_myHome=$FF_HOME	# dirname of this program
+		else
+			# dereference symbolic-links until full path is obtained
+				while [ -L "$__ff_myPath" ]
+				do
+					__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
+				done
+
+			__ff_myHome=${__ff_myPath%/*}	# dirname of this program
+		fi
 
 	__ff_myConf="$HOME/.ff"	# path to user settings directory
 		[ ! -e "$__ff_myConf" ] && mkdir -p "$__ff_myConf"	# create if needed
@@ -56,17 +61,17 @@
 ## global variables
 
 	# command line options
-	__ff_myOptions_shortFlag_handleHidden=-a
-	__ff_myOptions_longFlag_handleHidden=--all
+	__ff_myOptions_flag0_handleHidden=-A
+	__ff_myOptions_flag1_handleHidden=--all
 
-	__ff_myOptions_shortFlag_ignoreLinks=-l
-	__ff_myOptions_longFlag_ignoreLinks=--ignore-links
+	__ff_myOptions_flag0_ignoreLinks=-L
+	__ff_myOptions_flag1_ignoreLinks=--no-links
 
-	__ff_myOptions_shortFlag_recursive=-r
-	__ff_myOptions_longFlag_recursive=--recursive
+	__ff_myOptions_flag0_recursive=-r
+	__ff_myOptions_flag1_recursive=--recursive
 
-	__ff_myOptions_shortFlag_fileMask=-m
-	__ff_myOptions_longFlag_fileMask=--mask
+	__ff_myOptions_flag0_fileMask=-m
+	__ff_myOptions_flag1_fileMask=--mask
 
 ## functions
 
@@ -74,19 +79,19 @@
 	__lib_ff_handleOption()
 	{
 		case "$1" in
-			"$__ff_myOptions_shortFlag_handleHidden" | "$__ff_myOptions_longFlag_handleHidden")
+			$__ff_myOption_flag0_shandleHidden|$__ff_myOptions_flag1_handleHidden)
 				__ff_myOptions_isOn_handleHidden=1
 				return 1
 			;;
-			"$__ff_myOptions_shortFlag_ignoreLinks" | "$__ff_myOptions_longFlag_ignoreLinks")
+			$__ff_myOptions_flag0_ignoreLinks|$__ff_myOptions_flag1_ignoreLinks)
 				__ff_myOptions_isOn_ignoreLinks=1
 				return 1
 			;;
-			"$__ff_myOptions_shortFlag_recursive" | "$__ff_myOptions_longFlag_recursive")
+			$__ff_myOptions_flag0_recursive|$__ff_myOptions_flag1_recursive)
 				__ff_myOptions_isOn_recursive=1
 				return 1
 			;;
-			"$__ff_myOptions_shortFlag_fileMask" | "$__ff_myOptions_longFlag_fileMask")
+			$__ff_myOptions_flag0_fileMask|$__ff_myOptions_flag1_fileMask)
 				__ff_myOptions_isOn_fileMask=1
 				__ff_myOptions_value_fileMask=$2
 				return 2
@@ -105,25 +110,25 @@
 		local d=$1
 
 		# handle all directories
-		for p in "$d"/*
-		do
-			if [ -d "$p" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$p" ]]
-			then
+			for p in "$d"/*
+			do
+				if [ -d "$p" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$p" ]]
+				then
 
-#				echo "(recursive) entering '$p'"
-				__ff_main_recursive_ "$p"
-			fi
-		done
+	#				echo "(recursive) entering '$p'"
+					__ff_main_recursive_ "$p"
+				fi
+			done
 
 		# handle all files
-		for o in "$d"/${__ff_myOptions_value_fileMask:-*}
-		do
-			# update preset variables
-			p=$o	# redundant slashes have already been removed
-			n=${p##*/}	# keep everything after the last slash
+			for o in "$d"/${__ff_myOptions_value_fileMask:-*}
+			do
+				# update preset variables
+					p=$o	# redundant slashes have already been removed
+					n=${p##*/}	# keep everything after the last slash
 
-			main	# user's control function
-		done
+				main	# user's control function
+			done
 
 #		echo "(recursive) leaving '$d'"
 	}
@@ -147,61 +152,61 @@
 		then
 
 			# handle hidden file-names
-			[ ${__ff_myOptions_isOn_handleHidden:-0} -eq 1 ] && shopt -s dotglob
+				[ ${__ff_myOptions_isOn_handleHidden:-0} -eq 1 ] && shopt -s dotglob
 
 			# handle command-line targets
-			for d in "${__lib_ff_targetList[@]}"
-			do
-				if [ -d "$d" ]	# XXX: same block is copied below
-				then
-					d=${d//+(\/)//}
-					d=${d%/}
-					__ff_main_recursive_ "$d"
-				fi
-			done
+				for d in "${__lib_ff_targetList[@]}"
+				do
+					if [ -d "$d" ]	# XXX: same block is copied below
+					then
+						d=${d//+(\/)//}
+						d=${d%/}
+						__ff_main_recursive_ "$d"
+					fi
+				done
 
 			# handle piped targets
-			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
-			then
+				if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
+				then
 
-				[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
+					[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
 
-				while IFS= read -r
-				do
-					for d in $REPLY
+					while IFS= read -r
 					do
-						if [ -d "$d" ]
-						then
-							d=${d//+(\/)//}
-							d=${d%/}
-							__ff_main_recursive_ "$d"
-						fi
+						for d in $REPLY
+						do
+							if [ -d "$d" ]
+							then
+								d=${d//+(\/)//}
+								d=${d%/}
+								__ff_main_recursive_ "$d"
+							fi
+						done
 					done
-				done
-			fi
+				fi
 
 		else # non-recursive operation
 
 			# handle command-line targets
-			for o in "${__lib_ff_targetList[@]}"
-			do
-				__ff_main_linear_
-			done
+				for o in "${__lib_ff_targetList[@]}"
+				do
+					__ff_main_linear_
+				done
 
 			# handle piped targets
-			if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
-			then
+				if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
+				then
 
-				[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
+					[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
 
-				while IFS= read -r
-				do
-					for o in $REPLY
+					while IFS= read -r
 					do
-						__ff_main_linear_
+						for o in $REPLY
+						do
+							__ff_main_linear_
+						done
 					done
-				done
-			fi
+				fi
 		fi
 
 		end	# user's control function
@@ -210,11 +215,13 @@
 ## main script logic
 
 	# dummy control functions
-	begin() { :; }
-	end() { :; }
-	main() { :; }
-	finalize() { :; }
+		begin() { :; }
+		end() { :; }
+		main() { :; }
+		finalize() { :; }
 
-	__lib_ff_targetList=( "${@}" )	# init arguments array
+	# init arguments array
+		__lib_ff_targetList=( "${@}" )
+
 	__lib_ff_main
 

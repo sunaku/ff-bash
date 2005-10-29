@@ -69,8 +69,7 @@ main()
 	../ff -e "x=\${n#*html.}; x=\${x:0:2}; cp -vf \$p $result_dir/\${n%.pot*}.\$x.po" ${enc_file}.*.po
 	
 	# remove temp files
-	read -p "<$script_name> delete temp files (yes/no)? [no] " < /dev/tty
-	[ "${REPLY#[Yy]}" != "$REPLY" ] && rm -f ${raw_file}*
+	! __lib_util_queryYesNo "<$script_name> delete temp files?" && rm -f ${raw_file}*
 	
 }
 

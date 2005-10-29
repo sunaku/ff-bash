@@ -32,27 +32,36 @@
 
 ## globals
 
-	__lib_ff_version_number=1.7.3
-	__lib_ff_version_date=2004-09-10
+	__lib_ff_version_number=1.7.4
+	__lib_ff_version_date=yyyy-mm-dd
 
 	declare -a __lib_ff_targetList __lib_ff_scriptArgs
 
 	# command line options
-		__lib_ff_options_shortFlag_evalExpr=-e
-		__lib_ff_options_longFlag_evalExpr=--expression
+		__lib_ff_options_flag0_evalExpr=-e
+		__lib_ff_options_flag1_evalExpr=--expression
 
-		__lib_ff_options_shortFlag_evalFile=-f
-		__lib_ff_options_longFlag_evalFile=--file
+		__lib_ff_options_flag0_evalFile=-f
+		__lib_ff_options_flag1_evalFile=--file
 
-		__lib_ff_options_shortFlag_readPipe=-p
-		__lib_ff_options_longFlag_readPipe=--pipe
-		__lib_ff_options_flag_pipeDelim=--pipe-delim
+		__lib_ff_options_flag0_readPipe=-p
+		__lib_ff_options_flag1_readPipe=--pipe
 
-		__lib_ff_options_flag_showHelp=--help
-		__lib_ff_options_flag_showVersion=--version
-		__lib_ff_options_flag_endOpts=--
-		__lib_ff_options_flag_scriptArgs=--args
-		__lib_ff_options_flag_language=--lang
+			__lib_ff_options_flag0_pipeDelim=--pipe-delim
+
+		__lib_ff_options_flag0_showHelp=-h
+		__lib_ff_options_flag1_showHelp=--help
+
+		__lib_ff_options_flag0_language=-l
+		__lib_ff_options_flag1_language=--lang
+
+		__lib_ff_options_flag0_scriptArgs=-a
+		__lib_ff_options_flag1_scriptArgs=--args
+
+		__lib_ff_options_flag0_showVersion=-V
+		__lib_ff_options_flag1_showVersion=--version
+
+		__lib_ff_options_flag0_endOpts=--
 
 ## libraries
 	source "$__ff_myResources_libs/gettext.lib"
@@ -121,31 +130,37 @@ $expression
 			eval "$expression"
 	}
 
+	# formats documentation that is piped to this function
+	__lib_ff_formatDocumentation()
+	{
+		__lib_DocFmt_formatTags | expand -t 4 | fmt -sw ${COLUMNS:-80} | ${PAGER:-less -r}
+	}
+
 	# handles parsing of common command-line options
 	# @see __lib_CmdOpts_handleOption()
 	__lib_ff_handleBaseOption()
 	{
 		case $1 in
-			$__lib_ff_options_shortFlag_evalExpr | $__lib_ff_options_longFlag_evalExpr)
+			$__lib_ff_options_flag0_evalExpr|$__lib_ff_options_flag1_evalExpr)
 				__lib_ff_options_isOn_evalExpr=1
 				__lib_ff_options_value_evalExpr=$2
 				return 2
 			;;
-			$__lib_ff_options_shortFlag_evalFile | $__lib_ff_options_longFlag_evalFile)
+			$__lib_ff_options_flag0_evalFile|$__lib_ff_options_flag1_evalFile)
 				__lib_ff_options_isOn_evalFile=1
 				__lib_ff_options_value_evalFile=$2
 				return 2
 			;;
-			$__lib_ff_options_shortFlag_readPipe | $__lib_ff_options_longFlag_readPipe)
+			$__lib_ff_options_flag0_readPipe|$__lib_ff_options_flag1_readPipe)
 				__lib_ff_options_isOn_readPipe=1
 				return 1
 			;;
-			$__lib_ff_options_flag_pipeDelim)
+			$__lib_ff_options_flag0_pipeDelim)
 				__lib_ff_options_isOn_pipeDelim=1
 				__lib_ff_options_value_pipeDelim=$2
 				return 2
 			;;
-			$__lib_ff_options_flag_showHelp)
+			$__lib_ff_options_flag0_showHelp|$__lib_ff_options_flag1_showHelp)
 
 				local __lib_ff_docFileName=manual __lib_ff_docI18n __lib_ff_docCached
 				local __lib_ff_docFilePath="$__ff_myResources_docs/$__lib_ff_docFileName"
@@ -178,15 +193,15 @@ $expression
 							# generate & cache the documentation
 							source "$__lib_ff_docFilePath" | __lib_DocFmt_formatTags | tee "$__lib_ff_docCached"
 						fi
-					} | expand -t 4 | fmt -w ${COLUMNS:-80} | ${PAGER:-less -r}
+					} | __lib_ff_formatDocumentation
 
 				exit
 			;;
-			$__lib_ff_options_flag_showVersion)
+			$__lib_ff_options_flag0_showVersion|$__lib_ff_options_flag1_showVersion)
 				echo -e "$__lib_ff_version_number\t$__lib_ff_version_date"
 				exit
 			;;
-			$__lib_ff_options_flag_language)
+			$__lib_ff_options_flag0_language|$__lib_ff_options_flag1_language)
 				if [ -n "$2" ]
 				then
 					__ff_myLang=$2
@@ -194,10 +209,10 @@ $expression
 				fi
 				return 2
 			;;
-			$__lib_ff_options_flag_endOpts)
+			$__lib_ff_options_flag0_endOpts)
 				return 255
 			;;
-			$__lib_ff_options_flag_scriptArgs)
+			$__lib_ff_options_flag0_scriptArgs|$__lib_ff_options_flag1_scriptArgs)
 				flag=__lib_ff_scriptArgs
 				return 254
 			;;
@@ -263,7 +278,7 @@ $expression
 			# NOTE: assuming '$__lib_ff_targetList' is already initialized by the client script of this library
 			if ! __lib_CmdOpts_scanOptions __lib_ff_targetList __lib_ff_handleOption
 			then
-				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"$__lib_ff_options_flag_showHelp\""
+				gettext "Error: %s is not a valid option. Try %s." "\"${__lib_ff_targetList[0]}\"" "\"$__lib_ff_options_flag0_showHelp\""
 				exit 1
 			fi
 
