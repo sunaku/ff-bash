@@ -1,12 +1,10 @@
 #!/bin/bash
 #
-# Source code for the "For each File" tool.
+# For each File enables one to execute an arbitrary set of GNU BASH shell commands upon an arbitrary set of files. It is useful for, but not limited to, performing repetitive file-system manipulation procedures such as mass file renaming.
 #
 ###
 #
-# Copyright 2003, 2004 Suraj N. Kurapati.
-#
-###
+# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
 #
 # This file is part of "For each File".
 #
@@ -26,202 +24,425 @@
 #
 ###
 
-## global paths
 
-	__ff_myPath=$0	# path to this program
-	__ff_myName=${__ff_myPath##*/}	# basename of this program
 
-	# determine dirname of this program
-		if [ -n "${FF_HOME}" ]
-		then
-			__ff_myHome=$FF_HOME	# dirname of this program
-		else
-			# dereference symbolic-links until full path is obtained
-				while [ -L "$__ff_myPath" ]
-				do
-					__ff_myPath=$( find "$__ff_myPath" -printf "%l" )
-				done
+# User interface configuration
+	# Command-line options
+		# Command-line options for the English language.
+		function ffOptionBundle_en() {
+			ffOption_showHelp='+(h|help)'	# this is an extended shell glob
+			ffOption_showVersion='+(V|version)'
+			ffOption_beVerbose='+(v|verbose)'
+			ffOption_userTerminal='+(u|user-tty)'
 
-			__ff_myHome=${__ff_myPath%/*}	# dirname of this program
-		fi
+			ffOption_evalExpr='+(e|expression)'
+			ffOption_evalFile='+(f|file)'
 
-	__ff_myConf="$HOME/.ff"	# path to user settings directory
-		[ ! -e "$__ff_myConf" ] && mkdir -p "$__ff_myConf"	# create if needed
+			ffOption_pipeTargets='+(p|pipe)'
+			ffOption_pipeDelimiter='+(pipe-delim)'
 
-	__ff_myResources_libs="$__ff_myHome/libs"	# libraries
-	__ff_myResources_docs="$__ff_myHome/docs"	# documentation
-	__ff_myResources_i18n="$__ff_myHome/i18n"	# i18n resources
+			ffOption_beRecursive='+(r|recursive)'
+			ffOption_handleHidden='+(a|all)'
+			ffOption_ignoreLinks='+(L|ignore-links)'
+			ffOption_targetMask='+(m|mask)'
+		}
 
-	__ff_myLang=$( locale 2>/dev/null | sed -n 's/^LC_MESSAGES="*\([a-zA-Z]*\).*/\1/p' )	# language code
 
-## libraries
 
-	source "$__ff_myResources_libs/ff.lib"
+	# Text messages
+		# Text messages for the English language.
+		function ffTextBundle_en() {
+			ffText_errorInvalidOption='Error: "%s" is not a valid option.'
+			ffText_errorCannotReadFile='Error: I cannot read the "%s" file.'
+			ffText_errorNeedMoreArguments='Error: You must specify more arguments for the "%s" option.'
+		}
 
-## global variables
 
-	# command line options
-	__ff_myOptions_flag0_handleHidden=-A
-	__ff_myOptions_flag1_handleHidden=--all
 
-	__ff_myOptions_flag0_ignoreLinks=-L
-	__ff_myOptions_flag1_ignoreLinks=--no-links
+# Internal variables
+	ffReleaseVersion=2.0
+	ffReleaseDate=yyyy-mm-dd
 
-	__ff_myOptions_flag0_recursive=-r
-	__ff_myOptions_flag1_recursive=--recursive
+	ffLanguageCode_default=en
+	ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
-	__ff_myOptions_flag0_fileMask=-m
-	__ff_myOptions_flag1_fileMask=--mask
+	ffUserTerminal_default=/dev/tty
 
-## functions
+	# indices within a ffOption_* array
+	ffOptionIndex_isOn=1
+	ffOptionIndex_args=2
 
-	# handles parsing of command-line options
-	__lib_ff_handleOption()
-	{
-		case "$1" in
-			$__ff_myOption_flag0_shandleHidden|$__ff_myOptions_flag1_handleHidden)
-				__ff_myOptions_isOn_handleHidden=1
+
+	ffOptionPrefix_short=-
+	ffOptionPrefix_long=--
+
+	ffExitCode_success=0
+	ffExitCode_userError=1
+	ffExitCode_systemError=2
+	ffExitCode_internalError=3
+
+
+
+# Internal logic
+	# Says the given message to the user via 'printf'
+	function ffLogic_say() {
+		echo "ff: $( printf "$@" )"
+	}
+
+
+
+	# Handles command-line options
+	# @param	The command-line option to handle
+	# @param	All command-line arguments that follow the given option
+	# @return	The number of command-line arguments consumed by the given option
+	function ffLogic_handleOption() {
+		local option=$1
+		shift
+
+		case "$option" in
+			$ffOption_showHelp)
+				return 0
+			;;
+
+			$ffOption_showVersion)
+				echo $ffReleaseVersion $ffReleaseDate
+				return 0
+			;;
+
+			$ffOption_beVerbose)
+				ffOption_beVerbose[$ffOptionIndex_isOn]=true
+				return 0
+			;;
+
+			$ffOption_userTerminal)
+				(( $# < 1 )) &&
+				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
+				exit $ffExitCode_userError
+
+				ffOption_userTerminal[$ffOptionIndex_isOn]=true
+				ffOption_userTerminal[$ffOptionIndex_args]=$1
 				return 1
 			;;
-			$__ff_myOptions_flag0_ignoreLinks|$__ff_myOptions_flag1_ignoreLinks)
-				__ff_myOptions_isOn_ignoreLinks=1
+
+			$ffOption_evalExpr)
+				(( $# < 1 )) &&
+				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
+				exit $ffExitCode_userError
+
+				ffOption_evalExpr[$ffOptionIndex_isOn]=true
+				ffOption_evalExpr[$ffOptionIndex_args]=$1
 				return 1
 			;;
-			$__ff_myOptions_flag0_recursive|$__ff_myOptions_flag1_recursive)
-				__ff_myOptions_isOn_recursive=1
+
+			$ffOption_evalFile)
+				(( $# < 1 )) &&
+				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
+				exit $ffExitCode_userError
+
+				ffOption_evalFile[$ffOptionIndex_isOn]=true
+				ffOption_evalFile[$ffOptionIndex_args]=$1
 				return 1
 			;;
-			$__ff_myOptions_flag0_fileMask|$__ff_myOptions_flag1_fileMask)
-				__ff_myOptions_isOn_fileMask=1
-				__ff_myOptions_value_fileMask=$2
-				return 2
+
+			$ffOption_pipeTargets)
+				ffOption_pipeTargets[$ffOptionIndex_isOn]=true
+				return 0
 			;;
-			*) # handle base options
-				__lib_ff_handleBaseOption "$1" "$2"
-				return $?
+
+			$ffOption_pipeDelimiter)
+				(( $# < 1 )) &&
+				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
+				exit $ffExitCode_userError
+
+				ffOption_pipeDelimiter[$ffOptionIndex_isOn]=true
+				ffOption_pipeDelimiter[$ffOptionIndex_args]=$1
+				return 1
+			;;
+
+			$ffOption_beRecursive)
+				ffOption_beRecursive[$ffOptionIndex_isOn]=true
+				return 0
+			;;
+
+			$ffOption_handleHidden)
+				ffOption_handleHidden[$ffOptionIndex_isOn]=true
+				return 0
+			;;
+
+			$ffOption_ignoreLinks)
+				ffOption_ignoreLinks[$ffOptionIndex_isOn]=true
+				return 0
+			;;
+
+			$ffOption_targetMask)
+				ffOption_targetMask[$ffOptionIndex_isOn]=true
+				return 0
+			;;
+
+			*)
+				ffLogic_say "$ffText_errorInvalidOption" "$option"
+				exit $ffExitCode_userError
 			;;
 		esac
 	}
 
-	# code for recursive mode
-	# @param	1	path of directory to perform upon
-	__ff_main_recursive_()
-	{
-		local d=$1
 
-		# handle all directories
-			for p in "$d"/*
-			do
-				if [ -d "$p" ] && ! [[ ${__ff_myOptions_isOn_ignoreLinks:-0} -eq 1 && -L "$p" ]]
-				then
 
-	#				echo "(recursive) entering '$p'"
-					__ff_main_recursive_ "$p"
-				fi
-			done
+	# Parses command-line arguments
+	# @param	Name of an array which will hold the parsed arguments
+	function ffLogic_parseArgs() {
+		local arg arguments arguments_callBack=$1
+		shift
 
-		# handle all files
-			for o in "$d"/${__ff_myOptions_value_fileMask:-*}
-			do
-				# update preset variables
-					p=$o	# redundant slashes have already been removed
-					n=${p##*/}	# keep everything after the last slash
+		while (( $# > 0 )); do
+			arg=$1
+			shift
 
-				main	# user's control function
-			done
+			case $arg in
+				${ffOptionPrefix_long}*)
+					ffLogic_handleOption ${arg:${#ffOptionPrefix_long}} "$@"
+					shift $?
+				;;
 
-#		echo "(recursive) leaving '$d'"
+				${ffOptionPrefix_short}*)
+					local i options=${arg:${#ffOptionPrefix_short}}
+
+					# handle mulitple short options that have been grouped together into a single word
+					for (( i = 0; i < ${#options}; i++ )); do
+						ffLogic_handleOption ${options:0:1} "$@"
+						shift $?
+					done
+				;;
+
+				*)
+					arguments[${#arguments[@]}]=$arg
+				;;
+			esac
+		done
+
+
+		# propogate parsed arguments back to caller
+		eval "$arguments_callBack=( \${arguments[@]} )"
 	}
 
-	# code for non-recursive mode
-	__ff_main_linear_()
+
+
+	# Loads the user's script.
+	ffLogic_loadScript()
 	{
-		__lib_ff_updateVars_linear	# update preset variables
-		main	# user's control function
-	}
+		local expression=":;"
 
-	__ff_main()
-	{
-		# preset variables
-		local o d p n
+		if ${ffOption_evalExpr[$ffOptionIndex_isOn]:-false}; then
+			# read command-line argument
+			expression=${ffOption_evalExpr[$ffOptionIndex_args]}
 
-		begin "${__lib_ff_scriptArgs[@]}"	# user's control function
+		elif ${ffOption_evalFile[$ffOptionIndex_isOn]:-false}; then
+			# read script file
+			local scriptFile=${ffOption_evalFile[$ffOptionIndex_args]}
 
-		# check method of operation: recursive or non-recursive
-		if [ ${__ff_myOptions_isOn_recursive:-0} -eq 1 ] # recursive operation
-		then
+			if [ -f $scriptFile -a -r $scriptFile ]; then
+				expression=$( < $scriptFile )
+			else
+				ffLogic_say "$ffText_errorCannotReadFile" "\"$scriptFile\""
+				exit 2
+			fi
 
-			# handle hidden file-names
-				[ ${__ff_myOptions_isOn_handleHidden:-0} -eq 1 ] && shopt -s dotglob
-
-			# handle command-line targets
-				for d in "${__lib_ff_targetList[@]}"
-				do
-					if [ -d "$d" ]	# XXX: same block is copied below
-					then
-						d=${d//+(\/)//}
-						d=${d%/}
-						__ff_main_recursive_ "$d"
-					fi
-				done
-
-			# handle piped targets
-				if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
-				then
-
-					[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
-
-					while IFS= read -r
-					do
-						for d in $REPLY
-						do
-							if [ -d "$d" ]
-							then
-								d=${d//+(\/)//}
-								d=${d%/}
-								__ff_main_recursive_ "$d"
-							fi
-						done
-					done
-				fi
-
-		else # non-recursive operation
-
-			# handle command-line targets
-				for o in "${__lib_ff_targetList[@]}"
-				do
-					__ff_main_linear_
-				done
-
-			# handle piped targets
-				if [ ${__lib_ff_options_isOn_readPipe:-0} -eq 1 ]
-				then
-
-					[ ${__lib_ff_options_isOn_pipeDelim:-0} -eq 1 ] && IFS=$__lib_ff_options_value_pipeDelim
-
-					while IFS= read -r
-					do
-						for o in $REPLY
-						do
-							__ff_main_linear_
-						done
-					done
-				fi
+		else
+			# read user's terminal
+			while IFS= read -er < ${ffOption_evalFile[$ffOptionIndex_args]:-$ffUserTerminal_default}; do
+				expression="$expression
+$REPLY"
+			done
 		fi
 
-		end	# user's control function
+
+		# check input for control functions
+		if [ -n "${expression/*during*( |	)\(*( |	)\)*/}" -a -n "${expression/*function+( |	)during*/}" ]; then
+			expression="
+during(){
+$expression
+:;}"
+		fi
+
+
+		# load script into RAM
+		eval "$expression"
 	}
 
-## main script logic
 
-	# dummy control functions
-		begin() { :; }
-		end() { :; }
-		main() { :; }
-		finalize() { :; }
 
-	# init arguments array
-		__lib_ff_targetList=( "${@}" )
+	# Recursively executes 'during()' on the given directory
+	ffLogic_recursiveMode()
+	{
+		local o n p d=$1
+		shift
 
-	__lib_ff_main
+		# handle all directories
+		for p in "$d"/*; do
+			if [ -L "$p" ] && ! ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false} || [ -d "$p" ]; then
+				ffLogic_recursiveMode "$p"
+			fi
+		done
+
+		# handle all files
+		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_args]:-*}
+		do
+			# update preset variables
+			p=$o	# redundant slashes have already been removed
+			n=${p##*/}	# keep everything after the last slash
+
+			during
+		done
+	}
+
+
+
+	# Linearly executes 'during()' on the given arguments
+	ffLogic_linearMode() {
+		for o; do
+			p=$o
+
+			# handle special cases
+			case $p in
+				/)
+					n=/
+					d=/
+					return
+				;;
+				.)
+					n=.
+					d=.
+					return
+				;;
+				..)
+					n=..
+					d=.
+					return
+				;;
+
+				/*|./*|../*)
+					# path is already explicit
+				;;
+
+				*)
+					# convert implicit relative paths into explicit relative paths
+					p="./$p"
+				;;
+			esac
+
+
+			# update preset variables
+				# remove redundant slashes
+				p=${p//+(\/)//}
+
+				# remove trailing slash
+				p=${p%/}
+
+				# keep everything after the last slash
+				n=${p##*/}
+
+				# keep everything before the last slash
+				d=${d%/*}
+
+				# special case: $d is empty when it should be /
+				if [ -z "$d" ]; then
+					d=/
+				fi
+
+
+			during
+		done
+	}
+
+
+
+	# Performs upon arguments given on the pipe
+	# @param	Function that will handle arguments on the pipe
+	ffLogic_pipeWrapper() {
+		if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
+			local oldIfs=$IFS
+
+
+			# apply user-defined pipe delimiter
+			if ${ffOption_pipeDelimiter[$ffOptionIndex_isOn]:-false}; then
+				IFS=${ffOption_pipeDelimiter[$ffOptionIndex_args]}
+			fi
+
+
+			# execute arguments from pipe
+			while read -r; do
+				$1 "$REPLY"
+			done
+
+
+			# restore pipe delimiter
+			IFS=$oldIfs
+		fi
+	}
+
+
+
+	# Primary entry point into this file's logic
+	ff() {
+		# run the following code in a sub-shell because it uses the 'exit' command at some point. Without this sub-shell, the 'exit' command will close the user's terminal!
+		(
+			# dummy functions that are executed when user hasn't overridden them
+			function before() { :; }
+			function during() { :; }
+			function after() { :; }
+			function end() { :; }
+
+
+			# ensure proper clean up during exit
+			trap "exit $ffExitCode_systemError" INT KILL TERM HUP
+			trap end EXIT
+
+
+			# set options for current sub-shell
+			shopt -s extglob
+
+
+			# load localized bundles for current language
+			ffOptionBundle_$ffLanguageCode
+			ffTextBundle_$ffLanguageCode
+
+
+			# parse command-line arguments
+			local -a parsedArgs
+			ffLogic_parseArgs parsedArgs "$@"
+
+
+			# handle special command-line options
+			if ${ffOption_beVerbose[$ffOptionIndex_isOn]:-false}; then
+				set -x
+			fi
+
+			if ${ffOption_handleHidden[$ffOptionIndex_isOn]:-false}; then
+				shopt -s dotglob
+			fi
+
+
+			# execute user's script
+			ffLogic_loadScript
+
+			before "${parsedArgs[@]}"
+
+			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
+
+				local arg
+				for arg in "${parsedArgs[@]}"; do
+					ffLogic_recursiveMode "$arg"
+				done
+
+				ffLogic_pipeWrapper ffLogic_recursiveMode
+			else
+				ffLogic_linearMode "${parsedArgs[@]}"
+				ffLogic_pipeWrapper ffLogic_linearMode
+			fi
+
+			after "${parsedArgs[@]}"
+
+			# note: end() is called by the EXIT trap
+		)
+	}
 
