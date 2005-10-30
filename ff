@@ -38,6 +38,7 @@
 			ffOption_showVersion='+(V|version)'
 			ffOption_beVerbose='+(v|verbose)'
 			ffOption_pipeTargets='+(p|pipe)'
+			ffOption_extDelim='ext-delim'
 
 
 			ffOption_evalExpr='+(e|expression)'
@@ -68,14 +69,16 @@
 	declare -r ffReleaseDate=yyyy-mm-dd
 
 	declare -r ffNewLine=$'\n'
+	declare -r ffExtDelim_default=.
 	declare -r ffUserTerminal_default=/dev/tty
+
 	declare -r ffLanguageCode_default=en
 	ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
 
 	# indices within a ffOption_* array
 	declare -r ffOptionIndex_isOn=1
-	declare -r ffOptionIndex_args=2
+	declare -r ffOptionIndex_arg=2
 
 
 	# prefixes that appear before command-line options and distinguish them from regular command-line arguments
@@ -94,6 +97,23 @@
 	# Says the given message to the user via 'printf'
 	function ffLogic_say() {
 		echo "ff: $( printf "$@" )"
+	}
+
+
+
+	# Enables the given option and associates the given arguments with it
+	# @param	Number of arguments available to the given option
+	# @param	Option flag (how the user specifies the option)
+	# @param	Variable name associated with option (callback)
+	# @param	Argument to associate with option
+	function ffLogic_enableOption() {
+		if [ $1 -lt 1 ]; then
+			ffLogic_say "$ffText_errorNeedMoreArguments" "$2"
+			exit $ffExitCode_userError
+		fi
+
+		eval "$3[$ffOptionIndex_isOn]=true"
+		eval "$3[$ffOptionIndex_arg]=\$4"
 	}
 
 
@@ -132,23 +152,18 @@
 				return 0
 			;;
 
-			$ffOption_evalExpr)
-				(( $# < 1 )) &&
-				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
-				exit $ffExitCode_userError
+			$ffOption_extDelim)
+				ffLogic_enableOption $# "$option" ffOption_extDelim "$1"
+				return 1
+			;;
 
-				ffOption_evalExpr[$ffOptionIndex_isOn]=true
-				ffOption_evalExpr[$ffOptionIndex_args]=$1
+			$ffOption_evalExpr)
+				ffLogic_enableOption $# "$option" ffOption_evalExpr "$1"
 				return 1
 			;;
 
 			$ffOption_evalFile)
-				(( $# < 1 )) &&
-				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
-				exit $ffExitCode_userError
-
-				ffOption_evalFile[$ffOptionIndex_isOn]=true
-				ffOption_evalFile[$ffOptionIndex_args]=$1
+				ffLogic_enableOption $# "$option" ffOption_evalFile "$1"
 				return 1
 			;;
 
@@ -169,12 +184,7 @@
 			;;
 
 			$ffOption_targetMask)
-				(( $# < 1 )) &&
-				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
-				exit $ffExitCode_userError
-
-				ffOption_targetMask[$ffOptionIndex_isOn]=true
-				ffOption_targetMask[$ffOptionIndex_args]=$1
+				ffLogic_enableOption $# "$option" ffOption_targetMask "$1"
 				return 1
 			;;
 
@@ -233,17 +243,16 @@
 
 
 	# Loads the user's script from command-line argument or user's terminal.
-	ffLogic_loadScript()
-	{
+	function ffLogic_loadScript() {
 		local expression=:
 
 		if ${ffOption_evalExpr[$ffOptionIndex_isOn]:-false}; then
 			# read command-line argument
-			expression=${ffOption_evalExpr[$ffOptionIndex_args]}
+			expression=${ffOption_evalExpr[$ffOptionIndex_arg]}
 
 		elif ${ffOption_evalFile[$ffOptionIndex_isOn]:-false}; then
 			# read script file
-			local scriptFile=${ffOption_evalFile[$ffOptionIndex_args]}
+			local scriptFile=${ffOption_evalFile[$ffOptionIndex_arg]}
 
 			if [ -f $scriptFile -a -r $scriptFile ]; then
 				expression=$( < $scriptFile )
@@ -276,17 +285,36 @@
 
 
 
+	# Performs preset-variable updates that are common to recursive and linear modes
+	# @param	p	this preset-variable must be defined already
+	function ffLogic_updateVars() {
+		# keep everything after the last slash
+		n=${p##*/}
+
+
+		# keep everything before the last dot
+		b=${n%${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
+		e=
+
+
+		if expr index "$n" "${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}" >& /dev/null; then
+			# keep everything after the last dot
+			e=${n##*${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
+		fi
+	}
+
+
+
 	# Recursively executes 'during()' on the given directory
-	ffLogic_recursiveMode()
-	{
+	function ffLogic_recursiveMode() {
 		local o d=$1
 		shift
 
 
 		# handle files which match the target mask
-		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_args]:-*}; do
-			local p=$o
-			local n=${p##*/}
+		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_arg]:-*}; do
+			local p=$o n b e
+			ffLogic_updateVars
 
 			during
 		done
@@ -310,56 +338,51 @@
 
 
 	# Linearly executes 'during()' on the given arguments
-	ffLogic_linearMode() {
+	function ffLogic_linearMode() {
+		local o p d n b e
+
 		for o; do
 			p=$o
 
 			# handle special cases
 			case $p in
 				/)
-					n=/
+					p=/
 					d=/
-					return
-				;;
-				.)
-					n=.
-					d=.
-					return
-				;;
-				..)
-					n=..
-					d=.
-					return
+					n=/
 				;;
 
-				/*|./*|../*)
-					# path is already explicit
+				.)
+					p=./.
+					d=.
+					n=.
+				;;
+
+				..)
+					p=./..
+					d=.
+					n=..
 				;;
 
 				*)
-					# convert implicit relative paths into explicit relative paths
-					p="./$p"
+					# remove trailing slash
+					p=${p%/}
+
+
+					# keep everything before the last slash
+					d=${d%/*}
+
+
+					# special case: $d is empty when it should be /
+					if [ -z "$d" ]; then
+						d=/
+					fi
+
+
+					ffLogic_updateVars
 				;;
 			esac
 
-
-			# update preset variables
-				# remove redundant slashes
-				# p=${p//+(\/)//}
-
-				# remove trailing slash
-				p=${p%/}
-
-				# keep everything after the last slash
-				n=${p##*/}
-
-				# keep everything before the last slash
-				d=${d%/*}
-
-				# special case: $d is empty when it should be /
-				if [ -z "$d" ]; then
-					d=/
-				fi
 
 
 			during
@@ -370,7 +393,7 @@
 
 	# Performs upon arguments given on the pipe
 	# @param	Function that will handle arguments on the pipe
-	ffLogic_pipeWrapper() {
+	function ffLogic_pipeWrapper() {
 		if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
 			while read -r; do
 				$1 "$REPLY"
@@ -381,7 +404,7 @@
 
 
 	# Primary entry point into this file's logic
-	ff() {
+	function ff() {
 		# run the following code in a sub-shell because it uses the 'exit' command at some point. Without this sub-shell, the 'exit' command will close the user's terminal!
 		(
 			# dummy functions that are executed when user hasn't overridden them
