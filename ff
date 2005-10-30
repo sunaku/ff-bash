@@ -1,6 +1,9 @@
 #!/bin/bash
 #
-# For each File enables one to execute an arbitrary set of GNU BASH shell commands upon an arbitrary set of files. It is useful for, but not limited to, performing repetitive file-system manipulation procedures such as mass file renaming.
+# For each File enables one to execute an arbitrary set of GNU BASH shell
+# commands upon an arbitrary set of files. It can be used for performing
+# repetitive file-system manipulation procedures, such as mass file renaming
+# and gathering file-system statistics.
 #
 ###
 #
@@ -30,16 +33,16 @@
 	# Command-line options
 		# Command-line options for the English language.
 		function ffOptionBundle_en() {
-			ffOption_showHelp='+(h|help)'	# this is an extended shell glob
+			# @note the following values are extended shell globs
+			ffOption_showHelp='+(h|help)'
 			ffOption_showVersion='+(V|version)'
 			ffOption_beVerbose='+(v|verbose)'
-			ffOption_userTerminal='+(u|user-tty)'
+			ffOption_pipeTargets='+(p|pipe)'
+
 
 			ffOption_evalExpr='+(e|expression)'
 			ffOption_evalFile='+(f|file)'
 
-			ffOption_pipeTargets='+(p|pipe)'
-			ffOption_pipeDelimiter='+(pipe-delim)'
 
 			ffOption_beRecursive='+(r|recursive)'
 			ffOption_handleHidden='+(a|all)'
@@ -54,7 +57,7 @@
 		function ffTextBundle_en() {
 			ffText_errorInvalidOption='Error: You specified an invalid option: %s'
 			ffText_errorCannotReadFile='Error: I could not read the following file: %s'
-			ffText_errorNeedMoreArguments='Error: You must specify more arguments for the following option: %s'
+			ffText_errorNeedMoreArguments='Error: You must specify more arguments for option: %s'
 			ffText_errorBadUserScript='Error: I could not process your script: %s'
 		}
 
@@ -64,18 +67,21 @@
 	declare -r ffReleaseVersion=2.0
 	declare -r ffReleaseDate=yyyy-mm-dd
 
+	declare -r ffNewLine=$'\n'
+	declare -r ffUserTerminal_default=/dev/tty
 	declare -r ffLanguageCode_default=en
 	ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
-	declare -r ffUserTerminal_default=/dev/tty
 
 	# indices within a ffOption_* array
 	declare -r ffOptionIndex_isOn=1
 	declare -r ffOptionIndex_args=2
 
 
+	# prefixes that appear before command-line options and distinguish them from regular command-line arguments
 	declare -r ffOptionPrefix_short=-
 	declare -r ffOptionPrefix_long=--
+
 
 	declare -r ffExitCode_success=0
 	declare -r ffExitCode_userError=1
@@ -102,27 +108,28 @@
 
 		case "$option" in
 			$ffOption_showHelp)
-				return 0
+				# show a list of available options
+				for option in ${!ffOption_*}; do
+					echo "${!option}"
+				done
+
+				exit $ffExitCode_success
 			;;
 
 			$ffOption_showVersion)
 				echo $ffReleaseVersion $ffReleaseDate
-				return 0
+				exit $ffExitCode_success
 			;;
 
 			$ffOption_beVerbose)
 				ffOption_beVerbose[$ffOptionIndex_isOn]=true
+				set -x
 				return 0
 			;;
 
-			$ffOption_userTerminal)
-				(( $# < 1 )) &&
-				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
-				exit $ffExitCode_userError
-
-				ffOption_userTerminal[$ffOptionIndex_isOn]=true
-				ffOption_userTerminal[$ffOptionIndex_args]=$1
-				return 1
+			$ffOption_pipeTargets)
+				ffOption_pipeTargets[$ffOptionIndex_isOn]=true
+				return 0
 			;;
 
 			$ffOption_evalExpr)
@@ -145,21 +152,6 @@
 				return 1
 			;;
 
-			$ffOption_pipeTargets)
-				ffOption_pipeTargets[$ffOptionIndex_isOn]=true
-				return 0
-			;;
-
-			$ffOption_pipeDelimiter)
-				(( $# < 1 )) &&
-				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
-				exit $ffExitCode_userError
-
-				ffOption_pipeDelimiter[$ffOptionIndex_isOn]=true
-				ffOption_pipeDelimiter[$ffOptionIndex_args]=$1
-				return 1
-			;;
-
 			$ffOption_beRecursive)
 				ffOption_beRecursive[$ffOptionIndex_isOn]=true
 				return 0
@@ -167,6 +159,7 @@
 
 			$ffOption_handleHidden)
 				ffOption_handleHidden[$ffOptionIndex_isOn]=true
+				shopt -s dotglob
 				return 0
 			;;
 
@@ -176,8 +169,13 @@
 			;;
 
 			$ffOption_targetMask)
+				(( $# < 1 )) &&
+				ffLogic_say "$ffText_errorNeedMoreArguments" "$option" &&
+				exit $ffExitCode_userError
+
 				ffOption_targetMask[$ffOptionIndex_isOn]=true
-				return 0
+				ffOption_targetMask[$ffOptionIndex_args]=$1
+				return 1
 			;;
 
 			*)
@@ -200,6 +198,12 @@
 			shift
 
 			case "$arg" in
+				$ffOptionPrefix_long)
+					# stop parsing and consider the remaining command-line arguments as arguments
+					arguments=( "${arguments[@]}" "$@" )
+					break
+				;;
+
 				${ffOptionPrefix_long}*)
 					ffLogic_handleOption ${arg:${#ffOptionPrefix_long}} "$@"
 					shift $?
@@ -228,10 +232,10 @@
 
 
 
-	# Loads the user's script.
+	# Loads the user's script from command-line argument or user's terminal.
 	ffLogic_loadScript()
 	{
-		local expression
+		local expression=:
 
 		if ${ffOption_evalExpr[$ffOptionIndex_isOn]:-false}; then
 			# read command-line argument
@@ -250,9 +254,8 @@
 
 		else
 			# read user's terminal
-			while IFS= read -er < ${ffOption_evalFile[$ffOptionIndex_args]:-$ffUserTerminal_default}; do
-				expression="$expression
-$REPLY"
+			while read -er < $ffUserTerminal_default; do
+				expression="$expression${ffNewLine}$REPLY"
 			done
 		fi
 
@@ -279,14 +282,27 @@ $REPLY"
 		local o d=$1
 		shift
 
-		for o in "$d"/*; do
-			if [ -L "$o" ] && ! ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false} || [ -d "$o" ]; then
-				ffLogic_recursiveMode "$o"
-			else
-				local p=$o
-				local n=${p##*/}
 
-				during
+		# handle files which match the target mask
+		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_args]:-*}; do
+			local p=$o
+			local n=${p##*/}
+
+			during
+		done
+
+
+		# handle directories recursively
+		for o in "$d"/*; do
+			if [ -d "$o" ]; then
+
+				# skip links if user has specified so
+				if [ -L "$o" ] && ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false}; then
+					continue
+				fi
+
+
+				ffLogic_recursiveMode "$o"
 			fi
 		done
 	}
@@ -356,23 +372,9 @@ $REPLY"
 	# @param	Function that will handle arguments on the pipe
 	ffLogic_pipeWrapper() {
 		if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
-			local oldIfs=$IFS
-
-
-			# apply user-defined pipe delimiter
-			if ${ffOption_pipeDelimiter[$ffOptionIndex_isOn]:-false}; then
-				IFS=${ffOption_pipeDelimiter[$ffOptionIndex_args]}
-			fi
-
-
-			# execute arguments from pipe
 			while read -r; do
 				$1 "$REPLY"
 			done
-
-
-			# restore pipe delimiter
-			IFS=$oldIfs
 		fi
 	}
 
@@ -408,16 +410,6 @@ $REPLY"
 			ffLogic_parseArgs parsedArgs "$@"
 
 
-			# handle special command-line options
-			if ${ffOption_beVerbose[$ffOptionIndex_isOn]:-false}; then
-				set -x
-			fi
-
-			if ${ffOption_handleHidden[$ffOptionIndex_isOn]:-false}; then
-				shopt -s dotglob
-			fi
-
-
 			# load and execute user's script
 			ffLogic_loadScript
 
@@ -437,7 +429,7 @@ $REPLY"
 
 			after "${parsedArgs[@]}"
 
-			# note: end() is called by the EXIT trap
+			# @note end() is automatically called by the EXIT trap
 		)
 	}
 
