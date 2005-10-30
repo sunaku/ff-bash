@@ -52,34 +52,35 @@
 	# Text messages
 		# Text messages for the English language.
 		function ffTextBundle_en() {
-			ffText_errorInvalidOption='Error: "%s" is not a valid option.'
-			ffText_errorCannotReadFile='Error: I cannot read the "%s" file.'
-			ffText_errorNeedMoreArguments='Error: You must specify more arguments for the "%s" option.'
+			ffText_errorInvalidOption='Error: You specified an invalid option: %s'
+			ffText_errorCannotReadFile='Error: I could not read the following file: %s'
+			ffText_errorNeedMoreArguments='Error: You must specify more arguments for the following option: %s'
+			ffText_errorBadUserScript='Error: I could not process your script: %s'
 		}
 
 
 
 # Internal variables
-	ffReleaseVersion=2.0
-	ffReleaseDate=yyyy-mm-dd
+	declare -r ffReleaseVersion=2.0
+	declare -r ffReleaseDate=yyyy-mm-dd
 
-	ffLanguageCode_default=en
+	declare -r ffLanguageCode_default=en
 	ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
-	ffUserTerminal_default=/dev/tty
+	declare -r ffUserTerminal_default=/dev/tty
 
 	# indices within a ffOption_* array
-	ffOptionIndex_isOn=1
-	ffOptionIndex_args=2
+	declare -r ffOptionIndex_isOn=1
+	declare -r ffOptionIndex_args=2
 
 
-	ffOptionPrefix_short=-
-	ffOptionPrefix_long=--
+	declare -r ffOptionPrefix_short=-
+	declare -r ffOptionPrefix_long=--
 
-	ffExitCode_success=0
-	ffExitCode_userError=1
-	ffExitCode_systemError=2
-	ffExitCode_internalError=3
+	declare -r ffExitCode_success=0
+	declare -r ffExitCode_userError=1
+	declare -r ffExitCode_systemError=2
+	declare -r ffExitCode_internalError=3
 
 
 
@@ -198,7 +199,7 @@
 			arg=$1
 			shift
 
-			case $arg in
+			case "$arg" in
 				${ffOptionPrefix_long}*)
 					ffLogic_handleOption ${arg:${#ffOptionPrefix_long}} "$@"
 					shift $?
@@ -209,7 +210,7 @@
 
 					# handle mulitple short options that have been grouped together into a single word
 					for (( i = 0; i < ${#options}; i++ )); do
-						ffLogic_handleOption ${options:0:1} "$@"
+						ffLogic_handleOption ${options:$i:1} "$@"
 						shift $?
 					done
 				;;
@@ -230,7 +231,7 @@
 	# Loads the user's script.
 	ffLogic_loadScript()
 	{
-		local expression=":;"
+		local expression
 
 		if ${ffOption_evalExpr[$ffOptionIndex_isOn]:-false}; then
 			# read command-line argument
@@ -243,7 +244,7 @@
 			if [ -f $scriptFile -a -r $scriptFile ]; then
 				expression=$( < $scriptFile )
 			else
-				ffLogic_say "$ffText_errorCannotReadFile" "\"$scriptFile\""
+				ffLogic_say "$ffText_errorCannotReadFile" "$scriptFile"
 				exit 2
 			fi
 
@@ -256,17 +257,18 @@ $REPLY"
 		fi
 
 
-		# check input for control functions
-		if [ -n "${expression/*during*( |	)\(*( |	)\)*/}" -a -n "${expression/*function+( |	)during*/}" ]; then
-			expression="
-during(){
-$expression
-:;}"
+		# ensure that user's script has during() function
+		if ! grep 'during[:space:]*([:space:]*)' <<< "$expression" >& /dev/null; then
+			expression="during(){ $expression; }"
 		fi
 
 
-		# load script into RAM
+		# load the user's script
 		eval "$expression"
+
+		! declare -F during >& /dev/null &&
+		ffLogic_say "$ffText_errorBadUserScript" "$expression" &&
+		exit $ffExitCode_internalError
 	}
 
 
@@ -274,24 +276,18 @@ $expression
 	# Recursively executes 'during()' on the given directory
 	ffLogic_recursiveMode()
 	{
-		local o n p d=$1
+		local o d=$1
 		shift
 
-		# handle all directories
-		for p in "$d"/*; do
-			if [ -L "$p" ] && ! ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false} || [ -d "$p" ]; then
-				ffLogic_recursiveMode "$p"
+		for o in "$d"/*; do
+			if [ -L "$o" ] && ! ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false} || [ -d "$o" ]; then
+				ffLogic_recursiveMode "$o"
+			else
+				local p=$o
+				local n=${p##*/}
+
+				during
 			fi
-		done
-
-		# handle all files
-		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_args]:-*}
-		do
-			# update preset variables
-			p=$o	# redundant slashes have already been removed
-			n=${p##*/}	# keep everything after the last slash
-
-			during
 		done
 	}
 
@@ -333,7 +329,7 @@ $expression
 
 			# update preset variables
 				# remove redundant slashes
-				p=${p//+(\/)//}
+				# p=${p//+(\/)//}
 
 				# remove trailing slash
 				p=${p%/}
@@ -399,12 +395,12 @@ $expression
 
 
 			# set options for current sub-shell
-			shopt -s extglob
+			shopt -s extglob nullglob
 
 
 			# load localized bundles for current language
-			ffOptionBundle_$ffLanguageCode
 			ffTextBundle_$ffLanguageCode
+			ffOptionBundle_$ffLanguageCode
 
 
 			# parse command-line arguments
@@ -422,13 +418,12 @@ $expression
 			fi
 
 
-			# execute user's script
+			# load and execute user's script
 			ffLogic_loadScript
 
 			before "${parsedArgs[@]}"
 
 			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
-
 				local arg
 				for arg in "${parsedArgs[@]}"; do
 					ffLogic_recursiveMode "$arg"
