@@ -95,6 +95,8 @@
 
 # Internal logic
 	# Says the given message to the user via 'printf'
+	# @param	.	The format string used by printf
+	# @param	...	The arguments for the format string
 	function ffLogic_say() {
 		echo "ff: $( printf "$@" )"
 	}
@@ -203,7 +205,7 @@
 		local arg arguments arguments_callBack=$1
 		shift
 
-		while (( $# > 0 )); do
+		while [ $# -gt 0 ]; do
 			arg=$1
 			shift
 
@@ -269,7 +271,7 @@
 		fi
 
 
-		# ensure that user's script has during() function
+		# ensure that user's script has the during() function
 		if ! grep 'during[:space:]*([:space:]*)' <<< "$expression" >& /dev/null; then
 			expression="during(){ $expression; }"
 		fi
@@ -278,106 +280,93 @@
 		# load the user's script
 		eval "$expression"
 
-		! declare -F during >& /dev/null &&
-		ffLogic_say "$ffText_errorBadUserScript" "$expression" &&
-		exit $ffExitCode_internalError
-	}
-
-
-
-	# Updates preset-variable that are common to recursive and linear modes
-	# @param	p	this preset-variable must be defined already
-	function ffLogic_updateVars() {
-		n=${p##*/}
-		b=${n%${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
-		e=
-
-
-		# parse the file extension
-		if expr index "$n" "${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}" >& /dev/null; then
-			e=${n##*${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
+		if ! declare -F during >& /dev/null; then
+			ffLogic_say "$ffText_errorBadUserScript" "$expression"
+			exit $ffExitCode_internalError
 		fi
 	}
 
 
 
 	# Recursively executes 'during()' on the given directory
-	# @param	.	directory upon which to perform
+	# @param	...	directories upon which to perform
 	function ffLogic_recursiveMode() {
-		local o d=$1
-		shift
+		while [ $# -gt 0 ]; do
+			# handle files which match the target mask
+			ffLogic_linearMode "$1"/${ffOption_targetMask[$ffOptionIndex_arg]:-*}
 
 
-		# handle files which match the target mask
-		for o in "$d"/${ffOption_targetMask[$ffOptionIndex_arg]:-*}; do
-			local p=$o n b e
-			ffLogic_updateVars
+			# handle directories recursively
+			for o in "$1"/*; do
+				if [ -d "$o" ]; then
+					# skip links if user has specified so
+					if [ -L "$o" ] && ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false}; then
+						continue
+					fi
 
-			during
-		done
 
-
-		# handle directories recursively
-		for o in "$d"/*; do
-			if [ -d "$o" ]; then
-
-				# skip links if user has specified so
-				if [ -L "$o" ] && ${ffOption_ignoreLinks[$ffOptionIndex_isOn]:-false}; then
-					continue
+					ffLogic_recursiveMode "$o"
 				fi
+			done
 
 
-				ffLogic_recursiveMode "$o"
-			fi
+			shift
 		done
 	}
 
 
 
 	# Linearly executes 'during()' on the given argument
-	# @param	.	file upon which to perform
+	# @param	...	the files upon which to perform
 	function ffLogic_linearMode() {
-		local o=$1 p d n b e
+		for o; do
+			# update preset variables
+				# handle special cases
+				case "$o" in
+					/)
+						p=/
+						d=/
+						n=/
+						b=/
+					;;
+
+					.)
+						p=./.
+						d=.
+						n=.
+						b=.
+					;;
+
+					..)
+						p=./..
+						d=.
+						n=..
+						b=..
+					;;
+
+					*)
+						p=${o//+(\/)/\/}
+						p=${p%/}
+
+						d=${p%/*}
+						d=${d:-/}	# special case: $d is empty when it should be /
+
+						n=${p##*/}
+						b=${n%${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
+					;;
+				esac
 
 
-		# handle special cases
-		case $p in
-			/)
-				p=/
-				d=/
-				n=/
-			;;
-
-			.)
-				p=./.
-				d=.
-				n=.
-			;;
-
-			..)
-				p=./..
-				d=.
-				n=..
-			;;
-
-			*)
-				p=${o//+(\/)/\/}
-				p=${p%/}
-				d=${p%/*}
-
-
-				# special case: $d is empty when it should be /
-				if [ -z "$d" ]; then
-					d=/
+				# parse the file extension
+				if expr index "$n" "${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}" >& /dev/null; then
+					e=${n##*${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
+				else
+					e=
 				fi
 
 
-				ffLogic_updateVars
-			;;
-		esac
-
-
-		during
+			during
+		done
 	}
 
 
@@ -403,7 +392,7 @@
 			shopt -s extglob nullglob
 
 
-			# load localized bundles for current language
+			# load localized string bundles for current language
 			ffTextBundle_$ffLanguageCode
 			ffOptionBundle_$ffLanguageCode
 
@@ -413,7 +402,7 @@
 			ffLogic_parseArgs parsedArgs "$@"
 
 
-			# determine which mode to execute in
+			# determine which mode (linear or recursive) to execute in
 			local mode=ffLogic_linearMode
 
 			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
@@ -426,16 +415,17 @@
 
 			before "${parsedArgs[@]}"
 
-				# execute the user's script on the command-line arguments
-				for arg in "${parsedArgs[@]}"; do
-					$mode "$arg"
-				done
+				local o p d n b e
+
+
+				# execute the user's script on command-line arguments
+				$mode "${parsedArgs[@]}"
 
 
 				# execute the user's script on piped arguments
 				if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
-					while read -r; do
-						$mode "$REPLY"
+					while read -r o; do
+						$mode "$o"
 					done
 				fi
 
