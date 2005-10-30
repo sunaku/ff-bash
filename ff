@@ -102,10 +102,10 @@
 
 
 	# Enables the given option and associates the given arguments with it
-	# @param	Number of arguments available to the given option
-	# @param	Option flag (how the user specifies the option)
-	# @param	Variable name associated with option (callback)
-	# @param	Argument to associate with option
+	# @param	.	Number of arguments available to the given option
+	# @param	.	Option flag (how the user specifies the option)
+	# @param	.	Variable name associated with option (callback)
+	# @param	.	Argument to associate with option
 	function ffLogic_enableOption() {
 		if [ $1 -lt 1 ]; then
 			ffLogic_say "$ffText_errorNeedMoreArguments" "$2"
@@ -119,8 +119,8 @@
 
 
 	# Handles command-line options
-	# @param	The command-line option to handle
-	# @param	All command-line arguments that follow the given option
+	# @param	.	The command-line option to handle
+	# @param	.	All command-line arguments that follow the given option
 	# @return	The number of command-line arguments consumed by the given option
 	function ffLogic_handleOption() {
 		local option=$1
@@ -198,7 +198,7 @@
 
 
 	# Parses command-line arguments
-	# @param	Name of an array which will hold the parsed arguments
+	# @param	.	Name of an array which will hold the parsed arguments
 	function ffLogic_parseArgs() {
 		local arg arguments arguments_callBack=$1
 		shift
@@ -285,20 +285,16 @@
 
 
 
-	# Performs preset-variable updates that are common to recursive and linear modes
+	# Updates preset-variable that are common to recursive and linear modes
 	# @param	p	this preset-variable must be defined already
 	function ffLogic_updateVars() {
-		# keep everything after the last slash
 		n=${p##*/}
-
-
-		# keep everything before the last dot
 		b=${n%${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
 		e=
 
 
+		# parse the file extension
 		if expr index "$n" "${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}" >& /dev/null; then
-			# keep everything after the last dot
 			e=${n##*${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
 		fi
 	}
@@ -306,6 +302,7 @@
 
 
 	# Recursively executes 'during()' on the given directory
+	# @param	.	directory upon which to perform
 	function ffLogic_recursiveMode() {
 		local o d=$1
 		shift
@@ -337,73 +334,56 @@
 
 
 
-	# Linearly executes 'during()' on the given arguments
+	# Linearly executes 'during()' on the given argument
+	# @param	.	file upon which to perform
 	function ffLogic_linearMode() {
-		local o p d n b e
+		local o=$1 p d n b e
 
-		for o; do
-			p=$o
 
-			# handle special cases
-			case $p in
-				/)
-					p=/
+		# handle special cases
+		case $p in
+			/)
+				p=/
+				d=/
+				n=/
+			;;
+
+			.)
+				p=./.
+				d=.
+				n=.
+			;;
+
+			..)
+				p=./..
+				d=.
+				n=..
+			;;
+
+			*)
+				p=${o//+(\/)/\/}
+				p=${p%/}
+				d=${p%/*}
+
+
+				# special case: $d is empty when it should be /
+				if [ -z "$d" ]; then
 					d=/
-					n=/
-				;;
-
-				.)
-					p=./.
-					d=.
-					n=.
-				;;
-
-				..)
-					p=./..
-					d=.
-					n=..
-				;;
-
-				*)
-					# remove trailing slash
-					p=${p%/}
+				fi
 
 
-					# keep everything before the last slash
-					d=${d%/*}
+				ffLogic_updateVars
+			;;
+		esac
 
 
-					# special case: $d is empty when it should be /
-					if [ -z "$d" ]; then
-						d=/
-					fi
-
-
-					ffLogic_updateVars
-				;;
-			esac
-
-
-
-			during
-		done
-	}
-
-
-
-	# Performs upon arguments given on the pipe
-	# @param	Function that will handle arguments on the pipe
-	function ffLogic_pipeWrapper() {
-		if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
-			while read -r; do
-				$1 "$REPLY"
-			done
-		fi
+		during
 	}
 
 
 
 	# Primary entry point into this file's logic
+	# @param	...	Command-line arguments
 	function ff() {
 		# run the following code in a sub-shell because it uses the 'exit' command at some point. Without this sub-shell, the 'exit' command will close the user's terminal!
 		(
@@ -433,22 +413,31 @@
 			ffLogic_parseArgs parsedArgs "$@"
 
 
+			# determine which mode to execute in
+			local mode=ffLogic_linearMode
+
+			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
+				mode=ffLogic_recursiveMode
+			fi
+
+
 			# load and execute user's script
 			ffLogic_loadScript
 
 			before "${parsedArgs[@]}"
 
-			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
-				local arg
+				# execute the user's script on the command-line arguments
 				for arg in "${parsedArgs[@]}"; do
-					ffLogic_recursiveMode "$arg"
+					$mode "$arg"
 				done
 
-				ffLogic_pipeWrapper ffLogic_recursiveMode
-			else
-				ffLogic_linearMode "${parsedArgs[@]}"
-				ffLogic_pipeWrapper ffLogic_linearMode
-			fi
+
+				# execute the user's script on piped arguments
+				if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
+					while read -r; do
+						$mode "$REPLY"
+					done
+				fi
 
 			after "${parsedArgs[@]}"
 
