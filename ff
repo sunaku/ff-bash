@@ -202,7 +202,8 @@
 	# Parses command-line arguments
 	# @param	.	Name of an array which will hold the parsed arguments
 	function ffLogic_parseArgs() {
-		local arg arguments arguments_callBack=$1
+		local -a arguments
+		local arg arguments_callBack=$1
 		shift
 
 		while [ $# -gt 0 ]; do
@@ -239,7 +240,7 @@
 
 
 		# propogate parsed arguments back to caller
-		eval "$arguments_callBack=( \${arguments[@]} )"
+		eval "$arguments_callBack=( \"\${arguments[@]}\" )"
 	}
 
 
@@ -271,13 +272,13 @@
 		fi
 
 
-		# ensure that user's script has the during() function
+		# ensure that user's script has the required control function
 		if ! grep 'during[:space:]*([:space:]*)' <<< "$expression" >& /dev/null; then
 			expression="during(){ $expression; }"
 		fi
 
 
-		# load the user's script
+		# load the user's script, and perform a sanity check to see if the script *really* does have the required control function
 		eval "$expression"
 
 		if ! declare -F during >& /dev/null; then
@@ -321,7 +322,7 @@
 	function ffLogic_linearMode() {
 		for o; do
 			# update preset variables
-				# handle special cases
+				# handle special cases just like basename(1) and dirname(1)
 				case "$o" in
 					/)
 						p=/
@@ -376,23 +377,27 @@
 	function ff() {
 		# run the following code in a sub-shell because it uses the 'exit' command at some point. Without this sub-shell, the 'exit' command will close the user's terminal!
 		(
-			# dummy functions that are executed when user hasn't overridden them
+			# create dummy control functions to suppress errors, about non-existent functions, that occur when the user has not overridden the control functions
 			function before() { :; }
 			function during() { :; }
 			function after() { :; }
 			function end() { :; }
 
 
-			# ensure proper clean up during exit
+			# ensure that proper clean up is performed during exit
 			trap "exit $ffExitCode_systemError" INT KILL TERM HUP
 			trap end EXIT
 
 
-			# set options for current sub-shell
+			# enable support for extended shell globs and nullifying of bogus globs
 			shopt -s extglob nullglob
 
 
-			# load localized string bundles for current language
+			# enable support for targets with spaces and non-printable characters in their names
+			IFS=
+
+
+			# load localized string bundles for the user's current language
 			ffTextBundle_$ffLanguageCode
 			ffOptionBundle_$ffLanguageCode
 
@@ -400,6 +405,15 @@
 			# parse command-line arguments
 			local -a parsedArgs
 			ffLogic_parseArgs parsedArgs "$@"
+
+
+			# parse piped arguments
+			local -a pipedArgs
+			if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
+				while read -r "pipedArgs[${#pipedArgs[@]}]"; do
+					:
+				done
+			fi
 
 
 			# determine which mode (linear or recursive) to execute in
@@ -413,22 +427,9 @@
 			# load and execute user's script
 			ffLogic_loadScript
 
+			local o p d n b e
 			before "${parsedArgs[@]}"
-
-				local o p d n b e
-
-
-				# execute the user's script on command-line arguments
-				$mode "${parsedArgs[@]}"
-
-
-				# execute the user's script on piped arguments
-				if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
-					while read -r o; do
-						$mode "$o"
-					done
-				fi
-
+			$mode "${parsedArgs[@]}" "${pipedArgs[@]}"
 			after "${parsedArgs[@]}"
 
 			# @note end() is automatically called by the EXIT trap
