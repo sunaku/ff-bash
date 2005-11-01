@@ -5,6 +5,14 @@
 # repetitive file-system manipulation procedures, such as mass file renaming
 # and gathering file-system statistics.
 #
+#
+# Usage:
+#	1. Load this file into GNU BASH:
+#		$ source ff.bash
+#
+#	2. Invoke the 'ff' function:
+#		$ ff
+#
 ###
 #
 # Copyright 2003, 2004, 2005 Suraj N. Kurapati.
@@ -29,38 +37,32 @@
 
 
 
-# User interface configuration
-	# Command-line options
-		# Command-line options for the English language.
-		function ffOptionBundle_en() {
-			# @note the following values are extended shell globs
-			ffOption_showHelp='+(h|help)'
-			ffOption_showVersion='+(V|version)'
-			ffOption_beVerbose='+(v|verbose)'
-			ffOption_pipeTargets='+(p|pipe)'
-			ffOption_extDelim='ext-delim'
+# Localized string bundles
+	# Localized string bundle for the English language.
+	function ffL10nBundle_en() {
+		# Command-line options
+		# @note the following values are extended shell globs
+		ffOption_showHelp='+(h|help)'
+		ffOption_showVersion='+(V|version)'
+		ffOption_beVerbose='+(v|verbose)'
+		ffOption_pipeTargets='+(p|pipe)'
+		ffOption_extDelim='ext-delim'
+
+		ffOption_evalExpr='+(e|expression)'
+		ffOption_evalFile='+(f|file)'
+
+		ffOption_beRecursive='+(r|recursive)'
+		ffOption_handleHidden='+(a|all)'
+		ffOption_ignoreLinks='+(L|ignore-links)'
+		ffOption_targetMask='+(m|mask)'
 
 
-			ffOption_evalExpr='+(e|expression)'
-			ffOption_evalFile='+(f|file)'
-
-
-			ffOption_beRecursive='+(r|recursive)'
-			ffOption_handleHidden='+(a|all)'
-			ffOption_ignoreLinks='+(L|ignore-links)'
-			ffOption_targetMask='+(m|mask)'
-		}
-
-
-
-	# Text messages
-		# Text messages for the English language.
-		function ffTextBundle_en() {
-			ffText_errorInvalidOption='Error: You specified an invalid option: %s'
-			ffText_errorCannotReadFile='Error: I could not read the following file: %s'
-			ffText_errorNeedMoreArguments='Error: You must specify more arguments for option: %s'
-			ffText_errorBadUserScript='Error: I could not process your script: %s'
-		}
+		# Text messages
+		ffText_errorInvalidOption='Error: You specified an invalid option: %s'
+		ffText_errorCannotReadFile='Error: I could not read the following file: %s'
+		ffText_errorNeedMoreArguments='Error: You must specify more arguments for option: %s'
+		ffText_errorBadUserScript='Error: I could not process your script: %s'
+	}
 
 
 
@@ -71,9 +73,7 @@
 	declare -r ffNewLine=$'\n'
 	declare -r ffExtDelim_default=.
 	declare -r ffUserTerminal_default=/dev/tty
-
 	declare -r ffLanguageCode_default=en
-	ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
 
 	# indices within a ffOption_* array
@@ -206,7 +206,7 @@
 		local arg arguments_callBack=$1
 		shift
 
-		while [ $# -gt 0 ]; do
+		while (( $# > 0 )); do
 			arg=$1
 			shift
 
@@ -292,7 +292,7 @@
 	# Recursively executes 'during()' on the given directory
 	# @param	...	directories upon which to perform
 	function ffLogic_recursiveMode() {
-		while [ $# -gt 0 ]; do
+		while (( $# > 0 )); do
 			# handle files which match the target mask
 			ffLogic_linearMode "$1"/${ffOption_targetMask[$ffOptionIndex_arg]:-*}
 
@@ -398,8 +398,13 @@
 
 
 			# load localized string bundles for the user's current language
-			ffTextBundle_$ffLanguageCode
-			ffOptionBundle_$ffLanguageCode
+			ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
+
+			if declare -F "ffL10nBundle_$ffLanguageCode" >& /dev/null; then
+				ffL10nBundle_$ffLanguageCode
+			else
+				ffL10nBundle_$ffLanguageCode_default
+			fi
 
 
 			# parse command-line arguments
