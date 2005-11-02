@@ -167,14 +167,11 @@
 
 				# show a list of available options
 				echo "$ffText_helpOptions:"
-				(
-					printf "$ffOptionsHelpFormat" "$ffText_helpOptionGlob" "$ffText_helpDescription"
 
-					IFS=' '
-					for option in ${!ffOption_*}; do
-						printf "$ffOptionsHelpFormat" "${!option}" "${option#*_}"
-					done
-				)
+				printf "$ffOptionsHelpFormat" "{$ffText_helpOptionGlob}" "{$ffText_helpDescription}"
+				for option in ${!ffOption_*}; do
+					printf "$ffOptionsHelpFormat" "${!option}" "${option#*_}"
+				done
 				echo
 
 
@@ -441,10 +438,6 @@
 
 			# enable support for extended shell globs and nullifying of bogus globs
 			shopt -s extglob nullglob
-
-
-			# enable support for targets with spaces and non-printable characters in their names
-			IFS=
 
 
 			# load localized string bundles for the user's current language
