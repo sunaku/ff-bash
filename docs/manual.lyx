@@ -72,7 +72,7 @@ Usage
 \layout Enumerate
 
 Invoke FF according to the instructions in Section 
-\begin_inset LatexCommand \vref{sub:Invocation Syntax}
+\begin_inset LatexCommand \ref{sub:Invocation Syntax}
 
 \end_inset 
 
@@ -80,17 +80,13 @@ Invoke FF according to the instructions in Section
 \layout Enumerate
 
 If you did not specify your script in the previous step, then FF will give
- you a chance to type it at your command-prompt (See Figure 
-\begin_inset LatexCommand \vref{f:typing your script @ prompt}
-
-\end_inset 
-
-).
+ you a chance to type it at your command-prompt (See example below).
 \begin_deeper 
 \layout Enumerate
 
 When you are finished typing your script, tell FF that you have finished
- by typing 
+ by issuing the end-of-transmission signal.
+ This signal is represented as 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -98,73 +94,29 @@ When you are finished typing your script, tell FF that you have finished
 \begin_inset Quotes erd
 \end_inset 
 
- (See Figure 
-\begin_inset LatexCommand \vref{f:typing your script @ prompt}
-
+ in the example below, and it is issued by pressing the 
+\begin_inset Quotes eld
 \end_inset 
 
-).
-\end_deeper 
-\layout Standard
+Control" key and the 
+\begin_inset Quotes eld
+\end_inset 
 
-
-\begin_inset Float figure
-wide false
-collapsed false
-
+D" key simultaneously on a keyboard.
 \layout LyX-Code
 
 $ ff
-\layout LyX-Code
-
+\newline 
 
 \emph on 
 echo This is my script.
-\layout LyX-Code
-
-
-\emph on 
+\newline 
 ^D
-\layout LyX-Code
+\newline 
 
+\emph default 
 $
-\layout Caption
-
-
-\begin_inset LatexCommand \label{f:typing your script @ prompt}
-
-\end_inset 
-
-Typing your script at the command-prompt.
- Here, the word 
-\begin_inset Quotes eld
-\end_inset 
-
-^D
-\begin_inset Quotes erd
-\end_inset 
-
- does not actually appear on the screen.
- Instead, it represents the user pressing the 
-\begin_inset Quotes eld
-\end_inset 
-
-Control
-\begin_inset Quotes erd
-\end_inset 
-
- key and the 
-\begin_inset Quotes eld
-\end_inset 
-
-D
-\begin_inset Quotes erd
-\end_inset 
-
- key simultaneously on a keyboard.
-\end_inset 
-
-
+\end_deeper 
 \layout Subsection
 
 
@@ -195,12 +147,12 @@ This syntax denotes that (1) FF can be invoked with zero or more arguments,
 
 Option A mechanism which enables you to alter FF's behavior.
  (See Section 
-\begin_inset LatexCommand \vref{sub:Options}
+\begin_inset LatexCommand \ref{sub:Options}
 
 \end_inset 
 
  for a list of available options.)
-\layout Verse
+\layout Itemize
 
 A series of short options can be written as a single option.
  For example, 
@@ -223,7 +175,7 @@ A series of short options can be written as a single option.
 \layout Description
 
 Target An argument upon which your script will be executed.
-\layout Verse
+\layout Itemize
 
 Although targets are used most commonly as paths
 \begin_inset Foot
@@ -248,13 +200,16 @@ Absolute or relative paths to text or binary files, directories, symbolic
 Options
 \layout Description
 
--\SpecialChar \textcompwordmark{}
+-
+\begin_inset Formula $ $
+\end_inset 
+
 - Stop scanning the given arguments for options and consider the remaining
  arguments as targets.
-\layout Verse
+\layout Itemize
 
-With this option, you can safely specify targets which begin with a hypen
- 
+With this option, you can safely specify targets whose names begin with
+ a hypen 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -284,7 +239,10 @@ With this option, you can safely specify targets which begin with a hypen
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 - -foo -bar
 \begin_inset Quotes erd
 \end_inset 
@@ -299,7 +257,10 @@ expression
 \emph default 
 \SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \textcompwordmark{}
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -expression\SpecialChar ~
 
 \emph on 
@@ -311,13 +272,16 @@ expression
 \emph default 
  as being the user's script and, consequently, do not ask the user to type
  in a script at the command-prompt.
-\layout Verse
+\layout Itemize
 
 When this option is used, the 
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -file
 \begin_inset Quotes erd
 \end_inset 
@@ -332,7 +296,10 @@ file
 \emph default 
 \SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \textcompwordmark{}
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -file\SpecialChar ~
 
 \emph on 
@@ -348,17 +315,23 @@ file
 
 -p\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
--pipe In addition to those specified as arguments, read the standard
- input stream for a list of targets.
-\layout Verse
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-pipe In addition to those specified as arguments, read the standard input
+ stream for a list of targets.
+\layout Itemize
 
 Targets on the standard input stream should be listed one per line.
  Also, targets specified as arguments are handled before targets specified
  on the standard input stream.
 \layout Description
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -extension-delim\SpecialChar ~
 
 \emph on 
@@ -369,7 +342,7 @@ delimiter
 delimiter
 \emph default 
  separates a file's prefix and extension instead of a period.
-\layout Verse
+\layout Itemize
 
 By default, a period is considered to be the delimiter that separates a
  file's prefix and extension.
@@ -421,10 +394,13 @@ bar
 
 -r\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
--recursive Recursively handle targets, which are directories and symbolic
- links to directories, in a breadth-first manner.
-\layout Verse
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-recursive Recursively handle targets, which happen to be directories or
+ symbolic links to directories, in a breadth-first manner.
+\layout Itemize
 
 Because the recursion is performed in a breadth-first manner, all files
  in a directory are handled 
@@ -432,13 +408,7 @@ Because the recursion is performed in a breadth-first manner, all files
 before
 \emph default 
  any directories are handled recursively.
- For example, consider the directory structure in Figure 
-\begin_inset LatexCommand \vref{f:dir struct}
-
-\end_inset 
-
-.
- The paths 
+ For example, in the directory structure below, the paths 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -454,19 +424,11 @@ foo/baz
 \begin_inset Quotes erd
 \end_inset 
 
-, 
-\begin_inset Quotes eld
-\end_inset 
-
-foo/moz
-\begin_inset Quotes erd
-\end_inset 
-
 , and 
 \begin_inset Quotes eld
 \end_inset 
 
-foo/zap
+foo/moz
 \begin_inset Quotes erd
 \end_inset 
 
@@ -483,13 +445,7 @@ foo/bar/baz
 \end_inset 
 
 .
-\layout Standard
-
-
-\begin_inset Float figure
-wide false
-collapsed false
-
+\begin_deeper 
 \layout Itemize
 
 foo/
@@ -505,75 +461,27 @@ baz
 \layout Itemize
 
 moz
-\layout Itemize
-
-zap
 \end_deeper 
-\layout Caption
-
-
-\begin_inset LatexCommand \label{f:dir struct}
-
-\end_inset 
-
-A sample directory structure.
- Here, 
-\begin_inset Quotes eld
-\end_inset 
-
-foo
-\begin_inset Quotes erd
-\end_inset 
-
- and 
-\begin_inset Quotes eld
-\end_inset 
-
-bar
-\begin_inset Quotes erd
-\end_inset 
-
- represent directories while 
-\begin_inset Quotes eld
-\end_inset 
-
-baz
-\begin_inset Quotes erd
-\end_inset 
-
-, 
-\begin_inset Quotes eld
-\end_inset 
-
-moz
-\begin_inset Quotes erd
-\end_inset 
-
-, and 
-\begin_inset Quotes eld
-\end_inset 
-
-zap
-\begin_inset Quotes erd
-\end_inset 
-
- represent non-directories.
-\end_inset 
-
-
+\end_deeper 
 \layout Description
 
 -a\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -all Do not ignore targets whose names begin with a period.
-\layout Verse
+\layout Itemize
 
 This option has no effect when used without the 
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -recursive
 \begin_inset Quotes erd
 \end_inset 
@@ -583,15 +491,21 @@ This option has no effect when used without the
 
 -L\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -ignore-links Ignore symbolic links that point to directories.
-\layout Verse
+\layout Itemize
 
 This option has no effect when used without the 
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -recursive
 \begin_inset Quotes erd
 \end_inset 
@@ -606,7 +520,10 @@ glob
 \emph default 
 \SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -mask\SpecialChar ~
 
 \emph on 
@@ -617,23 +534,26 @@ glob
 glob
 \emph default 
 .
-\layout Verse
+\layout Itemize
 
 This option has no effect when used without the 
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -recursive
 \begin_inset Quotes erd
 \end_inset 
 
  option.
-\layout Verse
+\layout Itemize
 
 In addition to the normal globbing notation, the given glob can be expressed
  using extended globbing notation.
-\layout Verse
+\layout Itemize
 
 If the given glob does not use any globbing notation, then it will be appended
  to the name of every target that matches the 
@@ -645,15 +565,35 @@ If the given glob does not use any globbing notation, then it will be appended
 \end_inset 
 
  glob.
- For example, 
-\layout Verse
+ 
+\begin_deeper 
+\layout Itemize
+
+For example, try executing the following command and notice how all echoed
+ paths have 
+\begin_inset Quotes eld
+\end_inset 
+
+globby_glob
+\begin_inset Quotes erd
+\end_inset 
+
+ at the end.
+\layout LyX-Code
+
+$ ff -r /tmp -m globby_glob -e 'echo $p'
+\end_deeper 
+\layout Itemize
 
 The given glob will not match a period at the beginning of a target's name
  unless the 
 \begin_inset Quotes eld
 \end_inset 
 
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -all
 \begin_inset Quotes erd
 \end_inset 
@@ -663,20 +603,30 @@ The given glob will not match a period at the beginning of a target's name
 
 -h\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
--help Show a list of available options in extended globbing notation.
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-help Show the invocation syntax and a list of available options in extended
+ globbing notation.
 \layout Description
 
 -v\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
+-
+\begin_inset Formula $ $
+\end_inset 
+
 -verbose Tell the user what you are doing as you do it.
 \layout Description
 
 -V\SpecialChar ~
 OR\SpecialChar ~
--\SpecialChar \-
--version Show your release version and release date.
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-version Show your release-version and copyright.
 \layout Section
 
 Scripts
