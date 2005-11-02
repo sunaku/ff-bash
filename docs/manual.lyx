@@ -1,0 +1,692 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\begin_preamble
+\usepackage{url}          %% for URLs (also in Bibtex)
+\usepackage{ae,aecompl}   %% generates nicer PDF output (better fonts)
+\usepackage{hyperref}     %% best at the end, generates PDF with hyperlinks
+\end_preamble
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\float_placement p
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+The 
+\begin_inset Quotes eld
+\end_inset 
+
+For each File
+\begin_inset Quotes erd
+\end_inset 
+
+ User's Manual
+\layout Author
+
+Suraj N.
+ Kurapati
+\newline 
+
+\begin_inset LatexCommand \url{http://ff-bash.sf.net}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Section
+\pagebreak_top 
+Introduction
+\layout Section
+
+Installation
+\layout Section
+
+Usage
+\layout Enumerate
+
+Invoke FF according to the instructions in Section 
+\begin_inset LatexCommand \vref{sub:Invocation Syntax}
+
+\end_inset 
+
+.
+\layout Enumerate
+
+If you did not specify your script in the previous step, then FF will give
+ you a chance to type it at your command-prompt (See Figure 
+\begin_inset LatexCommand \vref{f:typing your script @ prompt}
+
+\end_inset 
+
+).
+\begin_deeper 
+\layout Enumerate
+
+When you are finished typing your script, tell FF that you have finished
+ by typing 
+\begin_inset Quotes eld
+\end_inset 
+
+^D
+\begin_inset Quotes erd
+\end_inset 
+
+ (See Figure 
+\begin_inset LatexCommand \vref{f:typing your script @ prompt}
+
+\end_inset 
+
+).
+\end_deeper 
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout LyX-Code
+
+$ ff
+\layout LyX-Code
+
+
+\emph on 
+echo This is my script.
+\layout LyX-Code
+
+
+\emph on 
+^D
+\layout LyX-Code
+
+$
+\layout Caption
+
+
+\begin_inset LatexCommand \label{f:typing your script @ prompt}
+
+\end_inset 
+
+Typing your script at the command-prompt.
+ Here, the word 
+\begin_inset Quotes eld
+\end_inset 
+
+^D
+\begin_inset Quotes erd
+\end_inset 
+
+ does not actually appear on the screen.
+ Instead, it represents the user pressing the 
+\begin_inset Quotes eld
+\end_inset 
+
+Control
+\begin_inset Quotes erd
+\end_inset 
+
+ key and the 
+\begin_inset Quotes eld
+\end_inset 
+
+D
+\begin_inset Quotes erd
+\end_inset 
+
+ key simultaneously on a keyboard.
+\end_inset 
+
+
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{sub:Invocation Syntax}
+
+\end_inset 
+
+Invocation Syntax
+\layout Standard
+
+You can invoke FF by executing a command with the following syntax:
+\layout LyX-Code
+
+ff [
+\emph on 
+option
+\emph default 
+|
+\emph on 
+target
+\emph default 
+]...
+\layout Standard
+
+This syntax denotes that (1) FF can be invoked with zero or more arguments,
+ and (2) an argument is either an option or a target.
+\layout Description
+
+Option A mechanism which enables you to alter FF's behavior.
+ (See Section 
+\begin_inset LatexCommand \vref{sub:Options}
+
+\end_inset 
+
+ for a list of available options.)
+\layout Verse
+
+A series of short options can be written as a single option.
+ For example, 
+\begin_inset Quotes eld
+\end_inset 
+
+-a 1 -b 2 -c 3
+\begin_inset Quotes erd
+\end_inset 
+
+ can also be written as 
+\begin_inset Quotes eld
+\end_inset 
+
+-abc 1 2 3
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Description
+
+Target An argument upon which your script will be executed.
+\layout Verse
+
+Although targets are used most commonly as paths
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Absolute or relative paths to text or binary files, directories, symbolic
+ or hard links, block or character devices, pipes, sockets, and so on.
+\end_inset 
+
+, they are not restricted to being used in this way.
+ You can use a target as a URL, string, number, or any other form of abstraction
+ that your script requires.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{sub:Options}
+
+\end_inset 
+
+Options
+\layout Description
+
+-\SpecialChar \textcompwordmark{}
+- Stop scanning the given arguments for options and consider the remaining
+ arguments as targets.
+\layout Verse
+
+With this option, you can safely specify targets which begin with a hypen
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Such targets would otherwise be considered as options.
+ For example, you can specify two targets named 
+\begin_inset Quotes eld
+\end_inset 
+
+-foo
+\begin_inset Quotes erd
+\end_inset 
+
+ and 
+\begin_inset Quotes eld
+\end_inset 
+
+-bar
+\begin_inset Quotes erd
+\end_inset 
+
+ by writing them as 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+- -foo -bar
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Description
+
+-e\SpecialChar ~
+
+\emph on 
+expression
+\emph default 
+\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \textcompwordmark{}
+-expression\SpecialChar ~
+
+\emph on 
+expression
+\emph default 
+ Consider the given 
+\emph on 
+expression
+\emph default 
+ as being the user's script and, consequently, do not ask the user to type
+ in a script at the command-prompt.
+\layout Verse
+
+When this option is used, the 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+-file
+\begin_inset Quotes erd
+\end_inset 
+
+ option is ignored.
+\layout Description
+
+-f\SpecialChar ~
+
+\emph on 
+file
+\emph default 
+\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \textcompwordmark{}
+-file\SpecialChar ~
+
+\emph on 
+file
+\emph default 
+ Consider the contents of the given 
+\emph on 
+file
+\emph default 
+ as being the user's script and, consequently, do not ask the user to type
+ in a script at the command-prompt.
+\layout Description
+
+-p\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-pipe In addition to those specified as arguments, read the standard
+ input stream for a list of targets.
+\layout Verse
+
+Targets on the standard input stream should be listed one per line.
+ Also, targets specified as arguments are handled before targets specified
+ on the standard input stream.
+\layout Description
+
+-\SpecialChar \-
+-extension-delim\SpecialChar ~
+
+\emph on 
+delimiter
+\emph default 
+ Consider that the given 
+\emph on 
+delimiter
+\emph default 
+ separates a file's prefix and extension instead of a period.
+\layout Verse
+
+By default, a period is considered to be the delimiter that separates a
+ file's prefix and extension.
+ For example, a file named 
+\begin_inset Quotes eld
+\end_inset 
+
+foo.bar
+\begin_inset Quotes erd
+\end_inset 
+
+ has three parts:
+\begin_deeper 
+\layout Itemize
+
+a prefix: 
+\begin_inset Quotes eld
+\end_inset 
+
+foo
+\begin_inset Quotes erd
+\end_inset 
+
+
+\layout Itemize
+
+an extension delimiter: 
+\begin_inset Quotes eld
+\end_inset 
+
+.
+\begin_inset Quotes erd
+\end_inset 
+
+
+\layout Itemize
+
+an extension: 
+\begin_inset Quotes eld
+\end_inset 
+
+bar
+\begin_inset Quotes erd
+\end_inset 
+
+
+\end_deeper 
+\layout Description
+
+-r\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-recursive Recursively handle targets, which are directories and symbolic
+ links to directories, in a breadth-first manner.
+\layout Verse
+
+Because the recursion is performed in a breadth-first manner, all files
+ in a directory are handled 
+\emph on 
+before
+\emph default 
+ any directories are handled recursively.
+ For example, consider the directory structure in Figure 
+\begin_inset LatexCommand \vref{f:dir struct}
+
+\end_inset 
+
+.
+ The paths 
+\begin_inset Quotes eld
+\end_inset 
+
+foo/bar
+\begin_inset Quotes erd
+\end_inset 
+
+, 
+\begin_inset Quotes eld
+\end_inset 
+
+foo/baz
+\begin_inset Quotes erd
+\end_inset 
+
+, 
+\begin_inset Quotes eld
+\end_inset 
+
+foo/moz
+\begin_inset Quotes erd
+\end_inset 
+
+, and 
+\begin_inset Quotes eld
+\end_inset 
+
+foo/zap
+\begin_inset Quotes erd
+\end_inset 
+
+ are handled 
+\emph on 
+before
+\emph default 
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+foo/bar/baz
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Float figure
+wide false
+collapsed false
+
+\layout Itemize
+
+foo/
+\begin_deeper 
+\layout Itemize
+
+bar/
+\begin_deeper 
+\layout Itemize
+
+baz
+\end_deeper 
+\layout Itemize
+
+moz
+\layout Itemize
+
+zap
+\end_deeper 
+\layout Caption
+
+
+\begin_inset LatexCommand \label{f:dir struct}
+
+\end_inset 
+
+A sample directory structure.
+ Here, 
+\begin_inset Quotes eld
+\end_inset 
+
+foo
+\begin_inset Quotes erd
+\end_inset 
+
+ and 
+\begin_inset Quotes eld
+\end_inset 
+
+bar
+\begin_inset Quotes erd
+\end_inset 
+
+ represent directories while 
+\begin_inset Quotes eld
+\end_inset 
+
+baz
+\begin_inset Quotes erd
+\end_inset 
+
+, 
+\begin_inset Quotes eld
+\end_inset 
+
+moz
+\begin_inset Quotes erd
+\end_inset 
+
+, and 
+\begin_inset Quotes eld
+\end_inset 
+
+zap
+\begin_inset Quotes erd
+\end_inset 
+
+ represent non-directories.
+\end_inset 
+
+
+\layout Description
+
+-a\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-all Do not ignore targets whose names begin with a period.
+\layout Verse
+
+This option has no effect when used without the 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+-recursive
+\begin_inset Quotes erd
+\end_inset 
+
+ option.
+\layout Description
+
+-L\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-ignore-links Ignore symbolic links that point to directories.
+\layout Verse
+
+This option has no effect when used without the 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+-recursive
+\begin_inset Quotes erd
+\end_inset 
+
+ option.
+\layout Description
+
+-m\SpecialChar ~
+
+\emph on 
+glob
+\emph default 
+\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-mask\SpecialChar ~
+
+\emph on 
+glob
+\emph default 
+ Only handle targets whose names match the given 
+\emph on 
+glob
+\emph default 
+.
+\layout Verse
+
+This option has no effect when used without the 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+-recursive
+\begin_inset Quotes erd
+\end_inset 
+
+ option.
+\layout Verse
+
+In addition to the normal globbing notation, the given glob can be expressed
+ using extended globbing notation.
+\layout Verse
+
+If the given glob does not use any globbing notation, then it will be appended
+ to the name of every target that matches the 
+\begin_inset Quotes eld
+\end_inset 
+
+*
+\begin_inset Quotes erd
+\end_inset 
+
+ glob.
+ For example, 
+\layout Verse
+
+The given glob will not match a period at the beginning of a target's name
+ unless the 
+\begin_inset Quotes eld
+\end_inset 
+
+-\SpecialChar \-
+-all
+\begin_inset Quotes erd
+\end_inset 
+
+ option is also specified.
+\layout Description
+
+-h\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-help Show a list of available options in extended globbing notation.
+\layout Description
+
+-v\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-verbose Tell the user what you are doing as you do it.
+\layout Description
+
+-V\SpecialChar ~
+OR\SpecialChar ~
+-\SpecialChar \-
+-version Show your release version and release date.
+\layout Section
+
+Scripts
+\layout Section
+
+Localization
+\layout Section
+
+Examples
+\layout Section
+
+License
+\the_end

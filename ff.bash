@@ -46,7 +46,7 @@
 		ffOption_showVersion='+(V|version)'
 		ffOption_beVerbose='+(v|verbose)'
 		ffOption_pipeTargets='+(p|pipe)'
-		ffOption_extDelim='ext-delim'
+		ffOption_extDelim='extension-delim'
 
 		ffOption_evalExpr='+(e|expression)'
 		ffOption_evalFile='+(f|file)'
@@ -58,17 +58,27 @@
 
 
 		# Text messages
-		ffText_errorInvalidOption='Error: You specified an invalid option: %s'
-		ffText_errorCannotReadFile='Error: I could not read the following file: %s'
-		ffText_errorNeedMoreArguments='Error: You must specify more arguments for option: %s'
-		ffText_errorBadUserScript='Error: I could not process your script: %s'
+		ffText_errorInvalidOption="Error: You specified an invalid option: %s"
+		ffText_errorCannotReadFile="Error: I could not read the following file: %s"
+		ffText_errorNeedMoreArguments="Error: You must specify more arguments for option: %s"
+		ffText_errorBadUserScript="Error: I could not process your script: %s"
+
+		ffText_helpSeeUserManual="See the User's Manual for explanations and examples."
+		ffText_helpUsage="Usage"
+		ffText_helpOptions="Options"
+		ffText_helpOptionGlob="Option Glob"
+		ffText_helpDescription="Description"
+
+		ffText_forEachFile="For each File"
+		ffText_disclaimer="This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 	}
 
 
 
 # Internal variables
 	declare -r ffReleaseVersion=2.0
-	declare -r ffReleaseDate=yyyy-mm-dd
+	declare -r ffWebsite="http://ff-bash.sf.net"
+	declare -r ffOptionsHelpFormat="%20s\t%s\n"
 
 	declare -r ffNewLine=$'\n'
 	declare -r ffExtDelim_default=.
@@ -103,6 +113,19 @@
 
 
 
+	function ffLogic_showVersion() {
+		echo "$ffText_forEachFile $ffReleaseVersion <$ffWebsite>"
+	}
+
+
+
+	function ffLogic_showDisclaimer() {
+		echo "Copyright 2003, 2004, 2005 Suraj N. Kurapati."
+		echo "$ffText_disclaimer"
+	}
+
+
+
 	# Enables the given option and associates the given arguments with it
 	# @param	.	Number of arguments available to the given option
 	# @param	.	Option flag (how the user specifies the option)
@@ -130,16 +153,43 @@
 
 		case "$option" in
 			$ffOption_showHelp)
+				# show description
+				ffLogic_showVersion
+				echo "$ffText_helpSeeUserManual"
+				echo
+
+
+				# show invocation syntax
+				echo "$ffText_helpUsage:"
+				echo "ff [option|target]..."
+				echo
+
+
 				# show a list of available options
-				for option in ${!ffOption_*}; do
-					echo "${!option}"
-				done
+				echo "$ffText_helpOptions:"
+				(
+					printf "$ffOptionsHelpFormat" "$ffText_helpOptionGlob" "$ffText_helpDescription"
+
+					IFS=' '
+					for option in ${!ffOption_*}; do
+						printf "$ffOptionsHelpFormat" "${!option}" "${option#*_}"
+					done
+				)
+				echo
+
+
+				# show a disclaimer
+				ffLogic_showDisclaimer
+
 
 				exit $ffExitCode_success
 			;;
 
 			$ffOption_showVersion)
-				echo $ffReleaseVersion $ffReleaseDate
+				ffLogic_showVersion
+				echo
+				ffLogic_showDisclaimer
+
 				exit $ffExitCode_success
 			;;
 
