@@ -646,7 +646,24 @@ Control Functions
 \layout Standard
 
 These functions give your script more control over its execution.
- You are not required to implement these functions in order to use FF.
+ You are not required
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+FF will automatically place your script inside the 
+\begin_inset Quotes eld
+\end_inset 
+
+during
+\begin_inset Quotes erd
+\end_inset 
+
+ control function if your script does not implement any control functions.
+\end_inset 
+
+ to implement these functions in order to use FF.
  However, if you decide to implement any one of these functions, then FF
  requires that you implement the 
 \begin_inset Quotes eld
@@ -656,7 +673,7 @@ during
 \begin_inset Quotes erd
 \end_inset 
 
- function as well.
+ control function as well.
 \layout Description
 
 before\SpecialChar ~
@@ -821,24 +838,461 @@ $ ff -- foo bar
 \layout Subsubsection
 
 Preset Variables
+\layout Standard
+
+These variables represent various aspects of a target that has been passed
+ to your script for execution.
+ They are available for use in your script and are automatically set every
+ time the 
+\begin_inset Quotes eld
+\end_inset 
+
+during
+\begin_inset Quotes erd
+\end_inset 
+
+ control function is invoked by FF.
 \layout Description
+
+$o The original value of the current target, as it was specified by the
+ user.
+\layout Itemize
+
+The value of this variable is unmodified and retains the exact value it
+ was given by the user, whereas the values of the variables below will have,
+ among other modifications, redundant directory separators removed.
+  For example, if the value of this variable is 
+\layout Description
+
+$p Either a relative or absolute path to the current target.
+ 
+\layout Itemize
+
+For example, if 
+\begin_inset Quotes eld
+\end_inset 
 
 $o
-\layout Description
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+////foo//bar///baz//a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+ then 
+\begin_inset Quotes eld
+\end_inset 
 
 $p
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+/foo/bar/baz/a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+.
 \layout Description
+
+$d Either a relative or an absolute path to the directory which contains
+ the current target.
+\layout Itemize
+
+For example, if 
+\begin_inset Quotes eld
+\end_inset 
+
+$p
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+/foo/bar/baz/a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+ then 
+\begin_inset Quotes eld
+\end_inset 
 
 $d
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+/foo/bar/baz
+\begin_inset Quotes erd
+\end_inset 
+
+.
 \layout Description
+
+$n The name of the current target without its path information.
+ 
+\layout Itemize
+
+For example, if 
+\begin_inset Quotes eld
+\end_inset 
+
+$p
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+/foo/bar/baz/a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+ then 
+\begin_inset Quotes eld
+\end_inset 
 
 $n
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+.
 \layout Description
+
+$b The prefix of the current target without its path information and without
+ its extension.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option is not specified and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
 
 $b
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option specifies 
+\begin_inset Quotes eld
+\end_inset 
+
+c
+\begin_inset Quotes erd
+\end_inset 
+
+ as the delimiter and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
+
+$b
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option specifies 
+\begin_inset Quotes eld
+\end_inset 
+
+X
+\begin_inset Quotes erd
+\end_inset 
+
+ as the delimiter and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
+
+$b
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+.
 \layout Description
 
+$e The extension of the current target without its path information and
+ without its name.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option is not specified and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
+
 $e
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+d
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option specifies 
+\begin_inset Quotes eld
+\end_inset 
+
+c
+\begin_inset Quotes erd
+\end_inset 
+
+ as the delimiter and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
+
+$e
+\begin_inset Quotes erd
+\end_inset 
+
+ will be 
+\begin_inset Quotes eld
+\end_inset 
+
+.d
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Itemize
+
+For example, if the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-extension-delim
+\begin_inset Quotes erd
+\end_inset 
+
+ option specifies 
+\begin_inset Quotes eld
+\end_inset 
+
+X
+\begin_inset Quotes erd
+\end_inset 
+
+ as the delimiter and 
+\begin_inset Quotes eld
+\end_inset 
+
+$n
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+a.b.c.d
+\begin_inset Quotes erd
+\end_inset 
+
+, then 
+\begin_inset Quotes eld
+\end_inset 
+
+$e
+\begin_inset Quotes erd
+\end_inset 
+
+ will be empty.
 \layout Subsection
 
 Environment Variables
