@@ -79,11 +79,8 @@ Invoke FF using the syntax described in Section
 \layout Enumerate
 
 If you did not specify your script in the previous step, then FF will give
- you a chance to type it at your command-prompt (See example below).
-\begin_deeper 
-\layout Enumerate
-
-When you have finished typing your script, tell FF that you have finished
+ you a chance to type it at your command-prompt, as shown below.
+  When you have finished typing your script, tell FF that you have finished
  by issuing the end-of-transmission signal.
  This signal is (1) represented as 
 \begin_inset Quotes eld
@@ -102,6 +99,7 @@ Control" key and the
 \end_inset 
 
 D" key simultaneously on a keyboard.
+\begin_deeper 
 \layout LyX-Code
 
 $ ff
@@ -119,8 +117,8 @@ $
 \layout Enumerate
 
 FF will now execute your script upon the given arguments.
- Once it has finished, FF will return a diagnostic exit-status (See Section
- 
+ Once it has finished, FF will return a diagnostic value for its exit status
+ (See Section 
 \begin_inset LatexCommand \ref{sub:Diagnostics}
 
 \end_inset 
@@ -136,7 +134,7 @@ FF will now execute your script upon the given arguments.
 Invocation Syntax
 \layout Standard
 
-You can invoke FF by executing a command with the following syntax:
+You can invoke FF by executing a command using the following syntax:
 \layout LyX-Code
 
 ff [
@@ -151,7 +149,7 @@ target
 \layout Standard
 
 This syntax denotes that (1) FF can be invoked with zero or more arguments,
- and (2) an argument is either an option or a target.
+ and (2) an argument is either an option or a target---as described below.
 \layout Description
 
 Option A mechanism which enables you to alter FF's behavior.
@@ -188,7 +186,7 @@ Target An argument upon which your script will be executed.
 
 Although targets are used most commonly as paths
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -213,12 +211,12 @@ Available Options
 \begin_inset Formula $ $
 \end_inset 
 
-- Stop scanning the given arguments for options and consider the remaining
+- Stop looking for options among the given arguments and consider the remaining
  arguments as targets.
 \layout Itemize
 
 With this option, you can safely specify targets whose names begin with
- a hypen 
+ a hyphen 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -279,8 +277,8 @@ expression
 \emph on 
 expression
 \emph default 
- as being the user's script and, consequently, do not ask the user to type
- in a script at the command-prompt.
+ as the user's script and, consequently, do not ask the user to type in
+ a script at the command-prompt.
 \layout Itemize
 
 When this option is used, the 
@@ -314,11 +312,11 @@ OR\SpecialChar ~
 \emph on 
 file
 \emph default 
- Consider the contents of the given 
+ Consider that the given 
 \emph on 
 file
 \emph default 
- as being the user's script and, consequently, do not ask the user to type
+ contains the user's script and, consequently, do not ask the user to type
  in a script at the command-prompt.
 \layout Description
 
@@ -328,8 +326,8 @@ OR\SpecialChar ~
 \begin_inset Formula $ $
 \end_inset 
 
--pipe In addition to those specified as arguments, read the standard input
- stream for a list of targets.
+-pipe Read the standard input stream for targets in addition to those specified
+ as arguments.
 \layout Itemize
 
 Targets on the standard input stream should be listed one per line.
@@ -350,11 +348,18 @@ delimiter
 \emph on 
 delimiter
 \emph default 
- separates a file's prefix and extension instead of a period.
+ separates a file's prefix and extension.
 \layout Itemize
 
-By default, a period is considered to be the delimiter that separates a
- file's prefix and extension.
+By default, a period 
+\begin_inset Quotes eld
+\end_inset 
+
+.
+\begin_inset Quotes erd
+\end_inset 
+
+ is considered to be the delimiter that separates a file's prefix and extension.
  For example, a file named 
 \begin_inset Quotes eld
 \end_inset 
@@ -408,7 +413,7 @@ OR\SpecialChar ~
 \end_inset 
 
 -recursive Recursively handle targets, which happen to be directories or
- symbolic links to directories, in a breadth-first manner.
+ symbolic links that point to directories, in a breadth-first manner.
 \layout Itemize
 
 Because the recursion is performed in a breadth-first manner, all files
@@ -441,11 +446,7 @@ foo/moz
 \begin_inset Quotes erd
 \end_inset 
 
- are handled 
-\emph on 
-before
-\emph default 
- 
+ are handled before 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -538,10 +539,27 @@ OR\SpecialChar ~
 \emph on 
 glob
 \emph default 
- Only handle targets whose names match the given 
+ Handle targets only if their names match the given 
 \emph on 
 glob
 \emph default 
+
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+See 
+\begin_inset Quotes eld
+\end_inset 
+
+Pattern Matching
+\begin_inset Quotes erd
+\end_inset 
+
+ in the GNU BASH manual for more information.
+\end_inset 
+
 .
 \layout Itemize
 
@@ -560,8 +578,40 @@ This option has no effect when used without the
  option.
 \layout Itemize
 
-In addition to the normal globbing notation, the given glob can be expressed
- using extended globbing notation.
+The given glob can use both normal and extended
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+See 
+\begin_inset Quotes eld
+\end_inset 
+
+extglob
+\begin_inset Quotes erd
+\end_inset 
+
+ in the GNU BASH manual for more information.
+\end_inset 
+
+ globbing notation.
+\layout Itemize
+
+The given glob will not match a period at the beginning of a target's name
+ unless the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-all
+\begin_inset Quotes erd
+\end_inset 
+
+ option is also specified.
 \layout Itemize
 
 If the given glob does not use any globbing notation, then it will be appended
@@ -580,7 +630,7 @@ If the given glob does not use any globbing notation, then it will be appended
 \layout Itemize
 
 For example, try executing the following command and notice how all echoed
- paths have 
+ paths have the word 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -588,27 +638,11 @@ globbyGlob
 \begin_inset Quotes erd
 \end_inset 
 
- at the end.
+ appended to them.
 \layout LyX-Code
 
-$ ff -r /etc -m globbyGlob -e 'echo $p'
+ff -r /etc -m globbyGlob -e 'echo $p'
 \end_deeper 
-\layout Itemize
-
-The given glob will not match a period at the beginning of a target's name
- unless the 
-\begin_inset Quotes eld
-\end_inset 
-
--
-\begin_inset Formula $ $
-\end_inset 
-
--all
-\begin_inset Quotes erd
-\end_inset 
-
- option is also specified.
 \layout Description
 
 -h\SpecialChar ~
@@ -627,7 +661,7 @@ OR\SpecialChar ~
 \begin_inset Formula $ $
 \end_inset 
 
--verbose Tell the user what you are doing as you do it.
+-verbose Describe what you are doing as you do it.
 \layout Description
 
 -V\SpecialChar ~
@@ -640,6 +674,16 @@ OR\SpecialChar ~
 \layout Subsection
 
 User Scripts
+\layout Standard
+
+A user script is a set of GNU BASH commands that performs some operation
+ on the targets you specified.
+ In other words, a user script is a shell script written in the GNU BASH
+ scripting language.
+\layout Standard
+
+To aid your script in performing operations on targets you have specified,
+ FF provides control functions and preset variables for your script's use.
 \layout Subsubsection
 
 Control Functions
@@ -681,9 +725,9 @@ before\SpecialChar ~
 \emph on 
 argumentTargets
 \emph default 
- This function is invoked before any targets have been handled.
- Its parameters are targets that have been specified as arguments only.
- Thus, targets specified on the standard input stream with the 
+ This control function is invoked before any targets have been handled.
+ Its parameters are targets that have been specified as arguments to FF.
+ Targets specified on the standard input stream with the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -698,7 +742,8 @@ argumentTargets
  option are not passed to this function.
 \layout Itemize
 
-This is a good place to scan for options that pertain to your script.
+This is a good place to look for options among the targets passed to your
+ script.
 \layout Description
 
 during\SpecialChar ~
@@ -706,13 +751,13 @@ during\SpecialChar ~
 \emph on 
 target
 \emph default 
- This function is invoked once per 
+ This control function is invoked once per 
 \emph on 
 target
 \emph default 
 .
- Its parameter is a target that has either been specified as an argument
- or has been specified on the standard input stream with the 
+ Its parameter is a single target that has been specified either (1) as
+ an argument to FF or (2) on the standard input stream with the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -725,11 +770,11 @@ target
 \end_inset 
 
  option.
- 
 \layout Itemize
 
-Targets specified as arguments are passed to this function before targets
- specified on the standard input stream with the 
+Targets specified as arguments to FF are passed, one by one, to this control
+ function.
+ Afterwards, targets specified on the standard input stream with the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -741,7 +786,7 @@ Targets specified as arguments are passed to this function before targets
 \begin_inset Quotes erd
 \end_inset 
 
- option.
+ option are passed, one by one, to this control function.
 \layout Description
 
 after\SpecialChar ~
@@ -749,9 +794,9 @@ after\SpecialChar ~
 \emph on 
 argumentTargets 
 \emph default 
-This function is invoked after all targets have been handled.
- Its parameters are targets that have been specified as arguments only.
- Thus, targets specified on the standard input stream with the 
+This control function is invoked after all targets have been handled.
+ Its parameters are targets that have been specified as arguments to FF.
+ Targets specified on the standard input stream with the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -766,8 +811,11 @@ This function is invoked after all targets have been handled.
  option are not passed to this function.
 \layout Description
 
-end This function is invoked immediately before FF terminates.
- It is a good place to clean up any temporary files that were created by
+end This control function is invoked immediately before FF terminates.
+ 
+\layout Itemize
+
+This is a good place to clean up any temporary files that were created by
  your script.
 \layout Subsubsection
 
@@ -791,8 +839,8 @@ end
  terminates it.
 \layout Itemize
 
-Your script can scan targets---specified as arguments to FF---for options
- in the 
+Your script can look for options, among targets specified as arguments to
+ FF, in the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -800,14 +848,18 @@ before
 \begin_inset Quotes erd
 \end_inset 
 
- function.
+ control function.
  This enables your script to change its behavior depending on the options
  passed to it, just like FF.
- For example, a user can specify options 
+ 
+\begin_deeper 
+\layout Itemize
+
+For example, a user can specify options 
 \begin_inset Quotes eld
 \end_inset 
 
-foo
+-foo
 \begin_inset Quotes erd
 \end_inset 
 
@@ -815,7 +867,7 @@ foo
 \begin_inset Quotes eld
 \end_inset 
 
-bar
+-bar
 \begin_inset Quotes erd
 \end_inset 
 
@@ -834,16 +886,17 @@ bar
  option, as shown below.
 \layout LyX-Code
 
-$ ff -- foo bar
+ff -- -foo -bar
+\end_deeper 
 \layout Subsubsection
 
 Preset Variables
 \layout Standard
 
-These variables represent various aspects of a target that has been passed
- to your script for execution.
- They are available for use in your script and are automatically set every
- time the 
+These variables represent various aspects of targets that are passed to
+ your script for execution.
+ They are available for use anywhere in your script and are automatically
+ updated every time FF invokes the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -851,21 +904,14 @@ during
 \begin_inset Quotes erd
 \end_inset 
 
- control function is invoked by FF.
+ control function.
 \layout Description
 
-$o The original value of the current target, as it was specified by the
- user.
-\layout Itemize
-
-The value of this variable is unmodified and retains the exact value it
- was given by the user, whereas the values of the variables below will have,
- among other modifications, redundant directory separators removed.
-  For example, if the value of this variable is 
+$o The value of the current target, exactly as it was specified by the user.
 \layout Description
 
-$p Either a relative or absolute path to the current target.
- 
+$p Either a relative or absolute path to the current target with redundant
+ slashes removed.
 \layout Itemize
 
 For example, if 
@@ -903,8 +949,8 @@ $p
 .
 \layout Description
 
-$d Either a relative or an absolute path to the directory which contains
- the current target.
+$d Either a relative or absolute path to the directory which contains the
+ current target.
 \layout Itemize
 
 For example, if 
@@ -1296,6 +1342,56 @@ $e
 \layout Subsection
 
 Environment Variables
+\layout Description
+
+$LANG The first two characters of this variable's value are considered as
+ the ISO-639 language code that represents the user's language.
+ The localization bundle associated with this language code will then be
+ used when displaying messages to the user.
+\layout Itemize
+
+If this variable is not set, then FF will assume that the user's language
+ is English and that the user's ISO-639 language code is 
+\begin_inset Quotes eld
+\end_inset 
+
+en
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Itemize
+
+If FF cannot access the localization bundle for the user's language, then
+ it will revert to using the localization bundle for the English language.
+\layout Itemize
+
+For example, if 
+\begin_inset Quotes eld
+\end_inset 
+
+$LANG
+\begin_inset Quotes erd
+\end_inset 
+
+ is 
+\begin_inset Quotes eld
+\end_inset 
+
+te_IN.UTF-8
+\begin_inset Quotes erd
+\end_inset 
+
+ then 
+\begin_inset Quotes eld
+\end_inset 
+
+te
+\begin_inset Quotes erd
+\end_inset 
+
+ is considered as the ISO-639 language code that represents the user's language-
+--which is the Telugu language in this case.
 \layout Subsection
 
 
@@ -1303,13 +1399,41 @@ Environment Variables
 
 \end_inset 
 
-Exit-Status Diagnostics
+Exit Status Diagnostics
+\layout Standard
+
+Before it terminates, FF returns one of the following diagnostic values
+ as its exit status.
+\layout Description
+
+0 FF has fulfilled its duties successfully; have a nice day.
+\layout Description
+
+1 An error has occurred because of something the user has done.
+\layout Description
+
+2 An error has occurred because of how the user's system is configured.
+\layout Description
+
+3 An error has occurred because of something FF has done.
 \layout Section
 
 Localization
 \layout Section
 
 Examples
+\layout Section
+
+Glossary
+\layout Description
+
+FF For each File.
+\layout Description
+
+Glob A pattern.
+\layout Description
+
+Globbing Pattern-matching.
 \layout Section
 
 License
