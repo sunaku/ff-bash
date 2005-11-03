@@ -1,16 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"><!--
+<!--
 	Copyright 2003, 2004, 2005 Suraj N. Kurapati.
 
 	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".
 -->
-<book>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!ENTITY ff "<application>For each File</application>">
+	<!ENTITY ffWebsite "http://ff-bash.sf.net">
+]>
+<book lang="en">
 	<bookinfo>
-		<title>Hello, world</title>
-	</bookinfo>
-	<chapter>
-		<title>Hello, world</title>
+		<title>&ff; User's Manual</title>
 
-		<para>This is my first DocBook file.</para>
+		<author>
+			<firstname>Suraj</firstname>
+			<othername>N.</othername>
+			<surname>Kurapati</surname>
+		</author>
+
+		<copyright>
+			<year>2003</year>
+			<year>2004</year>
+			<year>2005</year>
+			<holder>Suraj N. Kurapati</holder>
+		</copyright>
+
+		<abstract>
+			<para>This manual, intended for users, explains how to install, use, and extend <ulink url="&ffWebsite;">&ff;</ulink>.</para>
+		</abstract>
+
+		<legalnotice condition="req">
+			<para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="ch:intro">
+		<title>Introduction</title>
+		<para>&ff; is a tool that enables one to execute an arbitrary set of GNU BASH commands upon an arbitrary set of files, directories, strings, or any other form of abstraction one requires. It can be used for performing repetitive file-system manipulation procedures such as mass file renaming.</para>
+	</chapter>
+
+	<chapter id="ch:getting-started">
+		<title>Getting Started</title>
+
+		<sect1 id="se:requirements">
+			<title>Requirements</title>
+			<para/>
+		</sect1>
+
+		<sect1 id="se:installation">
+			<title>Installing &ff;</title>
+			<para/>
+		</sect1>
+	</chapter>
+
+	<chapter id="ch:using">
+		<title>Using &ff;</title>
+		<para/>
+
+		<sect1 id="se:invocation">
+			<title>Invoking &ff;</title>
+			<para/>
+
+			<!-- need MAN page here -->
+			<!-- env vars -->
+			<!-- exit status -->
+		</sect1>
+
+		<sect1 id="se:writing-scripts">
+			<title>Writing Scripts</title>
+			<para/>
+
+			<sect2 id="se:control-functions">
+				<title>Control Functions</title>
+				<para/>
+			</sect2>
+
+			<sect2 id="se:target-variables">
+				<title>Target Variables</title>
+				<para/>
+			</sect2>
+		</sect1>
+	</chapter>
+
+	<chapter id="ch:extending">
+		<title>Extending &ff;</title>
+		<para/>
+
+		<sect1 id="se:localization">
+			<title>Localizing &ff;</title>
+			<para/>
+		</sect1>
 	</chapter>
 </book>
