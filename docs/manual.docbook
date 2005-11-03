@@ -26,10 +26,26 @@
 		</copyright>
 
 		<abstract>
-			<para>This manual, intended for users, explains how to install, use, and extend <ulink url="&ffWebsite;">&ff;</ulink>.</para>
+			<para>This manual explains how to install, use, and extend <ulink url="&ffWebsite;">&ff;</ulink>.</para>
 		</abstract>
 
-		<legalnotice condition="req">
+		<revhistory>
+			<revision>
+				<revnumber>1.2</revnumber>
+				<date>2005-11-03</date>
+				<authorinitials>snk</authorinitials>
+				<revremark>Extensive refactoring of document structure and content.</revremark>
+			</revision>
+
+			<revision>
+				<revnumber>1.1</revnumber>
+				<date>2005-11-02</date>
+				<authorinitials>snk</authorinitials>
+				<revremark>Initial port of user manual from old script-based manpages to DocBook-XML.</revremark>
+			</revision>
+		</revhistory>
+
+		<legalnotice>
 			<para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
 		</legalnotice>
 	</bookinfo>
@@ -88,6 +104,31 @@
 
 		<sect1 id="se:localization">
 			<title>Localizing &ff;</title>
+			<para/>
+		</sect1>
+	</chapter>
+
+	<chapter id="ch:feedback">
+		<title>Giving Feedback</title>
+		<para/>
+
+		<sect1 id="se:defect-reports">
+			<title>Reporting Defects</title>
+			<para/>
+		</sect1>
+
+		<sect1 id="se:feature-request">
+			<title>Requesting Features</title>
+			<para/>
+		</sect1>
+
+		<sect1 id="se:discussion-forums">
+			<title>Voicing Your Opinion</title>
+			<para/>
+		</sect1>
+
+		<sect1 id="se:getting-help">
+			<title>Getting Help</title>
 			<para/>
 		</sect1>
 	</chapter>
