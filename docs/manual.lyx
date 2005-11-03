@@ -39,9 +39,6 @@ For each File
  User's Manual
 \layout Author
 
-Suraj N.
- Kurapati
-\newline 
 
 \begin_inset LatexCommand \url{http://ff-bash.sf.net}
 
@@ -49,10 +46,29 @@ Suraj N.
 
 
 \layout Abstract
-\added_space_bottom bigskip 
+\added_space_bottom vfill 
 This manual explains how to install, use, and extend For each File.
 \layout Standard
 
+Copyright 2003, 2004, 2005 Suraj N.
+ Kurapati.
+\layout Standard
+
+Permission is granted to copy, distribute and/or modify this document under
+ the terms of the GNU Free Documentation License, Version 1.2 or any later
+ version published by the Free Software Foundation; with no Invariant Sections,
+ no Front-Cover Texts, and no Back-Cover Texts.
+ A copy of the license is included in the section entitled 
+\begin_inset Quotes eld
+\end_inset 
+
+GNU Free Documentation License.
+\begin_inset Quotes erd
+\end_inset 
+
+
+\layout Standard
+\added_space_top vfill \pagebreak_bottom 
 
 \begin_inset LatexCommand \tableofcontents{}
 
@@ -60,7 +76,7 @@ This manual explains how to install, use, and extend For each File.
 
 
 \layout Section
-\pagebreak_top 
+
 Introduction
 \layout Section
 
@@ -1436,5 +1452,14 @@ Glob A pattern.
 Globbing Pattern-matching.
 \layout Section
 
-License
+GNU Free Documentation License
+\layout Standard
+
+
+\begin_inset Include \verbatiminput{fdl.txt}
+preview false
+
+\end_inset 
+
+
 \the_end
