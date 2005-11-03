@@ -2,9 +2,7 @@
 \lyxformat 221
 \textclass article
 \begin_preamble
-\usepackage{url}          %% for URLs (also in Bibtex)
 \usepackage{ae,aecompl}   %% generates nicer PDF output (better fonts)
-\usepackage{hyperref}     %% best at the end, generates PDF with hyperlinks
 \end_preamble
 \language english
 \inputencoding auto
@@ -78,6 +76,42 @@ GNU Free Documentation License.
 \layout Section
 
 Introduction
+\layout Standard
+
+For each File (FF) is a tool that enables one to execute an arbitrary set
+ of GNU BASH commands upon an arbitrary set of files, directories, strings,
+ or any other form of abstraction one requires.
+ It can be used for performing repetitive file-system manipulation procedures
+ such as mass file renaming.
+\layout Section
+
+Requirements
+\layout Itemize
+
+
+\begin_inset LatexCommand \htmlurl[GNU BASH]{http://www.gnu.org/software/bash/bash.html}
+
+\end_inset 
+
+
+\begin_deeper 
+\layout Itemize
+
+Version 2.05b has been tested successfully with FF.
+\end_deeper 
+\layout Itemize
+
+
+\begin_inset LatexCommand \htmlurl[GNU coreutils]{http://www.gnu.org/software/coreutils/}
+
+\end_inset 
+
+
+\begin_deeper 
+\layout Itemize
+
+Version 5.2.1 has been tested successfully with FF.
+\end_deeper 
 \layout Section
 
 Installation
