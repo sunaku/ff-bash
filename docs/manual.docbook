@@ -6,7 +6,8 @@
 -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
 	<!ENTITY ff "<application>For each File</application>">
-	<!ENTITY ffWebsite "http://ff-bash.sf.net">
+	<!ENTITY cmd "ff">
+	<!ENTITY url "http://ff-bash.sf.net">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -26,7 +27,7 @@
 		</copyright>
 
 		<abstract>
-			<para>This manual explains how to install, use, and extend <ulink url="&ffWebsite;">&ff;</ulink>.</para>
+			<para>This manual explains how to install, use, and extend <ulink url="&url;">&ff;</ulink>.</para>
 		</abstract>
 
 		<revhistory>
@@ -52,7 +53,7 @@
 
 	<chapter id="ch:intro">
 		<title>Introduction</title>
-		<para>&ff; is a tool that enables one to execute an arbitrary set of GNU BASH commands upon an arbitrary set of files, directories, strings, or any other form of abstraction one requires. It can be used for performing repetitive file-system manipulation procedures such as mass file renaming.</para>
+		<para>&ff; lets you execute an arbitrary set of GNU BASH commands upon an arbitrary set of files. It is often used to perform repetitive file-system manipulation tasks, such as renaming a large number of files.</para>
 	</chapter>
 
 	<chapter id="ch:getting-started">
@@ -71,11 +72,37 @@
 
 	<chapter id="ch:using">
 		<title>Using &ff;</title>
-		<para/>
+		<procedure id="proc:using">
+			<title>Using &ff;</title>
+
+			<step performance="required">
+				<para>Using its <link linkend="se:invocation">invocation syntax</link>, invoke &ff; at your command-prompt.</para>
+			</step>
+
+			<step performance="required">
+				<para>If you did not specify your <link linkend="se:writing-scripts">script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>. Type your script on as many lines as you need. When you have finished, press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a blank line to tell &ff; that you have finished typing your script.</para>
+
+				<example id="ex:typing-script-at-prompt">
+					<title>Typing your Script at The Command-Prompt</title>
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd;</command> <replaceable>World</replaceable></userinput>
+<userinput>echo -n "Hello, $o! Today is "
+date
+<keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
+<computeroutput>Hello, World! Today is Thu Nov  3 15:32:16 PST 2005</computeroutput>
+<prompt>$</prompt>
+					</screen>
+				</example>
+			</step>
+
+			<step>
+				<para>&ff; will now (1) execute your script, (2) return a diagnostic value for its exit status, and (3) terminate.</para>
+			</step>
+		</procedure>
 
 		<sect1 id="se:invocation">
 			<title>Invoking &ff;</title>
-			<para/>
+			<para>blah</para>
 
 			<!-- need MAN page here -->
 			<!-- env vars -->
