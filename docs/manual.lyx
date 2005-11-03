@@ -33,13 +33,9 @@
 \layout Title
 
 The 
-\begin_inset Quotes eld
-\end_inset 
-
+\emph on 
 For each File
-\begin_inset Quotes erd
-\end_inset 
-
+\emph default 
  User's Manual
 \layout Author
 
@@ -52,6 +48,9 @@ Suraj N.
 \end_inset 
 
 
+\layout Abstract
+\added_space_bottom bigskip 
+This manual explains how to install, use, and extend For each File.
 \layout Standard
 
 
@@ -71,7 +70,7 @@ Installation
 Usage
 \layout Enumerate
 
-Invoke FF according to the instructions in Section 
+Invoke FF using the syntax described in Section 
 \begin_inset LatexCommand \ref{sub:Invocation Syntax}
 
 \end_inset 
@@ -84,9 +83,9 @@ If you did not specify your script in the previous step, then FF will give
 \begin_deeper 
 \layout Enumerate
 
-When you are finished typing your script, tell FF that you have finished
+When you have finished typing your script, tell FF that you have finished
  by issuing the end-of-transmission signal.
- This signal is represented as 
+ This signal is (1) represented as 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -94,7 +93,7 @@ When you are finished typing your script, tell FF that you have finished
 \begin_inset Quotes erd
 \end_inset 
 
- in the example below, and it is issued by pressing the 
+ in the example below and (2) issued by pressing the 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -117,6 +116,16 @@ echo This is my script.
 \emph default 
 $
 \end_deeper 
+\layout Enumerate
+
+FF will now execute your script upon the given arguments.
+ Once it has finished, FF will return a diagnostic exit-status (See Section
+ 
+\begin_inset LatexCommand \ref{sub:Diagnostics}
+
+\end_inset 
+
+) and terminate.
 \layout Subsection
 
 
@@ -147,7 +156,7 @@ This syntax denotes that (1) FF can be invoked with zero or more arguments,
 
 Option A mechanism which enables you to alter FF's behavior.
  (See Section 
-\begin_inset LatexCommand \ref{sub:Options}
+\begin_inset LatexCommand \ref{sub:Invocation Options}
 
 \end_inset 
 
@@ -190,14 +199,14 @@ Absolute or relative paths to text or binary files, directories, symbolic
 , they are not restricted to being used in this way.
  You can use a target as a URL, string, number, or any other form of abstraction
  that your script requires.
-\layout Subsection
+\layout Subsubsection
 
 
-\begin_inset LatexCommand \label{sub:Options}
+\begin_inset LatexCommand \label{sub:Invocation Options}
 
 \end_inset 
 
-Options
+Available Options
 \layout Description
 
 -
@@ -565,7 +574,8 @@ If the given glob does not use any globbing notation, then it will be appended
 \end_inset 
 
  glob.
- 
+ This happens because FF does not check if a target exists in the file-system
+ before executing your script on the target.
 \begin_deeper 
 \layout Itemize
 
@@ -574,14 +584,14 @@ For example, try executing the following command and notice how all echoed
 \begin_inset Quotes eld
 \end_inset 
 
-globby_glob
+globbyGlob
 \begin_inset Quotes erd
 \end_inset 
 
  at the end.
 \layout LyX-Code
 
-$ ff -r /tmp -m globby_glob -e 'echo $p'
+$ ff -r /etc -m globbyGlob -e 'echo $p'
 \end_deeper 
 \layout Itemize
 
@@ -627,9 +637,219 @@ OR\SpecialChar ~
 \end_inset 
 
 -version Show your release-version and copyright.
-\layout Section
+\layout Subsection
 
-Scripts
+User Scripts
+\layout Subsubsection
+
+Control Functions
+\layout Standard
+
+These functions give your script more control over its execution.
+ You are not required to implement these functions in order to use FF.
+ However, if you decide to implement any one of these functions, then FF
+ requires that you implement the 
+\begin_inset Quotes eld
+\end_inset 
+
+during
+\begin_inset Quotes erd
+\end_inset 
+
+ function as well.
+\layout Description
+
+before\SpecialChar ~
+
+\emph on 
+argumentTargets
+\emph default 
+ This function is invoked before any targets have been handled.
+ Its parameters are targets that have been specified as arguments only.
+ Thus, targets specified on the standard input stream with the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-pipe
+\begin_inset Quotes erd
+\end_inset 
+
+ option are not passed to this function.
+\layout Itemize
+
+This is a good place to scan for options that pertain to your script.
+\layout Description
+
+during\SpecialChar ~
+
+\emph on 
+target
+\emph default 
+ This function is invoked once per 
+\emph on 
+target
+\emph default 
+.
+ Its parameter is a target that has either been specified as an argument
+ or has been specified on the standard input stream with the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-pipe
+\begin_inset Quotes erd
+\end_inset 
+
+ option.
+ 
+\layout Itemize
+
+Targets specified as arguments are passed to this function before targets
+ specified on the standard input stream with the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-pipe
+\begin_inset Quotes erd
+\end_inset 
+
+ option.
+\layout Description
+
+after\SpecialChar ~
+
+\emph on 
+argumentTargets 
+\emph default 
+This function is invoked after all targets have been handled.
+ Its parameters are targets that have been specified as arguments only.
+ Thus, targets specified on the standard input stream with the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-pipe
+\begin_inset Quotes erd
+\end_inset 
+
+ option are not passed to this function.
+\layout Description
+
+end This function is invoked immediately before FF terminates.
+ It is a good place to clean up any temporary files that were created by
+ your script.
+\layout Subsubsection
+
+Uses of Control Functions
+\layout Standard
+
+To illustrate how control functions give your script more control over its
+ execution, consider the following examples.
+\layout Itemize
+
+If your script creates temporary files during execution, then you can place
+ code that removes the temporary files in the 
+\begin_inset Quotes eld
+\end_inset 
+
+end
+\begin_inset Quotes erd
+\end_inset 
+
+ function to make sure your script does not leave a mess when a user forcefully
+ terminates it.
+\layout Itemize
+
+Your script can scan targets---specified as arguments to FF---for options
+ in the 
+\begin_inset Quotes eld
+\end_inset 
+
+before
+\begin_inset Quotes erd
+\end_inset 
+
+ function.
+ This enables your script to change its behavior depending on the options
+ passed to it, just like FF.
+ For example, a user can specify options 
+\begin_inset Quotes eld
+\end_inset 
+
+foo
+\begin_inset Quotes erd
+\end_inset 
+
+ and 
+\begin_inset Quotes eld
+\end_inset 
+
+bar
+\begin_inset Quotes erd
+\end_inset 
+
+ for your script by placing them after the 
+\begin_inset Quotes eld
+\end_inset 
+
+-
+\begin_inset Formula $ $
+\end_inset 
+
+-
+\begin_inset Quotes erd
+\end_inset 
+
+ option, as shown below.
+\layout LyX-Code
+
+$ ff -- foo bar
+\layout Subsubsection
+
+Preset Variables
+\layout Description
+
+$o
+\layout Description
+
+$p
+\layout Description
+
+$d
+\layout Description
+
+$n
+\layout Description
+
+$b
+\layout Description
+
+$e
+\layout Subsection
+
+Environment Variables
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{sub:Diagnostics}
+
+\end_inset 
+
+Exit-Status Diagnostics
 \layout Section
 
 Localization
