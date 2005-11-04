@@ -5,9 +5,17 @@
 	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".
 -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!ENTITY fdlAppendix SYSTEM "fdl.xml">
+
+	<!ENTITY gnu "<acronym>GNU</acronym>">
+	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 	<!ENTITY ff "<application>For each File</application>">
+
 	<!ENTITY cmd "ff">
 	<!ENTITY url "http://ff-bash.sf.net">
+	<!ENTITY desc "&ff; lets you execute an arbitrary set of &bash; commands upon an arbitrary set of files. It is often used to perform repetitive file-system manipulation tasks, such as renaming a large number of files.">
+
+	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -42,50 +50,50 @@
 				<revnumber>1.1</revnumber>
 				<date>2005-11-02</date>
 				<authorinitials>snk</authorinitials>
-				<revremark>Initial port of user manual from old script-based manpages to DocBook-XML.</revremark>
+				<revremark>Initial port of user manual from old script-based manualPages to DocBook-XML.</revremark>
 			</revision>
 		</revhistory>
 
 		<legalnotice>
-			<para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
+			<para>Permission is granted to copy, distribute and/or modify this document under the terms of the &gnu; Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "&gnu; Free Documentation License".</para>
 		</legalnotice>
 	</bookinfo>
 
-	<chapter id="ch:intro">
+	<chapter id="chp:intro">
 		<title>Introduction</title>
-		<para>&ff; lets you execute an arbitrary set of GNU BASH commands upon an arbitrary set of files. It is often used to perform repetitive file-system manipulation tasks, such as renaming a large number of files.</para>
+		<para>&desc;</para>
 	</chapter>
 
-	<chapter id="ch:getting-started">
+	<chapter id="chp:getting-started">
 		<title>Getting Started</title>
 
-		<sect1 id="se:requirements">
+		<sect1 id="sec:requirements">
 			<title>Requirements</title>
 			<para/>
 		</sect1>
 
-		<sect1 id="se:installation">
+		<sect1 id="sec:installation">
 			<title>Installing &ff;</title>
 			<para/>
 		</sect1>
 	</chapter>
 
-	<chapter id="ch:using">
+	<chapter id="chp:using">
 		<title>Using &ff;</title>
 		<procedure id="proc:using">
 			<title>Using &ff;</title>
 
 			<step performance="required">
-				<para>Using its <link linkend="se:invocation">invocation syntax</link>, invoke &ff; at your command-prompt.</para>
+				<para>Using its <link linkend="ref:manualPage">invocation syntax</link>, invoke &ff; at a command-prompt.</para>
 			</step>
 
 			<step performance="required">
-				<para>If you did not specify your <link linkend="se:writing-scripts">script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>. Type your script on as many lines as you need. When you have finished, press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a blank line to tell &ff; that you have finished typing your script.</para>
+				<para>If you did not specify your <link linkend="sec:writing-scripts">script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>. Type your script on as many lines as you need. When you have finished, press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a blank line to tell &ff; that you have finished typing your script.</para>
 
 				<example id="ex:typing-script-at-prompt">
-					<title>Typing your Script at The Command-Prompt</title>
+					<title>Typing Your Script at a Command-Prompt</title>
 					<screen>
-<prompt>$</prompt> <userinput><command>&cmd;</command> <replaceable>World</replaceable></userinput>
+<prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
 <userinput>echo -n "Hello, $o! Today is "
 date
 <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
@@ -100,63 +108,341 @@ date
 			</step>
 		</procedure>
 
-		<sect1 id="se:invocation">
+		<sect1 id="sec:invocation">
 			<title>Invoking &ff;</title>
-			<para>blah</para>
+			<para> <!-- explain what the syntax means --></para>
 
-			<!-- need MAN page here -->
-			<!-- env vars -->
-			<!-- exit status -->
 		</sect1>
 
-		<sect1 id="se:writing-scripts">
+		<sect1 id="sec:writing-scripts">
 			<title>Writing Scripts</title>
 			<para/>
 
-			<sect2 id="se:control-functions">
+			<sect2 id="sec:control-functions">
 				<title>Control Functions</title>
 				<para/>
 			</sect2>
 
-			<sect2 id="se:target-variables">
+			<sect2 id="sec:target-variables">
 				<title>Target Variables</title>
 				<para/>
 			</sect2>
 		</sect1>
 	</chapter>
 
-	<chapter id="ch:extending">
+	<chapter id="chp:extending">
 		<title>Extending &ff;</title>
 		<para/>
 
-		<sect1 id="se:localization">
+		<sect1 id="sec:localization">
 			<title>Localizing &ff;</title>
 			<para/>
 		</sect1>
 	</chapter>
 
-	<chapter id="ch:feedback">
+	<chapter id="chp:feedback">
 		<title>Giving Feedback</title>
 		<para/>
 
-		<sect1 id="se:defect-reports">
+		<sect1 id="sec:defect-reports">
 			<title>Reporting Defects</title>
 			<para/>
 		</sect1>
 
-		<sect1 id="se:feature-request">
+		<sect1 id="sec:feature-request">
 			<title>Requesting Features</title>
 			<para/>
 		</sect1>
 
-		<sect1 id="se:discussion-forums">
+		<sect1 id="sec:discussion-forums">
 			<title>Voicing Your Opinion</title>
 			<para/>
 		</sect1>
 
-		<sect1 id="se:getting-help">
+		<sect1 id="sec:getting-help">
 			<title>Getting Help</title>
 			<para/>
 		</sect1>
 	</chapter>
+
+	<appendix>
+		<title><acronym>UNIX</acronym> Manual Page</title>
+		<refentry id="ref:manualPage">
+			<refmeta>
+				<refentrytitle>
+					<application>&cmd;</application>
+				</refentrytitle>
+				<manvolnum>1</manvolnum>
+			</refmeta>
+
+			<refnamediv>
+				<refname>
+					<application>&cmd;</application>
+				</refname>
+				<refpurpose>Run &bash; commands on files or strings.</refpurpose>
+			</refnamediv>
+
+			<refsynopsisdiv>
+				<cmdsynopsis>
+					<command>&cmd;</command>
+					<group choice="opt">
+						<arg choice="opt" rep="repeat">option</arg>
+						<arg choice="opt" rep="repeat">target</arg>
+					</group>
+				</cmdsynopsis>
+
+				<variablelist>
+					<varlistentry>
+						<term>option</term>
+						<listitem>
+							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:options"/> for a list of available options.</para>
+
+							<tip>
+								<para>You can combine a series of short options into a single option. For example, the series <command><option>-a</option> 1 <option>-b</option> 2 <option>-c</option> 3</command> can be combined into <command><option>-abc</option> 1 2 3</command>.</para>
+							</tip>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>target</term>
+						<listitem>
+							<!-- TODO: define "string" in glossary -->
+							<para>An object upon which the your script is executed. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsynopsisdiv>
+
+			<refsection>
+				<title>Description</title>
+				<para>&desc;</para>
+			</refsection>
+
+			<refsection id="ref:options">
+				<title>Options</title>
+				<variablelist>
+					<varlistentry>
+						<term>
+							<option>--</option>
+						</term>
+						<listitem>
+							<para>Stop looking for options among the given arguments and consider that the remaining arguments are targets.</para>
+
+							<para>With this option, you can safely specify targets whose names begin with a hyphen <literal>-</literal>. Such targets would otherwise be mistaken for options. For example, you can specify two targets named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-e</option>
+							<replaceable>expression</replaceable>
+						</term>
+						<term>
+							<option>--expression</option>
+							<replaceable>expression</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>expression</replaceable> is the user's script instead of asking the the user to type a script at the command-prompt.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-f</option>
+							<replaceable>file</replaceable>
+						</term>
+						<term>
+							<option>--file</option>
+							<replaceable>file</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>file</replaceable> contains the user's script instead of asking the user to type a script at the command-prompt.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-p</option>
+						</term>
+						<term>
+							<option>--pipe</option>
+						</term>
+						<listitem>
+							<para>Read the standard input stream for targets which are delimited by the new-line character. In other words, these targets should be listed one per line on the standard input stream.</para>
+
+							<para>Targets specified as command-line arguments are executed by the your script before the targets specified on the standard input stream.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>--suffix-delim</option>
+							<replaceable>delimiter</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:parts-of-fileName">prefix and suffix</link>&mdash;also known as an "extension"&mdash;of a file's name. The default suffix delimiter is a period <literal>.</literal>.</para>
+
+							<example id="ex:parts-of-fileName">
+								<title>The Parts of a File's Name</title>
+								<para>
+									The name of a file called <filename>foo.bar</filename> can be divided into the following parts:
+
+									<itemizedlist>
+										<listitem>
+											<para>A prefix: <literal>foo</literal></para>
+										</listitem>
+										<listitem>
+											<para>A suffix delimiter: <literal>.</literal></para>
+										</listitem>
+										<listitem>
+											<para>A suffix: <literal>bar</literal></para>
+										</listitem>
+									</itemizedlist>
+								</para>
+							</example>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-r</option>
+						</term>
+						<term>
+							<option>--recursive</option>
+						</term>
+						<listitem>
+							<para>Recursively traverse into targets&mdash;which happen to be directories or symbolic links that point to directories&mdash;in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
+
+							<example id="ex:breadth-first-recursion">
+								<title>Breadth-First Recursion</title>
+								<para>When breadth-first recursion is used, all files in a directory are handled linearly by the user's script <emphasis>before</emphasis> any sub-directories are handled recursively.</para>
+
+								<para>For example, in the directory structure below, the paths <filename>foo/bar</filename> and <filename>foo/moz</filename> are handled linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is handled recursively. In this manner, <filename>foo/bar/baz</filename> will be the last file handled by your script.</para>
+
+								<itemizedlist>
+									<listitem>
+										<para>foo/</para>
+
+										<itemizedlist>
+											<listitem>
+												<para>bar/</para>
+
+												<itemizedlist>
+													<listitem>
+														<para>baz</para>
+													</listitem>
+												</itemizedlist>
+											</listitem>
+
+											<listitem>
+												<para>moz</para>
+											</listitem>
+										</itemizedlist>
+									</listitem>
+								</itemizedlist>
+							</example>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-a</option>
+						</term>
+						<term>
+							<option>--all</option>
+						</term>
+						<listitem>
+							<para>Do not ignore targets whose names begin with a period.</para>
+
+							&noteNeedRecursiveOpt;
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-L</option>
+						</term>
+						<term>
+							<option>--ignore-links</option>
+						</term>
+						<listitem>
+							<para>Do not traverse into symbolic links that point to directories.</para>
+
+							&noteNeedRecursiveOpt;
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-m</option>
+							<replaceable>glob</replaceable>
+						</term>
+						<term>
+							<option>--mask</option>
+							<replaceable>glob</replaceable>
+						</term>
+						<listitem>
+							<para>Handle targets only if their names match the <replaceable>glob</replaceable><footnote>
+								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
+							</footnote>.</para>
+
+							&noteNeedRecursiveOpt;
+
+							<tip>
+								<para>You can use extended globbing notation<footnote>
+									<para>See "extglob" in the &bash; manual for more information.</para>
+								</footnote> in <replaceable>glob</replaceable>.</para>
+							</tip>
+
+							<para><replaceable>glob</replaceable> will not match a period at the beginning of a target's name unless the <option>--all</option> option is also specified.</para>
+
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every target that matches the <literal>*</literal> glob. This happens because &ff; does not check if a target exists in the file-system before executing your script on the target.</para>
+
+							<para>For example, try executing <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo $p'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-h</option>
+						</term>
+						<term>
+							<option>--help</option>
+						</term>
+						<listitem>
+							<para>Show the invocation syntax and a list of available options in extended globbing notation<footnote>
+									<para>See "extglob" in the &bash; manual for more information.</para>
+								</footnote>.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-v</option>
+						</term>
+						<term>
+							<option>--verbose</option>
+						</term>
+						<listitem>
+							<para>Describe what you are doing as you do it.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>
+							<option>-V</option>
+						</term>
+						<term>
+							<option>--version</option>
+						</term>
+						<listitem>
+							<para>Show your release-version and copyright.</para>
+						</listitem>
+					</varlistentry>
+
+				</variablelist>
+			</refsection>
+		</refentry>
+	</appendix>
+
+	&fdlAppendix;
 </book>
