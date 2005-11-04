@@ -67,15 +67,15 @@
 	<chapter id="chp:getting-started">
 		<title>Getting Started</title>
 
-		<sect1 id="sec:requirements">
+		<section id="sec:requirements">
 			<title>Requirements</title>
 			<para/>
-		</sect1>
+		</section>
 
-		<sect1 id="sec:installation">
+		<section id="sec:installation">
 			<title>Installing &ff;</title>
 			<para/>
-		</sect1>
+		</section>
 	</chapter>
 
 	<chapter id="chp:using">
@@ -108,61 +108,61 @@ date
 			</step>
 		</procedure>
 
-		<sect1 id="sec:invocation">
+		<section id="sec:invocation">
 			<title>Invoking &ff;</title>
 			<para> <!-- explain what the syntax means --></para>
 
-		</sect1>
+		</section>
 
-		<sect1 id="sec:writing-scripts">
+		<section id="sec:writing-scripts">
 			<title>Writing Scripts</title>
 			<para/>
 
-			<sect2 id="sec:control-functions">
+			<section id="sec:control-functions">
 				<title>Control Functions</title>
 				<para/>
-			</sect2>
+			</section>
 
-			<sect2 id="sec:target-variables">
+			<section id="sec:target-variables">
 				<title>Target Variables</title>
 				<para/>
-			</sect2>
-		</sect1>
+			</section>
+		</section>
 	</chapter>
 
 	<chapter id="chp:extending">
 		<title>Extending &ff;</title>
 		<para/>
 
-		<sect1 id="sec:localization">
+		<section id="sec:localization">
 			<title>Localizing &ff;</title>
 			<para/>
-		</sect1>
+		</section>
 	</chapter>
 
 	<chapter id="chp:feedback">
 		<title>Giving Feedback</title>
 		<para/>
 
-		<sect1 id="sec:defect-reports">
+		<section id="sec:defect-reports">
 			<title>Reporting Defects</title>
 			<para/>
-		</sect1>
+		</section>
 
-		<sect1 id="sec:feature-request">
+		<section id="sec:feature-request">
 			<title>Requesting Features</title>
 			<para/>
-		</sect1>
+		</section>
 
-		<sect1 id="sec:discussion-forums">
+		<section id="sec:discussion-forums">
 			<title>Voicing Your Opinion</title>
 			<para/>
-		</sect1>
+		</section>
 
-		<sect1 id="sec:getting-help">
+		<section id="sec:getting-help">
 			<title>Getting Help</title>
 			<para/>
-		</sect1>
+		</section>
 	</chapter>
 
 	<appendix>
@@ -393,7 +393,7 @@ date
 								</footnote> in <replaceable>glob</replaceable>.</para>
 							</tip>
 
-							<para><replaceable>glob</replaceable> will not match a period at the beginning of a target's name unless the <option>--all</option> option is also specified.</para>
+							<para>The <replaceable>glob</replaceable> will not match a period at the beginning of a target's name unless the <option>--all</option> option is also specified.</para>
 
 							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every target that matches the <literal>*</literal> glob. This happens because &ff; does not check if a target exists in the file-system before executing your script on the target.</para>
 
