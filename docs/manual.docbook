@@ -13,7 +13,7 @@
 
 	<!ENTITY cmd "ff">
 	<!ENTITY url "http://ff-bash.sf.net">
-	<!ENTITY desc "&ff; lets you execute an arbitrary set of &bash; commands upon an arbitrary set of files. It is often used to perform repetitive file-system manipulation tasks, such as renaming a large number of files.">
+	<!ENTITY desc "&ff; lets you run an arbitrary set of &bash; commands upon an arbitrary set of files or strings. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files.">
 
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
 ]>
@@ -84,13 +84,13 @@
 			<title>Using &ff;</title>
 
 			<step performance="required">
-				<para>Using its <link linkend="ref:manualPage">invocation syntax</link>, invoke &ff; at a command-prompt.</para>
+				<para>Invoke &ff; at a command-prompt (See <xref linkend="sec:invocation"/>).</para>
 			</step>
 
-			<step performance="required">
-				<para>If you did not specify your <link linkend="sec:writing-scripts">script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>. Type your script on as many lines as you need. When you have finished, press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a blank line to tell &ff; that you have finished typing your script.</para>
+			<step>
+				<para>If you did not specify <link linkend="sec:writing-scripts">your script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>.</para>
 
-				<example id="ex:typing-script-at-prompt">
+<example id="ex:typing-script-at-prompt">
 					<title>Typing Your Script at a Command-Prompt</title>
 					<screen>
 <prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
@@ -101,17 +101,31 @@ date
 <prompt>$</prompt>
 					</screen>
 				</example>
+
+				<substeps>
+					<step>
+						<para>Type your script using as much space as you need. That is, your script can take up multiple lines. You can start a new line by pressing the <keycap>Enter</keycap> or <keycap>Return</keycap> key.</para>
+
+						<tip>
+							<title>&gnu; Readline Shortcuts</title>
+							<para>While typing your script, you can use <ulink url="http://cnswww.cns.cwru.edu/~chet/readline/rltop.html">&gnu; Readline</ulink> shortcuts such as <keycombo action="press"><keycap>Ctrl</keycap><keycap>u</keycap></keycombo> to erase everything between the cursor and the beginning of a line; and <keycombo action="press"><keycap>Ctrl</keycap><keycap>k</keycap></keycombo> to erase everything between the cursor and the end of a line.</para>
+						</tip>
+					</step>
+
+					<step>
+						<para>Press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a new, blank line to tell &ff; that you have finished typing your script.</para>
+					</step>
+				</substeps>
 			</step>
 
 			<step>
-				<para>&ff; will now (1) execute your script, (2) return a diagnostic value for its exit status, and (3) terminate.</para>
+				<para>&ff; will now run your script, return a <!--TODO: link-->diagnostic value as its exit status, and terminate.</para>
 			</step>
 		</procedure>
 
 		<section id="sec:invocation">
 			<title>Invoking &ff;</title>
 			<para> <!-- explain what the syntax means --></para>
-
 		</section>
 
 		<section id="sec:writing-scripts">
@@ -198,6 +212,7 @@ date
 							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:options"/> for a list of available options.</para>
 
 							<tip>
+								<title>Combining Short Options</title>
 								<para>You can combine a series of short options into a single option. For example, the series <command><option>-a</option> 1 <option>-b</option> 2 <option>-c</option> 3</command> can be combined into <command><option>-abc</option> 1 2 3</command>.</para>
 							</tip>
 						</listitem>
@@ -206,7 +221,7 @@ date
 						<term>target</term>
 						<listitem>
 							<!-- TODO: define "string" in glossary -->
-							<para>An object upon which the your script is executed. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
+							<para>An object which is passed as an argument to and is handled by your script. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
@@ -269,7 +284,7 @@ date
 						<listitem>
 							<para>Read the standard input stream for targets which are delimited by the new-line character. In other words, these targets should be listed one per line on the standard input stream.</para>
 
-							<para>Targets specified as command-line arguments are executed by the your script before the targets specified on the standard input stream.</para>
+							<para>Targets specified as command-line arguments are handled by your script before the targets specified on the standard input stream.</para>
 						</listitem>
 					</varlistentry>
 
@@ -279,9 +294,11 @@ date
 							<replaceable>delimiter</replaceable>
 						</term>
 						<listitem>
-							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:parts-of-fileName">prefix and suffix</link>&mdash;also known as an "extension"&mdash;of a file's name. The default suffix delimiter is a period <literal>.</literal>.</para>
+							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:fileName-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
+								<para>The suffix is also called "extension" or "file extension".</para>
+							</footnote></link> of a file's name. The default suffix delimiter is a period <literal>.</literal>.</para>
 
-							<example id="ex:parts-of-fileName">
+							<example id="ex:fileName-parts">
 								<title>The Parts of a File's Name</title>
 								<para>
 									The name of a file called <filename>foo.bar</filename> can be divided into the following parts:
@@ -381,23 +398,21 @@ date
 							<replaceable>glob</replaceable>
 						</term>
 						<listitem>
-							<para>Handle targets only if their names match the <replaceable>glob</replaceable><footnote>
+							<para>Handle targets only if their names match <replaceable>glob</replaceable><footnote id="fot:bash-glob">
 								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
 							</footnote>.</para>
+
+							<para>Unless the <option>--all</option> option is also specified, targets whose names begin with a period <literal>.</literal> are not checked to see if their names match <replaceable>glob</replaceable>. For example, targets with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas targets with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
+
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every target that matches the <literal>*</literal> glob. This happens because &ff; does not check if a target exists in the file-system before passing the target as an argument to your script. For example, try running the command <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo $p'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
 							<tip>
-								<para>You can use extended globbing notation<footnote>
+								<para>You can use extended<footnote id="fot:bash-extglob">
 									<para>See "extglob" in the &bash; manual for more information.</para>
-								</footnote> in <replaceable>glob</replaceable>.</para>
+								</footnote> globbing notation in <replaceable>glob</replaceable>.</para>
 							</tip>
-
-							<para>The <replaceable>glob</replaceable> will not match a period at the beginning of a target's name unless the <option>--all</option> option is also specified.</para>
-
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every target that matches the <literal>*</literal> glob. This happens because &ff; does not check if a target exists in the file-system before executing your script on the target.</para>
-
-							<para>For example, try executing <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo $p'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 						</listitem>
 					</varlistentry>
 
@@ -409,9 +424,7 @@ date
 							<option>--help</option>
 						</term>
 						<listitem>
-							<para>Show the invocation syntax and a list of available options in extended globbing notation<footnote>
-									<para>See "extglob" in the &bash; manual for more information.</para>
-								</footnote>.</para>
+							<para>Show the invocation syntax and a list of available options in extended<footnoteref linkend="fot:bash-extglob"/> globbing notation.</para>
 						</listitem>
 					</varlistentry>
 
