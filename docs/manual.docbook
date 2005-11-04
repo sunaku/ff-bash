@@ -13,7 +13,9 @@
 
 	<!ENTITY cmd "ff">
 	<!ENTITY url "http://ff-bash.sf.net">
-	<!ENTITY desc "&ff; lets you run an arbitrary set of &bash; commands upon an arbitrary set of files or strings. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files.">
+	<!ENTITY desc "&ff; lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files.">
+
+	<!ENTITY period "period <literal>.</literal>">
 
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
 ]>
@@ -80,27 +82,16 @@
 
 	<chapter id="chp:using">
 		<title>Using &ff;</title>
+
 		<procedure id="proc:using">
 			<title>Using &ff;</title>
 
 			<step performance="required">
-				<para>Invoke &ff; at a command-prompt (See <xref linkend="sec:invocation"/>).</para>
+				<para><link linkend="sec:invocation">Invoke &ff;</link> at a command-prompt.</para>
 			</step>
 
 			<step>
 				<para>If you did not specify <link linkend="sec:writing-scripts">your script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>.</para>
-
-<example id="ex:typing-script-at-prompt">
-					<title>Typing Your Script at a Command-Prompt</title>
-					<screen>
-<prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
-<userinput>echo -n "Hello, $o! Today is "
-date
-<keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
-<computeroutput>Hello, World! Today is Thu Nov  3 15:32:16 PST 2005</computeroutput>
-<prompt>$</prompt>
-					</screen>
-				</example>
 
 				<substeps>
 					<step>
@@ -123,6 +114,18 @@ date
 			</step>
 		</procedure>
 
+		<example id="ex:typing-script-at-prompt">
+					<title>Typing Your Script at a Command-Prompt</title>
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
+<userinput>echo -n "Hello, $o! Today is "
+date
+<keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
+<computeroutput>Hello, World! Today is Thu Nov  3 15:32:16 PST 2005</computeroutput>
+<prompt>$</prompt>
+					</screen>
+		</example>
+
 		<section id="sec:invocation">
 			<title>Invoking &ff;</title>
 			<para> <!-- explain what the syntax means --></para>
@@ -137,8 +140,8 @@ date
 				<para/>
 			</section>
 
-			<section id="sec:target-variables">
-				<title>Target Variables</title>
+			<section id="sec:object-variables">
+				<title>Object Variables</title>
 				<para/>
 			</section>
 		</section>
@@ -201,7 +204,7 @@ date
 					<command>&cmd;</command>
 					<group choice="opt">
 						<arg choice="opt" rep="repeat">option</arg>
-						<arg choice="opt" rep="repeat">target</arg>
+						<arg choice="opt" rep="repeat">object</arg>
 					</group>
 				</cmdsynopsis>
 
@@ -218,10 +221,10 @@ date
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term>target</term>
+						<term>object</term>
 						<listitem>
 							<!-- TODO: define "string" in glossary -->
-							<para>An object which is passed as an argument to and is handled by your script. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
+							<para>An object which is passed as an argument to your script for processing. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
@@ -240,9 +243,9 @@ date
 							<option>--</option>
 						</term>
 						<listitem>
-							<para>Stop looking for options among the given arguments and consider that the remaining arguments are targets.</para>
+							<para>Stop looking for options among the given arguments and consider that the remaining arguments are objects.</para>
 
-							<para>With this option, you can safely specify targets whose names begin with a hyphen <literal>-</literal>. Such targets would otherwise be mistaken for options. For example, you can specify two targets named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
+							<para>With this option, you can safely specify objects whose names begin with a hyphen <literal>-</literal>. Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
 						</listitem>
 					</varlistentry>
 
@@ -282,9 +285,9 @@ date
 							<option>--pipe</option>
 						</term>
 						<listitem>
-							<para>Read the standard input stream for targets which are delimited by the new-line character. In other words, these targets should be listed one per line on the standard input stream.</para>
+							<para>Read the standard input stream for objects which are delimited by the new-line character. In other words, these objects should be listed one per line on the standard input stream.</para>
 
-							<para>Targets specified as command-line arguments are handled by your script before the targets specified on the standard input stream.</para>
+							<para>Objects specified as command-line arguments are processsed by your script before the objects specified on the standard input stream.</para>
 						</listitem>
 					</varlistentry>
 
@@ -294,18 +297,18 @@ date
 							<replaceable>delimiter</replaceable>
 						</term>
 						<listitem>
-							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:fileName-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
+							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:object-name-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
 								<para>The suffix is also called "extension" or "file extension".</para>
-							</footnote></link> of a file's name. The default suffix delimiter is a period <literal>.</literal>.</para>
+							</footnote></link> of an object's name. The default suffix delimiter is a &period;.</para>
 
-							<example id="ex:fileName-parts">
-								<title>The Parts of a File's Name</title>
+							<example id="ex:object-name-parts">
+								<title>The Parts of an Object's Name</title>
 								<para>
-									The name of a file called <filename>foo.bar</filename> can be divided into the following parts:
+									The name of an object called <filename>foo.bar.baz</filename> can be divided into the following parts:
 
 									<itemizedlist>
 										<listitem>
-											<para>A prefix: <literal>foo</literal></para>
+											<para>A prefix: <literal>foo.bar</literal></para>
 										</listitem>
 										<listitem>
 											<para>A suffix delimiter: <literal>.</literal></para>
@@ -327,13 +330,13 @@ date
 							<option>--recursive</option>
 						</term>
 						<listitem>
-							<para>Recursively traverse into targets&mdash;which happen to be directories or symbolic links that point to directories&mdash;in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
+							<para>Recursively traverse into objects, which happen to be directories or symbolic links that point to directories, in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
 
 							<example id="ex:breadth-first-recursion">
-								<title>Breadth-First Recursion</title>
-								<para>When breadth-first recursion is used, all files in a directory are handled linearly by the user's script <emphasis>before</emphasis> any sub-directories are handled recursively.</para>
+								<title>Order of Handling in Breadth-First Recursion</title>
+								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
 
-								<para>For example, in the directory structure below, the paths <filename>foo/bar</filename> and <filename>foo/moz</filename> are handled linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is handled recursively. In this manner, <filename>foo/bar/baz</filename> will be the last file handled by your script.</para>
+								<para>For example, in the directory structure below, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
 
 								<itemizedlist>
 									<listitem>
@@ -368,7 +371,7 @@ date
 							<option>--all</option>
 						</term>
 						<listitem>
-							<para>Do not ignore targets whose names begin with a period.</para>
+							<para>Do not ignore objects whose names begin with a &period;.</para>
 
 							&noteNeedRecursiveOpt;
 						</listitem>
@@ -398,13 +401,13 @@ date
 							<replaceable>glob</replaceable>
 						</term>
 						<listitem>
-							<para>Handle targets only if their names match <replaceable>glob</replaceable><footnote id="fot:bash-glob">
+							<para>Handle objects only if their names match <replaceable>glob</replaceable><footnote id="fot:bash-glob">
 								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
 							</footnote>.</para>
 
-							<para>Unless the <option>--all</option> option is also specified, targets whose names begin with a period <literal>.</literal> are not checked to see if their names match <replaceable>glob</replaceable>. For example, targets with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas targets with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
+							<para>Unless the <option>--all</option> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every target that matches the <literal>*</literal> glob. This happens because &ff; does not check if a target exists in the file-system before passing the target as an argument to your script. For example, try running the command <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo $p'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo "$p"'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
@@ -436,7 +439,7 @@ date
 							<option>--verbose</option>
 						</term>
 						<listitem>
-							<para>Describe what you are doing as you do it.</para>
+							<para>Describe what you are doing, while you do it.</para>
 						</listitem>
 					</varlistentry>
 
