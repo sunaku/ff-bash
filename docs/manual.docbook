@@ -8,16 +8,17 @@
 	<!ENTITY fdlAppendix SYSTEM "fdl.xml">
 
 	<!ENTITY gnu "<acronym>GNU</acronym>">
+	<!ENTITY unix "<acronym>UNIX</acronym>">
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
-	<!ENTITY ff "<application>For each File</application>">
+	<!ENTITY url "<acronym>URL</acronym>">
 
+	<!ENTITY ff "<application>For each File</application>">
 	<!ENTITY cmd "ff">
-	<!ENTITY url "http://ff-bash.sf.net">
-	<!ENTITY desc "&ff; lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files.">
+	<!ENTITY website "http://ff-bash.sf.net">
 
 	<!ENTITY period "period <literal>.</literal>">
-
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
+	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -37,7 +38,7 @@
 		</copyright>
 
 		<abstract>
-			<para>This manual explains how to install, use, and extend <ulink url="&url;">&ff;</ulink>.</para>
+			<para>&abstract;</para>
 		</abstract>
 
 		<revhistory>
@@ -63,7 +64,30 @@
 
 	<chapter id="chp:intro">
 		<title>Introduction</title>
-		<para>&desc;</para>
+
+		<para>&abstract; However, it assumes that you have basic knowledge of:
+			<itemizedlist>
+				<listitem>
+					<para>how to run commands using the &bash; shell.</para>
+				</listitem>
+				<listitem>
+					<para>&unix; terminology such as "command-line", "command-prompt", "standard input stream", and so on.</para>
+				</listitem>
+				<listitem>
+					<para>programming or software development terminology such as "string", "function", "variable", and so on.</para>
+				</listitem>
+				<listitem>
+					<para>traditional &unix;-style manual pages and how they are organized.</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+		<section id="sec:what-is-ff">
+			<title>What is &ff;?</title>
+			<para>&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects.</para>
+
+			<para>&ff; is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files. For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>foo</replaceable> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable></command>.</para>
+		</section>
 	</chapter>
 
 	<chapter id="chp:getting-started">
@@ -183,7 +207,7 @@ date
 	</chapter>
 
 	<appendix>
-		<title><acronym>UNIX</acronym> Manual Page</title>
+		<title>Traditional &unix;-Style Manual Page</title>
 		<refentry id="ref:manualPage">
 			<refmeta>
 				<refentrytitle>
@@ -196,7 +220,7 @@ date
 				<refname>
 					<application>&cmd;</application>
 				</refname>
-				<refpurpose>Run &bash; commands on files or strings.</refpurpose>
+				<refpurpose>Run &bash; commands on objects.</refpurpose>
 			</refnamediv>
 
 			<refsynopsisdiv>
@@ -223,17 +247,20 @@ date
 					<varlistentry>
 						<term>object</term>
 						<listitem>
-							<!-- TODO: define "string" in glossary -->
-							<para>An object which is passed as an argument to your script for processing. This object can be a string, file, directory, <acronym>URL</acronym>, or any other form of abstraction your script requires.</para>
+							<para>Something that is passed as an argument to your script for processing. &ff; places no restrcitions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
+							</para>
+							<para>For example, if your script renames files, then objects are files. Likewise, if your script downloads data from &url;s, then objects are &url;s.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
 			</refsynopsisdiv>
 
+			<!--
 			<refsection>
 				<title>Description</title>
 				<para>&desc;</para>
 			</refsection>
+			-->
 
 			<refsection id="ref:options">
 				<title>Options</title>
@@ -336,25 +363,25 @@ date
 								<title>Order of Handling in Breadth-First Recursion</title>
 								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
 
-								<para>For example, in the directory structure below, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
+								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
 
 								<itemizedlist>
 									<listitem>
-										<para>foo/</para>
+										<para><filename>foo/</filename></para>
 
 										<itemizedlist>
 											<listitem>
-												<para>bar/</para>
+												<para><filename>bar/</filename></para>
 
 												<itemizedlist>
 													<listitem>
-														<para>baz</para>
+														<para><filename>baz</filename></para>
 													</listitem>
 												</itemizedlist>
 											</listitem>
 
 											<listitem>
-												<para>moz</para>
+												<para><filename>moz</filename></para>
 											</listitem>
 										</itemizedlist>
 									</listitem>
@@ -407,7 +434,7 @@ date
 
 							<para>Unless the <option>--all</option> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> /etc <option>-m</option> globbyGlob <option>-e</option> 'echo "$p"'</command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$p"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
