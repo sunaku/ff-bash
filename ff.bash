@@ -66,7 +66,7 @@
 		ffText_helpSeeUserManual="See the User's Manual for explanations and examples."
 		ffText_helpUsage="Usage"
 		ffText_helpOptions="Options"
-		ffText_helpOptionGlob="Option Glob"
+		ffText_helpOptionGlob="Option glob"
 		ffText_helpDescription="Description"
 
 		ffText_forEachFile="For each File"
@@ -82,7 +82,6 @@
 
 	declare -r ffNewLine=$'\n'
 	declare -r ffExtDelim_default=.
-	declare -r ffUserTerminal_default=/dev/tty
 	declare -r ffLanguageCode_default=en
 
 
@@ -293,6 +292,7 @@
 
 
 	# Loads the user's script from command-line argument or user's terminal.
+	# @pre	the standard input stream must represent the user's terminal (e.g. /dev/tty)
 	function ffLogic_loadScript() {
 		local expression=:
 
@@ -313,7 +313,7 @@
 
 		else
 			# read user's terminal
-			while read -er < $ffUserTerminal_default; do
+			while read -er; do
 				expression="$expression${ffNewLine}$REPLY"
 			done
 		fi
@@ -321,7 +321,7 @@
 
 		# ensure that user's script has the required control function
 		if ! grep 'during[:space:]*([:space:]*)' <<< "$expression" >& /dev/null; then
-			expression="during(){ $expression; }"
+			expression="during(){${ffNewLine}$expression${ffNewLine}:;}"
 		fi
 
 
@@ -480,7 +480,9 @@
 			$mode "${parsedArgs[@]}" "${pipedArgs[@]}"
 			after "${parsedArgs[@]}"
 
+
 			# @note end() is automatically called by the EXIT trap
+			# @note the default exit status is 0 (same as $ffExitCode_success)
 		)
 	}
 
