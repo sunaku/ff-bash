@@ -12,17 +12,18 @@
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 	<!ENTITY url "<acronym>URL</acronym>">
 
-	<!ENTITY ff "<application>For each File</application>">
+	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 	<!ENTITY cmd "ff">
 	<!ENTITY website "http://ff-bash.sf.net">
 
 	<!ENTITY period "period <literal>.</literal>">
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
 	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
+	<!ENTITY paramDesc_beforeAfter "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <option>--pipe</option> option are not passed to this function.">
 ]>
 <book lang="en">
 	<bookinfo>
-		<title>&ff; User's Manual</title>
+		<title>&ff; user's manual</title>
 
 		<author>
 			<firstname>Suraj</firstname>
@@ -64,34 +65,38 @@
 
 	<chapter id="chp:intro">
 		<title>Introduction</title>
+		<para>&abstract;</para>
 
-		<para>&abstract; However, it assumes that you have basic knowledge of:
-			<itemizedlist>
-				<listitem>
-					<para>how to run commands using the &bash; shell.</para>
-				</listitem>
-				<listitem>
-					<para>&unix; terminology such as "command-line", "command-prompt", "standard input stream", and so on.</para>
-				</listitem>
-				<listitem>
-					<para>programming or software development terminology such as "string", "function", "variable", and so on.</para>
-				</listitem>
-				<listitem>
-					<para>traditional &unix;-style manual pages and how they are organized.</para>
-				</listitem>
-			</itemizedlist>
-		</para>
+		<section id="sec:what-should-i-know">
+			<title>What should I know?</title>
+			<para>This manual assumes that you have basic knowledge of:
+				<itemizedlist>
+					<listitem>
+						<para>how to run commands using the &bash; shell.</para>
+					</listitem>
+					<listitem>
+						<para>&unix; terminology such as "command-line," "command-prompt," "standard input stream," and so on.</para>
+					</listitem>
+					<listitem>
+						<para>programming or software development terminology such as "string," "function," "variable," and so on.</para>
+					</listitem>
+					<listitem>
+						<para>traditional &unix;-style manual pages and how they are organized.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
 
 		<section id="sec:what-is-ff">
 			<title>What is &ff;?</title>
 			<para>&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects.</para>
 
-			<para>&ff; is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files. For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>foo</replaceable> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable></command>.</para>
+			<para>I often use &ff; to perform repetitive file-system manipulation tasks such as renaming a large number of files and gathering file statistics. <!--For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.--></para>
 		</section>
 	</chapter>
 
 	<chapter id="chp:getting-started">
-		<title>Getting Started</title>
+		<title>Getting started</title>
 
 		<section id="sec:requirements">
 			<title>Requirements</title>
@@ -122,7 +127,7 @@
 						<para>Type your script using as much space as you need. That is, your script can take up multiple lines. You can start a new line by pressing the <keycap>Enter</keycap> or <keycap>Return</keycap> key.</para>
 
 						<tip>
-							<title>&gnu; Readline Shortcuts</title>
+							<title>&gnu; Readline shortcuts</title>
 							<para>While typing your script, you can use <ulink url="http://cnswww.cns.cwru.edu/~chet/readline/rltop.html">&gnu; Readline</ulink> shortcuts such as <keycombo action="press"><keycap>Ctrl</keycap><keycap>u</keycap></keycombo> to erase everything between the cursor and the beginning of a line; and <keycombo action="press"><keycap>Ctrl</keycap><keycap>k</keycap></keycombo> to erase everything between the cursor and the end of a line.</para>
 						</tip>
 					</step>
@@ -139,7 +144,7 @@
 		</procedure>
 
 		<example id="ex:typing-script-at-prompt">
-					<title>Typing Your Script at a Command-Prompt</title>
+					<title>Typing your script at a command-prompt</title>
 					<screen>
 <prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
 <userinput>echo -n "Hello, $o! Today is "
@@ -156,16 +161,90 @@ date
 		</section>
 
 		<section id="sec:writing-scripts">
-			<title>Writing Scripts</title>
-			<para/>
+			<title>Writing scripts</title>
+			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the objects passed to it, by specifying those operations in something called a "script."</para>
+
+			<para>A script contains a list of GNU BASH commands that &ff; will examine<footnote>
+					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting: parsing and executing the commands.</para>
+				</footnote> and execute. It is similar to a script for a theatrical play which contains a list of dialogue that an actor will examine, recite, and exhibit.</para>
+
+			<para>In addition, a script is not limited to containing only a list of &bash; commands. It can be a generic &bash; shell script containing control structures, functions, variables, and so on.</para>
 
 			<section id="sec:control-functions">
-				<title>Control Functions</title>
-				<para/>
+				<title>Control functions</title>
+				<para><link linkend="ref:cfuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
+					<para>&ff; will automatically place your script inside the <xref linkend="ref:cfunc-during"/> control function if your script does not implement any control functions.</para>
+				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:cfunc-during"/> control function as well.</para>
+
+				<para>To illustrate how control functions give your script more control over its execution, consider the following examples.</para>
+
+				<example id="ex:cleaning-temporary-files">
+					<title>Cleaning up temporary files</title>
+					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:cfunc-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
+
+					<para>For example, consider the following script which collects the relative or absolute path to each user-specified object in a temporary file called <filename>tempFile</filename>, shows the contents of the temporary file with line numbers, and finally removes the temporary file.</para>
+
+					<programlisting>
+during() {
+	echo "$p" >> tempFile
+}
+after() {
+	cat -n tempFile
+}
+end() {
+	rm -v tempFile
+}
+					</programlisting>
+
+					<para>Suppose that this script has been written to a file called <filename>cleanTemp.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
+
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>cleanTemp.ff</replaceable> <replaceable>foo</replaceable> <replaceable>bar</replaceable></command></userinput>
+     1  foo
+     2  bar
+removed `tempFile'
+					</screen>
+				</example>
+
+				<example id="ex:script-options">
+					<title>Command-line options for your script</title>
+					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:cfunc-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
+
+					<para>For example, consider the following script which recognizes two options: <option>-foo</option> and <option>-bar</option>. When this script is invoked with some arguments, it looks for options among those arguments and notifies us accordingly.</para>
+
+					<programlisting>
+before() {
+	for arg
+	do
+		case $arg in
+			-foo|-bar)
+				echo "This is an option: $arg"
+				;;
+			*)
+				echo "This is an argument: $arg"
+				;;
+		esac
+	done
+}
+during() { :; }
+					</programlisting>
+
+					<para>Suppose that this script has been written to a file called <filename>scriptArgs.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
+
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>scriptArgs.ff</replaceable> <option>--</option> <replaceable>-foo</replaceable> <replaceable>-moz</replaceable> <replaceable>-bar</replaceable> <replaceable>10.3</replaceable></command></userinput>
+This is an option: -foo
+This is an argument: -moz
+This is an option: -bar
+This is an argument: 10.3
+					</screen>
+				</example>
 			</section>
 
+			<!-- explain the stuff in manual.. put JUST reference in manpage -->
+
 			<section id="sec:object-variables">
-				<title>Object Variables</title>
+				<title>Object variables</title>
 				<para/>
 			</section>
 		</section>
@@ -182,26 +261,26 @@ date
 	</chapter>
 
 	<chapter id="chp:feedback">
-		<title>Giving Feedback</title>
+		<title>Giving feedback</title>
 		<para/>
 
 		<section id="sec:defect-reports">
-			<title>Reporting Defects</title>
+			<title>Reporting defects</title>
 			<para/>
 		</section>
 
 		<section id="sec:feature-request">
-			<title>Requesting Features</title>
+			<title>Requesting features</title>
 			<para/>
 		</section>
 
 		<section id="sec:discussion-forums">
-			<title>Voicing Your Opinion</title>
+			<title>Voicing your opinion</title>
 			<para/>
 		</section>
 
 		<section id="sec:getting-help">
-			<title>Getting Help</title>
+			<title>Getting help</title>
 			<para/>
 		</section>
 	</chapter>
@@ -239,7 +318,7 @@ date
 							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:options"/> for a list of available options.</para>
 
 							<tip>
-								<title>Combining Short Options</title>
+								<title>Combining short options</title>
 								<para>You can combine a series of short options into a single option. For example, the series <command><option>-a</option> 1 <option>-b</option> 2 <option>-c</option> 3</command> can be combined into <command><option>-abc</option> 1 2 3</command>.</para>
 							</tip>
 						</listitem>
@@ -329,7 +408,7 @@ date
 							</footnote></link> of an object's name. The default suffix delimiter is a &period;.</para>
 
 							<example id="ex:object-name-parts">
-								<title>The Parts of an Object's Name</title>
+								<title>The parts of an object's name</title>
 								<para>
 									The name of an object called <filename>foo.bar.baz</filename> can be divided into the following parts:
 
@@ -360,7 +439,7 @@ date
 							<para>Recursively traverse into objects, which happen to be directories or symbolic links that point to directories, in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
 
 							<example id="ex:breadth-first-recursion">
-								<title>Order of Handling in Breadth-First Recursion</title>
+								<title>Order of handling in breadth-first recursion</title>
 								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
 
 								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
@@ -482,6 +561,50 @@ date
 						</listitem>
 					</varlistentry>
 
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:cfuncs">
+				<title>Control functions</title>
+				<variablelist>
+					<varlistentry id="ref:cfunc-before">
+						<term>
+							<function>before</function> <parameter>object...</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked before any object have been handled. &paramDesc_beforeAfter;</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<variablelist>
+					<varlistentry id="ref:cfunc-during">
+						<term>
+							<function>during</function> <parameter>object</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked to handle an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <option>--pipe</option> option. Thus, for each object specified, this control function is invoked once to handle that object.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<variablelist>
+					<varlistentry id="ref:cfunc-after">
+						<term>
+							<function>after</function> <parameter>object...</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked after all object have been handled. &paramDesc_beforeAfter;</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<variablelist>
+					<varlistentry id="ref:cfunc-end">
+						<term>
+							<function>end</function>
+						</term>
+						<listitem>
+							<para>This control function is invoked immediately before &ff; terminates. It does not have any parameters.</para>
+						</listitem>
+					</varlistentry>
 				</variablelist>
 			</refsection>
 		</refentry>
