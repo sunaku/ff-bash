@@ -4,9 +4,16 @@
 
 	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".
 -->
+
+<!--
+	The general strategy is to put information within the manual-page section and explain that information within the remainder of the text/discussion.
+-->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!-- imports -->
 	<!ENTITY fdlAppendix SYSTEM "fdl.xml">
 
+
+	<!-- acronyms & abbreviations -->
 	<!ENTITY gnu "<acronym>GNU</acronym>">
 	<!ENTITY unix "<acronym>UNIX</acronym>">
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
@@ -16,10 +23,17 @@
 	<!ENTITY cmd "ff">
 	<!ENTITY website "http://ff-bash.sf.net">
 
-	<!ENTITY period "period <literal>.</literal>">
-	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <option>--recursive</option> option.</para></note>">
+
+	<!-- small inclusions -->
+	<!ENTITY period "period (<literal>.</literal>)">
+
+
+	<!-- big inclusions -->
 	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
-	<!ENTITY paramDesc_beforeAfter "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <option>--pipe</option> option are not passed to this function.">
+	<!ENTITY description "&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files and gathering file statistics.">
+
+	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:options-beRecursive'/> option.</para></note>">
+	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:options-pipedObjects'/> option are not passed to this function.">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -89,9 +103,8 @@
 
 		<section id="sec:what-is-ff">
 			<title>What is &ff;?</title>
-			<para>&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects.</para>
-
-			<para>I often use &ff; to perform repetitive file-system manipulation tasks such as renaming a large number of files and gathering file statistics. <!--For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.--></para>
+			<para>&description;</para>
+			<!--<para>For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.</para>-->
 		</section>
 	</chapter>
 
@@ -170,17 +183,22 @@ date
 
 			<para>In addition, a script is not limited to containing only a list of &bash; commands. It can be a generic &bash; shell script containing control structures, functions, variables, and so on.</para>
 
+			<section id="sec:object-variables">
+				<title>Object variables</title>
+				<para/><!-- TODO -->
+			</section>
+
 			<section id="sec:control-functions">
 				<title>Control functions</title>
-				<para><link linkend="ref:cfuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
-					<para>&ff; will automatically place your script inside the <xref linkend="ref:cfunc-during"/> control function if your script does not implement any control functions.</para>
-				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:cfunc-during"/> control function as well.</para>
+				<para><link linkend="ref:ctrlFuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
+					<para>&ff; will automatically place your script inside the <xref linkend="ref:ctrlFuncs-during"/> control function if your script does not implement any control functions.</para>
+				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:ctrlFuncs-during"/> control function as well.</para>
 
 				<para>To illustrate how control functions give your script more control over its execution, consider the following examples.</para>
 
 				<example id="ex:cleaning-temporary-files">
 					<title>Cleaning up temporary files</title>
-					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:cfunc-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
+					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:ctrlFuncs-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
 
 					<para>For example, consider the following script which collects the relative or absolute path to each user-specified object in a temporary file called <filename>tempFile</filename>, shows the contents of the temporary file with line numbers, and finally removes the temporary file.</para>
 
@@ -208,7 +226,7 @@ removed `tempFile'
 
 				<example id="ex:script-options">
 					<title>Command-line options for your script</title>
-					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:cfunc-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
+					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
 
 					<para>For example, consider the following script which recognizes two options: <option>-foo</option> and <option>-bar</option>. When this script is invoked with some arguments, it looks for options among those arguments and notifies us accordingly.</para>
 
@@ -239,13 +257,6 @@ This is an option: -bar
 This is an argument: 10.3
 					</screen>
 				</example>
-			</section>
-
-			<!-- explain the stuff in manual.. put JUST reference in manpage -->
-
-			<section id="sec:object-variables">
-				<title>Object variables</title>
-				<para/>
 			</section>
 		</section>
 	</chapter>
@@ -285,9 +296,10 @@ This is an argument: 10.3
 		</section>
 	</chapter>
 
-	<appendix>
-		<title>Traditional &unix;-Style Manual Page</title>
-		<refentry id="ref:manualPage">
+	<appendix id="ref:manualPage">
+		<title>Traditional &unix; manual page</title>
+
+		<refentry>
 			<refmeta>
 				<refentrytitle>
 					<application>&cmd;</application>
@@ -334,28 +346,30 @@ This is an argument: 10.3
 				</variablelist>
 			</refsynopsisdiv>
 
-			<!--
 			<refsection>
 				<title>Description</title>
-				<para>&desc;</para>
+				<para>&description;</para>
+
+				<note>
+					<para>This traditional &unix; manual page is intentionally terse. See the &ff; user's manual for a user-friendly treatment&mdash;complete with explanations and examples&mdash;of this manual page.</para>
+				</note>
 			</refsection>
-			-->
 
 			<refsection id="ref:options">
 				<title>Options</title>
 				<variablelist>
-					<varlistentry>
+					<varlistentry id="ref:options-stopScan">
 						<term>
 							<option>--</option>
 						</term>
 						<listitem>
 							<para>Stop looking for options among the given arguments and consider that the remaining arguments are objects.</para>
 
-							<para>With this option, you can safely specify objects whose names begin with a hyphen <literal>-</literal>. Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
+							<para>With this option, you can safely specify objects whose names begin with a hyphen (<literal>-</literal>). Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-evalExpr">
 						<term>
 							<option>-e</option>
 							<replaceable>expression</replaceable>
@@ -369,7 +383,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-evalFile">
 						<term>
 							<option>-f</option>
 							<replaceable>file</replaceable>
@@ -383,7 +397,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-pipedObjects">
 						<term>
 							<option>-p</option>
 						</term>
@@ -397,14 +411,14 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-suffixDelim">
 						<term>
 							<option>--suffix-delim</option>
 							<replaceable>delimiter</replaceable>
 						</term>
 						<listitem>
 							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:object-name-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
-								<para>The suffix is also called "extension" or "file extension".</para>
+								<para>Also known as a "file extension."</para>
 							</footnote></link> of an object's name. The default suffix delimiter is a &period;.</para>
 
 							<example id="ex:object-name-parts">
@@ -414,13 +428,13 @@ This is an argument: 10.3
 
 									<itemizedlist>
 										<listitem>
-											<para>A prefix: <literal>foo.bar</literal></para>
+											<para>the prefix: <literal>foo.bar</literal></para>
 										</listitem>
 										<listitem>
-											<para>A suffix delimiter: <literal>.</literal></para>
+											<para>the suffix delimiter: <literal>.</literal></para>
 										</listitem>
 										<listitem>
-											<para>A suffix: <literal>bar</literal></para>
+											<para>the suffix: <literal>bar</literal></para>
 										</listitem>
 									</itemizedlist>
 								</para>
@@ -428,7 +442,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-beRecursive">
 						<term>
 							<option>-r</option>
 						</term>
@@ -469,7 +483,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-handleHidden">
 						<term>
 							<option>-a</option>
 						</term>
@@ -483,7 +497,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-ignoreLinks">
 						<term>
 							<option>-L</option>
 						</term>
@@ -497,7 +511,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-objectMask">
 						<term>
 							<option>-m</option>
 							<replaceable>glob</replaceable>
@@ -511,7 +525,7 @@ This is an argument: 10.3
 								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
 							</footnote>.</para>
 
-							<para>Unless the <option>--all</option> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
+							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
 							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$p"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 
@@ -525,7 +539,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-showHelp">
 						<term>
 							<option>-h</option>
 						</term>
@@ -537,7 +551,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-beVerbose">
 						<term>
 							<option>-v</option>
 						</term>
@@ -549,7 +563,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry>
+					<varlistentry id="ref:options-showVersion">
 						<term>
 							<option>-V</option>
 						</term>
@@ -557,47 +571,141 @@ This is an argument: 10.3
 							<option>--version</option>
 						</term>
 						<listitem>
-							<para>Show your release-version and copyright.</para>
+							<para>Show the version of your release and your copyright.</para>
 						</listitem>
 					</varlistentry>
 
 				</variablelist>
 			</refsection>
 
-			<refsection id="ref:cfuncs">
+			<refsection id="ref:objVars">
+				<title>Object variables</title>
+				<variablelist>
+					<varlistentry id="ref:objVars-o">
+						<term>
+							<varname>$o</varname>
+						</term>
+						<listitem>
+							<para>The value, exactly as it was specified by the user, of the current object.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-p">
+						<term>
+							<varname>$p</varname>
+						</term>
+						<listitem>
+							<para>Either a relative or absolute path to the current object with redundant slashes removed.</para>
+
+							<para>For example, if <varname>$o</varname> is "////foo//bar///baz//a.b.c.d" then <varname>$p</varname> will be "/foo/bar/baz/a.b.c.d".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-d">
+						<term>
+							<varname>$d</varname>
+						</term>
+						<listitem>
+							<para>Either a relative or absolute path to the directory which contains the current object.</para>
+
+							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$d</varname> will be "/foo/bar/baz".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-n">
+						<term>
+							<varname>$n</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its path information.</para>
+
+							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$n</varname> will be "a.b.c.d".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-r">
+						<term>
+							<varname>$r</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its suffix.</para>
+
+							<para>For example,
+								<itemizedlist>
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c.d".</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-s">
+						<term>
+							<varname>$s</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its prefix.</para>
+
+							<para>For example,
+								<itemizedlist>
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be "d".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be ".d".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be empty.</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:ctrlFuncs">
 				<title>Control functions</title>
 				<variablelist>
-					<varlistentry id="ref:cfunc-before">
+					<varlistentry id="ref:ctrlFuncs-before">
 						<term>
 							<function>before</function> <parameter>object...</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked before any object have been handled. &paramDesc_beforeAfter;</para>
+							<para>This control function is invoked before any object have been handled. &ctrlFuncParamDesc;</para>
 						</listitem>
 					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<varlistentry id="ref:cfunc-during">
+
+					<varlistentry id="ref:ctrlFuncs-during">
 						<term>
 							<function>during</function> <parameter>object</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked to handle an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <option>--pipe</option> option. Thus, for each object specified, this control function is invoked once to handle that object.</para>
+							<para>This control function is invoked to handle an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to handle that object.</para>
 						</listitem>
 					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<varlistentry id="ref:cfunc-after">
+
+					<varlistentry id="ref:ctrlFuncs-after">
 						<term>
 							<function>after</function> <parameter>object...</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked after all object have been handled. &paramDesc_beforeAfter;</para>
+							<para>This control function is invoked after all object have been handled. &ctrlFuncParamDesc;</para>
 						</listitem>
 					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<varlistentry id="ref:cfunc-end">
+
+					<varlistentry id="ref:ctrlFuncs-end">
 						<term>
 							<function>end</function>
 						</term>
