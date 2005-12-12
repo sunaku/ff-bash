@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+
+	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "GNU Free Documentation License".
+-->
+
+<!--
+	The general strategy is to put information within the manual-page section and explain that information within the remainder of the text/discussion.
+-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!-- imports -->
+	<!ENTITY fdlAppendix SYSTEM "fdl.xml">
+
+
+	<!-- acronyms & abbreviations -->
+	<!ENTITY gnu "<acronym>GNU</acronym>">
+	<!ENTITY unix "<acronym>UNIX</acronym>">
+	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
+	<!ENTITY url "<acronym>URL</acronym>">
+
+	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
+	<!ENTITY cmd "ff">
+	<!ENTITY website "http://ff-bash.sf.net">
+
+
+	<!-- small inclusions -->
+	<!ENTITY period "period (<literal>.</literal>)">
+
+
+	<!-- big inclusions -->
+	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
+	<!ENTITY description "&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files and gathering file statistics.">
+
+	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:options-beRecursive'/> option.</para></note>">
+	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:options-pipedObjects'/> option are not passed to this function.">
+]>
+<book lang="en">
+	<bookinfo>
+		<title>&ff; user's manual</title>
+
+		<author>
+			<firstname>Suraj</firstname>
+			<othername>N.</othername>
+			<surname>Kurapati</surname>
+		</author>
+
+		<copyright>
+			<year>2003</year>
+			<year>2004</year>
+			<year>2005</year>
+			<holder>Suraj N. Kurapati</holder>
+		</copyright>
+
+		<abstract>
+			<para>&abstract;</para>
+		</abstract>
+
+		<revhistory>
+			<revision>
+				<revnumber>1.2</revnumber>
+				<date>2005-11-03</date>
+				<authorinitials>snk</authorinitials>
+				<revremark>Extensive refactoring of document structure and content.</revremark>
+			</revision>
+
+			<revision>
+				<revnumber>1.1</revnumber>
+				<date>2005-11-02</date>
+				<authorinitials>snk</authorinitials>
+				<revremark>Initial port of user manual from old script-based manualPages to DocBook-XML.</revremark>
+			</revision>
+		</revhistory>
+
+		<legalnotice>
+			<para>Permission is granted to copy, distribute and/or modify this document under the terms of the &gnu; Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled "&gnu; Free Documentation License".</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="chp:intro">
+		<title>Introduction</title>
+		<para>&abstract;</para>
+
+		<section id="sec:what-should-i-know">
+			<title>What should I know?</title>
+			<para>This manual assumes that you have basic knowledge of:
+				<itemizedlist>
+					<listitem>
+						<para>how to run commands using the &bash; shell.</para>
+					</listitem>
+					<listitem>
+						<para>&unix; terminology such as "command-line," "command-prompt," "standard input stream," and so on.</para>
+					</listitem>
+					<listitem>
+						<para>programming or software development terminology such as "string," "function," "variable," and so on.</para>
+					</listitem>
+					<listitem>
+						<para>traditional &unix;-style manual pages and how they are organized.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+
+		<section id="sec:what-is-ff">
+			<title>What is &ff;?</title>
+			<para>&description;</para>
+			<!--<para>For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.</para>-->
+		</section>
+	</chapter>
+
+	<chapter id="chp:getting-started">
+		<title>Getting started</title>
+
+		<section id="sec:requirements">
+			<title>Requirements</title>
+			<para/>
+		</section>
+
+		<section id="sec:installation">
+			<title>Installing &ff;</title>
+			<para/>
+		</section>
+	</chapter>
+
+	<chapter id="chp:using">
+		<title>Using &ff;</title>
+
+		<procedure id="proc:using">
+			<title>Using &ff;</title>
+
+			<step performance="required">
+				<para><link linkend="sec:invocation">Invoke &ff;</link> at a command-prompt.</para>
+			</step>
+
+			<step>
+				<para>If you did not specify <link linkend="sec:writing-scripts">your script</link> in the previous step, then &ff; will give you a chance to <link linkend="ex:typing-script-at-prompt">type it at your command-prompt</link>.</para>
+
+				<substeps>
+					<step>
+						<para>Type your script using as much space as you need. That is, your script can take up multiple lines. You can start a new line by pressing the <keycap>Enter</keycap> or <keycap>Return</keycap> key.</para>
+
+						<tip>
+							<title>&gnu; Readline shortcuts</title>
+							<para>While typing your script, you can use <ulink url="http://cnswww.cns.cwru.edu/~chet/readline/rltop.html">&gnu; Readline</ulink> shortcuts such as <keycombo action="press"><keycap>Ctrl</keycap><keycap>u</keycap></keycombo> to erase everything between the cursor and the beginning of a line; and <keycombo action="press"><keycap>Ctrl</keycap><keycap>k</keycap></keycombo> to erase everything between the cursor and the end of a line.</para>
+						</tip>
+					</step>
+
+					<step>
+						<para>Press <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo> on a new, blank line to tell &ff; that you have finished typing your script.</para>
+					</step>
+				</substeps>
+			</step>
+
+			<step>
+				<para>&ff; will now run your script, return a <!--TODO: link-->diagnostic value as its exit status, and terminate.</para>
+			</step>
+		</procedure>
+
+		<example id="ex:typing-script-at-prompt">
+					<title>Typing your script at a command-prompt</title>
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
+<userinput>echo -n "Hello, $o! Today is "
+date
+<keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
+<computeroutput>Hello, World! Today is Thu Nov  3 15:32:16 PST 2005</computeroutput>
+<prompt>$</prompt>
+					</screen>
+		</example>
+
+		<section id="sec:invocation">
+			<title>Invoking &ff;</title>
+			<para> <!-- explain what the syntax means --></para>
+		</section>
+
+		<section id="sec:writing-scripts">
+			<title>Writing scripts</title>
+			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the objects passed to it, by specifying those operations in something called a "script."</para>
+
+			<para>A script contains a list of GNU BASH commands that &ff; will examine<footnote>
+					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting: parsing and executing the commands.</para>
+				</footnote> and execute. It is similar to a script for a theatrical play which contains a list of dialogue that an actor will examine, recite, and exhibit.</para>
+
+			<para>In addition, a script is not limited to containing only a list of &bash; commands. It can be a generic &bash; shell script containing control structures, functions, variables, and so on.</para>
+
+			<section id="sec:object-variables">
+				<title>Object variables</title>
+				<para/><!-- TODO -->
+			</section>
+
+			<section id="sec:control-functions">
+				<title>Control functions</title>
+				<para><link linkend="ref:ctrlFuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
+					<para>&ff; will automatically place your script inside the <xref linkend="ref:ctrlFuncs-during"/> control function if your script does not implement any control functions.</para>
+				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:ctrlFuncs-during"/> control function as well.</para>
+
+				<para>To illustrate how control functions give your script more control over its execution, consider the following examples.</para>
+
+				<example id="ex:cleaning-temporary-files">
+					<title>Cleaning up temporary files</title>
+					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:ctrlFuncs-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
+
+					<para>For example, consider the following script which collects the relative or absolute path to each user-specified object in a temporary file called <filename>tempFile</filename>, shows the contents of the temporary file with line numbers, and finally removes the temporary file.</para>
+
+					<programlisting>
+during() {
+	echo "$p" >> tempFile
+}
+after() {
+	cat -n tempFile
+}
+end() {
+	rm -v tempFile
+}
+					</programlisting>
+
+					<para>Suppose that this script has been written to a file called <filename>cleanTemp.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
+
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>cleanTemp.ff</replaceable> <replaceable>foo</replaceable> <replaceable>bar</replaceable></command></userinput>
+     1  foo
+     2  bar
+removed `tempFile'
+					</screen>
+				</example>
+
+				<example id="ex:script-options">
+					<title>Command-line options for your script</title>
+					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
+
+					<para>For example, consider the following script which recognizes two options: <option>-foo</option> and <option>-bar</option>. When this script is invoked with some arguments, it looks for options among those arguments and notifies us accordingly.</para>
+
+					<programlisting>
+before() {
+	for arg
+	do
+		case $arg in
+			-foo|-bar)
+				echo "This is an option: $arg"
+				;;
+			*)
+				echo "This is an argument: $arg"
+				;;
+		esac
+	done
+}
+during() { :; }
+					</programlisting>
+
+					<para>Suppose that this script has been written to a file called <filename>scriptArgs.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
+
+					<screen>
+<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>scriptArgs.ff</replaceable> <option>--</option> <replaceable>-foo</replaceable> <replaceable>-moz</replaceable> <replaceable>-bar</replaceable> <replaceable>10.3</replaceable></command></userinput>
+This is an option: -foo
+This is an argument: -moz
+This is an option: -bar
+This is an argument: 10.3
+					</screen>
+				</example>
+			</section>
+		</section>
+	</chapter>
+
+	<chapter id="chp:extending">
+		<title>Extending &ff;</title>
+		<para/>
+
+		<section id="sec:localization">
+			<title>Localizing &ff;</title>
+			<para/>
+		</section>
+	</chapter>
+
+	<chapter id="chp:feedback">
+		<title>Giving feedback</title>
+		<para/>
+
+		<section id="sec:defect-reports">
+			<title>Reporting defects</title>
+			<para/>
+		</section>
+
+		<section id="sec:feature-request">
+			<title>Requesting features</title>
+			<para/>
+		</section>
+
+		<section id="sec:discussion-forums">
+			<title>Voicing your opinion</title>
+			<para/>
+		</section>
+
+		<section id="sec:getting-help">
+			<title>Getting help</title>
+			<para/>
+		</section>
+	</chapter>
+
+	<appendix id="ref:manualPage">
+		<title>Traditional &unix; manual page</title>
+
+		<refentry>
+			<refmeta>
+				<refentrytitle>
+					<application>&cmd;</application>
+				</refentrytitle>
+				<manvolnum>1</manvolnum>
+			</refmeta>
+
+			<refnamediv>
+				<refname>
+					<application>&cmd;</application>
+				</refname>
+				<refpurpose>Run &bash; commands on objects.</refpurpose>
+			</refnamediv>
+
+			<refsynopsisdiv>
+				<cmdsynopsis>
+					<command>&cmd;</command>
+					<group choice="opt">
+						<arg choice="opt" rep="repeat">option</arg>
+						<arg choice="opt" rep="repeat">object</arg>
+					</group>
+				</cmdsynopsis>
+
+				<variablelist>
+					<varlistentry>
+						<term>option</term>
+						<listitem>
+							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:options"/> for a list of available options.</para>
+
+							<tip>
+								<title>Combining short options</title>
+								<para>You can combine a series of short options into a single option. For example, the series <command><option>-a</option> 1 <option>-b</option> 2 <option>-c</option> 3</command> can be combined into <command><option>-abc</option> 1 2 3</command>.</para>
+							</tip>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>object</term>
+						<listitem>
+							<para>Something that is passed as an argument to your script for processing. &ff; places no restrcitions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
+							</para>
+							<para>For example, if your script renames files, then objects are files. Likewise, if your script downloads data from &url;s, then objects are &url;s.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsynopsisdiv>
+
+			<refsection>
+				<title>Description</title>
+				<para>&description;</para>
+
+				<note>
+					<para>This traditional &unix; manual page is intentionally terse. See the &ff; user's manual for a user-friendly treatment&mdash;complete with explanations and examples&mdash;of this manual page.</para>
+				</note>
+			</refsection>
+
+			<refsection id="ref:options">
+				<title>Options</title>
+				<variablelist>
+					<varlistentry id="ref:options-stopScan">
+						<term>
+							<option>--</option>
+						</term>
+						<listitem>
+							<para>Stop looking for options among the given arguments and consider that the remaining arguments are objects.</para>
+
+							<para>With this option, you can safely specify objects whose names begin with a hyphen (<literal>-</literal>). Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-evalExpr">
+						<term>
+							<option>-e</option>
+							<replaceable>expression</replaceable>
+						</term>
+						<term>
+							<option>--expression</option>
+							<replaceable>expression</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>expression</replaceable> is the user's script instead of asking the the user to type a script at the command-prompt.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-evalFile">
+						<term>
+							<option>-f</option>
+							<replaceable>file</replaceable>
+						</term>
+						<term>
+							<option>--file</option>
+							<replaceable>file</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>file</replaceable> contains the user's script instead of asking the user to type a script at the command-prompt.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-pipedObjects">
+						<term>
+							<option>-p</option>
+						</term>
+						<term>
+							<option>--pipe</option>
+						</term>
+						<listitem>
+							<para>Read the standard input stream for objects which are delimited by the new-line character. In other words, these objects should be listed one per line on the standard input stream.</para>
+
+							<para>Objects specified as command-line arguments are processsed by your script before the objects specified on the standard input stream.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-suffixDelim">
+						<term>
+							<option>--suffix-delim</option>
+							<replaceable>delimiter</replaceable>
+						</term>
+						<listitem>
+							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:object-name-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
+								<para>Also known as a "file extension."</para>
+							</footnote></link> of an object's name. The default suffix delimiter is a &period;.</para>
+
+							<example id="ex:object-name-parts">
+								<title>The parts of an object's name</title>
+								<para>
+									The name of an object called <filename>foo.bar.baz</filename> can be divided into the following parts:
+
+									<itemizedlist>
+										<listitem>
+											<para>the prefix: <literal>foo.bar</literal></para>
+										</listitem>
+										<listitem>
+											<para>the suffix delimiter: <literal>.</literal></para>
+										</listitem>
+										<listitem>
+											<para>the suffix: <literal>bar</literal></para>
+										</listitem>
+									</itemizedlist>
+								</para>
+							</example>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-beRecursive">
+						<term>
+							<option>-r</option>
+						</term>
+						<term>
+							<option>--recursive</option>
+						</term>
+						<listitem>
+							<para>Recursively traverse into objects, which happen to be directories or symbolic links that point to directories, in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
+
+							<example id="ex:breadth-first-recursion">
+								<title>Order of handling in breadth-first recursion</title>
+								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
+
+								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
+
+								<itemizedlist>
+									<listitem>
+										<para><filename>foo/</filename></para>
+
+										<itemizedlist>
+											<listitem>
+												<para><filename>bar/</filename></para>
+
+												<itemizedlist>
+													<listitem>
+														<para><filename>baz</filename></para>
+													</listitem>
+												</itemizedlist>
+											</listitem>
+
+											<listitem>
+												<para><filename>moz</filename></para>
+											</listitem>
+										</itemizedlist>
+									</listitem>
+								</itemizedlist>
+							</example>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-handleHidden">
+						<term>
+							<option>-a</option>
+						</term>
+						<term>
+							<option>--all</option>
+						</term>
+						<listitem>
+							<para>Do not ignore objects whose names begin with a &period;.</para>
+
+							&noteNeedRecursiveOpt;
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-ignoreLinks">
+						<term>
+							<option>-L</option>
+						</term>
+						<term>
+							<option>--ignore-links</option>
+						</term>
+						<listitem>
+							<para>Do not traverse into symbolic links that point to directories.</para>
+
+							&noteNeedRecursiveOpt;
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-objectMask">
+						<term>
+							<option>-m</option>
+							<replaceable>glob</replaceable>
+						</term>
+						<term>
+							<option>--mask</option>
+							<replaceable>glob</replaceable>
+						</term>
+						<listitem>
+							<para>Handle objects only if their names match <replaceable>glob</replaceable><footnote id="fot:bash-glob">
+								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
+							</footnote>.</para>
+
+							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
+
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$p"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+
+							&noteNeedRecursiveOpt;
+
+							<tip>
+								<para>You can use extended<footnote id="fot:bash-extglob">
+									<para>See "extglob" in the &bash; manual for more information.</para>
+								</footnote> globbing notation in <replaceable>glob</replaceable>.</para>
+							</tip>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-showHelp">
+						<term>
+							<option>-h</option>
+						</term>
+						<term>
+							<option>--help</option>
+						</term>
+						<listitem>
+							<para>Show the invocation syntax and a list of available options in extended<footnoteref linkend="fot:bash-extglob"/> globbing notation.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-beVerbose">
+						<term>
+							<option>-v</option>
+						</term>
+						<term>
+							<option>--verbose</option>
+						</term>
+						<listitem>
+							<para>Describe what you are doing, while you do it.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:options-showVersion">
+						<term>
+							<option>-V</option>
+						</term>
+						<term>
+							<option>--version</option>
+						</term>
+						<listitem>
+							<para>Show the version of your release and your copyright.</para>
+						</listitem>
+					</varlistentry>
+
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:objVars">
+				<title>Object variables</title>
+				<variablelist>
+					<varlistentry id="ref:objVars-o">
+						<term>
+							<varname>$o</varname>
+						</term>
+						<listitem>
+							<para>The value, exactly as it was specified by the user, of the current object.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-p">
+						<term>
+							<varname>$p</varname>
+						</term>
+						<listitem>
+							<para>Either a relative or absolute path to the current object with redundant slashes removed.</para>
+
+							<para>For example, if <varname>$o</varname> is "////foo//bar///baz//a.b.c.d" then <varname>$p</varname> will be "/foo/bar/baz/a.b.c.d".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-d">
+						<term>
+							<varname>$d</varname>
+						</term>
+						<listitem>
+							<para>Either a relative or absolute path to the directory which contains the current object.</para>
+
+							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$d</varname> will be "/foo/bar/baz".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-n">
+						<term>
+							<varname>$n</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its path information.</para>
+
+							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$n</varname> will be "a.b.c.d".</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-r">
+						<term>
+							<varname>$r</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its suffix.</para>
+
+							<para>For example,
+								<itemizedlist>
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c.d".</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:objVars-s">
+						<term>
+							<varname>$s</varname>
+						</term>
+						<listitem>
+							<para>The name of the current object without its prefix.</para>
+
+							<para>For example,
+								<itemizedlist>
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be "d".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be ".d".</para>
+									</listitem>
+
+									<listitem>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be empty.</para>
+									</listitem>
+								</itemizedlist>
+							</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:ctrlFuncs">
+				<title>Control functions</title>
+				<variablelist>
+					<varlistentry id="ref:ctrlFuncs-before">
+						<term>
+							<function>before</function> <parameter>object...</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked before any object have been handled. &ctrlFuncParamDesc;</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:ctrlFuncs-during">
+						<term>
+							<function>during</function> <parameter>object</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked to handle an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to handle that object.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:ctrlFuncs-after">
+						<term>
+							<function>after</function> <parameter>object...</parameter>
+						</term>
+						<listitem>
+							<para>This control function is invoked after all object have been handled. &ctrlFuncParamDesc;</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:ctrlFuncs-end">
+						<term>
+							<function>end</function>
+						</term>
+						<listitem>
+							<para>This control function is invoked immediately before &ff; terminates. It does not have any parameters.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsection>
+		</refentry>
+	</appendix>
+
+	&fdlAppendix;
+</book>
