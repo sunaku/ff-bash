@@ -25,6 +25,7 @@
 	<!ENTITY cmd "ff">
 	<!ENTITY website "http://ff-bash.sf.net">
 	<!ENTITY objects "<link linkend='ref:synopsis-object'>objects</link>">
+	<!ENTITY iso639 "<ulink url='http://www.oasis-open.org/cover/iso639a.html'>ISO 639</ulink>">
 
 	<!ENTITY period "period or full stop (<literal>.</literal>)">
 	<!ENTITY hyphen "hyphen or dash (<literal>-</literal>)">
@@ -545,7 +546,7 @@ This is an argument: 10.3
 
 							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
@@ -718,6 +719,66 @@ This is an argument: 10.3
 						</term>
 						<listitem>
 							<para>This control function is invoked immediately before &ff; terminates. It does not have any parameters.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:envVars">
+				<title>Environment variables</title>
+				<variablelist>
+					<varlistentry id="ref:envVars-lang">
+						<term>
+							<varname>$LANG</varname>
+						</term>
+						<listitem>
+							<para>The first two characters of this variable's value denote the &iso639; language code of the user's preferred human language. For example, if <varname>$LANG</varname> is "te_IN.UTF-8" then "te" denotes the &iso639; language code of the user's preferred human language.</para>
+
+							<para>Using this information, &ff; will attempt communicate with the user in their preferred human language. If it cannot, &ff; will assume that the user's prefferred human language is English.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry id="ref:envVars-ffHome">
+						<term>
+							<varname>$FF_HOME</varname>
+						</term>
+						<listitem>
+							<para>This variable defines the path to &ff;'s installation directory. Although &ff; neither uses nor requires this variable, some of the example scripts provided with &ff; depend upon this variable to function correctly.</para>
+
+							<para>For example, one of the example scripts depends upon an external library, composed of &bash; functions, located within &ff;'s installation directory.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</refsection>
+
+			<refsection id="ref:exitStatus">
+				<title>Exit status diagnostics</title>
+				<variablelist>
+					<varlistentry>
+						<term>0</term>
+						<listitem>
+							<para>&ff; has fulfilled its duties successfully. Have a nice day!</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>1</term>
+						<listitem>
+							<para>An error has occurred because of something the user has done.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>2</term>
+						<listitem>
+							<para>An error has occurred because of how the user's system is configured.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>3</term>
+						<listitem>
+							<para>An error has occurred because of something &ff; has done.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
