@@ -7,7 +7,7 @@
 #
 #
 # Usage:
-#	1. Load this file into GNU BASH:
+#	1. Load this file into an existing GNU BASH session:
 #		$ source ff.bash
 #
 #	2. Invoke the 'ff' function:
@@ -42,19 +42,19 @@
 	function ffL10nBundle_en() {
 		# Command-line options
 		# @note the following values are extended shell globs
-		ffOption_showHelp='+(h|help)'
-		ffOption_showVersion='+(V|version)'
-		ffOption_beVerbose='+(v|verbose)'
-		ffOption_pipeTargets='+(p|pipe)'
-		ffOption_extDelim='extension-delim'
+		ffOption_showHelp='@(h|help)'
+		ffOption_showVersion='@(V|version)'
+		ffOption_beVerbose='@(v|verbose)'
+		ffOption_pipeObjects='@(p|pipe)'
+		ffOption_suffixDelim='suffix-delim'
 
-		ffOption_evalExpr='+(e|expression)'
-		ffOption_evalFile='+(f|file)'
+		ffOption_evalExpr='@(e|expression)'
+		ffOption_evalFile='@(f|file)'
 
-		ffOption_beRecursive='+(r|recursive)'
-		ffOption_handleHidden='+(a|all)'
-		ffOption_ignoreLinks='+(L|ignore-links)'
-		ffOption_targetMask='+(m|mask)'
+		ffOption_beRecursive='@(r|recursive)'
+		ffOption_handleHidden='@(a|all)'
+		ffOption_ignoreLinks='@(L|ignore-links)'
+		ffOption_objectMask='@(m|mask)'
 
 
 		# Text messages
@@ -63,7 +63,7 @@
 		ffText_errorNeedMoreArguments="Error: You must specify more arguments for option: %s"
 		ffText_errorBadUserScript="Error: I could not process your script: %s"
 
-		ffText_helpSeeUserManual="See the User's Manual for explanations and examples."
+		ffText_helpSeeUserManual="See the user's manual for explanations and examples."
 		ffText_helpUsage="Usage"
 		ffText_helpOptions="Options"
 		ffText_helpOptionGlob="Option glob"
@@ -159,15 +159,15 @@
 
 
 				# show invocation syntax
-				echo "$ffText_helpUsage:"
-				echo "ff [option|target]..."
+				echo "$ffText_helpUsage:	ff [option|object]..."
 				echo
 
 
 				# show a list of available options
 				echo "$ffText_helpOptions:"
 
-				printf "$ffOptionsHelpFormat" "{$ffText_helpOptionGlob}" "{$ffText_helpDescription}"
+				printf "$ffOptionsHelpFormat" "$ffText_helpOptionGlob" "$ffText_helpDescription"
+				printf "$ffOptionsHelpFormat" "${ffText_helpOptionGlob//?/-}" "${ffText_helpDescription//?/-}"
 				for option in ${!ffOption_*}; do
 					printf "$ffOptionsHelpFormat" "${!option}" "${option#*_}"
 				done
@@ -195,13 +195,13 @@
 				return 0
 			;;
 
-			$ffOption_pipeTargets)
-				ffOption_pipeTargets[$ffOptionIndex_isOn]=true
+			$ffOption_pipeObjects)
+				ffOption_pipeObjects[$ffOptionIndex_isOn]=true
 				return 0
 			;;
 
-			$ffOption_extDelim)
-				ffLogic_enableOption $# "$option" ffOption_extDelim "$1"
+			$ffOption_suffixDelim)
+				ffLogic_enableOption $# "$option" ffOption_suffixDelim "$1"
 				return 1
 			;;
 
@@ -231,8 +231,8 @@
 				return 0
 			;;
 
-			$ffOption_targetMask)
-				ffLogic_enableOption $# "$option" ffOption_targetMask "$1"
+			$ffOption_objectMask)
+				ffLogic_enableOption $# "$option" ffOption_objectMask "$1"
 				return 1
 			;;
 
@@ -341,7 +341,7 @@
 	function ffLogic_recursiveMode() {
 		while (( $# > 0 )); do
 			# handle files which match the target mask
-			ffLogic_linearMode "$1"/${ffOption_targetMask[$ffOptionIndex_arg]:-*}
+			ffLogic_linearMode "$1"/${ffOption_objectMask[$ffOptionIndex_arg]:-*}
 
 
 			# handle directories recursively
@@ -369,47 +369,49 @@
 	function ffLogic_linearMode() {
 		for o; do
 			# update preset variables
+				# parse the object's name and parent directory
 				# handle special cases just like basename(1) and dirname(1)
 				case "$o" in
 					/)
-						p=/
 						d=/
 						n=/
-						b=/
 					;;
 
 					.)
-						p=./.
 						d=.
 						n=.
-						b=.
 					;;
 
 					..)
-						p=./..
 						d=.
 						n=..
-						b=..
 					;;
 
 					*)
-						p=${o//+(\/)/\/}
-						p=${p%/}
+						# prepare object value to parse parent directory and object name correctly
+						local oNormalized=${o%%+(\/)}
 
-						d=${p%/*}
+
+						# parse the parent directory
+						d=${oNormalized%/*}
 						d=${d:-/}	# special case: $d is empty when it should be /
 
-						n=${p##*/}
-						b=${n%${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
+
+						# parse the name
+						n=${oNormalized##*/}
 					;;
 				esac
 
 
-				# parse the file extension
-				if expr index "$n" "${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}" >& /dev/null; then
-					e=${n##*${ffOption_extDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
+				# parse the prefix
+				p=${n%${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
+
+
+				# parse the suffix
+				if [ "$p" != "$n" ]; then
+					s=${n##*${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
 				else
-					e=
+					s=
 				fi
 
 
@@ -457,7 +459,7 @@
 
 			# parse piped arguments
 			local -a pipedArgs
-			if ${ffOption_pipeTargets[$ffOptionIndex_isOn]:-false}; then
+			if ${ffOption_pipeObjects[$ffOptionIndex_isOn]:-false}; then
 				while read -r "pipedArgs[${#pipedArgs[@]}]"; do
 					:
 				done
@@ -475,7 +477,13 @@
 			# load and execute user's script
 			ffLogic_loadScript
 
-			local o p d n b e
+			# o = object
+			# d = dirname
+			# n = basename
+			# p = prefix (without file extension)
+			# s = suffix (file extension)
+			local o d n p s
+
 			before "${parsedArgs[@]}"
 			$mode "${parsedArgs[@]}" "${pipedArgs[@]}"
 			after "${parsedArgs[@]}"

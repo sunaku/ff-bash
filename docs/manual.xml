@@ -18,19 +18,24 @@
 	<!ENTITY unix "<acronym>UNIX</acronym>">
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 	<!ENTITY url "<acronym>URL</acronym>">
-
 	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
+
+
+	<!-- fixed content -->
 	<!ENTITY cmd "ff">
 	<!ENTITY website "http://ff-bash.sf.net">
+	<!ENTITY objects "<link linkend='ref:synopsis-object'>objects</link>">
 
+	<!ENTITY period "period or full stop (<literal>.</literal>)">
+	<!ENTITY hyphen "hyphen or dash (<literal>-</literal>)">
 
-	<!-- small inclusions -->
-	<!ENTITY period "period (<literal>.</literal>)">
+	<!ENTITY bashManual "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
+	<!ENTITY bashManual_patternMatching "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual;">
 
 
 	<!-- big inclusions -->
 	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
-	<!ENTITY description "&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of objects. It is often used to perform repetitive file-system manipulation tasks such as renaming a large number of files and gathering file statistics.">
+	<!ENTITY description "&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:synopsis-object'>objects</link>. The author often uses it to perform repetitive file-system tasks such as renaming a large number of files or gathering file statistics.">
 
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:options-beRecursive'/> option.</para></note>">
 	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:options-pipedObjects'/> option are not passed to this function.">
@@ -68,7 +73,7 @@
 				<revnumber>1.1</revnumber>
 				<date>2005-11-02</date>
 				<authorinitials>snk</authorinitials>
-				<revremark>Initial port of user manual from old script-based manualPages to DocBook-XML.</revremark>
+				<revremark>Initial port of user manual from old script-based manpage to DocBook-XML.</revremark>
 			</revision>
 		</revhistory>
 
@@ -89,10 +94,10 @@
 						<para>how to run commands using the &bash; shell.</para>
 					</listitem>
 					<listitem>
-						<para>&unix; terminology such as "command-line," "command-prompt," "standard input stream," and so on.</para>
+						<para>&unix; concepts such as <ulink url="http://en.wikipedia.org/wiki/Computer_science">command-line</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pipe_%28Unix%29">pipe</ulink>, <ulink url="http://en.wikipedia.org/wiki/Standard_streams">standard streams</ulink>, and so on.</para>
 					</listitem>
 					<listitem>
-						<para>programming or software development terminology such as "string," "function," "variable," and so on.</para>
+						<para>computer science concepts such as <ulink url="http://en.wikipedia.org/wiki/String_%28computer_science%29">string</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pattern_matching">pattern</ulink>, <ulink url="http://en.wikipedia.org/wiki/Function_%28computer_science%29">function</ulink>, <ulink url="http://en.wikipedia.org/wiki/Variable_%28computer_science%29">variable</ulink>, <ulink url="http://en.wikipedia.org/wiki/Recursion">recursion</ulink>, and so on.</para>
 					</listitem>
 					<listitem>
 						<para>traditional &unix;-style manual pages and how they are organized.</para>
@@ -137,11 +142,11 @@
 
 				<substeps>
 					<step>
-						<para>Type your script using as much space as you need. That is, your script can take up multiple lines. You can start a new line by pressing the <keycap>Enter</keycap> or <keycap>Return</keycap> key.</para>
+						<para>Type your script using as much space as you need. That is, your script can take up multiple lines: you can start a new line by pressing the <keycap>Enter</keycap> or <keycap>Return</keycap> key.</para>
 
 						<tip>
 							<title>&gnu; Readline shortcuts</title>
-							<para>While typing your script, you can use <ulink url="http://cnswww.cns.cwru.edu/~chet/readline/rltop.html">&gnu; Readline</ulink> shortcuts such as <keycombo action="press"><keycap>Ctrl</keycap><keycap>u</keycap></keycombo> to erase everything between the cursor and the beginning of a line; and <keycombo action="press"><keycap>Ctrl</keycap><keycap>k</keycap></keycombo> to erase everything between the cursor and the end of a line.</para>
+							<para>While typing your script, you can use <ulink url="http://cnswww.cns.cwru.edu/~chet/readline/rluserman.html#SEC4">&gnu; Readline shortcuts</ulink> such as <keycombo action="press"><keycap>Ctrl</keycap><keycap>u</keycap></keycombo> to erase everything between the cursor and the beginning of a line; and <keycombo action="press"><keycap>Ctrl</keycap><keycap>k</keycap></keycombo> to erase everything between the cursor and the end of a line.</para>
 						</tip>
 					</step>
 
@@ -170,22 +175,34 @@ date
 
 		<section id="sec:invocation">
 			<title>Invoking &ff;</title>
-			<para> <!-- explain what the syntax means --></para>
+			<para><!-- explain how to load ff.bash -->
+			<!-- explain what the syntax means --></para>
 		</section>
 
 		<section id="sec:writing-scripts">
 			<title>Writing scripts</title>
-			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the objects passed to it, by specifying those operations in something called a "script."</para>
+			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the &objects; passed to it, by specifying those operations in something called a "script."</para>
 
-			<para>A script contains a list of GNU BASH commands that &ff; will examine<footnote>
-					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting: parsing and executing the commands.</para>
-				</footnote> and execute. It is similar to a script for a theatrical play which contains a list of dialogue that an actor will examine, recite, and exhibit.</para>
-
-			<para>In addition, a script is not limited to containing only a list of &bash; commands. It can be a generic &bash; shell script containing control structures, functions, variables, and so on.</para>
+			<para>A script either (1) contains a list of &bash; commands or (2) is a full fledged &bash; shell script. It is examined<footnote id="fot:shell-evaluates-script">
+					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting&mdash;parsing and executing the commands&mdash;through the <command>eval</command> command. For this reason, a script written for &ff; is no different than a script written for &bash;.</para>
+				</footnote> and executed by &ff; like a theatrical play's script is examined, recited, and exhibited by an actor or actress.</para>
 
 			<section id="sec:object-variables">
 				<title>Object variables</title>
-				<para/><!-- TODO -->
+				<para><link linkend="ref:objVars">Object variables</link> let your script interact with &objects; specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere in your script and are automatically updated immediately before &ff; invokes the <xref linkend="ref:ctrlFuncs-during"/> control function.</para>
+
+				<example id="ex:object-vars-demo">
+					<title>Seeing what kinds of information object variables provide</title>
+					<programlisting>
+echo "\$o = $o"
+echo "\$d = $d"
+echo "\$n = $n"
+echo "\$p = $p"
+echo "\$s = $s"
+echo ----------
+					</programlisting>
+<!-- TODO -->
+				</example>
 			</section>
 
 			<section id="sec:control-functions">
@@ -204,7 +221,7 @@ date
 
 					<programlisting>
 during() {
-	echo "$p" >> tempFile
+	echo "$o" >> tempFile
 }
 after() {
 	cat -n tempFile
@@ -226,7 +243,7 @@ removed `tempFile'
 
 				<example id="ex:script-options">
 					<title>Command-line options for your script</title>
-					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
+					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the &objects; passed to any control function. However, the <xref linkend="ref:ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any &objects; have been processed by your script.</para>
 
 					<para>For example, consider the following script which recognizes two options: <option>-foo</option> and <option>-bar</option>. When this script is invoked with some arguments, it looks for options among those arguments and notifies us accordingly.</para>
 
@@ -297,7 +314,7 @@ This is an argument: 10.3
 	</chapter>
 
 	<appendix id="ref:manualPage">
-		<title>Traditional &unix; manual page</title>
+		<title>Traditional &unix;-style manual page</title>
 
 		<refentry>
 			<refmeta>
@@ -335,11 +352,12 @@ This is an argument: 10.3
 							</tip>
 						</listitem>
 					</varlistentry>
-					<varlistentry>
+					<varlistentry id="ref:synopsis-object">
 						<term>object</term>
 						<listitem>
 							<para>Something that is passed as an argument to your script for processing. &ff; places no restrcitions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
 							</para>
+
 							<para>For example, if your script renames files, then objects are files. Likewise, if your script downloads data from &url;s, then objects are &url;s.</para>
 						</listitem>
 					</varlistentry>
@@ -351,7 +369,7 @@ This is an argument: 10.3
 				<para>&description;</para>
 
 				<note>
-					<para>This traditional &unix; manual page is intentionally terse. See the &ff; user's manual for a user-friendly treatment&mdash;complete with explanations and examples&mdash;of this manual page.</para>
+					<para>This traditional &unix;-style manual page is intentionally terse. See the &ff; user's manual for a user-friendly supplement&mdash;complete with explanations and examples&mdash;to this manual page.</para>
 				</note>
 			</refsection>
 
@@ -418,7 +436,7 @@ This is an argument: 10.3
 						</term>
 						<listitem>
 							<para>Consider that <replaceable>delimiter</replaceable> separates the <link linkend="ex:object-name-parts">prefix and suffix<footnote id="fot:suffix-and-extension">
-								<para>Also known as a "file extension."</para>
+								<para>Some authors use the phrase "file extension" instead of "suffix."</para>
 							</footnote></link> of an object's name. The default suffix delimiter is a &period;.</para>
 
 							<example id="ex:object-name-parts">
@@ -453,7 +471,7 @@ This is an argument: 10.3
 							<para>Recursively traverse into objects, which happen to be directories or symbolic links that point to directories, in a <link linkend="ex:breadth-first-recursion">breadth-first manner</link>.</para>
 
 							<example id="ex:breadth-first-recursion">
-								<title>Order of handling in breadth-first recursion</title>
+								<title>Order of processing in breadth-first recursion</title>
 								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
 
 								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
@@ -522,18 +540,18 @@ This is an argument: 10.3
 						</term>
 						<listitem>
 							<para>Handle objects only if their names match <replaceable>glob</replaceable><footnote id="fot:bash-glob">
-								<para>See "Pattern Matching" in the &bash; manual for more information.</para>
+								<para>See the &bashManual_patternMatching; for more information.</para>
 							</footnote>.</para>
 
 							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$p"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word <literal>globbyGlob</literal> appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
 							<tip>
 								<para>You can use extended<footnote id="fot:bash-extglob">
-									<para>See "extglob" in the &bash; manual for more information.</para>
+									<para>See "extglob" in the &bashManual_patternMatching; for more information.</para>
 								</footnote> globbing notation in <replaceable>glob</replaceable>.</para>
 							</tip>
 						</listitem>
@@ -590,17 +608,6 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-p">
-						<term>
-							<varname>$p</varname>
-						</term>
-						<listitem>
-							<para>Either a relative or absolute path to the current object with redundant slashes removed.</para>
-
-							<para>For example, if <varname>$o</varname> is "////foo//bar///baz//a.b.c.d" then <varname>$p</varname> will be "/foo/bar/baz/a.b.c.d".</para>
-						</listitem>
-					</varlistentry>
-
 					<varlistentry id="ref:objVars-d">
 						<term>
 							<varname>$d</varname>
@@ -608,7 +615,7 @@ This is an argument: 10.3
 						<listitem>
 							<para>Either a relative or absolute path to the directory which contains the current object.</para>
 
-							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$d</varname> will be "/foo/bar/baz".</para>
+							<para>For example, if <varname>$o</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$d</varname> will be "/foo/bar/baz".</para>
 						</listitem>
 					</varlistentry>
 
@@ -619,29 +626,29 @@ This is an argument: 10.3
 						<listitem>
 							<para>The name of the current object without its path information.</para>
 
-							<para>For example, if <varname>$p</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$n</varname> will be "a.b.c.d".</para>
+							<para>For example, if <varname>$o</varname> is "/foo/bar/baz/a.b.c.d" then <varname>$n</varname> will be "a.b.c.d".</para>
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-r">
+					<varlistentry id="ref:objVars-p">
 						<term>
-							<varname>$r</varname>
+							<varname>$p</varname>
 						</term>
 						<listitem>
-							<para>The name of the current object without its suffix.</para>
+							<para>The prefix of the current object's name.</para>
 
 							<para>For example,
 								<itemizedlist>
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c".</para>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.".</para>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$r</varname> will be "a.b.c.d".</para>
+										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c.d".</para>
 									</listitem>
 								</itemizedlist>
 							</para>
@@ -653,7 +660,7 @@ This is an argument: 10.3
 							<varname>$s</varname>
 						</term>
 						<listitem>
-							<para>The name of the current object without its prefix.</para>
+							<para>The suffix of the current object's name.</para>
 
 							<para>For example,
 								<itemizedlist>
@@ -683,7 +690,7 @@ This is an argument: 10.3
 							<function>before</function> <parameter>object...</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked before any object have been handled. &ctrlFuncParamDesc;</para>
+							<para>This control function is invoked before any object have been processed. &ctrlFuncParamDesc;</para>
 						</listitem>
 					</varlistentry>
 
@@ -692,7 +699,7 @@ This is an argument: 10.3
 							<function>during</function> <parameter>object</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked to handle an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to handle that object.</para>
+							<para>This control function is invoked to processe an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to processe that object.</para>
 						</listitem>
 					</varlistentry>
 
@@ -701,7 +708,7 @@ This is an argument: 10.3
 							<function>after</function> <parameter>object...</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked after all object have been handled. &ctrlFuncParamDesc;</para>
+							<para>This control function is invoked after all object have been processed. &ctrlFuncParamDesc;</para>
 						</listitem>
 					</varlistentry>
 
