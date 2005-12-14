@@ -58,10 +58,10 @@
 
 
 		# Text messages
-		ffText_errorInvalidOption="Error: You specified an invalid option: %s"
-		ffText_errorCannotReadFile="Error: I could not read the following file: %s"
-		ffText_errorNeedMoreArguments="Error: You must specify more arguments for option: %s"
-		ffText_errorBadUserScript="Error: I could not process your script: %s"
+		ffText_errorInvalidOption="You specified an invalid option: %s"
+		ffText_errorCannotReadFile="I could not read this file: %s"
+		ffText_errorNeedMoreArguments="You must specify more arguments for this option: %s"
+		ffText_errorBadUserScript="I could not process your script: %s"
 
 		ffText_helpSeeUserManual="See the user's manual for explanations and examples."
 		ffText_helpUsage="Usage"
@@ -69,6 +69,7 @@
 		ffText_helpOptionGlob="Option glob"
 		ffText_helpDescription="Description"
 
+		ffText_version="version"
 		ffText_forEachFile="For each File"
 		ffText_disclaimer="This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 	}
@@ -113,13 +114,14 @@
 
 
 	function ffLogic_showVersion() {
-		echo "$ffText_forEachFile $ffReleaseVersion <$ffWebsite>"
+		echo "$ffText_forEachFile, $ffText_version $ffReleaseVersion ($ffWebsite)"
 	}
 
 
 
 	function ffLogic_showDisclaimer() {
 		echo "Copyright 2003, 2004, 2005 Suraj N. Kurapati."
+		echo
 		echo "$ffText_disclaimer"
 	}
 
@@ -183,7 +185,6 @@
 
 			$ffOption_showVersion)
 				ffLogic_showVersion
-				echo
 				ffLogic_showDisclaimer
 
 				exit $ffExitCode_success
@@ -320,7 +321,7 @@
 
 
 		# ensure that user's script has the required control function
-		if ! grep 'during[:space:]*([:space:]*)' <<< "$expression" >& /dev/null; then
+		if ! [[ "$expression" =~ 'during\s*\(\s*\)' ]]; then
 			expression="during(){${ffNewLine}$expression${ffNewLine}:;}"
 		fi
 
