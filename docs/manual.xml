@@ -9,6 +9,17 @@
 	The general strategy is to put information within the manual-page section and explain that information within the remainder of the text/discussion.
 -->
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+
+	<!-- release info -->
+	<!ENTITY ffVersion "2.0">
+
+	<!ENTITY ffUrl "http://ff-bash.sf.net">
+	<!ENTITY ffDownloadUrl "http://sourceforge.net/project/showfiles.php?group_id=106777&amp;package_id=115170">
+
+	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
+	<!ENTITY ffCmd "ff">
+
+
 	<!-- imports -->
 	<!ENTITY fdlAppendix SYSTEM "fdl.xml">
 
@@ -18,12 +29,9 @@
 	<!ENTITY unix "<acronym>UNIX</acronym>">
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 	<!ENTITY url "<acronym>URL</acronym>">
-	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 
 
 	<!-- fixed content -->
-	<!ENTITY cmd "ff">
-	<!ENTITY website "http://ff-bash.sf.net">
 	<!ENTITY objects "<link linkend='ref:synopsis-object'>objects</link>">
 	<!ENTITY iso639 "<ulink url='http://www.oasis-open.org/cover/iso639a.html'>ISO 639</ulink>">
 
@@ -33,10 +41,13 @@
 	<!ENTITY bashManual "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
 	<!ENTITY bashManual_patternMatching "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual;">
 
+	<!ENTITY bashrc "<filename>~/.bashrc</filename>">
+	<!ENTITY installDir "<varname>installDir</varname>">
+
 
 	<!-- big inclusions -->
-	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&website;'>&ff;</ulink>.">
-	<!ENTITY description "&ff; is a &bash; function. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:synopsis-object'>objects</link>. The author often uses it to perform repetitive file-system tasks such as renaming a large number of files or gathering file statistics.">
+	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&ffUrl;'>&ff;</ulink>.">
+	<!ENTITY description "&ff; is a <ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC22'>&bash; function</ulink>. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:synopsis-object'>objects</link>. The author often uses it to perform repetitive file-system tasks such as renaming a large number of files or gathering file statistics.">
 
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:options-beRecursive'/> option.</para></note>">
 	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:options-pipedObjects'/> option are not passed to this function.">
@@ -89,19 +100,19 @@
 
 		<section id="sec:what-should-i-know">
 			<title>What should I know?</title>
-			<para>This manual assumes that you have basic knowledge of:
+			<para>This manual assumes that you have, at minimum, basic knowledge of:
 				<itemizedlist>
 					<listitem>
-						<para>how to run commands using the &bash; shell.</para>
+						<para>how to run commands using the <ulink url="http://en.wikipedia.org/wiki/Bash">&bash; shell</ulink>.</para>
 					</listitem>
 					<listitem>
-						<para>&unix; concepts such as <ulink url="http://en.wikipedia.org/wiki/Computer_science">command-line</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pipe_%28Unix%29">pipe</ulink>, <ulink url="http://en.wikipedia.org/wiki/Standard_streams">standard streams</ulink>, and so on.</para>
+						<para><ulink url="http://en.wikipedia.org/wiki/Unix">&unix;</ulink> concepts such as <ulink url="http://en.wikipedia.org/wiki/Path_%28computing%29">path</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pipe_%28Unix%29">pipe</ulink>, <ulink url="http://en.wikipedia.org/wiki/Standard_streams">standard streams</ulink>, and so on.</para>
 					</listitem>
 					<listitem>
-						<para>computer science concepts such as <ulink url="http://en.wikipedia.org/wiki/String_%28computer_science%29">string</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pattern_matching">pattern</ulink>, <ulink url="http://en.wikipedia.org/wiki/Function_%28computer_science%29">function</ulink>, <ulink url="http://en.wikipedia.org/wiki/Variable_%28computer_science%29">variable</ulink>, <ulink url="http://en.wikipedia.org/wiki/Recursion">recursion</ulink>, and so on.</para>
+						<para>computer science concepts such as <ulink url="http://en.wikipedia.org/wiki/String_%28computer_science%29">string</ulink>, <ulink url="http://en.wikipedia.org/wiki/Function_%28computer_science%29">function</ulink>, <ulink url="http://en.wikipedia.org/wiki/Variable_%28computer_science%29">variable</ulink>, <ulink url="http://en.wikipedia.org/wiki/Recursion">recursion</ulink>, <ulink url="http://en.wikipedia.org/wiki/Pattern_matching">pattern</ulink>, and so on.</para>
 					</listitem>
 					<listitem>
-						<para>traditional &unix;-style manual pages and how they are organized.</para>
+						<para>traditional <ulink url="http://en.wikipedia.org/wiki/Manpage">&unix;-style manual pages</ulink> and how they are organized.</para>
 					</listitem>
 				</itemizedlist>
 			</para>
@@ -110,21 +121,72 @@
 		<section id="sec:what-is-ff">
 			<title>What is &ff;?</title>
 			<para>&description;</para>
-			<!--<para>For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&cmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.</para>-->
+			<!--<para>For example, you can easily rename the suffix of all gzipped tarballs in directory <filename>foo</filename> from <literal>tgz</literal> to <literal>tar.gz</literal> by running the command <command>&ffCmd; <option>-rme</option> <replaceable>'*tgz'</replaceable> <replaceable>'mv "$p" "${p%tgz}tar.gz"'</replaceable> <replaceable>foo</replaceable></command>.</para>-->
 		</section>
 	</chapter>
 
 	<chapter id="chp:getting-started">
 		<title>Getting started</title>
+		<para>First, ensure you have the <link linkend="sec:dependencies">necessary dependencies</link> to run &ff;. Next, <link linkend="sec:installation">install &ff;</link> onto your system. Finally, <link linkend="sec:invocation">invoke &ff;</link> at your command-prompt and away you go!</para>
 
-		<section id="sec:requirements">
-			<title>Requirements</title>
-			<para/>
+		<section id="sec:dependencies">
+			<title>Dependencies</title>
+			<para>&ff; depends upon the software listed below to function correctly. If your system does not already have these dependencies, you can obtain them by following their respective hyperlinks below.</para>
+
+			<section id="sec:dependencies-required">
+				<title>Required software</title>
+
+				<variablelist>
+					<varlistentry>
+						<term><ulink url="http://www.gnu.org/software/bash/">&bash; shell</ulink></term>
+						<listitem>
+							<para>Version 3 or newer, of this software, is required because it provides regular expression capabilities. &ff; has been developed and tested successfully using version 3.00.16(1) of this software.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+
+			<section id="sec:dependencies-optional">
+				<title>Optional, but recommended, software</title>
+
+				<variablelist>
+					<varlistentry>
+						<term><ulink url="http://www.gnu.org/software/coreutils/">&gnu; coreutils</ulink></term>
+						<listitem>
+							<para>This software, called "core utilities", provides a collection of programs that are, in my opinion, (1) essential for daily computing and (2) an integral part of the &gnu; experience.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
 		</section>
 
 		<section id="sec:installation">
 			<title>Installing &ff;</title>
-			<para/>
+
+			<procedure id="proc:installing">
+				<title>Installing &ff;</title>
+
+				<step>
+					<para><ulink url="&ffDownloadUrl;">Obtain the latest release</ulink> of &ff;.</para>
+				</step>
+
+				<step id="proc:installing-extraction">
+					<para>Extract the obtained archive to a location&mdash;henceforth denoted by &installDir;&mdash;of your choice by issuing the command <command>bunzip2 -c <filename>ff-&ffVersion;.tar.bz2</filename> | tar -C &installDir; -vxf -</command>.</para>
+				</step>
+
+				<step>
+					<para>Using your favorite text editor, (1) append the following text to the &bashrc; file and (2) be sure to replace the word &installDir; with the location it denotes (see <xref linkend="proc:installing-extraction"/>) before committing your changes.</para>
+
+					<programlisting>
+export FF_HOME="&installDir;"
+source "$FF_HOME/ff.bash"
+					</programlisting>
+				</step>
+
+				<step>
+					<para>Update your &bash; session by issuing the command <command>source &bashrc;</command>.</para>
+				</step>
+			</procedure>
 		</section>
 	</chapter>
 
@@ -165,7 +227,7 @@
 		<example id="ex:typing-script-at-prompt">
 					<title>Typing your script at a command-prompt</title>
 					<screen>
-<prompt>$</prompt> <userinput><command>&cmd; <replaceable>World</replaceable></command></userinput>
+<prompt>$</prompt> <userinput><command>&ffCmd; <replaceable>World</replaceable></command></userinput>
 <userinput>echo -n "Hello, $o! Today is "
 date
 <keycombo action="press"><keycap>Ctrl</keycap><keycap>d</keycap></keycombo></userinput>
@@ -184,16 +246,19 @@ date
 			<title>Writing scripts</title>
 			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the &objects; passed to it, by specifying those operations in something called a "script."</para>
 
-			<para>A script either (1) contains a list of &bash; commands or (2) is a full fledged &bash; shell script. It is examined<footnote id="fot:shell-evaluates-script">
+			<para>A script either (1) contains a list of &bash; commands or (2) is a full fledged &bash; <ulink url="http://en.wikipedia.org/wiki/Shell_script">shell script</ulink>. It is examined<footnote id="fot:shell-evaluates-script">
 					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting&mdash;parsing and executing the commands&mdash;through the <command>eval</command> command. For this reason, a script written for &ff; is no different than a script written for &bash;.</para>
-				</footnote> and executed by &ff; like a theatrical play's script is examined, recited, and exhibited by an actor or actress.</para>
+				</footnote> and executed by &ff; like a theatrical play's script is examined, recited, and exhibited by an actor.</para>
 
 			<section id="sec:object-variables">
 				<title>Object variables</title>
 				<para><link linkend="ref:objVars">Object variables</link> let your script interact with &objects; specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere in your script and are automatically updated immediately before &ff; invokes the <xref linkend="ref:ctrlFuncs-during"/> control function.</para>
 
 				<example id="ex:object-vars-demo">
-					<title>Seeing what kinds of information object variables provide</title>
+					<title>Seeing what information object variables provide</title>
+
+					<para>In order to see what kinds of information object variables provide, consider the following script which displays each object variable and its value.</para>
+
 					<programlisting>
 echo "\$o = $o"
 echo "\$d = $d"
@@ -202,7 +267,36 @@ echo "\$p = $p"
 echo "\$s = $s"
 echo ----------
 					</programlisting>
-<!-- TODO -->
+
+					<para>Suppose that this script has been written to a file called <filename>objectVars.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
+
+					<screen>
+<prompt>$</prompt> <userinput><command>&ffCmd; <option>-f</option> <replaceable>objVars.ff</replaceable> <replaceable>/var/log/mail*</replaceable></command></userinput>
+$o = /var/log/mail.err
+$d = /var/log
+$n = mail.err
+$p = mail
+$s = err
+----------
+$o = /var/log/mail.info
+$d = /var/log
+$n = mail.info
+$p = mail
+$s = info
+----------
+$o = /var/log/mail.log
+$d = /var/log
+$n = mail.log
+$p = mail
+$s = log
+----------
+$o = /var/log/mail.warn
+$d = /var/log
+$n = mail.warn
+$p = mail
+$s = warn
+----------
+					</screen>
 				</example>
 			</section>
 
@@ -235,7 +329,7 @@ end() {
 					<para>Suppose that this script has been written to a file called <filename>cleanTemp.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
 
 					<screen>
-<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>cleanTemp.ff</replaceable> <replaceable>foo</replaceable> <replaceable>bar</replaceable></command></userinput>
+<prompt>$</prompt> <userinput><command>&ffCmd; <option>-f</option> <replaceable>cleanTemp.ff</replaceable> <replaceable>foo</replaceable> <replaceable>bar</replaceable></command></userinput>
      1  foo
      2  bar
 removed `tempFile'
@@ -268,7 +362,7 @@ during() { :; }
 					<para>Suppose that this script has been written to a file called <filename>scriptArgs.ff</filename>. Shown below is output generated by this script when invoked with some sample arguments.</para>
 
 					<screen>
-<prompt>$</prompt> <userinput><command>&cmd; <option>-f</option> <replaceable>scriptArgs.ff</replaceable> <option>--</option> <replaceable>-foo</replaceable> <replaceable>-moz</replaceable> <replaceable>-bar</replaceable> <replaceable>10.3</replaceable></command></userinput>
+<prompt>$</prompt> <userinput><command>&ffCmd; <option>-f</option> <replaceable>scriptArgs.ff</replaceable> <option>--</option> <replaceable>-foo</replaceable> <replaceable>-moz</replaceable> <replaceable>-bar</replaceable> <replaceable>10.3</replaceable></command></userinput>
 This is an option: -foo
 This is an argument: -moz
 This is an option: -bar
@@ -320,21 +414,21 @@ This is an argument: 10.3
 		<refentry>
 			<refmeta>
 				<refentrytitle>
-					<application>&cmd;</application>
+					<application>&ffCmd;</application>
 				</refentrytitle>
 				<manvolnum>1</manvolnum>
 			</refmeta>
 
 			<refnamediv>
 				<refname>
-					<application>&cmd;</application>
+					<application>&ffCmd;</application>
 				</refname>
 				<refpurpose>Run &bash; commands on objects.</refpurpose>
 			</refnamediv>
 
 			<refsynopsisdiv>
 				<cmdsynopsis>
-					<command>&cmd;</command>
+					<command>&ffCmd;</command>
 					<group choice="opt">
 						<arg choice="opt" rep="repeat">option</arg>
 						<arg choice="opt" rep="repeat">object</arg>
@@ -475,7 +569,7 @@ This is an argument: 10.3
 								<title>Order of processing in breadth-first recursion</title>
 								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
 
-								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object processsed by your script.</para>
+								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object to be processsed by your script.</para>
 
 								<itemizedlist>
 									<listitem>
@@ -546,7 +640,7 @@ This is an argument: 10.3
 
 							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&cmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&ffCmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
