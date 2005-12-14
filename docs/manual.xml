@@ -32,11 +32,10 @@
 
 
 	<!-- fixed content -->
-	<!ENTITY objects "<link linkend='ref:synopsis-object'>objects</link>">
 	<!ENTITY iso639 "<ulink url='http://www.oasis-open.org/cover/iso639a.html'>ISO 639</ulink>">
 
-	<!ENTITY period "period or full stop (<literal>.</literal>)">
-	<!ENTITY hyphen "hyphen or dash (<literal>-</literal>)">
+	<!ENTITY period "period or full stop &quot;<literal>.</literal>&quot;">
+	<!ENTITY hyphen "hyphen or dash &quot;<literal>-</literal>&quot;">
 
 	<!ENTITY bashManual "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
 	<!ENTITY bashManual_patternMatching "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual;">
@@ -47,10 +46,10 @@
 
 	<!-- big inclusions -->
 	<!ENTITY abstract "This manual explains how to install, use, and extend <ulink url='&ffUrl;'>&ff;</ulink>.">
-	<!ENTITY description "&ff; is a <ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC22'>&bash; function</ulink>. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:synopsis-object'>objects</link>. The author often uses it to perform repetitive file-system tasks such as renaming a large number of files or gathering file statistics.">
+	<!ENTITY description "&ff; is a <ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC22'>&bash; function</ulink>. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:ff-synopsis-object'>objects</link>. The author often uses it to perform repetitive file-system tasks such as renaming a large number of files or gathering file statistics.">
 
-	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:options-beRecursive'/> option.</para></note>">
-	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:options-pipedObjects'/> option are not passed to this function.">
+	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:ff-options-beRecursive'/> option.</para></note>">
+	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:ff-options-pipedObjects'/> option are not passed to this function.">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -153,7 +152,7 @@
 					<varlistentry>
 						<term><ulink url="http://www.gnu.org/software/coreutils/">&gnu; coreutils</ulink></term>
 						<listitem>
-							<para>This software, called "core utilities", provides a collection of programs that are, in my opinion, (1) essential for daily computing and (2) an integral part of the &gnu; experience.</para>
+							<para>This software, called "core utilities", provides a collection of programs that are, in my opinion, essential for daily computing.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
@@ -238,13 +237,29 @@ date
 
 		<section id="sec:invocation">
 			<title>Invoking &ff;</title>
-			<para><!-- explain how to load ff.bash -->
-			<!-- explain what the syntax means --></para>
+			<para>First, examine the <link linkend="ref:ff-synopsis">invocation syntax, or synopsis,</link> presented in the <link linkend="ref:ff">&unix;-style manual page</link>. From this syntax, one can infer that:
+
+				<itemizedlist>
+					<listitem>
+						<para>&ff; can be invoked without any arguments because its parameters are optional (denoted by the square brackets which surround a parameter).</para>
+					</listitem>
+
+					<listitem>
+						<para>each parameter may be repeated indefinitely (denoted by the elipsis appended to the parameter). That is, one can specify more than one option and more than one object at a time while invoking &ff;.</para>
+					</listitem>
+
+					<listitem>
+						<para>the order in which options and objects are specified is irrelevant. For example, the command <command>&ffCmd; <replaceable>/bin</replaceable> <option>-e</option> <replaceable>'echo $o'</replaceable></command> has the same effect as the command <command>&ffCmd; <option>-e</option> <replaceable>'echo $o'</replaceable> <replaceable>/bin</replaceable></command>. However, note that the command <command>&ffCmd; <replaceable>'echo $o'</replaceable> <option>-e</option>  <replaceable>/bin</replaceable></command> <emphasis>does not</emphasis> have the same effect as the previous two because it specifies a different argument for the <option>-e</option> option.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+
+			<para>Now you are ready to invoke &ff;, using the aforementioned invocation syntax, by issuing the appropriate command at your command-prompt.</para>
 		</section>
 
 		<section id="sec:writing-scripts">
 			<title>Writing scripts</title>
-			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the &objects; passed to it, by specifying those operations in something called a "script."</para>
+			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the objects passed to it, by specifying those operations in something called a "script."</para>
 
 			<para>A script either (1) contains a list of &bash; commands or (2) is a full fledged &bash; <ulink url="http://en.wikipedia.org/wiki/Shell_script">shell script</ulink>. It is examined<footnote id="fot:shell-evaluates-script">
 					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting&mdash;parsing and executing the commands&mdash;through the <command>eval</command> command. For this reason, a script written for &ff; is no different than a script written for &bash;.</para>
@@ -252,7 +267,7 @@ date
 
 			<section id="sec:object-variables">
 				<title>Object variables</title>
-				<para><link linkend="ref:objVars">Object variables</link> let your script interact with &objects; specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere in your script and are automatically updated immediately before &ff; invokes the <xref linkend="ref:ctrlFuncs-during"/> control function.</para>
+				<para><link linkend="ref:ff-objVars">Object variables</link> let your script interact with <link linkend="ref:ff-synopsis-object">objects</link> specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere in your script and are automatically updated immediately before &ff; invokes the <xref linkend="ref:ff-ctrlFuncs-during"/> control function.</para>
 
 				<example id="ex:object-vars-demo">
 					<title>Seeing what information object variables provide</title>
@@ -302,15 +317,15 @@ $s = warn
 
 			<section id="sec:control-functions">
 				<title>Control functions</title>
-				<para><link linkend="ref:ctrlFuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
-					<para>&ff; will automatically place your script inside the <xref linkend="ref:ctrlFuncs-during"/> control function if your script does not implement any control functions.</para>
-				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:ctrlFuncs-during"/> control function as well.</para>
+				<para><link linkend="ref:ff-ctrlFuncs">Control functions</link> give your script more control over its execution by allowing it to execute portions of its code at different times. You are not required<footnote>
+					<para>&ff; will automatically place your script inside the <xref linkend="ref:ff-ctrlFuncs-during"/> control function if your script does not implement any control functions.</para>
+				</footnote> to implement these functions in order to use &ff;. However, if you decide to implement any one of these functions, then &ff; requires that you implement the <xref linkend="ref:ff-ctrlFuncs-during"/> control function as well.</para>
 
 				<para>To illustrate how control functions give your script more control over its execution, consider the following examples.</para>
 
 				<example id="ex:cleaning-temporary-files">
 					<title>Cleaning up temporary files</title>
-					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:ctrlFuncs-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
+					<para>If your script creates temporary files during execution, then you can place code that removes the temporary files in the <xref linkend="ref:ff-ctrlFuncs-end"/> control function to guarantee that your script does not leave a mess when a user forcefully terminates it.</para>
 
 					<para>For example, consider the following script which collects the relative or absolute path to each user-specified object in a temporary file called <filename>tempFile</filename>, shows the contents of the temporary file with line numbers, and finally removes the temporary file.</para>
 
@@ -338,7 +353,7 @@ removed `tempFile'
 
 				<example id="ex:script-options">
 					<title>Command-line options for your script</title>
-					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the &objects; passed to any control function. However, the <xref linkend="ref:ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any &objects; have been processed by your script.</para>
+					<para>Just like &ff;, your script can have command-line options that let a user change its behavior. To do this, your script can look for options among the objects passed to any control function. However, the <xref linkend="ref:ff-ctrlFuncs-before"/> control function is usually the best place to look for options because it can set flags that change your script's behavior <emphasis>before</emphasis> any objects have been processed by your script.</para>
 
 					<para>For example, consider the following script which recognizes two options: <option>-foo</option> and <option>-bar</option>. When this script is invoked with some arguments, it looks for options among those arguments and notifies us accordingly.</para>
 
@@ -408,10 +423,10 @@ This is an argument: 10.3
 		</section>
 	</chapter>
 
-	<appendix id="ref:manualPage">
-		<title>Traditional &unix;-style manual page</title>
+	<appendix>
+		<title>Traditional &unix;-style manual pages</title>
 
-		<refentry>
+		<refentry id="ref:ff">
 			<refmeta>
 				<refentrytitle>
 					<application>&ffCmd;</application>
@@ -423,23 +438,23 @@ This is an argument: 10.3
 				<refname>
 					<application>&ffCmd;</application>
 				</refname>
-				<refpurpose>Run &bash; commands on objects.</refpurpose>
+				<refpurpose>Run &bash; scripts or commands on objects.</refpurpose>
 			</refnamediv>
 
 			<refsynopsisdiv>
-				<cmdsynopsis>
+				<cmdsynopsis id="ref:ff-synopsis">
 					<command>&ffCmd;</command>
 					<group choice="opt">
-						<arg choice="opt" rep="repeat">option</arg>
-						<arg choice="opt" rep="repeat">object</arg>
+						<arg rep="repeat">option</arg>
+						<arg rep="repeat">object</arg>
 					</group>
 				</cmdsynopsis>
 
 				<variablelist>
-					<varlistentry>
+					<varlistentry id="ref:ff-synopsis-option">
 						<term>option</term>
 						<listitem>
-							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:options"/> for a list of available options.</para>
+							<para>A mechanism which lets you control how &ff; behaves. See <xref linkend="ref:ff-options"/> for a list of available options.</para>
 
 							<tip>
 								<title>Combining short options</title>
@@ -447,7 +462,7 @@ This is an argument: 10.3
 							</tip>
 						</listitem>
 					</varlistentry>
-					<varlistentry id="ref:synopsis-object">
+					<varlistentry id="ref:ff-synopsis-object">
 						<term>object</term>
 						<listitem>
 							<para>Something that is passed as an argument to your script for processing. &ff; places no restrcitions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
@@ -468,21 +483,21 @@ This is an argument: 10.3
 				</note>
 			</refsection>
 
-			<refsection id="ref:options">
+			<refsection id="ref:ff-options">
 				<title>Options</title>
 				<variablelist>
-					<varlistentry id="ref:options-stopScan">
+					<varlistentry id="ref:ff-options-stopScan">
 						<term>
 							<option>--</option>
 						</term>
 						<listitem>
 							<para>Stop looking for options among the given arguments and consider that the remaining arguments are objects.</para>
 
-							<para>With this option, you can safely specify objects whose names begin with a hyphen (<literal>-</literal>). Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
+							<para>With this option, you can safely specify objects whose names begin with a &hyphen;. Such objects would otherwise be mistaken for options. For example, you can specify two objects named <option>-foo</option> and <option>-bar</option> by writing them as <command><option>--</option> <option>-foo</option> <option>-bar</option></command>.</para>
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-evalExpr">
+					<varlistentry id="ref:ff-options-evalExpr">
 						<term>
 							<option>-e</option>
 							<replaceable>expression</replaceable>
@@ -496,7 +511,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-evalFile">
+					<varlistentry id="ref:ff-options-evalFile">
 						<term>
 							<option>-f</option>
 							<replaceable>file</replaceable>
@@ -510,7 +525,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-pipedObjects">
+					<varlistentry id="ref:ff-options-pipedObjects">
 						<term>
 							<option>-p</option>
 						</term>
@@ -524,7 +539,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-suffixDelim">
+					<varlistentry id="ref:ff-options-suffixDelim">
 						<term>
 							<option>--suffix-delim</option>
 							<replaceable>delimiter</replaceable>
@@ -555,7 +570,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-beRecursive">
+					<varlistentry id="ref:ff-options-beRecursive">
 						<term>
 							<option>-r</option>
 						</term>
@@ -596,7 +611,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-handleHidden">
+					<varlistentry id="ref:ff-options-handleHidden">
 						<term>
 							<option>-a</option>
 						</term>
@@ -610,7 +625,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-ignoreLinks">
+					<varlistentry id="ref:ff-options-ignoreLinks">
 						<term>
 							<option>-L</option>
 						</term>
@@ -624,7 +639,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-objectMask">
+					<varlistentry id="ref:ff-options-objectMask">
 						<term>
 							<option>-m</option>
 							<replaceable>glob</replaceable>
@@ -638,7 +653,7 @@ This is an argument: 10.3
 								<para>See the &bashManual_patternMatching; for more information.</para>
 							</footnote>.</para>
 
-							<para>Unless the <xref linkend="ref:options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
+							<para>Unless the <xref linkend="ref:ff-options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
 							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&ffCmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
 
@@ -652,7 +667,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-showHelp">
+					<varlistentry id="ref:ff-options-showHelp">
 						<term>
 							<option>-h</option>
 						</term>
@@ -664,7 +679,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-beVerbose">
+					<varlistentry id="ref:ff-options-beVerbose">
 						<term>
 							<option>-v</option>
 						</term>
@@ -676,7 +691,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:options-showVersion">
+					<varlistentry id="ref:ff-options-showVersion">
 						<term>
 							<option>-V</option>
 						</term>
@@ -691,10 +706,10 @@ This is an argument: 10.3
 				</variablelist>
 			</refsection>
 
-			<refsection id="ref:objVars">
+			<refsection id="ref:ff-objVars">
 				<title>Object variables</title>
 				<variablelist>
-					<varlistentry id="ref:objVars-o">
+					<varlistentry id="ref:ff-objVars-o">
 						<term>
 							<varname>$o</varname>
 						</term>
@@ -703,7 +718,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-d">
+					<varlistentry id="ref:ff-objVars-d">
 						<term>
 							<varname>$d</varname>
 						</term>
@@ -714,7 +729,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-n">
+					<varlistentry id="ref:ff-objVars-n">
 						<term>
 							<varname>$n</varname>
 						</term>
@@ -725,7 +740,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-p">
+					<varlistentry id="ref:ff-objVars-p">
 						<term>
 							<varname>$p</varname>
 						</term>
@@ -735,22 +750,22 @@ This is an argument: 10.3
 							<para>For example,
 								<itemizedlist>
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c".</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.".</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c.d".</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$p</varname> will be "a.b.c.d".</para>
 									</listitem>
 								</itemizedlist>
 							</para>
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:objVars-s">
+					<varlistentry id="ref:ff-objVars-s">
 						<term>
 							<varname>$s</varname>
 						</term>
@@ -760,15 +775,15 @@ This is an argument: 10.3
 							<para>For example,
 								<itemizedlist>
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be "d".</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option is not specified and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be "d".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be ".d".</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option specifies "c" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be ".d".</para>
 									</listitem>
 
 									<listitem>
-										<para>if the <xref linkend="ref:options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be empty.</para>
+										<para>if the <xref linkend="ref:ff-options-suffixDelim"/> option specifies "X" as the delimiter and <varname>$n</varname> is "a.b.c.d", then <varname>$s</varname> will be empty.</para>
 									</listitem>
 								</itemizedlist>
 							</para>
@@ -777,10 +792,10 @@ This is an argument: 10.3
 				</variablelist>
 			</refsection>
 
-			<refsection id="ref:ctrlFuncs">
+			<refsection id="ref:ff-ctrlFuncs">
 				<title>Control functions</title>
 				<variablelist>
-					<varlistentry id="ref:ctrlFuncs-before">
+					<varlistentry id="ref:ff-ctrlFuncs-before">
 						<term>
 							<function>before</function> <parameter>object...</parameter>
 						</term>
@@ -789,16 +804,16 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:ctrlFuncs-during">
+					<varlistentry id="ref:ff-ctrlFuncs-during">
 						<term>
 							<function>during</function> <parameter>object</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked to processe an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to processe that object.</para>
+							<para>This control function is invoked to processe an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:ff-options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to processe that object.</para>
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:ctrlFuncs-after">
+					<varlistentry id="ref:ff-ctrlFuncs-after">
 						<term>
 							<function>after</function> <parameter>object...</parameter>
 						</term>
@@ -807,7 +822,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:ctrlFuncs-end">
+					<varlistentry id="ref:ff-ctrlFuncs-end">
 						<term>
 							<function>end</function>
 						</term>
@@ -818,10 +833,10 @@ This is an argument: 10.3
 				</variablelist>
 			</refsection>
 
-			<refsection id="ref:envVars">
+			<refsection id="ref:ff-envVars">
 				<title>Environment variables</title>
 				<variablelist>
-					<varlistentry id="ref:envVars-lang">
+					<varlistentry id="ref:ff-envVars-lang">
 						<term>
 							<varname>$LANG</varname>
 						</term>
@@ -832,7 +847,7 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:envVars-ffHome">
+					<varlistentry id="ref:ff-envVars-ffHome">
 						<term>
 							<varname>$FF_HOME</varname>
 						</term>
@@ -845,7 +860,7 @@ This is an argument: 10.3
 				</variablelist>
 			</refsection>
 
-			<refsection id="ref:exitStatus">
+			<refsection id="ref:ff-exitStatus">
 				<title>Exit status diagnostics</title>
 				<variablelist>
 					<varlistentry>

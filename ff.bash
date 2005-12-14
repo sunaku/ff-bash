@@ -1,9 +1,6 @@
 #!/bin/bash
 #
-# For each File enables one to execute an arbitrary set of GNU BASH shell
-# commands upon an arbitrary set of files. It can be used for performing
-# repetitive file-system manipulation procedures, such as mass file renaming
-# and gathering file-system statistics.
+# For each File enables one to execute an arbitrary set of GNU BASH shell commands upon an arbitrary set of files. It can be used for performing repetitive file-system manipulation procedures, such as mass file renaming and gathering file-system statistics.
 #
 #
 # Usage:
