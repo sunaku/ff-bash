@@ -1,0 +1,178 @@
+#!/bin/bash
+
+# Extracts various compressed and uncompressed file archives (see http://en.wikipedia.org/wiki/List_of_archive_formats) into their *own* output directories to prevent them from making a mess of your current working directory!
+
+# Each output directory is located "next to" its corresponding file archive; that is, an output directory is created inside the parent directory of its corresponding file archive.
+
+
+#
+# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+#
+# This file is part of "For each File".
+#
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+
+msg() {
+	echo "extract.ff: $*"
+}
+
+
+
+before() {
+	# ensure that when adjusting the output directory, no hidden content is left behind by our globs
+	shopt -s dotglob
+}
+
+
+
+# The general strategy is to (1) make a new directory, (2) decompress the archive normally into that directory, and (3) adjust the contents of the directory to fulfill the goal of this script.
+during() {
+	# get access to a non-existent output directory
+	outDir="$o.out"
+
+	while [ -e "$outDir" ]; do
+		outDir="$outDir-$$"
+	done
+
+
+	# create the output directory
+	if ! mkdir "$outDir"; then
+		msg "I cannot create this output directory: $outDir"
+		exit $ffExitCode_scriptError
+	fi
+
+
+	# extract the archive into the output directory
+	pushd "$outDir" >& /dev/null
+
+	oRelative="../$n"	# the object relative to output directory
+
+	case "$n" in
+		*.tar.gz|*.tar.Z|*.tgz|*.taz)
+			tar -zxf "$oRelative"
+		;;
+
+		*.gz)
+			gunzip -c "$oRelative" > "$p"
+		;;
+
+
+		*.tar.bz|*.tar.bz2|*.tbz|*.tbz2)
+			tar -jxf "$oRelative"
+		;;
+
+		*.bz|*.bz2)
+			bunzip2 -c "$oRelative" > "$p"
+		;;
+
+
+		*.tar.lzo|*.tzo)
+			lzop -xc "$oRelative" | tar -xf -
+		;;
+
+		*.lzo)
+			lzop -x "$oRelative"
+		;;
+
+
+		*.tar|*.cpio)
+			tar -xf "$oRelative"
+		;;
+
+		*.shar)
+			sh "$oRelative"
+		;;
+
+		*.7z)
+			7z x "$oRelative"
+		;;
+
+		*.zip)
+			unzip "$oRelative"
+		;;
+
+		*.rz)
+			# fool rzip into extracting to current working directory
+			ln -s "$oRelative"
+
+
+			rzip -d *	# rzip removes the above symbolic link after doing extraction
+		;;
+
+		*.rar)
+			unrar x "$oRelative"
+		;;
+
+		*.ace)
+			unace x "$oRelative"
+		;;
+
+		*.arj)
+			arj x "$oRelative"
+		;;
+
+		*.arc)
+			arc x "$oRelative"
+		;;
+
+		*.lhz|*.lha)
+			lha x "$oRelative"
+		;;
+
+		*.a|*.ar)
+			ar -x "$oRelative"
+		;;
+
+		*.Z)
+			uncompress -c "$oRelative" > "$p"
+		;;
+
+		*.z)
+			pcat "$oRelative" > "$p"
+		;;
+
+		*.zoo)
+			zoo x// "$oRelative"
+		;;
+
+		*.cab)
+			cabextract "$oRelative"
+		;;
+
+		*.deb)
+			dpkg -x "$oRelative"
+		;;
+
+		*)
+			msg "I do not know how to extract this archive: $o"
+		;;
+	esac
+
+	popd >& /dev/null
+
+
+
+	# adjust the contents of the output directory
+	contents=( "$outDir"/!(.|..) )
+
+	if ! [ ${#contents[@]} -eq 1 -a -d "$contents" ]; then
+		mv "$outDir"/{!(.|..),..}
+		rmdir "$outDir"
+	fi
+}
+
