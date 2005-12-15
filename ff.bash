@@ -1,17 +1,5 @@
 #!/bin/bash
 #
-# For each File enables one to execute an arbitrary set of GNU BASH shell commands upon an arbitrary set of files. It can be used for performing repetitive file-system manipulation procedures, such as mass file renaming and gathering file-system statistics.
-#
-#
-# Usage:
-#	1. Load this file into an existing GNU BASH session:
-#		$ source ff.bash
-#
-#	2. Invoke the 'ff' function:
-#		$ ff
-#
-###
-#
 # Copyright 2003, 2004, 2005 Suraj N. Kurapati.
 #
 # This file is part of "For each File".
@@ -30,7 +18,6 @@
 # along with "For each File"; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
-###
 
 
 
@@ -55,9 +42,9 @@
 
 
 		# Text messages
-		ffText_errorInvalidOption="You specified an invalid option: %s"
+		ffText_errorInvalidOption="I do not recognize this option: %s"
 		ffText_errorCannotReadFile="I could not read this file: %s"
-		ffText_errorNeedMoreArguments="You must specify more arguments for this option: %s"
+		ffText_errorNeedMoreArguments="This option needs more arguments: %s"
 		ffText_errorBadUserScript="I could not process your script: %s"
 
 		ffText_helpSeeUserManual="See the user's manual for explanations and examples."
@@ -97,6 +84,7 @@
 	declare -r ffExitCode_userError=1
 	declare -r ffExitCode_systemError=2
 	declare -r ffExitCode_internalError=3
+	declare -r ffExitCode_scriptError=4
 
 
 
@@ -366,10 +354,10 @@
 	# @param	...	the files upon which to perform
 	function ffLogic_linearMode() {
 		for o; do
-			# update preset variables
-				# parse the object's name and parent directory
-				# handle special cases just like basename(1) and dirname(1)
+			# update object variables
+				# parse the object's name and parent directory, which are separated by a slash.
 				case "$o" in
+					# special cases from basename(1) and dirname(1)
 					/)
 						d=/
 						n=/
@@ -385,18 +373,21 @@
 						n=..
 					;;
 
+
 					*)
-						# prepare object value to parse parent directory and object name correctly
+						# prepare object to ensure correct parsing
 						local oNormalized=${o%%+(\/)}
 
 
-						# parse the parent directory
-						d=${oNormalized%/*}
-						d=${d:-/}	# special case: $d is empty when it should be /
-
-
-						# parse the name
-						n=${oNormalized##*/}
+						if [[ "$oNormalized" =~ / ]]; then
+							d=${oNormalized%/*}
+							d=${d:-/}	# special case: $d is empty when it should be '/'
+							n=${oNormalized##*/}
+						else
+							# the object has no slashes; it is a simple file name like 'foo.bar' that is relative to the current working directory
+							d=.
+							n=$oNormalized
+						fi
 					;;
 				esac
 

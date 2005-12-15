@@ -36,6 +36,7 @@
 
 	<!ENTITY period "period or full stop &quot;<literal>.</literal>&quot;">
 	<!ENTITY hyphen "hyphen or dash &quot;<literal>-</literal>&quot;">
+	<!ENTITY pipe "pipe or vertical bar &quot;<literal>|</literal>&quot;">
 
 	<!ENTITY bashManual "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
 	<!ENTITY bashManual_patternMatching "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual;">
@@ -249,7 +250,7 @@ date
 					</listitem>
 
 					<listitem>
-						<para>the order in which options and objects are specified is irrelevant. For example, the command <command>&ffCmd; <replaceable>/bin</replaceable> <option>-e</option> <replaceable>'echo $o'</replaceable></command> has the same effect as the command <command>&ffCmd; <option>-e</option> <replaceable>'echo $o'</replaceable> <replaceable>/bin</replaceable></command>. However, note that the command <command>&ffCmd; <replaceable>'echo $o'</replaceable> <option>-e</option>  <replaceable>/bin</replaceable></command> <emphasis>does not</emphasis> have the same effect as the previous two because it specifies a different argument for the <option>-e</option> option.</para>
+						<para>the order in which options and objects are specified is irrelevant (denoted by the &pipe; between adjacent parameters). For example, the command <command>&ffCmd; <replaceable>/bin</replaceable> <option>-e</option> <replaceable>'echo $o'</replaceable></command> has the same effect as the command <command>&ffCmd; <option>-e</option> <replaceable>'echo $o'</replaceable> <replaceable>/bin</replaceable></command>. However, note that the command <command>&ffCmd; <replaceable>'echo $o'</replaceable> <option>-e</option>  <replaceable>/bin</replaceable></command> <emphasis>does not</emphasis> have the same effect as the previous two because it specifies a different argument for the <option>-e</option> option.</para>
 					</listitem>
 				</itemizedlist>
 			</para>
@@ -888,6 +889,13 @@ This is an argument: 10.3
 						<term>3</term>
 						<listitem>
 							<para>An error has occurred because of something &ff; has done.</para>
+						</listitem>
+					</varlistentry>
+
+					<varlistentry>
+						<term>4</term>
+						<listitem>
+							<para>An error has occurred because of something the user's script has done.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
