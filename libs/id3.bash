@@ -64,8 +64,10 @@
 		# read ID3 tag
 		tail -c 128 "$1" > "$tempFile"
 
-		# ensure the tag is valid
+
+		# ensure tag is valid
 		if [ "$( head -c 3 "$tempFile" )" != 'TAG' ]; then
+			rm -f "$tempFile"
 			return 1
 		fi
 
@@ -99,8 +101,8 @@
 			fi
 
 
-		# clean up
 		rm -f "$tempFile"
+		return 0
 	}
 
 

@@ -263,7 +263,7 @@
 
 	# Parses command-line arguments into an array named "$RESULT".
 	# @param	...	The arguments to be parsed.
-	# @result	$RESULT	Array containing parsed arguments.
+	# @global	$RESULT	Array containing parsed arguments.
 	function ff_parseArgs() {
 		while (( $# > 0 )); do
 			local arg=$1

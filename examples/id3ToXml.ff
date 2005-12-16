@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Generates an XML-based report, containing the path and ID3v1 and ID3v1.1 tag information, of MP3 files. However, note that the generated XML document may or may not be well formed.
+# Generates an XML-based report, containing the path and ID3v1 and ID3v1.1 tag information (see http://en.wikipedia.org/wiki/Id3) , of MP3 files. However, note that the generated XML document may or may not be well formed.
 
 #
 # Copyright 2003, 2004, 2005 Suraj N. Kurapati.
@@ -31,7 +31,8 @@ ff_import id3
 
 # Generate the XML header
 before() {
-	echo '<?xml version="1.0" encoding="utf-8"?>'
+	#@note	ID3v1.1 specification states that all tag information is encoded with ISO 8859-1
+	echo '<?xml version="1.0" encoding="iso-8859-1"?>'
 	echo '<id3ToXml>'
 }
 
@@ -52,12 +53,16 @@ during() {
 	<artist>${RESULT[$id3TagIndex_artist]}</artist>
 	<album>${RESULT[$id3TagIndex_album]}</album>
 	<year>${RESULT[$id3TagIndex_year]}</year>
-	<comment>${RESULT[$id3TagIndex_comment]}</comment>
-	<genre id=\"${RESULT[$id3TagIndex_genre]}\">${id3Text_genreNames[${RESULT[$id3TagIndex_genre]}]:-Unknown}</genre>
-	<track>${RESULT[$id3TagIndex_track]}</track>
+	<comment>${RESULT[$id3TagIndex_comment]}</comment>"
+
+		if [ "${RESULT[$id3TagIndex_version]}" = 1.1 ]; then
+			echo "	<track>${RESULT[$id3TagIndex_track]}</track>"
+		fi
+
+		echo "	<genre id=\"${RESULT[$id3TagIndex_genre]}\">${id3Text_genreNames[${RESULT[$id3TagIndex_genre]}]:-Unknown}</genre>
 </tag>"
 	else
-		echo "<!-- Warning: \"$o\" does not have a ID3v1 or ID3v1.1 tag. -->"
+		echo "<!-- This file has no ID3v1 or ID3v1.1 tag: \"$o\" -->"
 	fi
 }
 
