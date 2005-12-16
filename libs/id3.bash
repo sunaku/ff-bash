@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A library for reading and writing ID3v1 and ID3v1.1 tags of MP3 files.
+# A library for reading and writing ID3v1 and ID3v1.1 tags (see http://en.wikipedia.org/wiki/Id3).
 
 #
 # Copyright 2003, 2004 Suraj N. Kurapati.
@@ -56,8 +56,8 @@
 # Logic
 	# Parses an ID3v1 or ID3v1.1 tag from the given file and stores the results into an array named "$RESULT".
 	# @param	.	Path to the MP3 file whose tag you want to read.
-	# @result	$RESULT	Array containing data (see id3TagIndex_*) read from the given file.
-	# @return	1	The given file has an invalid ID3 tag.
+	# @global	$RESULT	Array containing data (see id3TagIndex_*) read from the given file.
+	# @return	1	The given file does not have an ID3 tag.
 	function id3_readTag() {
 		local tempFile=$( util_getTempFile )
 
@@ -76,30 +76,31 @@
 		RESULT[$id3TagIndex_album]=$( cut -c 64-93 "$tempFile" )
 		RESULT[$id3TagIndex_year]=$( cut -c 94-97 "$tempFile" )
 
-		# determine the genre ID
-		local genre=$( cut -c 128 "$tempFile" )
+			# determine the genre ID
+			local genre=$( cut -c 128 "$tempFile" )
 
-		if [ -z "$genre" ]; then
-			RESULT[$id3TagIndex_genre]=0
-		else
-			RESULT[$id3TagIndex_genre]=$( echo "$genre" | od -An -N1 -tu1 | tr -d '[:space:]' )
-		fi
+			if [ -z "$genre" ]; then
+				RESULT[$id3TagIndex_genre]=0
+			else
+				RESULT[$id3TagIndex_genre]=$( id3_ord "$genre" )
+			fi
 
-		# determine the version of the ID3 tag: in the comment field, if the second last byte is NUL and the last byte is not NUL, then the entire tag is ID3v1.1
-		if [ -n "$( cut -c 126-127 "$tempFile" )" ]; then
-			RESULT[$id3TagIndex_version]=1.1
-			RESULT[$id3TagIndex_comment]=$( cut -c 98-126 "$tempFile" )
-			RESULT[$id3TagIndex_track]=$( cut -c 127 "$tempFile" | od -An -N1 -tu1 | tr -d '[:space:]' )
-		else
-			RESULT[$id3TagIndex_version]=1
-			RESULT[$id3TagIndex_comment]=$( cut -c 98-127 "$tempFile" )
-			RESULT[$id3TagIndex_track]=
-		fi
+
+			# source: http://www.id3.org/id3v2-00.txt (section A.4)
+			# In ID3v1.1, Michael Mutschler revised the specification of the comment field in order to implement the track number. The new format of the comment field is a 28 character string followed by a mandatory null ($00) character and the original album tracknumber stored as an unsigned byte-size integer. In such cases where the 29th byte is not the null character or when the 30th is a null character, the tracknumber is to be considered undefined.
+			if [ -z "$( cut -c 126 "$tempFile" )" ]; then
+				RESULT[$id3TagIndex_version]=1.1
+				RESULT[$id3TagIndex_comment]=$( cut -c 98-125 "$tempFile" )
+				RESULT[$id3TagIndex_track]=$( id3_ord "$( cut -c 127 "$tempFile" )" )
+			else
+				RESULT[$id3TagIndex_version]=1
+				RESULT[$id3TagIndex_comment]=$( cut -c 98-127 "$tempFile" )
+				RESULT[$id3TagIndex_track]=
+			fi
 
 
 		# clean up
 		rm -f "$tempFile"
-		return 0
 	}
 
 
@@ -122,6 +123,7 @@
 
 
 		# write new tag data to temporary file
+		# @see note about ID3v1.1 inside id3_readTag()
 		echo -n "TAG" >> "$tempFile"
 
 		id3_writeField "${SOURCE[$id3TagIndex_title]}" 30 "$tempFile"
@@ -129,15 +131,16 @@
 		id3_writeField "${SOURCE[$id3TagIndex_album]}" 30 "$tempFile"
 		id3_writeField "${SOURCE[$id3TagIndex_year]}" 4 "$tempFile"
 
-
-		if [ "${SOURCE[$id3TagIndex_version]}" == 1 ]; then
-			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 30 "$tempFile"
+		if [ "${SOURCE[$id3TagIndex_version]}" == 1.1 ]; then
+			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 28 "$tempFile"
+			echo -ne '\0' >> "$tempFile"	# zero-byte separator
+			id3_chr "${SOURCE[$id3TagIndex_track]}" >> "$tempFile"
 		else
-			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 29 "$tempFile"
-			printf "%b" "\\x$( printf "%x" "${SOURCE[$id3TagIndex_track]}" )" >> "$tempFile"
+			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 30 "$tempFile"
 		fi
 
-		printf "%b" "\\x$( printf "%x" "${SOURCE[$id3TagIndex_genre]}" )" >> "$tempFile"
+		id3_chr "${SOURCE[$id3TagIndex_genre]}" >> "$tempFile"
+
 
 		# apply the new tag to the mp3 file
 		mv -f "$tempFile" "$1"
@@ -150,13 +153,43 @@
 	# @param	.	Maximum (exclusive limit) length of the field.
 	# @param	.	Path to the file in which the field is to be written.
 	function id3_writeField() {
-		# write the field
-		echo -n "$1" >> "$3"
+		count=$(( count + $2 ))
+		echo "COUNT=$count"
+
+		if [ ${#1} -lt $2 ]; then
+			# write the field
+			echo -n "$1" >> "$3"
 
 
-		# pad the remaining space with NUL bytes
-		local i
-		for (( i=${#1}; i < $2; i++ )); do
-			echo -ne '\0' >> "$3"
-		done
+			# fill the remaining space with NUL bytes
+			echo "remaining space=$(( $2 - ${#1} ))" > /dev/tty
+			local i
+			for (( i=${#1}; i < $2; i++ )); do
+				echo -ne '\0' >> "$3"
+			done
+		else
+			echo -n "${1:0:$2}" >> "$3"
+		fi
+
+		echo "SIZE=$( wc -c "$3" )"
+	}
+
+
+
+	# Prints the given base-10 ASCII code as a binary byte.
+	# @param	.	The base-10 ASCII code to convert.
+	function id3_chr() {
+		# convert the argument into a number if possible. otherwise consider it to be zero
+		local -i num=$1
+
+
+		echo -ne "$( printf '\\%o' "$num" )"
+	}
+
+
+
+	# Prints a base-10 ASCII code corresponding to the given binary byte.
+	# @param	.	The binary bite to convert.
+	function id3_ord() {
+		od -An -N1 -tu1 <<< "$1" | tr -d '[:space:]'
 	}
