@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A library for reading and writing ID3v1 and ID3v1.1 tags for mp3 files.
+# A library for reading and writing ID3v1 and ID3v1.1 tags of MP3 files.
 
 #
 # Copyright 2003, 2004 Suraj N. Kurapati.
@@ -48,14 +48,15 @@
 	id3TagIndex_genre=6
 	id3TagIndex_track=7
 
-	declare -r id3NulPadding=$'\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1'
+	id3NulByte=$'\1'
+	id3NulPadding=$'\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1'
 
 
 
 # Logic
 	# Parses an ID3v1 or ID3v1.1 tag from the given file and stores the results into an array named "$RESULT".
-	# @param	.	Path to an MP3 file from which a tag is to be read.
-	# @result	$RESULT	Array containing parsed data (see id3TagIndex_*).
+	# @param	.	Path to the MP3 file whose tag you want to read.
+	# @result	$RESULT	Array containing data (see id3TagIndex_*) read from the given file.
 	# @return	1	The given file has an invalid ID3 tag.
 	function id3_readTag() {
 		local tempFile=$( util_getTempFile )
@@ -103,60 +104,59 @@
 
 
 
-	# Writes an ID3v1 or ID3v1.1 tag to the given file using the tag data  places the result into the array variable whose name is given.
-	# @param	.	Name of the array (see $id3TagIndex_*) variable which contains the tag data that is to be written to the file.
-	# @param	.	Path to the MP3 file that is to be tagged with the given data.
+	# Writes an ID3v1 or ID3v1.1 tag to the given file.
+	# @param	.	Path to the MP3 file whose tag you want to write.
+	# @param	$SOURCE	Array containing data (see $id3TagIndex_*) that is to be written to the given file.
 	function id3_writeTag() {
 		# get access to a non-existent temporary file
-		local tempFile="$o.tmp"
-
-		while [ -e "$tempFile" ]; do
-			tempFile="$tempFile-$$"
-		done
-
-
-		# copy caller's array to local array
-		local -a tag
-		eval "tag=( \"\${$1[@]}\" )"
+		local tempFile=$( util_getTempFile )
 
 
 		# copy non-tag data from mp3 file to temporary file
-		if [ -e "$2" ]; then
-			# check if file already has a tag
-			if id3_readTag raw "$2"; then
-				head -c -128 "$2" > "$tempFile"
-			else
-				cp -f "$2" "$tempFile"
-			fi
+		if id3_readTag "$1"; then
+			head -c -128 "$1" > "$tempFile"
+		else
+			cp -f "$1" "$tempFile"
 		fi
 
 
-		# pad tag-fields with NUL bytes
-			for i in 1 2 3 4 5
-			do
-				tag[$i]="${tag[$i]}$id3NulPadding"
-			done
-
 
 		# write new tag data to temporary file
-		{
-			echo -n "TAG${tag[$id3TagIndex_title]:0:30}${tag[$id3TagIndex_artist]:0:30}${tag[$id3TagIndex_album]:0:30}${tag[$id3TagIndex_year]:0:4}"
+		echo -n "TAG" >> "$tempFile"
+
+		id3_writeField "${SOURCE[$id3TagIndex_title]}" 30 "$tempFile"
+		id3_writeField "${SOURCE[$id3TagIndex_artist]}" 30 "$tempFile"
+		id3_writeField "${SOURCE[$id3TagIndex_album]}" 30 "$tempFile"
+		id3_writeField "${SOURCE[$id3TagIndex_year]}" 4 "$tempFile"
 
 
-			# write the comment & 'track number' fields
-			if [ "${tag[$id3TagIndex_version]}" == 1 ]; then
-				echo -n "${tag[$id3TagIndex_comment]:0:30}"
-			else
-				echo -n "${tag[$id3TagIndex_comment]:0:28}$id3NulCode$( printf "%b" "\\x$( printf "%x" "${tag[$id3TagIndex_track]}" )" )"
-			fi
+		if [ "${SOURCE[$id3TagIndex_version]}" == 1 ]; then
+			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 30 "$tempFile"
+		else
+			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 29 "$tempFile"
+			printf "%b" "\\x$( printf "%x" "${SOURCE[$id3TagIndex_track]}" )" >> "$tempFile"
+		fi
 
-			# write the genre field
-			echo -n "$( printf "%b" "\\x$( printf "%x" "${tag[$id3TagIndex_genre]}" )" )"
-
-		} | tr "$id3NulCode" '\0' | head -c 128 >> "$tempFile"
-
+		printf "%b" "\\x$( printf "%x" "${SOURCE[$id3TagIndex_genre]}" )" >> "$tempFile"
 
 		# apply the new tag to the mp3 file
-		mv -f "$tempFile" "$2"
+		mv -f "$tempFile" "$1"
 	}
 
+
+
+	# Writes the given field to the given file.
+	# @param	.	Value of the field.
+	# @param	.	Maximum (exclusive limit) length of the field.
+	# @param	.	Path to the file in which the field is to be written.
+	function id3_writeField() {
+		# write the field
+		echo -n "$1" >> "$3"
+
+
+		# pad the remaining space with NUL bytes
+		local i
+		for (( i=${#1}; i < $2; i++ )); do
+			echo -ne '\0' >> "$3"
+		done
+	}
