@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# Displays the values of object variables and order of invocation of control functions.
+
+
+#
+# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+#
+# This file is part of "For each File".
+#
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+
+# Displays (1) the data passed to each control function, and (2) the values of all object variables
+# @param ...	the same arguments passed to each control function
+showInfo() {
+	# display command-line args
+	local i=0 arg
+
+	for arg; do
+		echo "  \$$(( ++i )) = $arg"
+	done
+
+
+	# leave some space between the two sections of output
+	(( i > 0 )) && echo
+
+
+	# display object variables
+	echo "  \$o = $o"
+	echo "  \$d = $d"
+	echo "  \$n = $n"
+	echo "  \$p = $p"
+	echo "  \$s = $s"
+}
+
+
+
+before() {
+	echo "before() {"
+	showInfo "$@"
+	echo "}"
+}
+
+
+
+during() {
+	echo "during() {"
+	showInfo "$@"
+	echo "}"
+}
+
+
+
+after()
+{
+	echo "after() {"
+	showInfo "$@"
+	echo "}"
+}
+
+
+
+end()
+{
+	echo "end() {"
+	showInfo "$@"
+	echo "}"
+}
+

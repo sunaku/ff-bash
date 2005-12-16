@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Generates an XML-based report, containing the path and ID3v1 and ID3v1.1 tag information, of MP3 files. However, note that the generated XML document may or may not be well formed.
+
+#
+# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+#
+# This file is part of "For each File".
+#
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+
+# Import library that parses ID3 tags
+ff_import id3
+
+
+
+# Generate the XML header
+before() {
+	echo '<?xml version="1.0" encoding="utf-8"?>'
+	echo '<id3ToXml>'
+}
+
+
+
+# Generate the XML footer
+end() {
+	echo '</id3ToXml>'
+}
+
+
+
+# Generate information about each MP3 file
+during() {
+	if id3_readTag "$o"; then
+		echo "<tag version=\"${RESULT[$id3TagIndex_version]}\" source=\"${o//\"/&quot;}\">
+	<title>${RESULT[$id3TagIndex_title]}</title>
+	<artist>${RESULT[$id3TagIndex_artist]}</artist>
+	<album>${RESULT[$id3TagIndex_album]}</album>
+	<year>${RESULT[$id3TagIndex_year]}</year>
+	<comment>${RESULT[$id3TagIndex_comment]}</comment>
+	<genre id=\"${RESULT[$id3TagIndex_genre]}\">${id3Text_genreNames[${RESULT[$id3TagIndex_genre]}]:-Unknown}</genre>
+	<track>${RESULT[$id3TagIndex_track]}</track>
+</tag>"
+	else
+		echo "<!-- Warning: \"$o\" does not have a ID3v1 or ID3v1.1 tag. -->"
+	fi
+}
+
