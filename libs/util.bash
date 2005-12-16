@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Utility functions library.
+
+
+#
+# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+#
+# This file is part of "For each File".
+#
+# "For each File" is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# "For each File" is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with "For each File"; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+
+
+# Localized string bundles
+	# Localized string bundle for the English language.
+	function utilL10nBundle_en() {
+		utilText_yes="Yes"
+		utilText_no="No"
+		utilText_default="Default"
+		utilText_pleaseAnswer__Or__="Please answer %s or %s."
+	}
+
+
+
+# Library logic
+	# Reads and returns the user's choice.
+	# @return	0 if the user answered "no"
+	# @return	1 if the user answered "yes"
+	function util_queryYesNo() {
+		while true; do
+			read -e -p "( 0 = $utilText_no | 1 = $utilText_yes ) "
+			[[ $REPLY == [01] ]] && return $REPLY
+
+			printf "$utilText_pleaseAnswer__Or__" 0 1
+		done
+	}
+
+
+
+	# Reads and stores the user's reply in $REPLY
+	# @param	.	The default answer, if user gives no reply.
+	# @return	0	User chose the default answer.
+	# @return	1	User did not choose the default answer.
+	# @return	$REPLY	The user's reply.
+	function util_query() {
+		while read -e -p "( $utilText_default: $1 ) "; do
+			if [ -z "$REPLY" ]; then
+				REPLY=$1
+				return 0
+			fi
+		done
+
+		return 1
+	}
+
+
+
+	# Prints the path to a non-existent temporary file, which is ready for your use. If the file is created (when you write to it), you are responsible for cleaning up that file once you are finished with it.
+	# @return	stdout	The path to a non-existent temporary file.
+	function util_getTempFile() {
+		local path="${TMPDIR:-/tmp}/$0.tmp"
+
+		while [ -e "$path" ]; do
+			path="$path-$$"
+		done
+
+		echo "$path"
+	}
+
+
+
+# Internal logic
+	ff_loadL10nBundle "utilL10nBundle"
+

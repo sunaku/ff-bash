@@ -21,7 +21,7 @@
 
 
 
-# Localized string bundles
+# Localization
 	# Localized string bundle for the English language.
 	function ffL10nBundle_en() {
 		# Command-line options
@@ -60,7 +60,7 @@
 
 
 
-# Internal variables
+# Variables
 	declare -r ffReleaseVersion=2.0
 	declare -r ffWebsite="http://ff-bash.sf.net"
 	declare -r ffOptionsHelpFormat="%20s\t%s\n"
@@ -80,31 +80,61 @@
 	declare -r ffOptionPrefix_long=--
 
 
+	# exit status diagnostics
 	declare -r ffExitCode_success=0
-	declare -r ffExitCode_userError=1
-	declare -r ffExitCode_systemError=2
-	declare -r ffExitCode_internalError=3
+	declare -r ffExitCode_internalError=1
+	declare -r ffExitCode_userError=2
+	declare -r ffExitCode_systemError=3
 	declare -r ffExitCode_scriptError=4
 
 
 
-# Internal logic
+# Logic
 	# Says the given message to the user via 'printf'
 	# @param	.	The format string used by printf
 	# @param	...	The arguments for the format string
-	function ffLogic_say() {
+	function ff_say() {
 		echo "ff: $( printf "$@" )"
 	}
 
 
 
-	function ffLogic_showVersion() {
+	# Loads localized string bundles for the user's current language.
+	# @param	.	Prefix of the function name which contains localized string bundles
+	function ff_loadL10nBundle() {
+		if declare -F "${1}_$ffLanguageCode" >& /dev/null; then
+			"${1}_$ffLanguageCode"
+		else
+			"${1}_$ffLanguageCode_default"
+		fi
+	}
+
+
+
+	# Makes the given libraries available for use by your script.
+	# @param	...	Names of the libraries you want to use.
+	function ff_import() {
+		for library; do
+			local path="$FF_HOME/libs/$library.bash"
+
+			if [ -f "$path" -a -r "$path" ]; then
+				source "$path"
+			else
+				ff_say "$ffText_errorCannotReadFile" "$path"
+				exit $ffExitCode_systemError
+			fi
+		done
+	}
+
+
+
+	function ff_showVersion() {
 		echo "$ffText_forEachFile, $ffText_version $ffReleaseVersion ($ffWebsite)"
 	}
 
 
 
-	function ffLogic_showDisclaimer() {
+	function ff_showDisclaimer() {
 		echo "Copyright 2003, 2004, 2005 Suraj N. Kurapati."
 		echo
 		echo "$ffText_disclaimer"
@@ -117,9 +147,9 @@
 	# @param	.	Option flag (how the user specifies the option)
 	# @param	.	Variable name associated with option (callback)
 	# @param	.	Argument to associate with option
-	function ffLogic_enableOption() {
+	function ff_enableOption() {
 		if [ $1 -lt 1 ]; then
-			ffLogic_say "$ffText_errorNeedMoreArguments" "$2"
+			ff_say "$ffText_errorNeedMoreArguments" "$2"
 			exit $ffExitCode_userError
 		fi
 
@@ -133,14 +163,14 @@
 	# @param	.	The command-line option to handle
 	# @param	.	All command-line arguments that follow the given option
 	# @return	The number of command-line arguments consumed by the given option
-	function ffLogic_handleOption() {
+	function ff_handleOption() {
 		local option=$1
 		shift
 
 		case "$option" in
 			$ffOption_showHelp)
 				# show description
-				ffLogic_showVersion
+				ff_showVersion
 				echo "$ffText_helpSeeUserManual"
 				echo
 
@@ -162,15 +192,15 @@
 
 
 				# show a disclaimer
-				ffLogic_showDisclaimer
+				ff_showDisclaimer
 
 
 				exit $ffExitCode_success
 			;;
 
 			$ffOption_showVersion)
-				ffLogic_showVersion
-				ffLogic_showDisclaimer
+				ff_showVersion
+				ff_showDisclaimer
 
 				exit $ffExitCode_success
 			;;
@@ -187,17 +217,17 @@
 			;;
 
 			$ffOption_suffixDelim)
-				ffLogic_enableOption $# "$option" ffOption_suffixDelim "$1"
+				ff_enableOption $# "$option" ffOption_suffixDelim "$1"
 				return 1
 			;;
 
 			$ffOption_evalExpr)
-				ffLogic_enableOption $# "$option" ffOption_evalExpr "$1"
+				ff_enableOption $# "$option" ffOption_evalExpr "$1"
 				return 1
 			;;
 
 			$ffOption_evalFile)
-				ffLogic_enableOption $# "$option" ffOption_evalFile "$1"
+				ff_enableOption $# "$option" ffOption_evalFile "$1"
 				return 1
 			;;
 
@@ -218,12 +248,12 @@
 			;;
 
 			$ffOption_objectMask)
-				ffLogic_enableOption $# "$option" ffOption_objectMask "$1"
+				ff_enableOption $# "$option" ffOption_objectMask "$1"
 				return 1
 			;;
 
 			*)
-				ffLogic_say "$ffText_errorInvalidOption" "$option"
+				ff_say "$ffText_errorInvalidOption" "$option"
 				exit $ffExitCode_userError
 			;;
 		esac
@@ -233,7 +263,7 @@
 
 	# Parses command-line arguments
 	# @param	.	Name of an array which will hold the parsed arguments
-	function ffLogic_parseArgs() {
+	function ff_parseArgs() {
 		local -a arguments
 		local arg arguments_callBack=$1
 		shift
@@ -250,7 +280,7 @@
 				;;
 
 				${ffOptionPrefix_long}*)
-					ffLogic_handleOption ${arg:${#ffOptionPrefix_long}} "$@"
+					ff_handleOption ${arg:${#ffOptionPrefix_long}} "$@"
 					shift $?
 				;;
 
@@ -259,7 +289,7 @@
 
 					# handle mulitple short options that have been grouped together into a single word
 					for (( i = 0; i < ${#options}; i++ )); do
-						ffLogic_handleOption ${options:$i:1} "$@"
+						ff_handleOption ${options:$i:1} "$@"
 						shift $?
 					done
 				;;
@@ -279,7 +309,7 @@
 
 	# Loads the user's script from command-line argument or user's terminal.
 	# @pre	the standard input stream must represent the user's terminal (e.g. /dev/tty)
-	function ffLogic_loadScript() {
+	function ff_loadScript() {
 		local expression=:
 
 		if ${ffOption_evalExpr[$ffOptionIndex_isOn]:-false}; then
@@ -293,7 +323,7 @@
 			if [ -f $scriptFile -a -r $scriptFile ]; then
 				expression=$( < $scriptFile )
 			else
-				ffLogic_say "$ffText_errorCannotReadFile" "$scriptFile"
+				ff_say "$ffText_errorCannotReadFile" "$scriptFile"
 				exit 2
 			fi
 
@@ -315,7 +345,7 @@
 		eval "$expression"
 
 		if ! declare -F during >& /dev/null; then
-			ffLogic_say "$ffText_errorBadUserScript" "$expression"
+			ff_say "$ffText_errorBadUserScript" "$expression"
 			exit $ffExitCode_internalError
 		fi
 	}
@@ -324,10 +354,10 @@
 
 	# Recursively executes 'during()' on the given directory
 	# @param	...	directories upon which to perform
-	function ffLogic_recursiveMode() {
+	function ff_recursiveMode() {
 		while (( $# > 0 )); do
 			# handle files which match the target mask
-			ffLogic_linearMode "$1"/${ffOption_objectMask[$ffOptionIndex_arg]:-*}
+			ff_linearMode "$1"/${ffOption_objectMask[$ffOptionIndex_arg]:-*}
 
 
 			# handle directories recursively
@@ -339,7 +369,7 @@
 					fi
 
 
-					ffLogic_recursiveMode "$o"
+					ff_recursiveMode "$o"
 				fi
 			done
 
@@ -352,7 +382,7 @@
 
 	# Linearly executes 'during()' on the given argument
 	# @param	...	the files upon which to perform
-	function ffLogic_linearMode() {
+	function ff_linearMode() {
 		for o; do
 			# update object variables
 				# parse the object's name and parent directory, which are separated by a slash.
@@ -434,16 +464,12 @@
 			# load localized string bundles for the user's current language
 			ffLanguageCode=$( expr substr ${LANG:-$ffLanguageCode_default} 1 2 )
 
-			if declare -F "ffL10nBundle_$ffLanguageCode" >& /dev/null; then
-				ffL10nBundle_$ffLanguageCode
-			else
-				ffL10nBundle_$ffLanguageCode_default
-			fi
+			ff_loadL10nBundle ffL10nBundle
 
 
 			# parse command-line arguments
 			local -a parsedArgs
-			ffLogic_parseArgs parsedArgs "$@"
+			ff_parseArgs parsedArgs "$@"
 
 
 			# parse piped arguments
@@ -456,15 +482,15 @@
 
 
 			# determine which mode (linear or recursive) to execute in
-			local mode=ffLogic_linearMode
+			local mode=ff_linearMode
 
 			if ${ffOption_beRecursive[$ffOptionIndex_isOn]:-false}; then
-				mode=ffLogic_recursiveMode
+				mode=ff_recursiveMode
 			fi
 
 
 			# load and execute user's script
-			ffLogic_loadScript
+			ff_loadScript
 
 			# o = object
 			# d = dirname
