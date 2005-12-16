@@ -261,21 +261,18 @@
 
 
 
-	# Parses command-line arguments
-	# @param	.	Name of an array which will hold the parsed arguments
+	# Parses command-line arguments into an array named "$RESULT".
+	# @param	...	The arguments to be parsed.
+	# @result	$RESULT	Array containing parsed arguments.
 	function ff_parseArgs() {
-		local -a arguments
-		local arg arguments_callBack=$1
-		shift
-
 		while (( $# > 0 )); do
-			arg=$1
+			local arg=$1
 			shift
 
 			case "$arg" in
 				$ffOptionPrefix_long)
 					# stop parsing and consider the remaining command-line arguments as arguments
-					arguments=( "${arguments[@]}" "$@" )
+					RESULT=( "${RESULT[@]}" "$@" )
 					break
 				;;
 
@@ -295,14 +292,10 @@
 				;;
 
 				*)
-					arguments[${#arguments[@]}]=$arg
+					RESULT[${#RESULT[@]}]=$arg
 				;;
 			esac
 		done
-
-
-		# propogate parsed arguments back to caller
-		eval "$arguments_callBack=( \"\${arguments[@]}\" )"
 	}
 
 
@@ -469,7 +462,8 @@
 
 			# parse command-line arguments
 			local -a parsedArgs
-			ff_parseArgs parsedArgs "$@"
+			ff_parseArgs "$@"
+			parsedArgs=( "${RESULT[@]}" )
 
 
 			# parse piped arguments

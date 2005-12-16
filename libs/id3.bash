@@ -39,30 +39,29 @@
 
 
 # Variables
-	id3DataIndex_version=0
-	id3DataIndex_title=1
-	id3DataIndex_artist=2
-	id3DataIndex_album=3
-	id3DataIndex_year=4
-	id3DataIndex_comment=5
-	id3DataIndex_genre=6
-	id3DataIndex_track=7
+	id3TagIndex_version=0
+	id3TagIndex_title=1
+	id3TagIndex_artist=2
+	id3TagIndex_album=3
+	id3TagIndex_year=4
+	id3TagIndex_comment=5
+	id3TagIndex_genre=6
+	id3TagIndex_track=7
 
 	declare -r id3NulPadding=$'\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1'
 
 
 
 # Logic
-	# Reads an ID3v1 or ID3v1.1 tag from the given file and places the result into the array variable whose name is given.
-	# @param	.	Name of the array (see id3DataIndex_*) variable in which to store parsed data.
+	# Parses an ID3v1 or ID3v1.1 tag from the given file and stores the results into an array named "$RESULT".
 	# @param	.	Path to an MP3 file from which a tag is to be read.
+	# @result	$RESULT	Array containing parsed data (see id3TagIndex_*).
+	# @return	1	The given file has an invalid ID3 tag.
 	function id3_readTag() {
-		# get access to a non-existent temporary file
 		local tempFile=$( util_getTempFile )
 
-
 		# read ID3 tag
-		tail -c 128 "$2" > "$tempFile"
+		tail -c 128 "$1" > "$tempFile"
 
 		# ensure the tag is valid
 		if [ "$( head -c 3 "$tempFile" )" != 'TAG' ]; then
@@ -71,32 +70,33 @@
 
 
 		# parse ID3 tag
-		eval "$1[$id3DataIndex_title]=\$( cut -c 4-33 \"\$tempFile\" )"
-		eval "$1[$id3DataIndex_artist]=\$( cut -c 34-63 \"\$tempFile\" )"
-		eval "$1[$id3DataIndex_album]=\$( cut -c 64-93 \"\$tempFile\" )"
-		eval "$1[$id3DataIndex_year]=\$( cut -c 94-97 \"\$tempFile\" )"
+		RESULT[$id3TagIndex_title]=$( cut -c 4-33 "$tempFile" )
+		RESULT[$id3TagIndex_artist]=$( cut -c 34-63 "$tempFile" )
+		RESULT[$id3TagIndex_album]=$( cut -c 64-93 "$tempFile" )
+		RESULT[$id3TagIndex_year]=$( cut -c 94-97 "$tempFile" )
 
 		# determine the genre ID
 		local genre=$( cut -c 128 "$tempFile" )
 
 		if [ -z "$genre" ]; then
-			eval "$1[$id3DataIndex_genre]=0"
+			RESULT[$id3TagIndex_genre]=0
 		else
-			eval "$1[$id3DataIndex_genre]=\$( echo '\$genre' | od -An -N1 -tu1 | tr -d '[:space:]' )"
+			RESULT[$id3TagIndex_genre]=$( echo "$genre" | od -An -N1 -tu1 | tr -d '[:space:]' )
 		fi
 
 		# determine the version of the ID3 tag: in the comment field, if the second last byte is NUL and the last byte is not NUL, then the entire tag is ID3v1.1
 		if [ -n "$( cut -c 126-127 "$tempFile" )" ]; then
-			eval "$1[$id3DataIndex_version]=1.1"
-			eval "$1[$id3DataIndex_comment]=\$( cut -c 98-126 \"\$tempFile\" )"
-			eval "$1[$id3DataIndex_track]=\$( cut -c 127 \"\$tempFile\" | od -An -N1 -tu1 | tr -d '[:space:]' )"
+			RESULT[$id3TagIndex_version]=1.1
+			RESULT[$id3TagIndex_comment]=$( cut -c 98-126 "$tempFile" )
+			RESULT[$id3TagIndex_track]=$( cut -c 127 "$tempFile" | od -An -N1 -tu1 | tr -d '[:space:]' )
 		else
-			eval "$1[$id3DataIndex_version]=1"
-			eval "$1[$id3DataIndex_comment]=\$( cut -c 98-127 \"\$tempFile\" )"
-			eval "$1[$id3DataIndex_track]="
+			RESULT[$id3TagIndex_version]=1
+			RESULT[$id3TagIndex_comment]=$( cut -c 98-127 "$tempFile" )
+			RESULT[$id3TagIndex_track]=
 		fi
 
 
+		# clean up
 		rm -f "$tempFile"
 		return 0
 	}
@@ -104,7 +104,7 @@
 
 
 	# Writes an ID3v1 or ID3v1.1 tag to the given file using the tag data  places the result into the array variable whose name is given.
-	# @param	.	Name of the array (see $id3DataIndex_*) variable which contains the tag data that is to be written to the file.
+	# @param	.	Name of the array (see $id3TagIndex_*) variable which contains the tag data that is to be written to the file.
 	# @param	.	Path to the MP3 file that is to be tagged with the given data.
 	function id3_writeTag() {
 		# get access to a non-existent temporary file
@@ -140,18 +140,18 @@
 
 		# write new tag data to temporary file
 		{
-			echo -n "TAG${tag[$id3DataIndex_title]:0:30}${tag[$id3DataIndex_artist]:0:30}${tag[$id3DataIndex_album]:0:30}${tag[$id3DataIndex_year]:0:4}"
+			echo -n "TAG${tag[$id3TagIndex_title]:0:30}${tag[$id3TagIndex_artist]:0:30}${tag[$id3TagIndex_album]:0:30}${tag[$id3TagIndex_year]:0:4}"
 
 
 			# write the comment & 'track number' fields
-			if [ "${tag[$id3DataIndex_version]}" == 1 ]; then
-				echo -n "${tag[$id3DataIndex_comment]:0:30}"
+			if [ "${tag[$id3TagIndex_version]}" == 1 ]; then
+				echo -n "${tag[$id3TagIndex_comment]:0:30}"
 			else
-				echo -n "${tag[$id3DataIndex_comment]:0:28}$id3NulCode$( printf "%b" "\\x$( printf "%x" "${tag[$id3DataIndex_track]}" )" )"
+				echo -n "${tag[$id3TagIndex_comment]:0:28}$id3NulCode$( printf "%b" "\\x$( printf "%x" "${tag[$id3TagIndex_track]}" )" )"
 			fi
 
 			# write the genre field
-			echo -n "$( printf "%b" "\\x$( printf "%x" "${tag[$id3DataIndex_genre]}" )" )"
+			echo -n "$( printf "%b" "\\x$( printf "%x" "${tag[$id3TagIndex_genre]}" )" )"
 
 		} | tr "$id3NulCode" '\0' | head -c 128 >> "$tempFile"
 

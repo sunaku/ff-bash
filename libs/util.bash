@@ -42,7 +42,7 @@
 	# @return	1 if the user answered "yes"
 	function util_queryYesNo() {
 		while true; do
-			read -e -p "( 0 = $utilText_no | 1 = $utilText_yes ) "
+			read -erp "( 0 = $utilText_no | 1 = $utilText_yes ) "
 			[[ $REPLY == [01] ]] && return $REPLY
 
 			printf "$utilText_pleaseAnswer__Or__" 0 1
@@ -57,7 +57,7 @@
 	# @return	1	User did not choose the default answer.
 	# @return	$REPLY	The user's reply.
 	function util_query() {
-		while read -e -p "( $utilText_default: $1 ) "; do
+		while read -erp "( $utilText_default: $1 ) "; do
 			if [ -z "$REPLY" ]; then
 				REPLY=$1
 				return 0
@@ -72,13 +72,27 @@
 	# Prints the path to a non-existent temporary file, which is ready for your use. If the file is created (when you write to it), you are responsible for cleaning up that file once you are finished with it.
 	# @return	stdout	The path to a non-existent temporary file.
 	function util_getTempFile() {
-		local path="${TMPDIR:-/tmp}/$0.tmp"
+		local path="${TMPDIR:-/tmp}/${0}${RANDOM}"
 
 		while [ -e "$path" ]; do
-			path="$path-$$"
+			path="${path}${RANDOM}"
 		done
 
 		echo "$path"
+	}
+
+
+
+	# Prints the name of a non-existent temporary variable, which is ready for your use.
+	# @out	Name of a non-existent temporary variable.
+	function util_getTempVar() {
+		local var="tmp$RANDOM"
+
+		while [ -z "${var:+ }" ]; do
+			var="${var}${RANDOM}"
+		done
+
+		echo "$var"
 	}
 
 
