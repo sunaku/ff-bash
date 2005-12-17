@@ -112,10 +112,11 @@
 
 
 	# Makes the given libraries available for use by your script.
+	# @global	$FF_HOME	Path to ff's installation directory.
 	# @param	...	Names of the libraries you want to use.
 	function ff_import() {
 		for library; do
-			local path="$FF_HOME/libs/$library.bash"
+			local path="$FF_HOME/lib/$library.bash"
 
 			if [ -f "$path" -a -r "$path" ]; then
 				source "$path"
