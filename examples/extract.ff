@@ -43,7 +43,7 @@ before() {
 # The general strategy is to (1) make a new directory, (2) decompress the archive normally into that directory, and (3) adjust the contents of the directory to fulfill the goal of this script.
 during() {
 	# get access to a non-existent output directory
-	outDir="$o.out"
+	local outDir="$o.out"
 
 	while [ -e "$outDir" ]; do
 		outDir="$outDir-$$"
@@ -60,7 +60,7 @@ during() {
 	# extract the archive into the output directory
 	pushd "$outDir" >& /dev/null
 
-	oRelative="../$n"	# the object relative to output directory
+	local oRelative="../$n"	# the object relative to output directory
 
 	case "$n" in
 		*.tar.gz|*.tar.Z|*.tgz|*.taz)
@@ -168,7 +168,7 @@ during() {
 
 
 	# adjust the contents of the output directory
-	contents=( "$outDir"/!(.|..) )
+	local contents=( "$outDir"/!(.|..) )
 
 	if ! [ ${#contents[@]} -eq 1 -a -d "$contents" ]; then
 		mv "$outDir"/{!(.|..),..}
