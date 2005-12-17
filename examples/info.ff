@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Displays the values of object variables and order of invocation of control functions.
+# Displays the values of object variables and the order in which control functions are invoked.
+
+# Use this script to observe and learn how object variables behave and how control functions are invoked.
 
 
 #

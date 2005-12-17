@@ -12,10 +12,7 @@
 
 	<!-- release info -->
 	<!ENTITY ffVersion "2.0">
-
 	<!ENTITY ffUrl "http://ff-bash.sf.net">
-	<!ENTITY ffDownloadUrl "http://sourceforge.net/project/showfiles.php?group_id=106777&amp;package_id=115170">
-
 	<!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 	<!ENTITY ffCmd "ff">
 
@@ -29,6 +26,7 @@
 	<!ENTITY unix "<acronym>UNIX</acronym>">
 	<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 	<!ENTITY url "<acronym>URL</acronym>">
+	<!ENTITY l10n "<acronym>L10N</acronym>">
 
 
 	<!-- fixed content -->
@@ -43,6 +41,7 @@
 
 	<!ENTITY bashrc "<filename>~/.bashrc</filename>">
 	<!ENTITY installDir "<varname>installDir</varname>">
+	<!ENTITY ff.bash "<filename>ff.bash</filename>">
 
 
 	<!-- big inclusions -->
@@ -51,6 +50,7 @@
 
 	<!ENTITY noteNeedRecursiveOpt "<note><para>This option has no effect when used without the <xref linkend='ref:ff-options-beRecursive'/> option.</para></note>">
 	<!ENTITY ctrlFuncParamDesc "Its parameters are objects that have been specified as arguments on the command-line only. Thus, objects specified on the standard input stream with the <xref linkend='ref:ff-options-pipedObjects'/> option are not passed to this function.">
+	<!ENTITY iso639_code "the &iso639; code of the human language for which you are performing this localization">
 ]>
 <book lang="en">
 	<bookinfo>
@@ -131,7 +131,7 @@
 
 		<section id="sec:dependencies">
 			<title>Dependencies</title>
-			<para>&ff; depends upon the software listed below to function correctly. If your system does not already have these dependencies, you can obtain them by following their respective hyperlinks below.</para>
+			<para>&ff; depends upon the software listed below to function correctly. If your system does not already have these dependencies, you can obtain them by following their respective hyper-links below.</para>
 
 			<section id="sec:dependencies-required">
 				<title>Required software</title>
@@ -167,7 +167,7 @@
 				<title>Installing &ff;</title>
 
 				<step>
-					<para><ulink url="&ffDownloadUrl;">Obtain the latest release</ulink> of &ff;.</para>
+					<para><ulink url="http://sourceforge.net/project/showfiles.php?group_id=106777&amp;package_id=115170">Obtain the latest release</ulink> of &ff;.</para>
 				</step>
 
 				<step id="proc:installing-extraction">
@@ -183,7 +183,7 @@ source "$FF_HOME/ff.bash"
 					</programlisting>
 				</step>
 
-				<step>
+				<step id="proc:installing-sourcingBash">
 					<para>Update your &bash; session by issuing the command <command>source &bashrc;</command>.</para>
 				</step>
 			</procedure>
@@ -246,7 +246,7 @@ date
 					</listitem>
 
 					<listitem>
-						<para>each parameter may be repeated indefinitely (denoted by the elipsis appended to the parameter). That is, one can specify more than one option and more than one object at a time while invoking &ff;.</para>
+						<para>each parameter may be repeated indefinitely (denoted by the ellipsis appended to the parameter). That is, one can specify more than one option and more than one object at a time while invoking &ff;.</para>
 					</listitem>
 
 					<listitem>
@@ -387,40 +387,80 @@ This is an argument: 10.3
 				</example>
 			</section>
 		</section>
+
+		<section id="sec:exampleScripts">
+			<title>Example scripts</title>
+			<para/><!-- TODO -->
+		</section>
 	</chapter>
 
 	<chapter id="chp:extending">
 		<title>Extending &ff;</title>
-		<para/>
+
+		<section id="sec:feedback">
+			<title>Giving feedback</title>
+			<para>Using the <ulink url="https://sourceforge.net/tracker/?group_id=106777">project tracker</ulink>, you can <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645574">report defects</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645575">request for support</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645577">request for features</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645576">submit patches</ulink>, <ulink url="https://sourceforge.net/forum/?group_id=106777">ask questions, and discuss related topics</ulink>.</para>
+
+			<!--<para>In addition, You can help improve and extend &ff; by reviewing or testing its code; reporting or fixing defects; contributing or improving libraries, example scripts, localizations, and translations; participating in the mailing lists; and so on (see <xref linkend="chp:feedback"/>).</para>-->
+
+<!--
+			<section id="sec:defect-reports">
+				<title>Reporting defects</title>
+				<para/>
+			</section>
+
+			<section id="sec:feature-request">
+				<title>Requesting features</title>
+				<para/>
+			</section>
+
+			<section id="sec:discussion-forums">
+				<title>Voicing your opinion</title>
+				<para/>
+			</section>
+
+			<section id="sec:getting-help">
+				<title>Getting help</title>
+				<para/>
+			</section>
+-->
+		</section>
 
 		<section id="sec:localization">
 			<title>Localizing &ff;</title>
-			<para/>
-		</section>
-	</chapter>
+			<para>&ff; has been designed with <ulink url="http://en.wikipedia.org/wiki/L10n">localization (&l10n;)</ulink> in mind to allow for easy addition and improvement of &l10n; bundles&mdash;a set of strings or messages localized for a particular human language.</para>
 
-	<chapter id="chp:feedback">
-		<title>Giving feedback</title>
-		<para/>
+			<procedure id="proc:adding-l10n-bundle">
+				<title>Adding a &l10n; bundle</title>
+				<para>This procedure outlines the steps necessary to add a &l10n; bundle for the &ff.bash; file&mdash;located within <link linkend="sec:installation">&ff;'s installation directory</link>.</para>
 
-		<section id="sec:defect-reports">
-			<title>Reporting defects</title>
-			<para/>
-		</section>
+				<step>
+					<para>Determine the &iso639; code of the human language you wish to localize.</para>
+				</step>
 
-		<section id="sec:feature-request">
-			<title>Requesting features</title>
-			<para/>
-		</section>
+				<step>
+					<para>Using your favorite text editor, open the &ff.bash; file for editing.</para>
 
-		<section id="sec:discussion-forums">
-			<title>Voicing your opinion</title>
-			<para/>
-		</section>
+					<substeps>
+						<step>
+							<para>Make a copy of the <function>ffL10nBundle_en</function> function and change the last two characters, which happen to be "en" in this case, in its name to &iso639_code;.</para>
+						</step>
 
-		<section id="sec:getting-help">
-			<title>Getting help</title>
-			<para/>
+						<step>
+							<para>Localize the values, while taking care to preserve any <ulink url="http://en.wikipedia.org/wiki/Printf#printf_format_placeholders">printf formatting placeholders</ulink>, of each variable present within your copy of the <function>ffL10nBundle_en</function> function.</para>
+						</step>
+
+						<step>
+							<para>Commit your changes to the &ff.bash; file and away you go!</para>
+
+							<tip id="tip:testing-l10n-bundle">
+								<title>Testing your &l10n; bundle</title>
+								<para>You can test your &l10n; bundle by (1) <link linkend="proc:installing-sourcingBash">updating your current &bash; session</link>, and then (2) issuing the command <command>LANG=<replaceable>foo</replaceable> &ffCmd;</command> where <replaceable>foo</replaceable> denotes &iso639_code;.</para>
+							</tip>
+						</step>
+					</substeps>
+				</step>
+			</procedure>
 		</section>
 	</chapter>
 
@@ -466,7 +506,7 @@ This is an argument: 10.3
 					<varlistentry id="ref:ff-synopsis-object">
 						<term>object</term>
 						<listitem>
-							<para>Something that is passed as an argument to your script for processing. &ff; places no restrcitions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
+							<para>Something that is passed as an argument to your script for processing. &ff; places no restrictions on what an object can represent. Thus, your script has complete authority in deciding the semantics of an object.
 							</para>
 
 							<para>For example, if your script renames files, then objects are files. Likewise, if your script downloads data from &url;s, then objects are &url;s.</para>
@@ -536,7 +576,7 @@ This is an argument: 10.3
 						<listitem>
 							<para>Read the standard input stream for objects which are delimited by the new-line character. In other words, these objects should be listed one per line on the standard input stream.</para>
 
-							<para>Objects specified as command-line arguments are processsed by your script before the objects specified on the standard input stream.</para>
+							<para>Objects specified as command-line arguments are processed by your script before the objects specified on the standard input stream.</para>
 						</listitem>
 					</varlistentry>
 
@@ -583,9 +623,9 @@ This is an argument: 10.3
 
 							<example id="ex:breadth-first-recursion">
 								<title>Order of processing in breadth-first recursion</title>
-								<para>When breadth-first recursion is used, all objects in a directory are processsed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processsed recursively.</para>
+								<para>When breadth-first recursion is used, all objects in a directory are processed linearly by the user's script <emphasis>before</emphasis> any sub-directories are processed recursively.</para>
 
-								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processsed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processsed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object to be processsed by your script.</para>
+								<para>For example, in the directory structure below, the objects <filename>foo/</filename> and <filename>bar/</filename> are directories. When &ff; is invoked to run your script recursively upon <filename>foo/</filename>, the objects <filename>foo/bar</filename> and <filename>foo/moz</filename> are processed linearly by your script <emphasis>before</emphasis> <filename>foo/bar</filename> is processed recursively. In this manner, <filename>foo/bar/baz</filename> will be the last object to be processed by your script.</para>
 
 								<itemizedlist>
 									<listitem>
@@ -656,7 +696,7 @@ This is an argument: 10.3
 
 							<para>Unless the <xref linkend="ref:ff-options-handleHidden"/> option is also specified, objects whose names begin with a &period; are not checked to see if their names match <replaceable>glob</replaceable>. For example, objects with names such as <filename>.foo</filename> and <filename>.bar</filename> will not not checked to see if they match <replaceable>glob</replaceable>, whereas objects with names such as <filename>foo</filename> and <filename>bar</filename> will be checked.</para>
 
-							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script processs the object. For example, try running the command <command>&ffCmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
+							<para>If <replaceable>glob</replaceable> is a fixed string and does not use any globbing notation, then it will be appended to the name of every object that matches the <literal>*</literal> glob. This happens because &ff; does not check if an object exists in the file-system before having your script process the object. For example, try running the command <command>&ffCmd; <option>-r</option> <replaceable>/etc</replaceable> <option>-m</option> <replaceable>globbyGlob</replaceable> <option>-e</option> <replaceable>'echo "$o"'</replaceable></command> and notice how all echoed paths have the word "globbyGlob" appended to them.</para>
 
 							&noteNeedRecursiveOpt;
 
@@ -810,7 +850,7 @@ This is an argument: 10.3
 							<function>during</function> <parameter>object</parameter>
 						</term>
 						<listitem>
-							<para>This control function is invoked to processe an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:ff-options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to processe that object.</para>
+							<para>This control function is invoked to process an object. Its parameter is a single single object that was either specified as a command-line argument or on the standard input stream with the <xref linkend="ref:ff-options-pipedObjects"/> option. Thus, for each object specified, this control function is invoked once to process that object.</para>
 						</listitem>
 					</varlistentry>
 
@@ -844,7 +884,7 @@ This is an argument: 10.3
 						<listitem>
 							<para>The first two characters of this variable's value denote the &iso639; language code of the user's preferred human language. For example, if <varname>$LANG</varname> is "te_IN.UTF-8" then "te" denotes the &iso639; language code of the user's preferred human language.</para>
 
-							<para>Using this information, &ff; will attempt communicate with the user in their preferred human language. If it cannot, &ff; will assume that the user's prefferred human language is English.</para>
+							<para>Using this information, &ff; will attempt communicate with the user in their preferred human language. If it cannot, &ff; will assume that the user's preferred human language is English.</para>
 						</listitem>
 					</varlistentry>
 
