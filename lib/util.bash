@@ -25,7 +25,7 @@
 
 
 
-# Localized string bundles
+# Localization
 	# Localized string bundle for the English language.
 	function utilL10nBundle_en() {
 		utilText_yes="Yes"
@@ -36,7 +36,12 @@
 
 
 
-# Library logic
+# Static initialization
+	ff_loadL10nBundle "utilL10nBundle"
+
+
+
+# Logic
 	# Reads and returns the user's choice.
 	# @stdin	user's terminal device
 	# @return	0 if the user answered "no"
@@ -98,7 +103,23 @@
 	}
 
 
+	# Prints the given base-10 ASCII code as a binary byte.
+	# @param	.	The base-10 ASCII code to convert.
+	# @stdout	the converted value
+	function util_chr() {
+		# convert the argument into a number if possible. otherwise consider it to be zero
+		local -i num=$1
 
-# Internal logic
-	ff_loadL10nBundle "utilL10nBundle"
+
+		echo -ne "$( printf '\\%o' "$num" )"
+	}
+
+
+
+	# Prints a base-10 ASCII code corresponding to the given binary byte.
+	# @param	.	The binary bite to convert.
+	# @stdout	the converted value
+	function util_ord() {
+		od -An -N1 -tu1 <<< "$1" | tr -d '[:space:]'
+	}
 

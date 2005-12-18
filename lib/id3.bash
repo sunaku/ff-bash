@@ -81,7 +81,7 @@
 			if [ -z "$genre" ]; then
 				RESULT[$id3TagIndex_genre]=0
 			else
-				RESULT[$id3TagIndex_genre]=$( id3_ord "$genre" )
+				RESULT[$id3TagIndex_genre]=$( util_ord "$genre" )
 			fi
 
 
@@ -90,7 +90,7 @@
 			if [ -z "$( cut -c 126 "$tempFile" )" ]; then
 				RESULT[$id3TagIndex_version]=1.1
 				RESULT[$id3TagIndex_comment]=$( cut -c 98-125 "$tempFile" )
-				RESULT[$id3TagIndex_track]=$( id3_ord "$( cut -c 127 "$tempFile" )" )
+				RESULT[$id3TagIndex_track]=$( util_ord "$( cut -c 127 "$tempFile" )" )
 			else
 				RESULT[$id3TagIndex_version]=1
 				RESULT[$id3TagIndex_comment]=$( cut -c 98-127 "$tempFile" )
@@ -133,12 +133,12 @@
 		if [ "${SOURCE[$id3TagIndex_version]}" == 1.1 ]; then
 			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 28 "$tempFile"
 			echo -ne '\0' >> "$tempFile"	# zero-byte separator
-			id3_chr "${SOURCE[$id3TagIndex_track]}" >> "$tempFile"
+			util_chr "${SOURCE[$id3TagIndex_track]}" >> "$tempFile"
 		else
 			id3_writeField "${SOURCE[$id3TagIndex_comment]}" 30 "$tempFile"
 		fi
 
-		id3_chr "${SOURCE[$id3TagIndex_genre]}" >> "$tempFile"
+		util_chr "${SOURCE[$id3TagIndex_genre]}" >> "$tempFile"
 
 
 		# apply the new tag to the mp3 file
@@ -173,24 +173,3 @@
 		echo "SIZE=$( wc -c "$3" )"
 	}
 
-
-
-	# Prints the given base-10 ASCII code as a binary byte.
-	# @param	.	The base-10 ASCII code to convert.
-	# @stdout	the converted value
-	function id3_chr() {
-		# convert the argument into a number if possible. otherwise consider it to be zero
-		local -i num=$1
-
-
-		echo -ne "$( printf '\\%o' "$num" )"
-	}
-
-
-
-	# Prints a base-10 ASCII code corresponding to the given binary byte.
-	# @param	.	The binary bite to convert.
-	# @stdout	the converted value
-	function id3_ord() {
-		od -An -N1 -tu1 <<< "$1" | tr -d '[:space:]'
-	}
