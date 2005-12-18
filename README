@@ -1,1 +1,7 @@
-See the user's manual inside the ./doc directory. 
+See ./doc/xhtml/index.html for the user's manual.
+
+See ./doc/man/ff.1 for the UNIX-style manpage.
+
+See ./CHANGELOG for the change log.
+
+See ./LICENSE for copying and distribution conditions.
