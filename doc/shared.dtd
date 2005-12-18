@@ -7,27 +7,44 @@
 
 
 <!-- release info -->
-<!ENTITY ff.version "2.0">
-<!ENTITY ff.date "2005-12-16">
-
 <!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 <!ENTITY ff.cmd "ff">
-
-<!--<!ENTITY ff.url "http://ff-bash.sf.net">-->
+<!ENTITY ff.version "2.0">
+<!ENTITY ff.date "2005-12-17">
 <!ENTITY ff.url "http://sf.net/projects/ff-bash">
+<!ENTITY ff.url-announce "http://freshmeat.net/projects/ff/">
+<!ENTITY ff.url-tracker "https://sourceforge.net/tracker/?group_id=106777">
+<!ENTITY ff:ulink "<ulink url='&ff.url;'>&ff;</ulink>">
+<!ENTITY ff.file "<filename>ff.bash</filename>">
 
+
+<!-- authors -->
+<!ENTITY snk "Suraj N. Kurapati">
+<!ENTITY snk:authorinitials "snk">
+<!ENTITY snk:author "<author> <firstname>Suraj</firstname> <othername>N.</othername> <surname>Kurapati</surname> </author>">
+<!ENTITY snk:year "<year>2003</year> <year>2004</year> <year>2005</year>">
+<!ENTITY snk:holder "<holder>&snk;</holder>">
+<!ENTITY snk:copyright "<copyright>&snk:year; &snk:holder;</copyright>">
 
 
 
 <!-- acronyms & abbreviations -->
-<!ENTITY gnu "<acronym>GNU</acronym>">
 <!ENTITY unix "<acronym>UNIX</acronym>">
-<!ENTITY bash "&gnu; <acronym>BASH</acronym>">
 <!ENTITY url "<acronym>URL</acronym>">
 <!ENTITY l10n "<acronym>L10N</acronym>">
+<!ENTITY ansi "<acronym>ANSI</acronym>">
+<!ENTITY xml "<acronym>XML</acronym>">
+<!ENTITY xhtml "<acronym>XHTML</acronym>">
+<!ENTITY html "<acronym>HTML</acronym>">
+
+<!ENTITY gnu "<acronym>GNU</acronym>">
+<!ENTITY gpl "&gnu; <acronym>GPL</acronym>">
+<!ENTITY bash "<application>&gnu; <acronym>BASH</acronym></application>">
+<!ENTITY coreutils "&gnu; coreutils">
+<!ENTITY find "<application>&gnu; find</application>">
 
 <!ENTITY iso639 "<acronym>ISO</acronym> 639">
-<!ENTITY iso639.ulink "<ulink url='http://www.oasis-open.org/cover/iso639a.html'>&iso639;</ulink>">
+<!ENTITY iso639:ulink "<ulink url='http://www.oasis-open.org/cover/iso639a.html'>&iso639;</ulink>">
 
 
 <!-- fixed content -->
@@ -35,8 +52,10 @@
 <!ENTITY hyphen "hyphen or dash &quot;<literal>-</literal>&quot;">
 <!ENTITY pipe "pipe or vertical bar &quot;<literal>|</literal>&quot;">
 
-<!ENTITY bashManual.ulink "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
-<!ENTITY bashManual.patternMatching.ulink "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual.ulink;">
+<!ENTITY bashManual:ulink "<ulink url='http://www.gnu.org/software/bash/manual/'>&bash; manual</ulink>">
+<!ENTITY bashManual.patternMatching:ulink "<ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC35'>&quot;Pattern Matching&quot;</ulink> section of the &bashManual:ulink;">
+<!ENTITY glob.see "(see the &bashManual.patternMatching:ulink; for more information)">
+<!ENTITY extglob.see "(see &quot;extglob&quot; in the &bashManual.patternMatching:ulink; for more information)">
 
 <!ENTITY bashrc.file "<filename>~/.bashrc</filename>">
 

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+
+	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the file called "LICENSE".
+-->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!-- imports -->
+	<!ENTITY % sharedDTD SYSTEM "shared.dtd">
+  %sharedDTD;
+
+
+	<!-- persons -->
+	<!ENTITY person.sc "<personname><firstname>Stephane</firstname> <surname>Chazelas</surname></personname>">
+	<!ENTITY person.mw "<personname><firstname>Michael</firstname> <surname>Wiedmann</surname></personname>">
+	<!ENTITY person.ak "<personname><firstname>Andy</firstname> <surname>Kirkpatrick</surname></personname>">
+]>
+<article>
+	<articleinfo>
+		<title>&ff; change log</title>
+
+		&snk:author;
+		&snk:copyright;
+
+		<abstract>
+			<para>This document is a record of changes that have occured with each release of &ff:ulink;. You can find announcements for new releases at <ulink url="&ff.url-announce;">&ff.url-announce;</ulink>.</para>
+		</abstract>
+	</articleinfo>
+
+	<section id="v2.0">
+		<title>Version 2.0 (2005-12-17)</title>
+		<itemizedlist>
+			<listitem>
+				<para>A comprehensive user's manual, written in Docbook-&xml; and complete with explanations and examples, has been added. This manual is accessible in both &xhtml; and &unix;-style manpage form.</para>
+			</listitem>
+			<listitem>
+				<para>&ff; has been made into a &bash; shell-function (compare with shell-script). This is a major architectural change as a user can now invoke &ff; from within any &bash; function. Its code has been stripped down, revised, and beautified such that it is now more light-weight, intuitive to use, and easier to edit and improve.</para>
+			</listitem>
+			<listitem>
+				<para>A new &bash; function-based approach to &l10n; has been implemented. As a result of this and great reduction in the amount of text communicated to the user, all of the old translation catalogs have been discarded.</para>
+			</listitem>
+			<listitem>
+				<para>The command-line parsing function has been re-written and all options have been made into extended globs &extglob.see; which can be changed via &l10n;.</para>
+			</listitem>
+			<listitem>
+				<para>&ff; now has only one software dependency: &bash;. However, some example scripts still need &coreutils;.</para>
+			</listitem>
+			<listitem>
+				<para>The names of control functions and their parameters have been changed:
+					<simplelist>
+						<member><function>begin</function> &rarr; <function>before</function></member>
+						<member><function>main</function> &rarr; <function>during</function></member>
+						<member><function>end</function> &rarr; <function>after</function></member>
+						<member><function>finalize</function> &rarr; <function>end</function></member>
+					</simplelist>
+				</para>
+			</listitem>
+			<listitem>
+				<para>The <varname>$p</varname> has been changed to denote the prefix of object, and a new variable <varname>$s</varname> denoting the suffix of an object has been added.</para>
+			</listitem>
+			<listitem>
+				<para>Many changes in terminology and naming conventions have been made. For example, "targets" are now known as "objects" and all &ff; construct names begin with "ff" instead of "__ff".</para>
+			</listitem>
+			<listitem>
+				<para>All of the old example scripts have been discarded except <filename>ff.id3_report</filename> (which has been updated into <filename>id3ToXml.ff</filename>) and <filename>ff.untar</filename> (which has been updated into <filename>extract.ff</filename>).</para>
+			</listitem>
+			<listitem>
+				<para>All of the old libraries have been discarded except <filename>util.lib</filename> (which has been updated into <filename>util.bash</filename>) and <filename>id3tag.lib</filename> (which has been updated into <filename>id3.bash</filename>).</para>
+			</listitem>
+			<listitem>
+				<para>Many new script-accessbile functions have been introduced into &ff; (see the source file &ff.file;). In particular, the <function>ff_import</function> lets you import libraries by specifying only their name; &ff; takes care of the rest.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.7.3">
+		<title>Version 1.7.3 (2004-09-16)</title>
+		<itemizedlist>
+			<listitem>
+				<para>The example scripts directory has been renamed as <filename>./examples/</filename>.</para>
+			</listitem>
+			<listitem>
+				<para>Korean language support is not available in this release because my translation software has ceased to function properly. Please feel free to contribute Korean localization which you can adapt from the translation catalogs of previous releases of this software.</para>
+			</listitem>
+			<listitem>
+				<para>Manuals, which can be viewed by specifying: <command><option>--args</option>
+						<option>--help</option>
+					</command>, have been added to some of the example scripts.</para>
+			</listitem>
+			<listitem>
+				<para>
+					<filename>util.lib</filename> has been added which now contains functions for querying the user.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.7.3-rc2">
+		<title>Version 1.7.3-rc2 (2004-08-16)</title>
+		<itemizedlist>
+			<listitem>
+				<para>The tools' start-up time has been made the same for all language codes.</para>
+			</listitem>
+			<listitem>
+				<para>Command-line arguments can now be passed to a user's script via the <option>--args</option> option.</para>
+
+				<itemizedlist>
+					<listitem>
+						<para>
+							<filename>ff.untar</filename> and <filename>ff.mp3_catalog</filename> now support command-line options and have their own help manuals.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>
+					<filename>id3tag.lib</filename>, a library for reading ID3v1 and ID3v1.1 tags, has been added.</para>
+
+				<itemizedlist>
+					<listitem>
+						<para>
+							<filename>ff.mp3_catalog</filename> now uses the new <filename>id3tag.lib</filename> library instead of the <filename>mp3info</filename> program, and the new <option>--args</option> option instead of querying the user.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>A new example script, named <filename>ff.id3_report</filename>, has been added.</para>
+			</listitem>
+			<listitem>
+				<para>The short options <option>-h</option> and <option>-v</option> have been removed as their longer counterparts are more common.</para>
+			</listitem>
+			<listitem>
+				<para>The language code can now be specified via the <option>--lang</option> option.</para>
+			</listitem>
+			<listitem>
+				<para>Piped targets which contain new-line characters in their names are now supported via the <option>--pipe-delim</option> option.</para>
+			</listitem>
+			<listitem>
+				<para>The preset scripting variables have been renamed to better reflect their contents as follows:
+					<simplelist>
+						<member><varname>$t</varname> &rarr; <varname>$o</varname></member>
+						<member><varname>$f</varname> &rarr; <varname>$p</varname></member>
+						<member><varname>$fn</varname> &rarr; <varname>$n</varname></member>
+					</simplelist>
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.7.2">
+		<title>Version 1.7.2 (2004-07-31)</title>
+		<itemizedlist>
+			<listitem>
+				<para>The recursive mode for &ff; has been completely rewritten and no longer requires <application>&gnu; find</application>.</para>
+
+				<itemizedlist>
+					<listitem>
+						<para>New-line characters in the names of targets specified on the command-line are supported.</para>
+					</listitem>
+					<listitem>
+						<para>The <option>--dereference</option> option has been removed because it was implemented by directly using &find;.</para>
+					</listitem>
+					<listitem>
+						<para>An <option>--ignore-links</option> option has been added because the recursive mode traverses symbolic links to directories by default.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>This package has been made more portable and robust, thanks to an extensive review by &person.sc;.</para>
+
+				<itemizedlist>
+					<listitem>
+						<para>The <filename>DocFmt.lib</filename> library attempts to use <command>tput</command> to change on-screen formatting instead of solely relying on &ansi; escape sequences.</para>
+					</listitem>
+					<listitem>
+						<para>Several mistakes and defects in the code, documentation, manuals, and example scripts have been fixed.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>The parsing of preset variables has been made more fault tolerant.</para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							<varname>$w</varname> has been removed because <varname>$PWD</varname> can be used in its place.</para>
+					</listitem>
+					<listitem>
+						<para>A defect, which causes the value of <varname>$d</varname> to be empty when it should be <filename>/</filename>, has been fixed.</para>
+					</listitem>
+					<listitem>
+						<para>A defect, which causes the values of <varname>$fn</varname> and <varname>$f</varname> to be empty when <filename>/</filename> is specified as the target, has been fixed.</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listitem>
+				<para>Control functions written in the form <code>function <function>main</function> { ... }</code> are supported.</para>
+			</listitem>
+			<listitem>
+				<para>The shell options "extglob" and "nullglob" are enabled by default.</para>
+			</listitem>
+			<listitem>
+				<para>A mechanism to stop the command line parser has been added.</para>
+			</listitem>
+			<listitem>
+				<para>The example script <filename>ff.untar</filename> now correctly determines the type of tar-ball and if the tar-ball extracts into its own directory.</para>
+			</listitem>
+			<listitem>
+				<para>A new <varname>$t</varname> preset variable has been added which holds the original name of a target.</para>
+			</listitem>
+			<listitem>
+				<para>The performance of hash-table implementation of <filename>gettext.lib</filename> has been significantly improved.</para>
+			</listitem>
+			<listitem>
+				<para>The tool manuals are cached so that subsequent display queries are executed faster.</para>
+			</listitem>
+			<listitem>
+				<para>The incorrect order of some translations in the translation catalogs has been fixed.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.7.1">
+		<title>Version 1.7.1 (2004-07-16)</title>
+		<itemizedlist>
+			<listitem>
+				<para>The German translation catalogs have been updated by &person.mw;.</para>
+			</listitem>
+			<listitem>
+				<para>A defect causing illegal options to be treated as targets has been fixed.</para>
+			</listitem>
+			<listitem>
+				<para>In <filename>fl.xgettext</filename>, the option for producing raw output has been removed.</para>
+			</listitem>
+			<listitem>
+				<para>The <option>--pipe</option> option has been greatly optimized by eliminating a temporary buffer in which piped data was stored.</para>
+			</listitem>
+			<listitem>
+				<para>The validation of control functions in user commands has been hardened.</para>
+			</listitem>
+			<listitem>
+				<para>The code, documentation, FAQ, and example scripts have been revised according to suggestions by &person.sc;.</para>
+			</listitem>
+			<listitem>
+				<para>Trivial and obsolete example scripts have been removed from the package.</para>
+			</listitem>
+			<listitem>
+				<para>The installation script has been removed from the package due to  portability concerns.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.7.0">
+		<title>Version 1.7.0 (2004-07-09)</title>
+		<itemizedlist>
+			<listitem>
+				<para>A defect causing segmentation faults upon parsing shell-sensitive characters in target names has been fixed.</para>
+			</listitem>
+			<listitem>
+				<para>In <filename>fl.xgettext</filename>, a defect causing segmentation faults when parsing input files encoded in UTF-8 has been fixed.</para>
+			</listitem>
+			<listitem>
+				<para>The example script <filename>ff.translate_url</filename> has been updated to be more fault tolerant to responses given by the user.</para>
+			</listitem>
+			<listitem>
+				<para>Overall start-up time has been improved.</para>
+			</listitem>
+			<listitem>
+				<para>The example scripts <filename>ff.vars</filename> and <filename>fl.vars</filename> display the invocation of control functions.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.9">
+		<title>Version 1.6.9 (2004-06-21)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Corrupted Unicode characters in the translations have been fixed.</para>
+			</listitem>
+			<listitem>
+				<para>The package documentation has been updated and converted to <acronym>HTML</acronym> to preserve formatting across translations.</para>
+			</listitem>
+			<listitem>
+				<para>The gettext emulation library has been optimized by using a hash-table implementation.</para>
+			</listitem>
+			<listitem>
+				<para>Shell commands are read from the user's terminal when not specified on the command-line.</para>
+			</listitem>
+			<listitem>
+				<para>The <option>--mask</option> option has been added for filename filtering in recursive mode.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.8">
+		<title>Version 1.6.8 (2004-06-18)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Completely redesigned the command-line interface and added new options.</para>
+			</listitem>
+			<listitem>
+				<para>Translated the documentation into various languages.</para>
+			</listitem>
+			<listitem>
+				<para>Added library for parsing command-line options.</para>
+			</listitem>
+			<listitem>
+				<para>Removed the preset variable <varname>$n</varname> from the &ff; tool.</para>
+			</listitem>
+			<listitem>
+				<para>Optimized several bottle-neck areas to increase performance.</para>
+			</listitem>
+			<listitem>
+				<para>Added &gpl; notices in all source files of this package.</para>
+			</listitem>
+			<listitem>
+				<para>Updated and added to the example scripts.</para>
+			</listitem>
+			<listitem>
+				<para>Updated the installation script and localized it.</para>
+			</listitem>
+			<listitem>
+				<para>Added example script which fetches translations for on-line documents.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.7">
+		<title>Version 1.6.7 (2004-04-13)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Added support for internationalization/localization through a gettext emulation library.</para>
+			</listitem>
+			<listitem>
+				<para>Removed installation script as it was unnecessary.</para>
+			</listitem>
+			<listitem>
+				<para>Modularized the package tree and source code.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.6">
+		<title>Version 1.6.6 (2004-04-05)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Fixed bug where the argument of the <option>-s</option> option was evaluated as a target.</para>
+			</listitem>
+			<listitem>
+				<para>Errors about undefined user functions have been fixed by &person.ak;.</para>
+			</listitem>
+			<listitem>
+				<para>Added an un-installation feature to the install script.</para>
+			</listitem>
+			<listitem>
+				<para>Added command line option to display program version.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.5">
+		<title>Version 1.6.5 (2004-04-01)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Fixed bug where targets given on command line were being misinterpreted.</para>
+			</listitem>
+			<listitem>
+				<para>Updated documentation and examples.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.4">
+		<title>Version 1.6.4 (2004-03-24)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Added command line option which allows the user to bypass the size limit of the shell's argument buffer.</para>
+			</listitem>
+			<listitem>
+				<para>Added <function>begin_file()</function> and <function>end_file()</function> control functions to the &ff; tool.</para>
+			</listitem>
+			<listitem>
+				<para>Updated documentation and examples.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.3">
+		<title>Version 1.6.3 (2004-03-21)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Modularized and optimized the code (~951% speed-up).</para>
+			</listitem>
+			<listitem>
+				<para>Added <function>begin()</function> and <function>end()</function> control functions, which are similar to the <function>BEGIN</function> and <function>END</function> control blocks of the <application>awk</application> tool.</para>
+			</listitem>
+			<listitem>
+				<para>Added more command line options.</para>
+			</listitem>
+			<listitem>
+				<para>Updated installation script, documentation, and examples.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.2">
+		<title>Version 1.6.2 (2004-03-14)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Fixed inconsistency in scripting variables between non/recursive modes.</para>
+			</listitem>
+			<listitem>
+				<para>Fixed several bugs in example scripts.</para>
+			</listitem>
+			<listitem>
+				<para>Removed obsolete scripting variable: <varname>$p</varname>.</para>
+			</listitem>
+			<listitem>
+				<para>Added new scripting variables <varname>$w</varname> and <varname>$fn</varname>.</para>
+			</listitem>
+			<listitem>
+				<para>Updated help and source documentation.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6.1">
+		<title>Version 1.6.1 (2004-03-13)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Added new scripting variable: <varname>$p</varname>.</para>
+			</listitem>
+			<listitem>
+				<para>Added MP3 cataloging and ID3 tagging example scripts.</para>
+			</listitem>
+			<listitem>
+				<para>Added installation script.</para>
+			</listitem>
+			<listitem>
+				<para>Updated documentation.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.6">
+		<title>Version 1.6 (2004-03-11)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Fixed special characters handling in file names.</para>
+			</listitem>
+			<listitem>
+				<para>Added new <application>For each Line</application> tool.</para>
+			</listitem>
+			<listitem>
+				<para>Updated documentation.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.5">
+		<title>Version 1.5 (2004-02-03)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Implemented subdirectory recursing in an iterative fashion.</para>
+			</listitem>
+			<listitem>
+				<para>User scripts are evaluated directly by the &bash; shell, via the <command>eval</command> command.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.4">
+		<title>Version 1.4 (2004-01-25)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Implemented solution for handling fragmented filenames.</para>
+			</listitem>
+			<listitem>
+				<para>Removed obsolete <command>ffr</command> tool. Use <command>ff <option>-r</option>
+					</command> instead.</para>
+			</listitem>
+			<listitem>
+				<para>Added command line options, documentation, and help message.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+	<section id="v1.3">
+		<title>Version 1.3 (2003-08-30)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Imported code into <acronym>CVS</acronym>.</para>
+			</listitem>
+			<listitem>
+				<para>Command-line arguments are now handled iteratively.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+</article>
