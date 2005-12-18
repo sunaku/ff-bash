@@ -86,6 +86,9 @@
 
 				<para>A defect, causing incorrect detection of ID3v1 versus ID3v1.1 tags, in <filename>id3.bash</filename> has been fixed.</para>
 			</listitem>
+			<listitem>
+				<para>The <application>For each Line</application> script has been removed.</para>
+			</listitem>
 		</itemizedlist>
 	</section>
 
