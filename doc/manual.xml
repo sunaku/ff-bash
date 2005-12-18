@@ -21,7 +21,7 @@
 
 	<!-- content -->
 	<!ENTITY ff.abstract "This manual explains how to install, use, and extend &ff:ulink;.">
-	<!ENTITY ff.desc "&ff; is a <ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC22'>&bash; function</ulink>. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:ff-synopsis-object'>objects</link>. The author often uses it to perform repetitive tasks such as renaming, extracting, moving, and manipulating a large number of files.">
+	<!ENTITY ff.intro "&ff; is a <ulink url='http://www.gnu.org/software/bash/manual/bashref.html#SEC22'>&bash; function</ulink>. It lets you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:ff-synopsis-object'>objects</link>. The author often uses it to perform repetitive tasks such as renaming, extracting, moving, and manipulating a large number of files.">
 
 	<!ENTITY installDir.var "<replaceable>installDir</replaceable>">
 	<!ENTITY installDir:link "<link linkend='proc:installing-extraction'>&ff;'s installation directory</link>">
@@ -72,7 +72,7 @@
 
 	<chapter id="chp:intro">
 		<title>Introduction</title>
-		<para>&ff.abstract;</para>
+		<para>&ff.intro;</para>
 
 		<section id="sec:what-should-i-know">
 			<title>What should I know?</title>
@@ -92,11 +92,6 @@
 					</listitem>
 				</itemizedlist>
 			</para>
-		</section>
-
-		<section id="sec:what-is-ff">
-			<title>What is &ff;?</title>
-			<para>&ff.desc;</para>
 		</section>
 	</chapter>
 
@@ -491,7 +486,7 @@ This is an argument: 10.3
 
 			<refsection>
 				<title>Description</title>
-				<para>&ff.desc;</para>
+				<para>&ff.intro;</para>
 
 				<note>
 					<para>This traditional &unix;-style manual page is intentionally terse. See the &ff; user's manual for a user-friendly supplement&mdash;complete with explanations and examples&mdash;to this manual page.</para>
