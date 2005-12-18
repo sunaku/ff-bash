@@ -10,7 +10,7 @@
 <!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 <!ENTITY ff.cmd "ff">
 <!ENTITY ff.version "2.0">
-<!ENTITY ff.date "2005-12-17">
+<!ENTITY ff.date "2005-12-18">
 <!ENTITY ff.url "http://sf.net/projects/ff-bash">
 <!ENTITY ff.url-announce "http://freshmeat.net/projects/ff/">
 <!ENTITY ff.url-tracker "https://sourceforge.net/tracker/?group_id=106777">

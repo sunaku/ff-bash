@@ -48,15 +48,12 @@
 	id3TagIndex_genre=6
 	id3TagIndex_track=7
 
-	id3NulByte=$'\1'
-	id3NulPadding=$'\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1\1'
-
 
 
 # Logic
 	# Parses an ID3v1 or ID3v1.1 tag from the given file and stores the results into an array named "$RESULT".
-	# @param	.	Path to the MP3 file whose tag you want to read.
 	# @global	$RESULT	Array containing data (see id3TagIndex_*) read from the given file.
+	# @param	.	Path to the MP3 file whose tag you want to read.
 	# @return	1	The given file does not have an ID3 tag.
 	function id3_readTag() {
 		local tempFile=$( util_getTempFile )
@@ -108,8 +105,8 @@
 
 
 	# Writes an ID3v1 or ID3v1.1 tag to the given file.
+	# @global	$SOURCE	Array containing data (see $id3TagIndex_*) that is to be written to the given file.
 	# @param	.	Path to the MP3 file whose tag you want to write.
-	# @param	$SOURCE	Array containing data (see $id3TagIndex_*) that is to be written to the given file.
 	function id3_writeTag() {
 		# get access to a non-existent temporary file
 		local tempFile=$( util_getTempFile )
@@ -180,6 +177,7 @@
 
 	# Prints the given base-10 ASCII code as a binary byte.
 	# @param	.	The base-10 ASCII code to convert.
+	# @stdout	the converted value
 	function id3_chr() {
 		# convert the argument into a number if possible. otherwise consider it to be zero
 		local -i num=$1
@@ -192,6 +190,7 @@
 
 	# Prints a base-10 ASCII code corresponding to the given binary byte.
 	# @param	.	The binary bite to convert.
+	# @stdout	the converted value
 	function id3_ord() {
 		od -An -N1 -tu1 <<< "$1" | tr -d '[:space:]'
 	}

@@ -93,6 +93,7 @@
 	# Says the given message to the user via 'printf'
 	# @param	.	The format string used by printf
 	# @param	...	The arguments for the format string
+	# @stdout	the given message
 	function ff_say() {
 		echo "ff: $( printf "$@" )"
 	}
@@ -263,8 +264,8 @@
 
 
 	# Parses command-line arguments into an array named "$RESULT".
-	# @param	...	The arguments to be parsed.
 	# @global	$RESULT	Array containing parsed arguments.
+	# @param	...	The arguments to be parsed.
 	function ff_parseArgs() {
 		while (( $# > 0 )); do
 			local arg=$1
@@ -302,7 +303,7 @@
 
 
 	# Loads the user's script from command-line argument or user's terminal.
-	# @pre	the standard input stream must represent the user's terminal (e.g. /dev/tty)
+	# @stdin	the user's terminal
 	function ff_loadScript() {
 		local expression=:
 
@@ -374,8 +375,8 @@
 
 
 
-	# Linearly executes 'during()' on the given argument
-	# @param	...	the files upon which to perform
+	# Linearly invokes the during() control function on the given objects
+	# @param	...	the objects upon which to perform
 	function ff_linearMode() {
 		for o; do
 			# update object variables
@@ -465,6 +466,7 @@
 			local -a parsedArgs
 			ff_parseArgs "$@"
 			parsedArgs=( "${RESULT[@]}" )
+			RESULT=
 
 
 			# parse piped arguments

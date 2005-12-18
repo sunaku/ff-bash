@@ -38,6 +38,7 @@
 
 # Library logic
 	# Reads and returns the user's choice.
+	# @stdin	user's terminal device
 	# @return	0 if the user answered "no"
 	# @return	1 if the user answered "yes"
 	function util_queryYesNo() {
@@ -52,10 +53,11 @@
 
 
 	# Reads and stores the user's reply in $REPLY
+	# @global	$REPLY	The user's reply.
+	# @stdin	user's terminal device
 	# @param	.	The default answer, if user gives no reply.
 	# @return	0	User chose the default answer.
 	# @return	1	User did not choose the default answer.
-	# @return	$REPLY	The user's reply.
 	function util_query() {
 		while read -erp "( $utilText_default: $1 ) "; do
 			if [ -z "$REPLY" ]; then
@@ -69,8 +71,8 @@
 
 
 
-	# Prints the path to a non-existent temporary file, which is ready for your use. If the file is created (when you write to it), you are responsible for cleaning up that file once you are finished with it.
-	# @return	stdout	The path to a non-existent temporary file.
+	# Prints the path to a non-existant temporary file, which is ready for your use. If the file is created (when you write to it), you are responsible for cleaning up that file once you are finished with it.
+	# @stdout	The path to a non-existant temporary file.
 	function util_getTempFile() {
 		local path="${TMPDIR:-/tmp}/${0}${RANDOM}"
 
@@ -83,8 +85,8 @@
 
 
 
-	# Prints the name of a non-existent temporary variable, which is ready for your use.
-	# @out	Name of a non-existent temporary variable.
+	# Prints the name of a non-existant temporary variable, which is ready for your use.
+	# @stdout	Name of a non-existant temporary variable.
 	function util_getTempVar() {
 		local var="tmp$RANDOM"
 

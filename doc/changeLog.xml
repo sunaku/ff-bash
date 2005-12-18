@@ -23,24 +23,29 @@
 		&snk:copyright;
 
 		<abstract>
-			<para>This document is a record of changes that have occured with each release of &ff:ulink;. You can find announcements for new releases at <ulink url="&ff.url-announce;">&ff.url-announce;</ulink>.</para>
+			<para>This document is a record of changes that have occurred with each release of &ff:ulink;. You can find announcements for new releases at <ulink url="&ff.url-announce;">&ff.url-announce;</ulink>.</para>
 		</abstract>
 	</articleinfo>
 
 	<section id="v2.0">
-		<title>Version 2.0 (2005-12-17)</title>
+		<title>Version 2.0 (&ff.date;)</title>
 		<itemizedlist>
 			<listitem>
-				<para>A comprehensive user's manual, written in Docbook-&xml; and complete with explanations and examples, has been added. This manual is accessible in both &xhtml; and &unix;-style manpage form.</para>
+				<para>&ff; has been made into a &bash; shell-function (compare with shell-script). This is a major architectural change as a user can now invoke &ff; from within any &bash; function.</para>
+
+				<para>The source code has been stripped down, revised, and beautified such that it is now more light-weight, intuitive to use, and easier to edit and improve.</para>
 			</listitem>
 			<listitem>
-				<para>&ff; has been made into a &bash; shell-function (compare with shell-script). This is a major architectural change as a user can now invoke &ff; from within any &bash; function. Its code has been stripped down, revised, and beautified such that it is now more light-weight, intuitive to use, and easier to edit and improve.</para>
+				<para>A comprehensive user's manual, written in Docbook-&xml; and complete with explanations and examples, has been added. This manual is accessible in, among other formats, both &xhtml; and &unix;-style manpage form.</para>
 			</listitem>
 			<listitem>
-				<para>A new &bash; function-based approach to &l10n; has been implemented. As a result of this and great reduction in the amount of text communicated to the user, all of the old translation catalogs have been discarded.</para>
+				<para>Full support for file names with spaces, new-lines, Unicode, non-printable and other weird characters has been added. This was previously a major limitation of &ff; in previous revision.</para>
 			</listitem>
 			<listitem>
-				<para>The command-line parsing function has been re-written and all options have been made into extended globs &extglob.see; which can be changed via &l10n;.</para>
+				<para>A new function-based approach to &l10n; has been implemented. As a result of this, and massive reduction and simplification of the text messages shown to the user, all of the old translation catalogs have been discarded.</para>
+			</listitem>
+			<listitem>
+				<para>All command-line options have been made into extended globs &extglob.see; which can be configured to better suit different human languages via &l10n;.</para>
 			</listitem>
 			<listitem>
 				<para>&ff; now has only one software dependency: &bash;. However, some example scripts still need &coreutils;.</para>
@@ -48,27 +53,38 @@
 			<listitem>
 				<para>The names of control functions and their parameters have been changed:
 					<simplelist>
-						<member><function>begin</function> &rarr; <function>before</function></member>
-						<member><function>main</function> &rarr; <function>during</function></member>
-						<member><function>end</function> &rarr; <function>after</function></member>
-						<member><function>finalize</function> &rarr; <function>end</function></member>
+						<member><function>begin</function> &rarr; <function>before</function>
+						</member>
+						<member>
+							<function>main</function> &rarr; <function>during</function>
+						</member>
+						<member>
+							<function>end</function> &rarr; <function>after</function>
+						</member>
+						<member>
+							<function>finalize</function> &rarr; <function>end</function>
+						</member>
 					</simplelist>
 				</para>
 			</listitem>
 			<listitem>
-				<para>The <varname>$p</varname> has been changed to denote the prefix of object, and a new variable <varname>$s</varname> denoting the suffix of an object has been added.</para>
+				<para>The <varname>$p</varname> variable now denotes the prefix of object, and a new variable <varname>$s</varname> denotes the suffix of an object.</para>
+			</listitem>
+			<listitem>
+				<para>Many new script-accessible functions have been introduced into &ff; (see the source file &ff.file;). In particular, the <function>ff_import</function> lets you import libraries by specifying only their name; &ff; takes care of the rest.</para>
 			</listitem>
 			<listitem>
 				<para>Many changes in terminology and naming conventions have been made. For example, "targets" are now known as "objects" and all &ff; construct names begin with "ff" instead of "__ff".</para>
 			</listitem>
 			<listitem>
 				<para>All of the old example scripts have been discarded except <filename>ff.id3_report</filename> (which has been updated into <filename>id3ToXml.ff</filename>) and <filename>ff.untar</filename> (which has been updated into <filename>extract.ff</filename>).</para>
+
+				<para><filename>extract.ff</filename> has taken a new approach to file archive extraction that works in all cases. Also, it now supports many kinds of file archives, not just tarballs.</para>
 			</listitem>
 			<listitem>
 				<para>All of the old libraries have been discarded except <filename>util.lib</filename> (which has been updated into <filename>util.bash</filename>) and <filename>id3tag.lib</filename> (which has been updated into <filename>id3.bash</filename>).</para>
-			</listitem>
-			<listitem>
-				<para>Many new script-accessbile functions have been introduced into &ff; (see the source file &ff.file;). In particular, the <function>ff_import</function> lets you import libraries by specifying only their name; &ff; takes care of the rest.</para>
+
+				<para>A defect, causing incorrect detection of ID3v1 versus ID3v1.1 tags, in <filename>id3.bash</filename> has been fixed.</para>
 			</listitem>
 		</itemizedlist>
 	</section>
@@ -136,9 +152,14 @@
 			<listitem>
 				<para>The preset scripting variables have been renamed to better reflect their contents as follows:
 					<simplelist>
-						<member><varname>$t</varname> &rarr; <varname>$o</varname></member>
-						<member><varname>$f</varname> &rarr; <varname>$p</varname></member>
-						<member><varname>$fn</varname> &rarr; <varname>$n</varname></member>
+						<member><varname>$t</varname> &rarr; <varname>$o</varname>
+						</member>
+						<member>
+							<varname>$f</varname> &rarr; <varname>$p</varname>
+						</member>
+						<member>
+							<varname>$fn</varname> &rarr; <varname>$n</varname>
+						</member>
 					</simplelist>
 				</para>
 			</listitem>
@@ -284,7 +305,7 @@
 				<para>Shell commands are read from the user's terminal when not specified on the command-line.</para>
 			</listitem>
 			<listitem>
-				<para>The <option>--mask</option> option has been added for filename filtering in recursive mode.</para>
+				<para>The <option>--mask</option> option has been added for file-name filtering in recursive mode.</para>
 			</listitem>
 		</itemizedlist>
 	</section>
@@ -458,7 +479,7 @@
 		<title>Version 1.5 (2004-02-03)</title>
 		<itemizedlist>
 			<listitem>
-				<para>Implemented subdirectory recursing in an iterative fashion.</para>
+				<para>Implemented sub-directory recursing in an iterative fashion.</para>
 			</listitem>
 			<listitem>
 				<para>User scripts are evaluated directly by the &bash; shell, via the <command>eval</command> command.</para>
@@ -470,7 +491,7 @@
 		<title>Version 1.4 (2004-01-25)</title>
 		<itemizedlist>
 			<listitem>
-				<para>Implemented solution for handling fragmented filenames.</para>
+				<para>Implemented solution for handling fragmented file-names.</para>
 			</listitem>
 			<listitem>
 				<para>Removed obsolete <command>ffr</command> tool. Use <command>ff <option>-r</option>
