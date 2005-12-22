@@ -66,7 +66,7 @@
 	declare -r ffOptionsHelpFormat="%20s\t%s\n"
 
 	declare -r ffNewLine=$'\n'
-	declare -r ffExtDelim_default=.
+	declare -r ffSuffixDelim_default=.
 	declare -r ffLanguageCode_default=en
 
 
@@ -95,7 +95,8 @@
 	# @param	...	The arguments for the format string
 	# @stdout	the given message
 	function ff_say() {
-		echo "ff: $( printf "$@" )"
+		echo -n "ff: "
+		printf "$@"
 	}
 
 
@@ -418,12 +419,12 @@
 
 
 				# parse the prefix
-				p=${n%${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffExtDelim_default}*}
+				p=${n%${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffSuffixDelim_default}*}
 
 
 				# parse the suffix
 				if [ "$p" != "$n" ]; then
-					s=${n##*${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffExtDelim_default}}
+					s=${n##*${ffOption_suffixDelim[ffOptionIndex_arg]:-$ffSuffixDelim_default}}
 				else
 					s=
 				fi

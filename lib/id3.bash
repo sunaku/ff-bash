@@ -39,7 +39,9 @@
 
 
 # Variables
+	# The value of the version is either "1" or "1.1"
 	id3TagIndex_version=0
+
 	id3TagIndex_title=1
 	id3TagIndex_artist=2
 	id3TagIndex_album=3
@@ -57,6 +59,7 @@
 	# @return	1	The given file does not have an ID3 tag.
 	function id3_readTag() {
 		local tempFile=$( util_getTempFile )
+
 
 		# read ID3 tag
 		tail -c 128 "$1" > "$tempFile"
@@ -152,24 +155,19 @@
 	# @param	.	Maximum (exclusive limit) length of the field.
 	# @param	.	Path to the file in which the field is to be written.
 	function id3_writeField() {
-		count=$(( count + $2 ))
-		echo "COUNT=$count"
-
 		if [ ${#1} -lt $2 ]; then
-			# write the field
+			# write the given field
 			echo -n "$1" >> "$3"
 
 
 			# fill the remaining space with NUL bytes
-			echo "remaining space=$(( $2 - ${#1} ))" > /dev/tty
 			local i
 			for (( i=${#1}; i < $2; i++ )); do
 				echo -ne '\0' >> "$3"
 			done
 		else
+			# write the given field
 			echo -n "${1:0:$2}" >> "$3"
 		fi
-
-		echo "SIZE=$( wc -c "$3" )"
 	}
 

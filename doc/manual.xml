@@ -123,7 +123,7 @@
 					<varlistentry>
 						<term><ulink url="http://www.gnu.org/software/coreutils/">&gnu; coreutils</ulink></term>
 						<listitem>
-							<para>This software, called "core utilities", provides a collection of programs that are, in my opinion, essential for daily computing.</para>
+							<para>This software, called "core utilities", provides a collection of programs that are, in the author's mind, essential for daily computing.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>
@@ -216,7 +216,7 @@ date
 					</listitem>
 
 					<listitem>
-						<para>each parameter may be repeated indefinitely (denoted by the ellipsis appended to a parameter). That is, one can specify more than one option and more than one object at a time while invoking &ff;.</para>
+						<para>each parameter may be repeated indefinitely (denoted by the ellipsis appended to a parameter). That is, you can specify more than one option and more than one object while invoking &ff;.</para>
 					</listitem>
 
 					<listitem>
@@ -234,13 +234,13 @@ date
 			<title>Writing scripts</title>
 			<para>In order for &ff; to be useful, you must give it some work to do. You can tell &ff; what operations you want it to perform, on the objects passed to it, by specifying those operations in something called a "script".</para>
 
-			<para>A script either (1) contains a list of &bash; commands or (2) is a full fledged &bash; <ulink url="http://en.wikipedia.org/wiki/Shell_script">shell script</ulink>. It is examined<footnote id="fot:shell-evaluates-script">
+			<para>A script is either (1) a list of &bash; commands or (2) a full fledged &bash; <ulink url="http://en.wikipedia.org/wiki/Shell_script">shell script</ulink>. It is examined<footnote id="fot:shell-evaluates-script">
 					<para>&ff; simply glances at the commands while employing the &bash; shell to do the heavy lifting&mdash;parsing and executing the commands&mdash;through the <command>eval</command> command. For this reason, a script written for &ff; is no different than a script written for &bash;.</para>
-				</footnote> and executed by &ff; like a theatrical play's script is examined, recited, and exhibited by an actor.</para>
+				</footnote> and executed by &ff; much like the script of a theatrical play is examined, recited, and exhibited by an actor.</para>
 
 			<section id="sec:object-variables">
 				<title>Object variables</title>
-				<para><link linkend="ref:ff-objVars">Object variables</link> let your script interact with <link linkend="ref:ff-synopsis-object">objects</link> specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere within your script and are automatically updated (immediately before) each time &ff; invokes the <xref linkend="ref:ff-ctrlFuncs-during"/> control function.</para>
+				<para><link linkend="ref:ff-objVars">Object variables</link> let your script interact with <link linkend="ref:ff-synopsis-object">objects</link> specified by the user. These variables represent various aspects of an object's value or name. In addition, they are available for use anywhere within your script and are automatically updated (immediately before) each time &ff; invokes the <xref linkend="ref:ff-ctrlFuncs-during"/> <link linkend="sec:control-functions">control function</link>.</para>
 
 				<example id="ex:object-vars-demo">
 					<title>Seeing what information object variables provide</title>

@@ -46,7 +46,7 @@ during() {
 	local outDir="$o.out"
 
 	while [ -e "$outDir" ]; do
-		outDir="$outDir-$$"
+		outDir="$outDir$RANDOM"
 	done
 
 
@@ -58,7 +58,7 @@ during() {
 
 
 	# extract the archive into the output directory
-	pushd "$outDir" >& /dev/null
+	pushd "$outDir" > /dev/null
 
 	local oRelative="../$n"	# the object relative to output directory
 
@@ -163,15 +163,15 @@ during() {
 		;;
 	esac
 
-	popd >& /dev/null
+	popd > /dev/null
 
 
 
-	# adjust the contents of the output directory
+	# adjust the contents of the output directory: if there is only one item in the output directory and the item is a directory then we know that the file archive does not make a mess, so we need to pull that item out of the output directory and make it appear as if the archive was extracted into $d instead of $outDir
 	local contents=( "$outDir"/!(.|..) )
 
-	if ! [ ${#contents[@]} -eq 1 -a -d "$contents" ]; then
-		mv "$outDir"/{!(.|..),..}
+	if [ ${#contents[@]} -eq 1 -a -d "$contents" ]; then
+		mv "$contents"/{,..} &&
 		rmdir "$outDir"
 	fi
 }
