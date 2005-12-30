@@ -846,6 +846,18 @@ This is an argument: 10.3
 			<refsection id="ref:ff-envVars">
 				<title>Environment variables</title>
 				<variablelist>
+					<varlistentry id="ref:ff-envVars-ffHome">
+						<term>
+							<varname>$FF_HOME</varname>
+						</term>
+						<listitem>
+							<para>This variable defines the path to &installDir:link;. Although &ff; neither uses nor requires this variable, some of the example scripts provided with &ff; depend upon this variable to function correctly.</para>
+
+							<para>For example, one of the example scripts depends upon an external library, composed of &bash; functions, located within &installDir:link;.</para>
+						</listitem>
+					</varlistentry>
+
+
 					<varlistentry id="ref:ff-envVars-lang">
 						<term>
 							<varname>$LANG</varname>
@@ -857,14 +869,21 @@ This is an argument: 10.3
 						</listitem>
 					</varlistentry>
 
-					<varlistentry id="ref:ff-envVars-ffHome">
+					<!--<varlistentry id="ref:ff-envVars-editor">
 						<term>
-							<varname>$FF_HOME</varname>
+							<varname>$EDITOR</varname>
 						</term>
 						<listitem>
-							<para>This variable defines the path to &installDir:link;. Although &ff; neither uses nor requires this variable, some of the example scripts provided with &ff; depend upon this variable to function correctly.</para>
+							<para>This variable defines the path to your text editor of choice. If undefined, &bash;'s built-in <command>read</command> command will be used as your text editor.</para>
+						</listitem>
+					</varlistentry>-->
 
-							<para>For example, one of the example scripts depends upon an external library, composed of &bash; functions, located within &installDir:link;.</para>
+					<varlistentry id="ref:ff-envVars-tmpDir">
+						<term>
+							<varname>$TMPDIR</varname>
+						</term>
+						<listitem>
+							<para>This variable defines the path to a directory in which &ff; or users' scripts may create and use temporary files. If undefined, its value is assumed to be <filename>/tmp</filename>.</para>
 						</listitem>
 					</varlistentry>
 				</variablelist>

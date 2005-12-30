@@ -77,9 +77,10 @@
 
 
 	# Prints the path to a non-existant temporary file, which is ready for your use. If the file is created (when you write to it), you are responsible for cleaning up that file once you are finished with it.
+	# @param	.	Optional path to the non-existant temporary file. Specify this if insist on having a specific path for the non-existanat temporary file.
 	# @stdout	The path to a non-existant temporary file.
 	function util_getTempFile() {
-		local path="${TMPDIR:-/tmp}/${0}${RANDOM}"
+		local path="${1:-${TMPDIR:-/tmp}/${0}${RANDOM}}"
 
 		while [ -e "$path" ]; do
 			path="${path}${RANDOM}"

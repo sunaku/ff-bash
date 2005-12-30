@@ -27,6 +27,11 @@
 
 
 
+# Import libraries
+ff_import util
+
+
+
 msg() {
 	echo "extract.ff: $*"
 }
@@ -43,16 +48,12 @@ before() {
 # The general strategy is to (1) make a new directory, (2) decompress the archive normally into that directory, and (3) adjust the contents of the directory to fulfill the goal of this script.
 during() {
 	# get access to a non-existent output directory
-	local outDir="$o.out"
-
-	while [ -e "$outDir" ]; do
-		outDir="$outDir$RANDOM"
-	done
+	local outDir=$(util_getTempFile "$o.out" )
 
 
 	# create the output directory
 	if ! mkdir "$outDir"; then
-		msg "I cannot create this output directory: $outDir"
+		msg "I could not create this directory: $outDir"
 		exit $ffExitCode_scriptError
 	fi
 
@@ -167,12 +168,16 @@ during() {
 
 
 
-	# adjust the contents of the output directory: if there is only one item in the output directory and the item is a directory then we know that the file archive does not make a mess, so we need to pull that item out of the output directory and make it appear as if the archive was extracted into $d instead of $outDir
+	# adjust the contents of the output directory: if the file archive does NOT make a mess, make it appear as if the archive was extracted into $d instead of $outDir
 	local contents=( "$outDir"/!(.|..) )
 
-	if [ ${#contents[@]} -eq 1 -a -d "$contents" ]; then
-		mv "$contents"/{,../..} &&
-		rmdir "$outDir"
+	if [ ${#contents[@]} -le 1 ]; then
+		if [ -d "$contents" ]; then
+			mv "$contents"/{,../..} ||
+			msg "I could not put the extracted contents where they belong, so I kept them in here: $outDir"
+		fi
+
+		rmdir "$outDir" >& /dev/null
 	fi
 }
 
