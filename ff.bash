@@ -104,7 +104,7 @@
 	# Loads localized string bundles for the user's current language.
 	# @param	.	Prefix of the function name which contains localized string bundles
 	function ff_loadL10nBundle() {
-		if declare -F "${1}_$ffLanguageCode" >& /dev/null; then
+		if declare -F "${1}_$ffLanguageCode" &> /dev/null; then
 			"${1}_$ffLanguageCode"
 		else
 			"${1}_$ffLanguageCode_default"
@@ -340,7 +340,7 @@
 		# load the user's script, and perform a sanity check to see if the script *really* does have the required control function
 		eval "$expression"
 
-		if ! declare -F during >& /dev/null; then
+		if ! declare -F during &> /dev/null; then
 			ff_say "$ffText_errorBadUserScript" "$expression"
 			exit $ffExitCode_internalError
 		fi
@@ -467,7 +467,7 @@
 			local -a parsedArgs
 			ff_parseArgs "$@"
 			parsedArgs=( "${RESULT[@]}" )
-			RESULT=
+			unset RESULT
 
 
 			# parse piped arguments

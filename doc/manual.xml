@@ -44,8 +44,15 @@
 
 		<revhistory>
 			<revision>
-				<revnumber>1.3</revnumber>
+				<revnumber>1.4</revnumber>
 				<date>&ff.date;</date>
+				<authorinitials>&snk:authorinitials;</authorinitials>
+				<revremark>Added info about Gna! services. Added "hacking", "getting help", and "examples of use" sections.</revremark>
+			</revision>
+
+			<revision>
+				<revnumber>1.3</revnumber>
+				<date>2005-12-18</date>
 				<authorinitials>&snk:authorinitials;</authorinitials>
 				<revremark>Added enough new content for 2.0 release.</revremark>
 			</revision>
@@ -359,40 +366,38 @@ This is an argument: 10.3
 			</section>
 		</section>
 
-		<section id="sec:exampleScripts">
-			<title>Example scripts</title>
-			<para>The <filename>./examples/</filename> directory, located within &installDir:link;, contains several example scripts that demonstrate tasks &ff; can be used to perform. The first few lines of these scripts contain a description of their purpose&mdash;which you can quickly view by running the command <command>head <replaceable>./examples/*</replaceable> | less</command> within &installDir:link;.</para>
+		<section id="sec:examplesOfUse">
+			<title>Examples of use</title>
+			<para>TODO</para>
+
+			<section id="sec:exampleScripts">
+				<title>Example scripts</title>
+				<para>The <filename>./examples/</filename> directory, located within &installDir:link;, contains several example scripts that demonstrate tasks &ff; can be used to perform. The first few lines of these scripts contain a description of their purpose&mdash;which you can quickly view by running the command <command>head <replaceable>./examples/*</replaceable> | less</command> within &installDir:link;.</para>
+			</section>
 		</section>
+
+		<section id="sec:getting-help">
+				<title>Getting help</title>
+				<para/>
+			</section>
 	</chapter>
 
 	<chapter id="chp:extending">
 		<title>Extending &ff;</title>
+		<para>This chapter describes several ways, ranging from giving simple feedback to hacking the source itself, in which you can help extend and improve &ff;.</para>
 
 		<section id="sec:feedback">
 			<title>Giving feedback</title>
-			<para>Using the <ulink url="&ff.url-tracker;">project tracker</ulink>, you can <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645574">report defects</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645575">request for support</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645577">request for features</ulink>, <ulink url="https://sourceforge.net/tracker/?group_id=106777&amp;atid=645576">submit patches</ulink>, <ulink url="https://sourceforge.net/forum/?group_id=106777">ask questions, and discuss related topics</ulink>.</para>
+			<para>Please feel at liberty to voice your opinion, ask questions, and discuss related topics on <ulink url="&ff.url-mailingList-user;">our mailing list for discussion among users and developers</ulink>.</para>
+		</section>
 
-<!--
-			<section id="sec:defect-reports">
-				<title>Reporting defects</title>
-				<para/>
-			</section>
+		<section id="sec:hacking">
+			<title>Hacking &ff;</title>
+			<para>First, join our <ulink url="&ff.url-mailingList;">developer and commits mailing lists</ulink>. The developer list is the primary forum of discussion among developers and therefore please post any development questions here. In addition, it may be prudent to check the list archives before posting. The commits list receives automated posts about commits to our Subversion repository.</para>
 
-			<section id="sec:feature-request">
-				<title>Requesting features</title>
-				<para/>
-			</section>
+			<para>Next, obtain a copy of the newest source <ulink url="&ff.url-svn;">from our Subversion repository</ulink> by issuing the command <command>svn co &ff.url-svnRepo;</command> or by using a graphical frontend to Subversion.</para>
 
-			<section id="sec:discussion-forums">
-				<title>Voicing your opinion</title>
-				<para/>
-			</section>
-
-			<section id="sec:getting-help">
-				<title>Getting help</title>
-				<para/>
-			</section>
--->
+			<para>Now you are ready to hack your local copy of the source and submit patches to <ulink url="&ff.url-tracker-patches;">the patches tracker</ulink>. Please familiarize yourself with <ulink url="http://tldp.org/HOWTO/Software-Release-Practice-HOWTO/patching.html">good patching practices</ulink> to improve the chances of your patches being accepted and incorporated, and <ulink url="http://www.linuxjournal.com/article/1237">the process of creating patches</ulink> if necessary.</para>
 		</section>
 
 		<section id="sec:localization">
@@ -421,15 +426,15 @@ This is an argument: 10.3
 
 						<step>
 							<para>Write your changes to the &ff.file; file and away you go!</para>
-
-							<tip id="tip:testing-l10n-bundle">
-								<title>Testing your &l10n; bundle</title>
-								<para>You can test your &l10n; bundle by (1) <link linkend="proc:installing-sourcingBash">updating your current &bash; session</link>, and then (2) running the command <command>LANG=<replaceable>foo</replaceable> &ff.cmd;</command> where <replaceable>foo</replaceable> denotes &iso639-code.desc;.</para>
-							</tip>
 						</step>
 					</substeps>
 				</step>
 			</procedure>
+
+			<tip id="tip:testing-l10n-bundle">
+				<title>Testing your &l10n; bundle</title>
+				<para>You can test your &l10n; bundle by (1) <link linkend="proc:installing-sourcingBash">updating your current &bash; session</link>, and then (2) running the command <command>LANG=<replaceable>foo</replaceable> &ff.cmd;</command> where <replaceable>foo</replaceable> denotes &iso639-code.desc;.</para>
+			</tip>
 		</section>
 	</chapter>
 

@@ -11,9 +11,13 @@
 <!ENTITY ff.cmd "ff">
 <!ENTITY ff.version "2.0">
 <!ENTITY ff.date "2005-12-18">
-<!ENTITY ff.url "http://sf.net/projects/ff-bash">
+<!ENTITY ff.url "http://home.gna.org/ff-bash/">
 <!ENTITY ff.url-announce "http://freshmeat.net/projects/ff-bash">
-<!ENTITY ff.url-tracker "https://sourceforge.net/tracker/?group_id=106777">
+<!ENTITY ff.url-tracker-patches "https://gna.org/patch/?group=ff-bash">
+<!ENTITY ff.url-mailingList "https://gna.org/mail/?group=ff-bash">
+<!ENTITY ff.url-mailingList-user "https://mail.gna.org/listinfo/ff-bash-user/">
+<!ENTITY ff.url-svnRepo "http://svn.gna.org/svn/ff-bash/trunk">
+<!ENTITY ff.url-svn "https://gna.org/svn/?group=ff-bash">
 <!ENTITY ff:ulink "<ulink url='&ff.url;'>&ff;</ulink>">
 <!ENTITY ff.file "<filename>ff.bash</filename>">
 
