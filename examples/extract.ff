@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Extracts various compressed and uncompressed file archives (see http://en.wikipedia.org/wiki/List_of_archive_formats) into their *own* output directories to prevent them from making a mess of your current working directory!
+# This script extracts various compressed and uncompressed file archives (see http://en.wikipedia.org/wiki/List_of_archive_formats) into their *own* output directories so that they do not make a mess by extracting directly into your working directory.
 
-# Each output directory is located "next to" its corresponding file archive; that is, an output directory is created inside the parent directory of its corresponding file archive.
+# In addition, the extracted contents of each file archive are kept "next to" it; that is, an output directory is created inside the parent directory of its corresponding file archive.
 
 
 #
