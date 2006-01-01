@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+# Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati.
 #
 # This file is part of "For each File".
 #
@@ -138,7 +138,7 @@
 
 
 	function ff_showDisclaimer() {
-		echo "Copyright 2003, 2004, 2005 Suraj N. Kurapati."
+		echo "Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati."
 		echo
 		echo "$ffText_disclaimer"
 	}

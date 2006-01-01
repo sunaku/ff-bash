@@ -3,7 +3,7 @@
 # A library for reading and writing ID3v1 and ID3v1.1 tags (see http://en.wikipedia.org/wiki/Id3).
 
 #
-# Copyright 2003, 2004 Suraj N. Kurapati.
+# Copyright 2003, 2004, 2006 Suraj N. Kurapati.
 #
 # This file is part of "For each File".
 #

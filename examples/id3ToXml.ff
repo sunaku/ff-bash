@@ -3,7 +3,7 @@
 # This script generates an XML document containing ID3v1 or ID3v1.1 tag information (see http://en.wikipedia.org/wiki/Id3) acquired from MP3 files. However, note that the generated XML document may or may not be well formed.
 
 #
-# Copyright 2003, 2004, 2005 Suraj N. Kurapati.
+# Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati.
 #
 # This file is part of "For each File".
 #
