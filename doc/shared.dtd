@@ -11,8 +11,9 @@
 <!ENTITY ff.cmd "ff">
 <!ENTITY ff.version "2.0">
 <!ENTITY ff.date "2005-12-18">
-<!ENTITY ff.url "http://home.gna.org/ff-bash/">
+<!ENTITY ff.url "https://gna.org/projects/ff-bash/">
 <!ENTITY ff.url-project "https://gna.org/projects/ff-bash/">
+<!ENTITY ff.url-download "https://gna.org/files/?group=ff-bash">
 <!ENTITY ff.url-announce "http://freshmeat.net/projects/ff-bash">
 <!ENTITY ff.url-tracker-patches "https://gna.org/patch/?group=ff-bash">
 <!ENTITY ff.url-tracker-defects "https://gna.org/bugs/?group=ff-bash">
@@ -30,7 +31,7 @@
 <!ENTITY snk "Suraj N. Kurapati">
 <!ENTITY snk:authorinitials "snk">
 <!ENTITY snk:author "<author> <firstname>Suraj</firstname> <othername>N.</othername> <surname>Kurapati</surname> </author>">
-<!ENTITY snk:year "<year>2003</year> <year>2004</year> <year>2005</year>">
+<!ENTITY snk:year "<year>2003</year> <year>2004</year> <year>2005</year> <year>2006</year>">
 <!ENTITY snk:holder "<holder>&snk;</holder>">
 <!ENTITY snk:copyright "<copyright>&snk:year; &snk:holder;</copyright>">
 

@@ -21,7 +21,7 @@
 
 	<!-- content -->
 	<!ENTITY ff.abstract "This manual explains how to install, use, and extend &ff:ulink;.">
-	<!ENTITY ff.intro "&ff:ulink; is a <ulink url='&bashManual.function.url;'>&bash; function</ulink> that enables you run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:ff-synopsis-object'>objects</link>. It is often used for, but not limited to, performing repetitive tasks such as renaming, extracting, moving, and manipulating a large number of files. &ff.announce;.">
+	<!ENTITY ff.intro "&ff:ulink; is a <ulink url='&bashManual.function.url;'>&bash; function</ulink> that enables you to run an arbitrary set of &bash; commands upon an arbitrary set of <link linkend='ref:ff-synopsis-object'>objects</link>. It is often used for, but is not limited to, performing repetitive tasks such as renaming, extracting, moving, and manipulating a large number of files. &ff.announce;.">
 
 	<!ENTITY installDir.var "<replaceable>installDir</replaceable>">
 	<!ENTITY installDir:link "<link linkend='proc:installing-extraction'>&ff;'s installation directory</link>">
@@ -145,11 +145,11 @@
 				<title>Installing &ff;</title>
 
 				<step>
-					<para><ulink url="https://sourceforge.net/project/showfiles.php?group_id=106777&amp;package_id=115170">Obtain the latest release</ulink> of &ff;.</para>
+					<para><ulink url="&ff.url-download;">Obtain the newest release</ulink> of &ff;.</para>
 				</step>
 
 				<step id="proc:installing-extraction">
-					<para>Extract the obtained archive to a location&mdash;henceforth denoted by &installDir.var;&mdash;of your choice by running the command <command>bunzip2 -c <filename>ff-&ff.version;.tar.bz2</filename> | tar -C &installDir.var; -vxf -</command> at your command-prompt.</para>
+					<para>Extract the obtained archive to a location&mdash;henceforth denoted by &installDir.var;&mdash;of your choice by running the command <command>bunzip2 -c <filename>ff-bash-&ff.version;.tar.bz2</filename> | tar -C &installDir.var; -vxf -</command> at your command-prompt.</para>
 				</step>
 
 				<step>
@@ -174,7 +174,7 @@ source "&ff.file;"
 
 			<tip>
 				<title>Learn &bash;'s string operations</title>
-				<para>If you learn &bash;'s <ulink url="&advBashGuide.stringOps.url;">string manipulation</ulink> and <ulink url="&bashManual.patternMatching.url;">globbing syntax</ulink>, you can make better use of &ff;, and also &bash; in general. An immediate effect of such knowledge is the ability to perform complex string operations without having to type so much code!</para>
+				<para>You can make better use of &ff; by learning &bash;'s <ulink url="&advBashGuide.stringOps.url;">string manipulation</ulink> and <ulink url="&bashManual.patternMatching.url;">globbing syntax</ulink>. An immediate effect of such knowledge is the ability to perform complex string operations without having to type so much code!</para>
 			</tip>
 
 			<example id="ex:renaming-file-suffixes">
