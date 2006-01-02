@@ -61,8 +61,8 @@
 
 
 # Variables
-	declare -r ffReleaseVersion=2.0
-	declare -r ffWebsite="http://ff-bash.sf.net"
+	declare -r ffReleaseVersion=2.1
+	declare -r ffWebsite="https://gna.org/projects/ff-bash/"
 	declare -r ffOptionsHelpFormat="%20s\t%s\n"
 
 	declare -r ffNewLine=$'\n'
