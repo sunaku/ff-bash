@@ -24,8 +24,25 @@
 		</abstract>
 	</articleinfo>
 
+	<section id="v2.1">
+		<title>Version 2.1 (&ff.date;)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Moved project hosting from SourceForge to Gna!.</para>
+			</listitem>
+			<listitem>
+				<para>Added information about Gna! services, and "contributing", "getting help", and "examples of useage" sections to the user's manual.</para>
+
+				<para>Added information about package structure to README file.</para>
+			</listitem>
+			<listitem>
+				<para>Fixed removal of empty output directory and logic for adjusting of output directory in <filename>extract.ff</filename>.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
 	<section id="v2.0">
-		<title>Version 2.0 (&ff.date;)</title>
+		<title>Version 2.0 (2005-12-18)</title>
 		<itemizedlist>
 			<listitem>
 				<para>&ff; has been made into a &bash; shell-function (compare with shell-script). This is a major architectural change as a user can now invoke &ff; from within any &bash; function.</para>

@@ -48,7 +48,7 @@
 				<revnumber>1.4</revnumber>
 				<date>&ff.date;</date>
 				<authorinitials>&snk:authorinitials;</authorinitials>
-				<revremark>Added info about Gna! services. Added "hacking", "getting help", and "examples of useage" sections.</revremark>
+				<revremark>Added info about Gna! services. Added "contributing", "getting help", and "examples of useage" sections.</revremark>
 			</revision>
 
 			<revision>

@@ -9,8 +9,8 @@
 <!-- release info -->
 <!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 <!ENTITY ff.cmd "ff">
-<!ENTITY ff.version "2.0">
-<!ENTITY ff.date "2005-12-18">
+<!ENTITY ff.version "2.1">
+<!ENTITY ff.date "2006-01-01">
 <!ENTITY ff.url "https://gna.org/projects/ff-bash/">
 <!ENTITY ff.url-project "https://gna.org/projects/ff-bash/">
 <!ENTITY ff.url-download "https://gna.org/files/?group=ff-bash">

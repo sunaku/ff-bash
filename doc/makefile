@@ -26,7 +26,7 @@ all: $(outputs)
 
 clean:
 	rm -rf $(outputs)
-	rm ../README ../HISTORY
+	rm -f ../README ../HISTORY
 
 man:
 	xmlto -o $@/$@1 $@ $(srcDir)/manual.xml
