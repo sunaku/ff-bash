@@ -72,4 +72,4 @@
 <!ENTITY extglob.see "(see &quot;extglob&quot; in the &bashManual.patternMatching:ulink; for more information)">
 
 <!ENTITY bashrc.file "<filename>~/.bashrc</filename>">
-<!ENTITY ff.announce "You can find announcements for new releases of &ff; at <ulink url='&ff.url-announce;'>&ff.url-announce;</ulink>">
+<!ENTITY ff.announce "You can find announcements for new releases at <ulink url='&ff.url-announce;'>&ff.url-announce;</ulink>">

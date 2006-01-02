@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati.
+
+	Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the file called "LICENSE".
+-->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+	<!-- imports -->
+	<!ENTITY % sharedDTD SYSTEM "shared.dtd">
+  %sharedDTD;
+
+	<!ENTITY manual.path "./doc/html/manual/index.html">
+	<!ENTITY history.path "./HISTORY">
+	<!ENTITY gpl.path "./LICENSE">
+	<!ENTITY fdl.path "./doc/src/LICENSE">
+]>
+<article lang="en">
+	<articleinfo>
+		<title>Welcome to &ff;</title>
+	</articleinfo>
+
+	<section>
+		<title>What is here?</title>
+		<variablelist>
+			<varlistentry>
+				<term><filename>doc/</filename></term>
+				<listitem>
+					<para>This directory contains documentation in &xhtml;, plain-text, &unix;-style manpage, and DocBook-&xml; formats.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><filename>lib/</filename></term>
+				<listitem>
+					<para>This directory contains libraries usable by users' scripts.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><filename>examples/</filename></term>
+				<listitem>
+					<para>This directory contains examples of users' scripts.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+	<section>
+		<title>What to do now?</title>
+		<itemizedlist>
+			<listitem>
+				<para>See the user's manual, located at <filename>&manual.path;</filename>, for instructions on installing, using, and extending &ff;.</para>
+			</listitem>
+			<listitem>
+				<para>See the history file, located at <filename>&history.path;</filename>, for a record of important changes between subsequent releases of &ff;.</para>
+			</listitem>
+			<listitem>
+				<para>See the copying conditions on software, located at <filename>&gpl.path;</filename>.</para>
+			</listitem>
+			<listitem>
+				<para>See the copying conditions on documentation, located at <filename>&fdl.path;</filename>.</para>
+			</listitem>
+			<listitem>
+				<para>Visit us <ulink url="&ff.url;">on the Internet</ulink> at <uri>&ff.url;</uri>.</para>
+			</listitem>
+			<listitem>
+				<para>&ff.announce;.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+</article>

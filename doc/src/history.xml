@@ -15,12 +15,9 @@
 	<!ENTITY person.mw "<personname><firstname>Michael</firstname> <surname>Wiedmann</surname></personname>">
 	<!ENTITY person.ak "<personname><firstname>Andy</firstname> <surname>Kirkpatrick</surname></personname>">
 ]>
-<article>
+<article lang="en">
 	<articleinfo>
-		<title>&ff; change log</title>
-
-		&snk:author;
-		&snk:copyright;
+		<title>History of &ff; releases</title>
 
 		<abstract>
 			<para>This document is a record of changes that have occurred with each release of &ff:ulink;. &ff.announce;.</para>
