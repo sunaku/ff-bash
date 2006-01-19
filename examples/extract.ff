@@ -169,7 +169,7 @@ during() {
 
 
 	# adjust the contents of the output directory: if the file archive does NOT make a mess, make it appear as if the archive was extracted into $d instead of $outDir
-	local contents=( "$outDir"/!(.|..) )
+	local -a contents=( "$outDir"/!(.|..) )
 
 	if [ ${#contents[@]} -le 1 ]; then
 		if [ -d "$contents" ]; then
