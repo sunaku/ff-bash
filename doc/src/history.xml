@@ -20,12 +20,28 @@
 		<title>History of &ff; releases</title>
 
 		<abstract>
-			<para>This document is a record of changes that have occurred with each release of &ff..ulink;. &ff.announce;.</para>
+			<para>This document is a record of changes that have occurred with each release of &ff..ulink;. &ff.announce;</para>
 		</abstract>
 	</articleinfo>
 
+	<section id="v2.2">
+		<title>Version 2.2 (&ff.date;)</title>
+		<itemizedlist>
+			<listitem>
+				<para>Fixed logic for adjusting of output directory in <filename>extract.ff</filename>. The output directory was being left behind, inside the temporary one, instead of being relocated to its proper location.</para>
+			</listitem>
+			<listitem>
+				<para>Replaced "dev" and "user" mailing lists with a new "friends" mailing list to better suit the size of &ff;'s user community.</para>
+			</listitem>
+			<listitem>
+				<para>Added information about verifying &ff; release packages.</para>
+				<para>Updated "examples of use" section and added a global text substitution example into the user's manual.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+
 	<section id="v2.1">
-		<title>Version 2.1 (&ff.date;)</title>
+		<title>Version 2.1 (2006-01-01)</title>
 		<itemizedlist>
 			<listitem>
 				<para>Moved project hosting from SourceForge to Gna!.</para>

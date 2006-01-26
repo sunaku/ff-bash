@@ -36,8 +36,8 @@ html: $(srcDir)/manual.xml
 	xmlto -o $@ xhtml-nochunks $(srcDir)/history.xml
 	xmlto -o $@ xhtml-nochunks $(srcDir)/readme.xml
 
-text:
-	xmlto -o $@ txt $(srcDir)/manual.xml
+text: $(srcDir)/manual.xml
+	xmlto -o $@ txt $<
 	xmlto -o $@ txt $(srcDir)/history.xml
 	xmlto -o $@ txt $(srcDir)/readme.xml
 

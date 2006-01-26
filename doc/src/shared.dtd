@@ -9,8 +9,8 @@
 <!-- release info -->
 <!ENTITY ff "<emphasis><application>For each File</application></emphasis>">
 <!ENTITY ff.cmd "ff">
-<!ENTITY ff.version "2.1">
-<!ENTITY ff.date "2006-01-01">
+<!ENTITY ff.version "2.2">
+<!ENTITY ff.date "2006-01-25">
 <!ENTITY ff.url "https://gna.org/projects/ff-bash/">
 <!ENTITY ff.url-project "https://gna.org/projects/ff-bash/">
 <!ENTITY ff.url-download "https://gna.org/files/?group=ff-bash">
@@ -77,4 +77,5 @@
 <!ENTITY extglob.see "(see &quot;extglob&quot; in the &bashManual.patternMatching..ulink; for more information)">
 
 <!ENTITY bashrc.file "<filename>~/.bashrc</filename>">
-<!ENTITY ff.announce "You can find announcements for new releases at <ulink url='&ff.url-announce;'>&ff.url-announce;</ulink>">
+<!ENTITY ff.announce "You can find announcements for new releases at <ulink url='&ff.url-announce;'>freshmeat</ulink>.">
+<!ENTITY ff.intro "&ff..ulink; is a &bash; script wrapper for repetitive file manipulation tasks. It lets you run arbitrary &bash; commands upon arbitrary files, directories, and more.">

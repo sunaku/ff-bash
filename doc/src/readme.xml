@@ -17,6 +17,9 @@
 <article lang="en">
 	<articleinfo>
 		<title>Welcome to &ff;</title>
+		<abstract>
+			<para>&ff.intro;</para>
+		</abstract>
 	</articleinfo>
 
 	<section>
@@ -62,7 +65,7 @@
 				<para>Visit &ff; <ulink url="&ff.url;">on the Internet</ulink> at <uri>&ff.url;</uri>.</para>
 			</listitem>
 			<listitem>
-				<para>&ff.announce;.</para>
+				<para>&ff.announce;</para>
 			</listitem>
 		</itemizedlist>
 	</section>
