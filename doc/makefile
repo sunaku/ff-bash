@@ -28,11 +28,11 @@ clean:
 	rm -rf $(outputs)
 	rm -f ../README ../HISTORY
 
-man:
-	xmlto -o $@/$@1 $@ $(srcDir)/manual.xml
+man: $(srcDir)/manual.xml
+	xmlto -o $@/$@1 $@ $<
 
-html:
-	xmlto -o $@/manual xhtml $(srcDir)/manual.xml
+html: $(srcDir)/manual.xml
+	xmlto -o $@/manual xhtml $<
 	xmlto -o $@ xhtml-nochunks $(srcDir)/history.xml
 	xmlto -o $@ xhtml-nochunks $(srcDir)/readme.xml
 

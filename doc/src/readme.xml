@@ -25,13 +25,13 @@
 			<varlistentry>
 				<term><filename>doc/</filename></term>
 				<listitem>
-					<para>This directory contains documentation in &xhtml;, plain-text, &unix;-style manpage, and DocBook-&xml; formats.</para>
+					<para>This directory contains documentation in &xhtml;, plain-text, &unix;-style manpage, and DocBook &xml; formats.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term><filename>lib/</filename></term>
 				<listitem>
-					<para>This directory contains libraries usable by users' scripts.</para>
+					<para>This directory contains libraries for users' scripts.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -59,7 +59,7 @@
 				<para>See the copying conditions on documentation, located at <filename>&fdl.path;</filename>.</para>
 			</listitem>
 			<listitem>
-				<para>Visit us <ulink url="&ff.url;">on the Internet</ulink> at <uri>&ff.url;</uri>.</para>
+				<para>Visit &ff; <ulink url="&ff.url;">on the Internet</ulink> at <uri>&ff.url;</uri>.</para>
 			</listitem>
 			<listitem>
 				<para>&ff.announce;.</para>
