@@ -20,7 +20,7 @@
 
 
 	<!-- content -->
-	<!ENTITY ff.abstract "This manual explains how to install, use, and extend &ff..ulink;.">
+	<!ENTITY ff.abstract "This manual explains how to install, use, and extend &ff;. You can find the newest version of this manual at the &ff..ulink; website.">
 
 	<!ENTITY installDir.var "<replaceable>installation_directory</replaceable>">
 	<!ENTITY installDir..link "<link linkend='proc..installing-extraction'>&ff;'s installation directory</link>">
@@ -52,8 +52,9 @@
 
 	<chapter id="chp..intro">
 		<title>Introduction</title>
-		<para>&ff.intro; In general, &ff; performs upon arbitrary strings just like &bash;'s for-loop construct. These strings are referred to as <link linkend="ref..ff-synopsis-object">objects</link> in this manual.</para>
-		<para>With &ff;, you can quickly perform repetitive tasks such as renaming, deleting, linking, archiving, extracting, and editing a large number of files. See <xref linkend="sec..examplesOfUse"/> for examples of how &ff; is used to perform such tasks.</para>
+		<para>&ff.intro;</para>
+		<para>In general, &ff; behaves like &bash;'s for-loop construct, running commands upon arbitrary strings. These strings are referred to as "<link linkend="ref..ff-synopsis-object">objects</link>" in this manual.</para>
+		<para>See <xref linkend="sec..examplesOfUse"/> to learn how &ff; is used to perform some common, repetitive tasks.</para>
 
 		<section id="sec..what-should-i-know">
 			<title>What should I know?</title>
@@ -151,7 +152,8 @@ source "&ff.file;"
 
 		<section id="sec..examplesOfUse">
 			<title>Examples of use</title>
-			<para>Here are some examples which demonstrate tasks &ff; can be used to perform. In addition to these examples, the <filename>$FF_HOME/examples/</filename> directory contains example scripts that perform tasks more complex than those shown below. The first few lines of these example scripts contain a description of their purpose. You can quickly view these descriptions by running the command <command>head <replaceable>$FF_HOME/examples/*</replaceable></command>.</para>
+			<para>Below are examples of some common, repetitive tasks which you can perform using &ff;.</para>
+			<para>See the <filename>$FF_HOME/examples/</filename> directory for more complex examples. Each example is written in a separate file, whose first few lines contain a description of the example. You can quickly view these descriptions by running the command <command>head <replaceable>$FF_HOME/examples/*</replaceable></command>.</para>
 
 			<tip>
 				<title>Learn &bash;'s string operations</title>

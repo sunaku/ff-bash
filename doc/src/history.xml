@@ -28,14 +28,14 @@
 		<title>Version 2.2 (&ff.date;)</title>
 		<itemizedlist>
 			<listitem>
-				<para>Fixed logic for adjusting of output directory in <filename>extract.ff</filename>. The output directory was being left behind, inside the temporary one, instead of being relocated to its proper location.</para>
+				<para>In <filename>extract.ff</filename>, a defect which prevents the output directory from being relocated to its proper location has been fixed.</para>
 			</listitem>
 			<listitem>
-				<para>Replaced "dev" and "user" mailing lists with a new "friends" mailing list to better suit the size of &ff;'s user community.</para>
+				<para>The "dev" and "user" mailing lists have been replaced with a new "friends" mailing list to better suit the size of the user community.</para>
 			</listitem>
 			<listitem>
-				<para>Added information about verifying &ff; release packages.</para>
-				<para>Updated "examples of use" section and added a global text substitution example into the user's manual.</para>
+				<para>In the user's manual, information about verifying the integrity of downloaded release packages, using &gpg;, has been added.</para>
+				<para>Also, an example about global text substitution has been added.</para>
 			</listitem>
 		</itemizedlist>
 	</section>

@@ -78,4 +78,5 @@
 
 <!ENTITY bashrc.file "<filename>~/.bashrc</filename>">
 <!ENTITY ff.announce "You can find announcements for new releases at <ulink url='&ff.url-announce;'>freshmeat</ulink>.">
-<!ENTITY ff.intro "&ff..ulink; is a &bash; script wrapper for repetitive file manipulation tasks. It lets you run arbitrary &bash; commands upon arbitrary files, directories, and more.">
+<!ENTITY ff.intro "&ff..ulink; is a &bash; script wrapper for repetitive file manipulation tasks such as mass file renaming. It lets you run arbitrary commands upon files, directories, and more.">
+
