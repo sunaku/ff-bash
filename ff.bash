@@ -61,8 +61,8 @@
 
 
 # Variables
-	declare -r ffReleaseVersion=2.1
-	declare -r ffWebsite="https://gna.org/projects/ff-bash/"
+	declare -r ffReleaseVersion=2.2
+	declare -r ffWebsite="https://gna.org/projects/ff-bash"
 	declare -r ffOptionsHelpFormat="%20s\t%s\n"
 
 	declare -r ffNewLine=$'\n'
@@ -132,7 +132,8 @@
 
 
 	function ff_showVersion() {
-		echo "$ffText_forEachFile, $ffText_version $ffReleaseVersion ($ffWebsite)"
+		echo "$ffText_forEachFile, $ffText_version $ffReleaseVersion"
+		echo "$ffWebsite"
 	}
 
 

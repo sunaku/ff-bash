@@ -26,7 +26,11 @@ all: $(outputs)
 
 clean:
 	rm -rf $(outputs)
-	rm -f ../README ../HISTORY
+
+dist-clean: clean
+	rm -f ../README ../HISTORY ../*.html
+
+spotless: dist-clean
 
 man: $(srcDir)/manual.xml
 	xmlto -o $@/$@1 $@ $<
@@ -44,4 +48,5 @@ text: $(srcDir)/manual.xml
 dist: all
 	cp text/readme.txt ../README
 	cp text/history.txt ../HISTORY
+	cp html/*.html ..
 

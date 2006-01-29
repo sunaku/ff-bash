@@ -11,9 +11,9 @@
 <!ENTITY ff.cmd "ff">
 <!ENTITY ff.version "2.2">
 <!ENTITY ff.date "2006-01-25">
-<!ENTITY ff.url "https://gna.org/projects/ff-bash/">
-<!ENTITY ff.url-project "https://gna.org/projects/ff-bash/">
-<!ENTITY ff.url-download "https://gna.org/files/?group=ff-bash">
+<!ENTITY ff.url "https://gna.org/projects/ff-bash">
+<!ENTITY ff.url-project "https://gna.org/projects/ff-bash">
+<!ENTITY ff.url-download "http://download.gna.org/ff-bash">
 <!ENTITY ff.url-announce "http://freshmeat.net/projects/ff-bash">
 <!ENTITY ff.url-tracker-patches "https://gna.org/patch/?group=ff-bash">
 <!ENTITY ff.url-tracker-defects "https://gna.org/bugs/?group=ff-bash">
