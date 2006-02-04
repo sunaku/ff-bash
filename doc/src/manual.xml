@@ -338,13 +338,13 @@ $s = warn
 
 					<programlisting>
 during() {
-	echo "$o" >> tempFile
+  echo "$o" >> tempFile
 }
 after() {
-	cat -n tempFile
+  cat -n tempFile
 }
 end() {
-	rm -v tempFile
+  rm -v tempFile
 }
 					</programlisting>
 
@@ -366,15 +366,18 @@ removed `tempFile'
 
 					<programlisting>
 before() {
-	for arg
-	do
-		if [[ "$arg" =~ '-(foo|bar)' ]]
-		then
-				echo "$arg is an option."
-		else
-				echo "$arg is an argument."
-		fi
-	done
+  for arg
+  do
+    case "$arg" in
+      -foo|-bar)
+        echo "$arg is an option."
+      ;;
+
+      *)
+        echo "$arg is an argument."
+      ;;
+    esac
+  done
 }
 during() { :; }
 					</programlisting>

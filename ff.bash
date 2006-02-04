@@ -47,10 +47,10 @@
 		ffText_errorNeedMoreArguments="This option needs more arguments: %s"
 		ffText_errorBadUserScript="I could not process your script: %s"
 
-		ffText_helpSeeUserManual="See the user's manual for explanations and examples."
+		ffText_helpSeeManual="See the manpage (by running %s) or the user's manual (located in %s) for explanations and examples."
 		ffText_helpUsage="Usage"
 		ffText_helpOptions="Options"
-		ffText_helpOptionGlob="Option glob"
+		ffText_helpOptionGlob="Option Glob"
 		ffText_helpDescription="Description"
 
 		ffText_version="version"
@@ -61,8 +61,7 @@
 
 
 # Variables
-	declare -r ffReleaseVersion=2.2
-	declare -r ffWebsite="https://gna.org/projects/ff-bash"
+	declare -r ffVersion=2.2
 	declare -r ffOptionsHelpFormat="%20s\t%s\n"
 
 	declare -r ffNewLine=$'\n'
@@ -131,21 +130,6 @@
 
 
 
-	function ff_showVersion() {
-		echo "$ffText_forEachFile, $ffText_version $ffReleaseVersion"
-		echo "$ffWebsite"
-	}
-
-
-
-	function ff_showDisclaimer() {
-		echo "Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati."
-		echo
-		echo "$ffText_disclaimer"
-	}
-
-
-
 	# Enables the given option and associates the given arguments with it
 	# @param	.	Number of arguments available to the given option
 	# @param	.	Option flag (how the user specifies the option)
@@ -173,12 +157,6 @@
 
 		case "$option" in
 			$ffOption_showHelp)
-				# show description
-				ff_showVersion
-				echo "$ffText_helpSeeUserManual"
-				echo
-
-
 				# show invocation syntax
 				echo "$ffText_helpUsage:	ff [option|object]..."
 				echo
@@ -195,16 +173,17 @@
 				echo
 
 
-				# show a disclaimer
-				ff_showDisclaimer
-
+				printf "$ffText_helpSeeManual" "'man ff'" "$FF_HOME"
+				echo
 
 				exit $ffExitCode_success
 			;;
 
 			$ffOption_showVersion)
-				ff_showVersion
-				ff_showDisclaimer
+				echo "$ffText_forEachFile $ffVersion"
+				echo "Copyright 2003, 2004, 2005, 2006 Suraj N. Kurapati."
+				echo
+				echo "$ffText_disclaimer"
 
 				exit $ffExitCode_success
 			;;
@@ -306,6 +285,7 @@
 
 	# Loads the user's script from command-line argument or user's terminal.
 	# @stdin	the user's terminal
+	# @pre	the 'extglob' shell option MUST be enabled
 	function ff_loadScript() {
 		local expression=:
 
@@ -333,9 +313,16 @@
 
 
 		# ensure that user's script has the required control function
-		if ! [[ "$expression" =~ 'during\s*\(\s*\)' ]]; then
-			expression="during(){${ffNewLine}$expression${ffNewLine}:;}"
-		fi
+		case "$expression" in
+			*during*([^\)])\(*([^\)])\)*)
+				# the control function WAS found... no need to modify script
+			;;
+
+			*)
+				# the control function was NOT found... need to modify script
+				expression="during(){${ffNewLine}$expression${ffNewLine}:;}"
+			;;
+		esac
 
 
 		# load the user's script, and perform a sanity check to see if the script *really* does have the required control function
@@ -406,15 +393,19 @@
 						local oNormalized=${o%%+(\/)}
 
 
-						if [[ "$oNormalized" =~ / ]]; then
-							d=${oNormalized%/*}
-							d=${d:-/}	# special case: $d is empty when it should be '/'
-							n=${oNormalized##*/}
-						else
-							# the object has no slashes; it is a simple file name like 'foo.bar' that is relative to the current working directory
-							d=.
-							n=$oNormalized
-						fi
+						case "$oNormalized" in
+							*/*)
+								d=${oNormalized%/*}
+								d=${d:-/}	# special case: $d is empty when it should be '/'
+								n=${oNormalized##*/}
+							;;
+
+							*)
+								# the object has no slashes; it is a simple file name like 'foo.bar' that is relative to the current working directory
+								d=.
+								n=$oNormalized
+							;;
+						esac
 					;;
 				esac
 
