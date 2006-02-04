@@ -1,0 +1,5 @@
+implement For each Line tool as a GNU BASH function
+learn to do unit tests on the code, to verify overall behavior
+learn to check if there is data on STDIN without altering it
+#restore support for bash 2.*
+	#remove uses of new regexp matching construct: [[ str =~ regexp ]]
